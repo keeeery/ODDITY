@@ -1,19 +1,29 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TeamOdd.Psychokinesis
 {
     [RequireComponent(typeof(Rigidbody), typeof(BoxCollider))]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class PsychokinesisObject : MonoBehaviour
     {
         [SerializeField] private Material availableOutline;
         [SerializeField] private Material unavailableOutline;
 
+        [SerializeField] private Material meshOutline;
+        [SerializeField, Min(0f)] private float outlineWidth = 0.05f;
+
+        private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int outlineWidthId = Shader.PropertyToID("_OutlineWidth");
+        private MaterialPropertyBlock outlineProperties;
+        private Mesh outlineMesh;
         private Rigidbody body;
         private BoxCollider box;
-        private LineRenderer outline;
+        private MeshRenderer outline;
         private bool originalGravity;
         private bool originalDetectCollisions;
         private float originalAngularDamping;
+        private bool canDealThrowDamage;
 
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
@@ -32,7 +42,20 @@ namespace TeamOdd.Psychokinesis
 
         private void OnDisable()
         {
+            canDealThrowDamage = false;
             if (IsHeld) Release(Vector3.zero);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (canDealThrowDamage == false) return;
+
+            PsychokinesisTestEnemy enemy = collision.collider.GetComponentInParent<PsychokinesisTestEnemy>();
+
+            if (enemy == null || enemy.isActiveAndEnabled == false || enemy.IsDead) return;
+
+            canDealThrowDamage = false;
+            enemy.TakeDamage(body.mass);
         }
 
         public void Configure(Material available, Material unavailable)
@@ -45,26 +68,33 @@ namespace TeamOdd.Psychokinesis
         {
             GameObject outlineObject = new GameObject("Focus Outline");
             outlineObject.transform.SetParent(transform, false);
-            outline = outlineObject.AddComponent<LineRenderer>();
-            outline.useWorldSpace = false;
-            outline.widthMultiplier = 0.025f;
+            Mesh source = GetComponent<MeshFilter>().sharedMesh;
+            outlineMesh = Instantiate(source);
+            outlineMesh.name = source.name + " Outline";
+            Vector3[] vertices = outlineMesh.vertices;
+            Vector3[] normals = outlineMesh.normals;
+            Dictionary<Vector3, Vector3> smoothNormals = new Dictionary<Vector3, Vector3>();
+            // UV와 하드 에지 때문에 분리된 동일 위치 정점도 같은 방향으로 확장한다.
+            for (int index = 0; index < vertices.Length; index++)
+            {
+                smoothNormals.TryGetValue(vertices[index], out Vector3 sum);
+                smoothNormals[vertices[index]] = sum + normals[index];
+            }
+            for (int index = 0; index < vertices.Length; index++)
+                normals[index] = smoothNormals[vertices[index]].normalized;
+            outlineMesh.normals = normals;
+            Bounds bounds = outlineMesh.bounds;
+            bounds.Expand(outlineWidth * 2f);
+            outlineMesh.bounds = bounds;
+
+            outlineObject.AddComponent<MeshFilter>().sharedMesh = outlineMesh;
+            outline = outlineObject.AddComponent<MeshRenderer>();
+            Material[] materials = new Material[outlineMesh.subMeshCount];
+            for (int index = 0; index < materials.Length; index++) materials[index] = meshOutline;
+            outline.sharedMaterials = materials;
             outline.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             outline.receiveShadows = false;
-            outline.positionCount = 16;
-            Vector3 min = box.center - box.size * 0.5f - Vector3.one * 0.015f;
-            Vector3 max = box.center + box.size * 0.5f + Vector3.one * 0.015f;
-            Vector3[] corners =
-            {
-                new Vector3(min.x, min.y, min.z), new Vector3(max.x, min.y, min.z),
-                new Vector3(max.x, min.y, max.z), new Vector3(min.x, min.y, max.z),
-                new Vector3(min.x, min.y, min.z), new Vector3(min.x, max.y, min.z),
-                new Vector3(max.x, max.y, min.z), new Vector3(max.x, min.y, min.z),
-                new Vector3(max.x, max.y, min.z), new Vector3(max.x, max.y, max.z),
-                new Vector3(max.x, min.y, max.z), new Vector3(max.x, max.y, max.z),
-                new Vector3(min.x, max.y, max.z), new Vector3(min.x, min.y, max.z),
-                new Vector3(min.x, max.y, max.z), new Vector3(min.x, max.y, min.z)
-            };
-            outline.SetPositions(corners);
+            outlineProperties = new MaterialPropertyBlock();
             outline.enabled = false;
         }
 
@@ -72,11 +102,22 @@ namespace TeamOdd.Psychokinesis
         {
             outline.enabled = isFocused;
 
-            if (isFocused) outline.sharedMaterial = available ? availableOutline : unavailableOutline;
+            if (isFocused == false) return;
+
+            Material colorMaterial = available ? availableOutline : unavailableOutline;
+            outlineProperties.SetColor(outlineColorId, colorMaterial.GetColor(outlineColorId));
+            outlineProperties.SetFloat(outlineWidthId, outlineWidth);
+            outline.SetPropertyBlock(outlineProperties);
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(outlineMesh);
         }
 
         public void BeginHold()
         {
+            canDealThrowDamage = false;
             originalGravity = body.useGravity;
             originalDetectCollisions = body.detectCollisions;
             originalAngularDamping = body.angularDamping;
@@ -88,11 +129,12 @@ namespace TeamOdd.Psychokinesis
             IsHeld = true;
         }
 
-        public void Release(Vector3 velocity)
+        public void Release(Vector3 velocity, bool isThrowing = false)
         {
             if (IsHeld == false) return;
 
             IsHeld = false;
+            canDealThrowDamage = isThrowing;
             body.useGravity = originalGravity;
             body.detectCollisions = originalDetectCollisions;
             body.angularDamping = originalAngularDamping;

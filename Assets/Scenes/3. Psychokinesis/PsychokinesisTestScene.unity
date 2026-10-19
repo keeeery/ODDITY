@@ -547,6 +547,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
+  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
+  outlineWidth: 0.05
 --- !u!54 &447538156
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1167,6 +1169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
+  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
+  outlineWidth: 0.05
 --- !u!54 &819711301
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1322,6 +1326,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
+  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
+  outlineWidth: 0.05
 --- !u!54 &842963583
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1483,7 +1489,7 @@ MonoBehaviour:
   pickupDistance: 12
   castHalfWidth: 2
   maxMass: 20
-  attackDamage: 10
+  attackDamage: 1
   attackInterval: 0.25
   holdDistance: 8
   holdClearance: 0.25
@@ -1834,6 +1840,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
+  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
+  outlineWidth: 0.05
 --- !u!54 &1332778108
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1989,6 +1997,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
+  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
+  outlineWidth: 0.05
 --- !u!54 &1387716297
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2256,6 +2266,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
+  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
+  outlineWidth: 0.05
 --- !u!54 &1473859660
 Rigidbody:
   m_ObjectHideFlags: 0

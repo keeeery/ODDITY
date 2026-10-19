@@ -338,7 +338,7 @@ namespace TeamOdd.Psychokinesis
                 velocity = direction.normalized * throwSpeed;
             }
 
-            heldObject.Release(velocity);
+            heldObject.Release(velocity, isThrowing);
             heldObject = null;
             targetInitialized = false;
         }
