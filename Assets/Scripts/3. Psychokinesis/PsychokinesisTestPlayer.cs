@@ -55,24 +55,18 @@ namespace TeamOdd.Psychokinesis
             characterController.Move(velocity * Time.deltaTime);
         }
 
-        private void LateUpdate()
-        {
-            FollowPlayer();
-        }
-
         private void OnDisable()
         {
             LockCursor(false);
         }
 
-        private void FollowPlayer()
+        private void LateUpdate()
         {
             Vector3 playerPosition = transform.position;
             cameraRig.position = playerPosition;
             // 플레이어가 리그의 자식이어도 부모 이동이 캐릭터 이동에 중복 적용되지 않게 한다.
             if (transform.IsChildOf(cameraRig)) transform.position = playerPosition;
         }
-
 
         private static void LockCursor(bool locked)
         {

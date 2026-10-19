@@ -451,6 +451,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2147000003}
   - {fileID: 1387716295}
   - {fileID: 1332778106}
   - {fileID: 842963581}
@@ -810,11 +811,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 669482515}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09265888aafb4d0e8d77552e46b4b783, type: 3}
+  m_Script: {fileID: 11500000, guid: 57b8b7f4df4a4d009bd1651998beceb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisTestEnemy
-  maxHealth: 100
-  focusOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.SampleCombatMonster
+  <Collider>k__BackingField: {fileID: 669482518}
+  <Stats>k__BackingField: {fileID: 11400000, guid: d8025811fade4e0c9ec1c3ec0a378901, type: 2}
 --- !u!136 &669482518
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1447,6 +1448,7 @@ GameObject:
   - component: {fileID: 1013557267}
   - component: {fileID: 1013557266}
   - component: {fileID: 1013557265}
+  - component: {fileID: 2147000010}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1483,13 +1485,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisController
   aimCamera: {fileID: 1982781878}
   player: {fileID: 1013557267}
+  combatEntity: {fileID: 2147000010}
   queryLayers:
     serializedVersion: 2
-    m_Bits: 1011
+    m_Bits: 115
   pickupDistance: 12
   castHalfWidth: 2
   maxMass: 20
-  attackDamage: 1
   attackInterval: 0.25
   holdDistance: 8
   holdClearance: 0.25
@@ -2759,7 +2761,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 1015
+    m_Bits: 119
 --- !u!114 &2010411289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2930,11 +2932,69 @@ MonoBehaviour:
   m_GameObject: {fileID: 2034567479}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09265888aafb4d0e8d77552e46b4b783, type: 3}
+  m_Script: {fileID: 11500000, guid: 57b8b7f4df4a4d009bd1651998beceb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisTestEnemy
-  maxHealth: 100
-  focusOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.SampleCombatMonster
+  <Collider>k__BackingField: {fileID: 2034567481}
+  <Stats>k__BackingField: {fileID: 11400000, guid: d8025811fade4e0c9ec1c3ec0a378901, type: 2}
+--- !u!1 &2147000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2147000003}
+  - component: {fileID: 2147000002}
+  m_Layer: 0
+  m_Name: Combat Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2147000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fda99b112f5a864a9c153662e72529d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatManager
+--- !u!4 &2147000003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 273411543}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2147000010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013557263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
+  <Collider>k__BackingField: {fileID: 1013557267}
+  <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

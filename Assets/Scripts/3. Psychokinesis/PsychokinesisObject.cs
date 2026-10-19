@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TeamOdd.Combat;
 using UnityEngine;
 
 namespace TeamOdd.Psychokinesis
@@ -24,6 +25,7 @@ namespace TeamOdd.Psychokinesis
         private bool originalDetectCollisions;
         private float originalAngularDamping;
         private bool canDealThrowDamage;
+        private ICombatable throwSender;
 
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
@@ -42,19 +44,21 @@ namespace TeamOdd.Psychokinesis
         private void OnDisable()
         {
             canDealThrowDamage = false;
-            if (IsHeld) Release(Vector3.zero);
+            throwSender = null;
+            Release(Vector3.zero);
         }
 
         private void OnCollisionEnter(Collision collision)
         {
             if (canDealThrowDamage == false) return;
-
-            PsychokinesisTestEnemy enemy = collision.collider.GetComponentInParent<PsychokinesisTestEnemy>();
-
-            if (enemy == null || enemy.isActiveAndEnabled == false || enemy.IsDead) return;
+            if (MonsterRegistry.TryGetMonster(collision.collider, out ICombatable target) == false) return;
+            if (target is CombatEntity entity && (entity.IsDead || entity.isActiveAndEnabled == false)) return;
 
             canDealThrowDamage = false;
-            enemy.TakeDamage(body.mass);
+            DamageInfo info = new DamageInfo(Mathf.RoundToInt(body.mass), collision.GetContact(0).point, collision.collider);
+            DamageEvent damageEvent = new DamageEvent(throwSender, target, info);
+            CombatManager.Instance.AddCombatEvent(damageEvent);
+            throwSender = null;
         }
 
         private void CreateOutline()
@@ -111,6 +115,7 @@ namespace TeamOdd.Psychokinesis
         public void BeginHold()
         {
             canDealThrowDamage = false;
+            throwSender = null;
             originalGravity = body.useGravity;
             originalDetectCollisions = body.detectCollisions;
             originalAngularDamping = body.angularDamping;
@@ -122,12 +127,13 @@ namespace TeamOdd.Psychokinesis
             IsHeld = true;
         }
 
-        public void Release(Vector3 velocity, bool isThrowing = false)
+        public void Release(Vector3 velocity, bool isThrowing = false, ICombatable sender = null)
         {
             if (IsHeld == false) return;
 
             IsHeld = false;
             canDealThrowDamage = isThrowing;
+            throwSender = isThrowing ? sender : null;
             body.useGravity = originalGravity;
             body.detectCollisions = originalDetectCollisions;
             body.angularDamping = originalAngularDamping;

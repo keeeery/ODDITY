@@ -1,3 +1,4 @@
+using TeamOdd.Combat;
 using Study.Utilities;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace TeamOdd.Psychokinesis
         [Header("References")]
         [SerializeField] private Camera aimCamera;
         [SerializeField] private CharacterController player;
+        [SerializeField] private CombatEntity combatEntity;
         [SerializeField] private LayerMask queryLayers = Physics.DefaultRaycastLayers;
 
         [Header("Targeting")]
@@ -17,7 +19,6 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(0f)] private float maxMass = 20f;
 
         [Header("Normal Attack")]
-        [SerializeField, Min(0f)] private float attackDamage = 10f;
         [SerializeField, Min(0.01f)] private float attackInterval = 0.25f;
 
         [Header("Holding and Throwing")]
@@ -214,10 +215,15 @@ namespace TeamOdd.Psychokinesis
             return best;
         }
 
+        private float GetTargetingDistance(Ray ray)
+        {
+            return pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+        }
+
         private void GetTargetingBox(out Ray ray, out Vector3 center, out Vector3 halfExtents)
         {
             ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float length = pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            float length = GetTargetingDistance(ray);
             center = ray.GetPoint(length * 0.5f);
             halfExtents = new Vector3(castHalfWidth, castHalfWidth, length * 0.5f);
         }
@@ -225,14 +231,15 @@ namespace TeamOdd.Psychokinesis
         private int CollectTargetingCandidates(out Ray ray)
         {
             GetTargetingBox(out ray, out Vector3 center, out Vector3 halfExtents);
-            return Physics.OverlapBoxNonAlloc(center, halfExtents, queryColliders,
-                aimCamera.transform.rotation, queryLayers, QueryTriggerInteraction.Ignore);
+
+            return Physics.OverlapBoxNonAlloc(
+                center, halfExtents, queryColliders, aimCamera.transform.rotation,
+                queryLayers, QueryTriggerInteraction.Ignore);
         }
 
         private Vector3 GetTargetingPosition(Collider target, Ray ray)
         {
-            GetTargetingBox(out _, out _, out Vector3 halfExtents);
-            float length = halfExtents.z * 2f;
+            float length = GetTargetingDistance(ray);
             if (target.Raycast(ray, out RaycastHit hit, length)) return hit.point;
 
             float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), 0f, length);
@@ -245,12 +252,14 @@ namespace TeamOdd.Psychokinesis
             nextAttackTime = Time.time + attackInterval;
 
             Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float distance = pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            float distance = GetTargetingDistance(ray);
             int count = Physics.RaycastNonAlloc(ray, obstructionHits, distance, queryLayers, QueryTriggerInteraction.Ignore);
             Collider hitCollider = null;
+
             for (int index = 0; index < count; index++)
             {
                 RaycastHit hit = obstructionHits[index];
+
                 if (IsOwner(hit.collider) || hit.distance > distance) continue;
 
                 distance = hit.distance;
@@ -258,11 +267,14 @@ namespace TeamOdd.Psychokinesis
             }
 
             Vector3 end = ray.GetPoint(distance);
-            if (hitCollider != null)
+
+            if (hitCollider != null && MonsterRegistry.TryGetMonster(hitCollider, out ICombatable target))
             {
-                PsychokinesisTestEnemy enemy = hitCollider.GetComponentInParent<PsychokinesisTestEnemy>();
-                if (enemy != null && enemy.isActiveAndEnabled) enemy.TakeDamage(attackDamage);
+                DamageInfo info = new DamageInfo(combatEntity.Stats.Atk, end, hitCollider);
+                DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
+                CombatManager.Instance.AddCombatEvent(damageEvent);
             }
+
             Debug.DrawLine(ray.origin, end, Color.cyan, 0.15f);
         }
 
@@ -309,6 +321,7 @@ namespace TeamOdd.Psychokinesis
                 Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
                 float distance = aimDistance;
                 int count = Physics.RaycastNonAlloc(ray, obstructionHits, aimDistance, queryLayers, QueryTriggerInteraction.Ignore);
+
                 for (int i = 0; i < count; i++)
                 {
                     RaycastHit hit = obstructionHits[i];
@@ -316,14 +329,16 @@ namespace TeamOdd.Psychokinesis
                     if (IsOwner(hit.collider) == false && hit.rigidbody != heldObject.Body)
                         distance = Mathf.Min(distance, hit.distance);
                 }
+
                 Vector3 direction = ray.GetPoint(distance) - heldObject.Body.worldCenterOfMass;
 
                 // 카메라와 물체 사이의 가까운 장애물을 조준해 역방향 발사 방지
                 if (Vector3.Dot(direction, ray.direction) <= 0f) direction = ray.direction;
+
                 velocity = direction.normalized * throwSpeed;
             }
 
-            heldObject.Release(velocity, isThrowing);
+            heldObject.Release(velocity, isThrowing, combatEntity);
             heldObject = null;
             targetInitialized = false;
         }
@@ -366,12 +381,10 @@ namespace TeamOdd.Psychokinesis
                 Vector3 screen = aimCamera.WorldToScreenPoint(candidate.Position);
                 if (screen.z <= 0f) continue;
                 bool selected = candidate.Target == focusedObject || candidate.Target == heldObject;
-                bool eligible = candidate.Visible;
-                GUI.color = selected ? Color.green : eligible ? Color.yellow : Color.gray;
+                GUI.color = selected ? Color.green : candidate.Visible ? Color.yellow : Color.gray;
                 string state = selected ? "Selected" : candidate.Visible ? "Candidate" : "Blocked";
-                float score = candidate.CenterDistance;
                 GUI.Label(new Rect(screen.x + 12f, Screen.height - screen.y + 12f, 250f, 62f),
-                    candidate.Target.name + " [" + state + "]\nCenter: " + score.ToString("F3")
+                    candidate.Target.name + " [" + state + "]\nCenter: " + candidate.CenterDistance.ToString("F3")
                     + " (lower wins)\nRange: " + candidate.PlayerDistance.ToString("F2") + " m", debugLabelStyle);
             }
             GUI.color = originalColor;
