@@ -17,6 +17,10 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Range(0.01f, 0.5f)] private float screenFocusRadius = 0.18f;
         [SerializeField, Min(0f)] private float maxMass = 20f;
 
+        [Header("Normal Attack")]
+        [SerializeField, Min(0f)] private float attackDamage = 10f;
+        [SerializeField, Min(0.01f)] private float attackInterval = 0.25f;
+
         [Header("Holding and Throwing")]
         [SerializeField, Min(1f)] private float holdDistance = 8f;
         [SerializeField, Min(0.05f)] private float holdClearance = 0.25f;
@@ -45,6 +49,7 @@ namespace TeamOdd.Psychokinesis
         private readonly RaycastHit[] obstructionHits = new RaycastHit[128];
         private PsychokinesisObject focusedObject;
         private PsychokinesisObject heldObject;
+        private PsychokinesisTestEnemy focusedEnemy;
         private Vector3 holdPosition;
         private Vector3 previousHoldPosition;
         private Vector3 targetVelocity;
@@ -52,6 +57,8 @@ namespace TeamOdd.Psychokinesis
         private bool grabRequested;
         private bool releaseRequested;
         private bool throwRequested;
+        private bool attackRequested;
+        private float nextAttackTime;
         public PsychokinesisObject FocusedObject => focusedObject;
         public PsychokinesisObject HeldObject => heldObject;
         public Camera AimCamera => aimCamera;
@@ -69,6 +76,7 @@ namespace TeamOdd.Psychokinesis
                 releaseRequested = true;
                 grabRequested = false;
                 throwRequested = false;
+                attackRequested = false;
 
                 return;
             }
@@ -82,8 +90,11 @@ namespace TeamOdd.Psychokinesis
                 releaseRequested = false;
             }
 
-            if (heldObject != null && rightHeld && SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
-                throwRequested = true;
+            if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
+            {
+                if (heldObject == null) attackRequested = true;
+                else if (rightHeld) throwRequested = true;
+            }
         }
 
         private void LateUpdate()
@@ -105,6 +116,15 @@ namespace TeamOdd.Psychokinesis
                 }
 
                 grabRequested = false;
+            }
+
+            SetEnemyFocus(heldObject == null && Cursor.lockState == CursorLockMode.Locked ? FindAttackTarget() : null);
+
+            if (attackRequested)
+            {
+                if (heldObject == null) NormalAttack();
+
+                attackRequested = false;
             }
 
             if (heldObject != null) holdPosition = GetHoldPosition();
@@ -157,9 +177,11 @@ namespace TeamOdd.Psychokinesis
             if (heldObject != null) ReleaseHeld(false);
 
             SetFocus(null);
+            SetEnemyFocus(null);
             grabRequested = false;
             releaseRequested = false;
             throwRequested = false;
+            attackRequested = false;
         }
 
         public void Configure(Camera camera, CharacterController character)
@@ -170,13 +192,7 @@ namespace TeamOdd.Psychokinesis
 
         private PsychokinesisObject FindFocus()
         {
-            Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float length = pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
-            // 원기둥을 감싸는 박스로 후보를 모은 뒤, 중심점의 축/반경 거리로 최종 판별
-            Vector3 center = ray.GetPoint(length * 0.5f);
-            Vector3 halfExtents = new Vector3(castRadius, castRadius, length * 0.5f);
-            int count = Physics.OverlapBoxNonAlloc(center, halfExtents, queryColliders,
-                aimCamera.transform.rotation, queryLayers, QueryTriggerInteraction.Ignore);
+            int count = CollectTargetingCandidates(out Ray ray, out float length);
             PsychokinesisObject best = null;
             float bestScore = float.PositiveInfinity;
             float nearestDistance = float.PositiveInfinity;
@@ -204,9 +220,6 @@ namespace TeamOdd.Psychokinesis
                 if (duplicate) continue;
 
                 Vector3 position = candidate.FocusPosition;
-                Vector3 fromStart = position - ray.origin;
-                float axialDistance = Vector3.Dot(fromStart, ray.direction);
-                Vector3 radialOffset = fromStart - ray.direction * axialDistance;
                 float distance = Vector3.Distance(player.transform.position, position);
                 Vector3 viewport = aimCamera.WorldToViewportPoint(position);
                 Vector2 delta = new Vector2((viewport.x - 0.5f) * aspect, viewport.y - 0.5f);
@@ -217,9 +230,8 @@ namespace TeamOdd.Psychokinesis
                     CenterDistance = score,
                     PlayerDistance = distance,
                     InRange = distance <= pickupDistance,
-                    InsideCylinder = axialDistance >= 0f && axialDistance <= length
-                        && radialOffset.sqrMagnitude <= castRadius * castRadius,
-                    Visible = HasLineOfSight(candidate),
+                    InsideCylinder = IsInsideCylinder(position, ray, length),
+                    Visible = HasLineOfSight(position, candidate.transform),
                     InsideFocus = viewport.z > 0f && score <= screenFocusRadius
                 };
                 candidates[candidateCount++] = diagnostic;
@@ -241,10 +253,87 @@ namespace TeamOdd.Psychokinesis
             return best;
         }
 
-        private bool HasLineOfSight(PsychokinesisObject candidate)
+        private int CollectTargetingCandidates(out Ray ray, out float length)
+        {
+            ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+            length = pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            // 원기둥을 감싸는 박스로 후보를 모은 뒤, 중심점의 축/반경 거리로 최종 판별
+            Vector3 center = ray.GetPoint(length * 0.5f);
+            Vector3 halfExtents = new Vector3(castRadius, castRadius, length * 0.5f);
+            return Physics.OverlapBoxNonAlloc(center, halfExtents, queryColliders,
+                aimCamera.transform.rotation, queryLayers, QueryTriggerInteraction.Ignore);
+        }
+
+        private bool IsInsideCylinder(Vector3 position, Ray ray, float length)
+        {
+            Vector3 fromStart = position - ray.origin;
+            float axialDistance = Vector3.Dot(fromStart, ray.direction);
+            Vector3 radialOffset = fromStart - ray.direction * axialDistance;
+            return axialDistance >= 0f && axialDistance <= length
+                && radialOffset.sqrMagnitude <= castRadius * castRadius;
+        }
+
+        private PsychokinesisTestEnemy FindAttackTarget()
+        {
+            int count = CollectTargetingCandidates(out Ray ray, out float length);
+            PsychokinesisTestEnemy target = null;
+            float bestScore = float.PositiveInfinity;
+            float nearestDistance = float.PositiveInfinity;
+
+            for (int i = 0; i < count; i++)
+            {
+                PsychokinesisTestEnemy enemy = queryColliders[i].GetComponentInParent<PsychokinesisTestEnemy>();
+                if (enemy == null || enemy.isActiveAndEnabled == false || enemy.IsDead) continue;
+
+                Vector3 position = enemy.transform.position;
+                float distance = Vector3.Distance(player.transform.position, position);
+                if (distance > pickupDistance || IsInsideCylinder(position, ray, length) == false) continue;
+
+                Vector3 viewport = aimCamera.WorldToViewportPoint(position);
+                Vector2 delta = new Vector2((viewport.x - 0.5f) * aimCamera.aspect, viewport.y - 0.5f);
+                float score = delta.magnitude;
+                if (viewport.z <= 0f || score > screenFocusRadius || HasLineOfSight(position, enemy.transform) == false) continue;
+
+                if (score < bestScore || (Mathf.Approximately(score, bestScore) && distance < nearestDistance))
+                {
+                    target = enemy;
+                    bestScore = score;
+                    nearestDistance = distance;
+                }
+            }
+
+            return target;
+        }
+
+        private void SetEnemyFocus(PsychokinesisTestEnemy target)
+        {
+            if (focusedEnemy != target && focusedEnemy != null) focusedEnemy.SetFocused(false);
+
+            focusedEnemy = target;
+
+            if (focusedEnemy != null) focusedEnemy.SetFocused(true);
+        }
+
+        private void NormalAttack()
+        {
+            if (Time.time < nextAttackTime) return;
+            nextAttackTime = Time.time + attackInterval;
+
+            Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+            Vector3 end = ray.GetPoint(pickupDistance + Vector3.Distance(ray.origin, player.transform.position));
+            if (focusedEnemy != null)
+            {
+                focusedEnemy.TakeDamage(attackDamage);
+                end = focusedEnemy.transform.position;
+                if (focusedEnemy.IsDead) SetEnemyFocus(null);
+            }
+            Debug.DrawLine(ray.origin, end, Color.cyan, 0.15f);
+        }
+
+        private bool HasLineOfSight(Vector3 position, Transform target)
         {
             Vector3 origin = aimCamera.transform.position;
-            Vector3 offset = candidate.FocusPosition - origin;
+            Vector3 offset = position - origin;
             int count = Physics.RaycastNonAlloc(
                 origin, offset.normalized, obstructionHits, offset.magnitude,
                 queryLayers, QueryTriggerInteraction.Ignore);
@@ -253,7 +342,7 @@ namespace TeamOdd.Psychokinesis
             {
                 Collider collider = obstructionHits[i].collider;
 
-                if (IsOwner(collider) == false && obstructionHits[i].rigidbody != candidate.Body)
+                if (IsOwner(collider) == false && collider.transform.IsChildOf(target) == false)
                     return false;
             }
 
@@ -313,6 +402,30 @@ namespace TeamOdd.Psychokinesis
         }
 
 #if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+            float length = pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            Vector3 end = ray.GetPoint(length);
+            Vector3 axis = ray.direction.normalized;
+            Vector3 side = Vector3.Cross(axis, Vector3.up);
+            if (side.sqrMagnitude < 0.001f) side = Vector3.Cross(axis, Vector3.right);
+            side.Normalize();
+            Vector3 up = Vector3.Cross(axis, side).normalized;
+
+            Color originalColor = UnityEditor.Handles.color;
+            UnityEditor.Handles.color = new Color(0.2f, 0.75f, 1f, 0.8f);
+            UnityEditor.Handles.DrawWireDisc(ray.origin, axis, castRadius);
+            UnityEditor.Handles.DrawWireDisc(end, axis, castRadius);
+            for (int index = 0; index < 8; index++)
+            {
+                float angle = index * Mathf.PI / 4f;
+                Vector3 radial = side * Mathf.Cos(angle) + up * Mathf.Sin(angle);
+                UnityEditor.Handles.DrawLine(ray.origin + radial * castRadius, end + radial * castRadius);
+            }
+            UnityEditor.Handles.color = originalColor;
+        }
+
         private GUIStyle debugLabelStyle;
 
         private void OnGUI()
