@@ -40,13 +40,13 @@ namespace TeamOdd.Combat
 
     public class DamageEvent : CombatEvent
     {
-        public DamageInfo DamageInfo { get; }
+        public DamageInfo Info { get; }
         public override EventType Type => EventType.Damage;
 
-        public DamageEvent(ICombatable sender, ICombatable receiver, DamageInfo damageInfo) 
+        public DamageEvent(ICombatable sender, ICombatable receiver, DamageInfo info) 
             : base(sender, receiver)
         {
-            DamageInfo = damageInfo;
+            Info = info;
         }
     }
     

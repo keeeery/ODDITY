@@ -7,7 +7,7 @@ namespace TeamOdd.Combat
         Collider Collider { get; }
         GameObject GameObject { get; }
 
-        public void TakeDamage(DamageEvent @event);
-        public void TakeHeal(HealEvent @event);
+        public int TakeDamage(DamageEvent @event);
+        public int TakeHeal(HealEvent @event);
     }
 }
