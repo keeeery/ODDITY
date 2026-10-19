@@ -18,14 +18,6 @@ namespace TeamOdd.Psychokinesis
         private CharacterController characterController;
         private float verticalSpeed;
 
-        public void Configure(Camera camera, Transform rig, BasicThirdPersonController controller)
-        {
-            playerCamera = camera;
-            cameraRig = rig;
-            cameraController = controller;
-            FollowPlayer();
-        }
-
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();

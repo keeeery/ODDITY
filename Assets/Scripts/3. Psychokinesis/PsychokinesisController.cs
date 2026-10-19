@@ -31,7 +31,7 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(1f)] private float throwSpeed = 25f;
         [SerializeField, Min(1f)] private float aimDistance = 100f;
 
-        public struct TargetingCandidate
+        private struct TargetingCandidate
         {
             public PsychokinesisObject Target;
             public float CenterDistance;
@@ -55,15 +55,6 @@ namespace TeamOdd.Psychokinesis
         private bool throwRequested;
         private bool attackRequested;
         private float nextAttackTime;
-
-        public PsychokinesisObject FocusedObject => focusedObject;
-        public PsychokinesisObject HeldObject => heldObject;
-        public Camera AimCamera => aimCamera;
-        public CharacterController Player => player;
-        public float PickupDistance => pickupDistance;
-        public float CastHalfWidth => castHalfWidth;
-        public int CandidateCount => candidateCount;
-        public TargetingCandidate GetCandidate(int index) => candidates[index];
 
         private void Update()
         {
@@ -175,12 +166,6 @@ namespace TeamOdd.Psychokinesis
             releaseRequested = false;
             throwRequested = false;
             attackRequested = false;
-        }
-
-        public void Configure(Camera camera, CharacterController character)
-        {
-            aimCamera = camera;
-            player = character;
         }
 
         private PsychokinesisObject FindFocus()

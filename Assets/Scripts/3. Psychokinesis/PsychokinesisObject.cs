@@ -27,7 +27,6 @@ namespace TeamOdd.Psychokinesis
 
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
-        public Vector3 FocusPosition => transform.TransformPoint(box.center);
         public Vector3 HalfExtents => Vector3.Scale(box.size * 0.5f, new Vector3(
             Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y), Mathf.Abs(transform.lossyScale.z)));
         public float CollisionRadius => HalfExtents.magnitude;
@@ -56,12 +55,6 @@ namespace TeamOdd.Psychokinesis
 
             canDealThrowDamage = false;
             enemy.TakeDamage(body.mass);
-        }
-
-        public void Configure(Material available, Material unavailable)
-        {
-            availableOutline = available;
-            unavailableOutline = unavailable;
         }
 
         private void CreateOutline()
