@@ -5,9 +5,9 @@ namespace TeamOdd.Psychokinesis
     public sealed class PsychokinesisTestEnemy : MonoBehaviour
     {
         [SerializeField, Min(1f)] private float maxHealth = 100f;
-        [SerializeField] private float currentHealth;
         [SerializeField] private Material focusOutline;
 
+        private float currentHealth;
         private Collider hitCollider;
         private LineRenderer outline;
         private readonly Vector3[] outlinePositions = new Vector3[16];
@@ -29,6 +29,11 @@ namespace TeamOdd.Psychokinesis
             outline.sharedMaterial = focusOutline;
             outline.positionCount = outlinePositions.Length;
             outline.enabled = false;
+        }
+
+        private void Update()
+        {
+            if (IsDead) gameObject.SetActive(false);
         }
 
         private void OnDisable()
