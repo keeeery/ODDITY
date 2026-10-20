@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2de19e03730b480889c455d81ed70ffb, type: 3}
   m_Name: PsychokinesisTestEnemyStats
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatStats
-  <MaxHp>k__BackingField: 100
+  <MaxHp>k__BackingField: 5000
   <Atk>k__BackingField: 20
   <Def>k__BackingField: 0

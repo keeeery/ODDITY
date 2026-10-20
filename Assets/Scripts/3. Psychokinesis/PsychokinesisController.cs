@@ -21,17 +21,34 @@ namespace TeamOdd.Psychokinesis
         [Header("Normal Attack")]
         [SerializeField, Min(0.01f)] private float attackInterval = 0.25f;
 
-        [Header("Holding and Throwing")]
-        [SerializeField, Min(1f)] private float holdDistance = 8f;
-        [SerializeField, Min(0.05f)] private float holdClearance = 0.25f;
-        [SerializeField, Min(1f)] private float followStrength = 75f;
-        [SerializeField, Min(0f)] private float followDamping = 18f;
-        [SerializeField, Min(1f)] private float maxAcceleration = 150f;
-        [SerializeField, Min(1f)] private float maxHoldSpeed = 18f;
-        [SerializeField, Min(1f)] private float breakDistance = 16f;
-        [SerializeField, Min(1f)] private float throwSpeed = 25f;
-        [SerializeField, Min(1f)] private float aimDistance = 100f;
+        [Header("Swing Activation")]
+        [SerializeField, Min(0f)] private float swingMinSpeed = 8f;
+        [SerializeField, Min(1f)] private float swingActivationSpeed = 180f;
+        [SerializeField, Min(0f)] private float swingActiveDuration = 0.12f;
 
+        [Header("Hold Rotation")]
+        [SerializeField, Min(0.01f)] private float holdRotationLag = 0.18f;
+        [SerializeField, Min(1f)] private float swingRotationSpeed = 180f;
+        [SerializeField, Range(0f, 90f)] private float maxHoldLagAngle = 60f;
+
+        [Header("Hold Physics")]
+        [SerializeField, Min(1f)] private float holdDistance = 8f;
+        [SerializeField, Min(1f)] private float followStrength = 180f;
+        [SerializeField, Min(0f)] private float followDamping = 24f;
+        [SerializeField, Min(1f)] private float maxAcceleration = 400f;
+        [SerializeField, Min(1f)] private float maxHoldSpeed = 26f;
+        [SerializeField, Min(1f)] private float breakDistance = 16f;
+
+        [Header("Throwing")]
+        [SerializeField, Min(0.01f)] private float throwPrepareDuration = 0.2f;
+        [SerializeField, Min(0.1f)] private float throwPrepareDistance = 2.5f;
+        [SerializeField, Min(1f)] private float throwPullMultiplier = 3f;
+        [SerializeField, Min(1f)] private float throwSpeed = 25f;
+
+        private const float SmallRotationLag = 0.025f;
+        private const float ThrowAimDistance = 100f;
+
+#if UNITY_EDITOR
         private struct TargetingCandidate
         {
             public PsychokinesisObject Target;
@@ -43,19 +60,33 @@ namespace TeamOdd.Psychokinesis
 
         private readonly TargetingCandidate[] candidates = new TargetingCandidate[128];
         private int candidateCount;
+        private float horizontalRotationSpeed;
+#endif
         private readonly Collider[] queryColliders = new Collider[128];
         private readonly RaycastHit[] obstructionHits = new RaycastHit[128];
         private PsychokinesisObject focusedObject;
         private PsychokinesisObject heldObject;
+        private Collider[] playerColliders;
+        private Vector3 holdDirection;
+        private Vector3 previousCameraDirection;
+        private Vector3 throwPrepareStartOffset;
+        private float throwPrepareStartTime = float.NegativeInfinity;
         private Vector3 holdPosition;
         private Vector3 previousHoldPosition;
-        private Vector3 targetVelocity;
         private bool targetInitialized;
         private bool grabRequested;
         private bool releaseRequested;
         private bool throwRequested;
         private bool attackRequested;
         private float nextAttackTime;
+        private float swingActiveUntil = float.NegativeInfinity;
+
+        private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
+
+        private void Awake()
+        {
+            playerColliders = player.GetComponentsInChildren<Collider>();
+        }
 
         private void Update()
         {
@@ -81,8 +112,17 @@ namespace TeamOdd.Psychokinesis
             if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
             {
                 if (heldObject == null) attackRequested = true;
-                else if (rightHeld) throwRequested = true;
+                else if (rightHeld)
+                {
+                    swingActiveUntil = float.NegativeInfinity;
+                    throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - player.bounds.center;
+                    throwPrepareStartTime = Time.time;
+                    targetInitialized = false;
+                }
             }
+
+            if (IsPreparingThrow && rightHeld && SimpleInput.GetMouseButtonUp(SimpleInput.MouseButton.Left))
+                throwRequested = true;
         }
 
         private void LateUpdate()
@@ -97,13 +137,24 @@ namespace TeamOdd.Psychokinesis
                 if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass))
                 {
                     heldObject = focusedObject;
-                    heldObject.BeginHold();
+                    holdDirection = aimCamera.transform.forward;
+                    previousCameraDirection = holdDirection;
+#if UNITY_EDITOR
+                    horizontalRotationSpeed = 0f;
+#endif
+                    swingActiveUntil = float.NegativeInfinity;
+                    heldObject.BeginHold(playerColliders, combatEntity);
                     SetFocus(null);
                     heldObject.SetFocused(true, true);
                     targetInitialized = false;
                 }
 
                 grabRequested = false;
+            }
+
+            if (heldObject != null && throwRequested && releaseRequested == false)
+            {
+                ReleaseHeld(true);
             }
 
             if (attackRequested)
@@ -118,14 +169,10 @@ namespace TeamOdd.Psychokinesis
 
         private void FixedUpdate()
         {
-            if (heldObject != null && (heldObject.IsHeld == false || heldObject.IsAvailable(maxMass) == false))
+            if (heldObject != null && (releaseRequested || heldObject.IsHeld == false || heldObject.IsAvailable(maxMass) == false))
                 ReleaseHeld(false);
 
-            if (heldObject != null && (releaseRequested || throwRequested))
-                ReleaseHeld(throwRequested && releaseRequested == false);
-
             releaseRequested = false;
-            throwRequested = false;
 
             if (heldObject == null) return;
 
@@ -138,24 +185,34 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
-            if (targetInitialized == false)
+            heldObject.UpdateHoldState(holdPosition, player.velocity, IsPreparingThrow == false,
+                Time.time <= swingActiveUntil, swingMinSpeed);
+
+            if (heldObject.IsHeld == false)
             {
-                targetVelocity = Vector3.zero;
-                targetInitialized = true;
-            }
-            else
-            {
-                Vector3 measuredVelocity = (holdPosition - previousHoldPosition) / Time.fixedDeltaTime;
-                targetVelocity = Vector3.Lerp(targetVelocity, Vector3.ClampMagnitude(measuredVelocity, maxHoldSpeed), 0.35f);
+                ReleaseHeld(false);
+                return;
             }
 
-            previousHoldPosition = holdPosition;
-
+            Vector3 targetVelocity = GetTargetVelocity();
+            float pullMultiplier = IsPreparingThrow ? Mathf.Lerp(1f, throwPullMultiplier, GetThrowPrepareBlend()) : 1f;
             Vector3 offset = holdPosition - body.worldCenterOfMass;
-            Vector3 acceleration = offset * followStrength - (body.linearVelocity - targetVelocity) * followDamping;
-            acceleration = Vector3.ClampMagnitude(acceleration, maxAcceleration);
-            Vector3 nextVelocity = Vector3.ClampMagnitude(body.linearVelocity + acceleration * Time.fixedDeltaTime, maxHoldSpeed);
+            Vector3 acceleration = offset * (followStrength * pullMultiplier) - (body.linearVelocity - targetVelocity) * followDamping;
+            acceleration = Vector3.ClampMagnitude(acceleration, maxAcceleration * pullMultiplier);
+            Vector3 nextVelocity = Vector3.ClampMagnitude(body.linearVelocity + acceleration * Time.fixedDeltaTime, maxHoldSpeed * pullMultiplier);
             body.AddForce((nextVelocity - body.linearVelocity) / Time.fixedDeltaTime, ForceMode.Acceleration);
+            heldObject.RecordPreCollisionVelocity(nextVelocity, player.velocity);
+        }
+
+        private Vector3 GetTargetVelocity()
+        {
+            Vector3 velocity = Vector3.zero;
+            if (targetInitialized)
+                velocity = Vector3.ClampMagnitude((holdPosition - previousHoldPosition) / Time.fixedDeltaTime, maxHoldSpeed);
+
+            targetInitialized = true;
+            previousHoldPosition = holdPosition;
+            return velocity;
         }
 
         private void OnDisable()
@@ -163,6 +220,8 @@ namespace TeamOdd.Psychokinesis
             if (heldObject != null) ReleaseHeld(false);
 
             SetFocus(null);
+            throwPrepareStartTime = float.NegativeInfinity;
+            swingActiveUntil = float.NegativeInfinity;
             grabRequested = false;
             releaseRequested = false;
             throwRequested = false;
@@ -176,7 +235,9 @@ namespace TeamOdd.Psychokinesis
             float bestScore = float.PositiveInfinity;
             float nearestDistance = float.PositiveInfinity;
             float aspect = aimCamera.aspect;
+#if UNITY_EDITOR
             candidateCount = 0;
+#endif
 
             for (int i = 0; i < count; i++)
             {
@@ -192,17 +253,18 @@ namespace TeamOdd.Psychokinesis
                 Vector3 viewport = aimCamera.WorldToViewportPoint(position);
                 Vector2 delta = new Vector2((viewport.x - 0.5f) * aspect, viewport.y - 0.5f);
                 float score = delta.magnitude;
-                TargetingCandidate diagnostic = new TargetingCandidate
+                bool visible = HasLineOfSight(position, candidate.transform);
+#if UNITY_EDITOR
+                candidates[candidateCount++] = new TargetingCandidate
                 {
                     Target = candidate,
                     CenterDistance = score,
                     PlayerDistance = distance,
                     Position = position,
-                    Visible = HasLineOfSight(position, candidate.transform)
+                    Visible = visible
                 };
-                candidates[candidateCount++] = diagnostic;
-
-                if (diagnostic.Visible == false) continue;
+#endif
+                if (visible == false) continue;
 
                 if (score < bestScore || (Mathf.Approximately(score, bestScore) && distance < nearestDistance))
                 {
@@ -270,6 +332,7 @@ namespace TeamOdd.Psychokinesis
 
             if (hitCollider != null && MonsterRegistry.TryGetMonster(hitCollider, out ICombatable target))
             {
+                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Stats.Atk = {combatEntity.Stats.Atk}", this);
                 DamageInfo info = new DamageInfo(combatEntity.Stats.Atk, end, hitCollider);
                 DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
                 CombatManager.Instance.AddCombatEvent(damageEvent);
@@ -299,12 +362,34 @@ namespace TeamOdd.Psychokinesis
 
         private Vector3 GetHoldPosition()
         {
-            Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            Bounds playerBounds = player.bounds;
-            float safeRadius = playerBounds.extents.magnitude + heldObject.CollisionRadius + holdClearance;
-            float minimumDistance = Vector3.Dot(playerBounds.center - ray.origin, ray.direction) + safeRadius;
+            Ray cameraRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+            float rotationSpeed = Vector3.Angle(previousCameraDirection, cameraRay.direction) / Mathf.Max(Time.deltaTime, 0.0001f);
+            Vector3 previousHorizontal = Vector3.ProjectOnPlane(previousCameraDirection, Vector3.up);
+            Vector3 currentHorizontal = Vector3.ProjectOnPlane(cameraRay.direction, Vector3.up);
+            float yawSpeed = Vector3.Angle(previousHorizontal, currentHorizontal) / Mathf.Max(Time.deltaTime, 0.0001f);
+#if UNITY_EDITOR
+            horizontalRotationSpeed = yawSpeed;
+#endif
+            previousCameraDirection = cameraRay.direction;
 
-            return ray.GetPoint(Mathf.Max(holdDistance, minimumDistance));
+            if (IsPreparingThrow == false && releaseRequested == false && yawSpeed >= swingActivationSpeed)
+                swingActiveUntil = Time.time + swingActiveDuration;
+
+            if (IsPreparingThrow)
+                return player.bounds.center + Vector3.Lerp(throwPrepareStartOffset,
+                    cameraRay.direction * throwPrepareDistance, GetThrowPrepareBlend());
+
+            float lagAmount = Mathf.InverseLerp(swingRotationSpeed * 0.25f, swingRotationSpeed, rotationSpeed);
+            float lag = Mathf.Lerp(SmallRotationLag, holdRotationLag, lagAmount);
+            float blend = 1f - Mathf.Exp(-Time.deltaTime / lag);
+            holdDirection = Vector3.Slerp(holdDirection, cameraRay.direction, blend).normalized;
+            holdDirection = Vector3.RotateTowards(cameraRay.direction, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
+            return player.bounds.center + holdDirection * holdDistance;
+        }
+
+        private float GetThrowPrepareBlend()
+        {
+            return Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((Time.time - throwPrepareStartTime) / throwPrepareDuration));
         }
 
         private bool IsOwner(Collider collider)
@@ -319,8 +404,8 @@ namespace TeamOdd.Psychokinesis
             if (isThrowing)
             {
                 Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-                float distance = aimDistance;
-                int count = Physics.RaycastNonAlloc(ray, obstructionHits, aimDistance, queryLayers, QueryTriggerInteraction.Ignore);
+                float distance = ThrowAimDistance;
+                int count = Physics.RaycastNonAlloc(ray, obstructionHits, ThrowAimDistance, queryLayers, QueryTriggerInteraction.Ignore);
 
                 for (int i = 0; i < count; i++)
                 {
@@ -340,6 +425,9 @@ namespace TeamOdd.Psychokinesis
 
             heldObject.Release(velocity, isThrowing, combatEntity);
             heldObject = null;
+            swingActiveUntil = float.NegativeInfinity;
+            throwRequested = false;
+            throwPrepareStartTime = float.NegativeInfinity;
             targetInitialized = false;
         }
 
@@ -361,6 +449,17 @@ namespace TeamOdd.Psychokinesis
             Gizmos.matrix = Matrix4x4.TRS(center, aimCamera.transform.rotation, Vector3.one);
             Gizmos.color = new Color(0.2f, 0.75f, 1f, 0.8f);
             Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
+            Gizmos.matrix = Matrix4x4.identity;
+            Gizmos.color = new Color(1f, 0.65f, 0.15f, 0.8f);
+            Vector3 orbitCenter = player.bounds.center;
+            Gizmos.DrawWireSphere(orbitCenter, holdDistance);
+            Vector3 direction = heldObject != null ? holdDirection : aimCamera.transform.forward;
+            Vector3 orbitPoint = orbitCenter + direction * holdDistance;
+            Gizmos.DrawLine(orbitCenter, orbitPoint);
+            Gizmos.DrawSphere(orbitPoint, 0.1f);
+            if (heldObject != null)
+                UnityEditor.Handles.Label(orbitPoint + Vector3.up * 0.3f,
+                    $"Camera yaw: {horizontalRotationSpeed:F0} / {swingActivationSpeed:F0} deg/s\nSwing window: {(Time.time <= swingActiveUntil ? "Active" : "Inactive")}");
             Gizmos.matrix = originalMatrix;
             Gizmos.color = originalColor;
         }
