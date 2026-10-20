@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 11127901}
+  - component: {fileID: 2147000020}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -550,6 +551,11 @@ MonoBehaviour:
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
   meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
   outlineWidth: 0.05
+  swingHitPadding: 0.5
+  swingDamageScale: 1
+  holdArrivalDistance: 0.4
+  holdArrivalSpeed: 1
+  throwDamageScale: 1
 --- !u!54 &447538156
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1172,6 +1178,11 @@ MonoBehaviour:
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
   meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
   outlineWidth: 0.05
+  swingHitPadding: 0.5
+  swingDamageScale: 1
+  holdArrivalDistance: 0.4
+  holdArrivalSpeed: 1
+  throwDamageScale: 1
 --- !u!54 &819711301
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1329,6 +1340,11 @@ MonoBehaviour:
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
   meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
   outlineWidth: 0.05
+  swingHitPadding: 0.5
+  swingDamageScale: 1
+  holdArrivalDistance: 0.4
+  holdArrivalSpeed: 1
+  throwDamageScale: 1
 --- !u!54 &842963583
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1493,15 +1509,22 @@ MonoBehaviour:
   castHalfWidth: 2
   maxMass: 20
   attackInterval: 0.25
-  holdDistance: 8
-  holdClearance: 0.25
-  followStrength: 75
-  followDamping: 18
-  maxAcceleration: 150
-  maxHoldSpeed: 18
+  swingMinSpeed: 17.5
+  swingActivationSpeed: 180
+  swingActiveDuration: 0.12
+  holdRotationLag: 0.18
+  swingRotationSpeed: 180
+  throwPrepareDuration: 0.2
+  maxHoldLagAngle: 60
+  holdDistance: 6.5
+  followStrength: 180
+  followDamping: 24
+  maxAcceleration: 400
+  maxHoldSpeed: 26
   breakDistance: 16
+  throwPrepareDistance: 3.5
+  throwPullMultiplier: 3
   throwSpeed: 25
-  aimDistance: 100
 --- !u!114 &1013557266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1844,6 +1867,11 @@ MonoBehaviour:
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
   meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
   outlineWidth: 0.05
+  swingHitPadding: 0.5
+  swingDamageScale: 1
+  holdArrivalDistance: 0.4
+  holdArrivalSpeed: 1
+  throwDamageScale: 1
 --- !u!54 &1332778108
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2001,6 +2029,11 @@ MonoBehaviour:
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
   meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
   outlineWidth: 0.05
+  swingHitPadding: 0.5
+  swingDamageScale: 1
+  holdArrivalDistance: 0.4
+  holdArrivalSpeed: 1
+  throwDamageScale: 1
 --- !u!54 &1387716297
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2270,6 +2303,11 @@ MonoBehaviour:
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
   meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
   outlineWidth: 0.05
+  swingHitPadding: 0.5
+  swingDamageScale: 1
+  holdArrivalDistance: 0.4
+  holdArrivalSpeed: 1
+  throwDamageScale: 1
 --- !u!54 &1473859660
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2995,6 +3033,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
   <Collider>k__BackingField: {fileID: 1013557267}
   <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
+--- !u!114 &2147000020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11127900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6516d4b29e9746d292f6ca2ca5e2e5ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisTestHealthUI
+  enemies:
+  - {fileID: 669482517}
+  - {fileID: 2034567484}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
