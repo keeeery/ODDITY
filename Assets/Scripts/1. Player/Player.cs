@@ -1,5 +1,7 @@
-﻿using TeamOdd.Combat;
+﻿using Study3D.FpsGame;
+using TeamOdd.Combat;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace TeamOdd.Player
 {
@@ -18,12 +20,44 @@ namespace TeamOdd.Player
         public float Hp => hp;
         public float Stamina => stamina;
         
+        [SerializeField] private PlayerMovement movement;
+        private AnimStateEventListener eventListener;
+        
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
+            eventListener = GetComponent<AnimStateEventListener>();
             
             hp = maxHp;
             stamina = maxStamina;
+        }
+        
+        private void OnEnable()
+        {
+            movement.OnRollRequested += HandleRollRequested;
+            eventListener.OnOccursAnimStateEvent += HandleAnimStateEvent;
+        }
+
+        private void OnDisable()
+        {
+            movement.OnRollRequested -= HandleRollRequested;
+            eventListener.OnOccursAnimStateEvent -= HandleAnimStateEvent;
+        }
+        
+        private void HandleRollRequested()
+        {
+            if (stamina < 100f) return;
+
+            ConsumeStamina(100f);
+            movement.InputRolling();
+        }
+        
+        private void HandleAnimStateEvent(string eventName, string parameter)
+        { 
+            if (eventName == "EndRolling")
+            {
+                movement.EndRoll();
+            }
         }
 
         public void ConsumeStamina(float amount)
