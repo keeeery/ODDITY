@@ -1,3 +1,4 @@
+using System;
 using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -54,6 +55,13 @@ namespace TeamOdd.Psychokinesis
         private Vector3 swingHitPoint;
         private float lastSwingHitTime = float.NegativeInfinity;
 
+        private CombatManager pendingDamageManager;
+        private DamageEvent pendingDamage;
+        private Vector3 impactPosition;
+        private Vector3 impactNormal;
+
+        public static event Action<Vector3, Vector3, float> Shattered;
+
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
         public bool IsAvailable(float maxMass) => isActiveAndEnabled && Body.isKinematic == false && Body.mass <= maxMass;
@@ -69,6 +77,7 @@ namespace TeamOdd.Psychokinesis
 
         private void OnDisable()
         {
+            ClearPendingDamage();
             canDealThrowDamage = false;
             damageSender = null;
             SetFocused(false, true);
@@ -98,9 +107,37 @@ namespace TeamOdd.Psychokinesis
 
         private void SendDamage(ICombatable target, Collider collider, Vector3 point, int damage)
         {
+            if (pendingDamage != null) return;
+
+            impactPosition = body.worldCenterOfMass;
+            Vector3 direction = impactPosition - point;
+            impactNormal = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
             DamageInfo info = new DamageInfo(damage, point, collider);
-            DamageEvent damageEvent = new DamageEvent(damageSender, target, info);
-            CombatManager.Instance.AddCombatEvent(damageEvent);
+            pendingDamage = new DamageEvent(damageSender, target, info);
+            pendingDamageManager = CombatManager.Instance;
+            pendingDamageManager.OnDamageEventExecuted += HandleDamageExecuted;
+            pendingDamageManager.AddCombatEvent(pendingDamage);
+        }
+
+        private void ClearPendingDamage()
+        {
+            if (pendingDamage == null) return;
+            if (pendingDamageManager != null) pendingDamageManager.OnDamageEventExecuted -= HandleDamageExecuted;
+            pendingDamage = null;
+        }
+
+        private void HandleDamageExecuted(DamageEvent damageEvent, int receivedDamage)
+        {
+            if (ReferenceEquals(damageEvent, pendingDamage) == false) return;
+
+            ClearPendingDamage();
+            if (receivedDamage <= 0) return;
+
+            Release(Vector3.zero);
+            // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
+            gameObject.SetActive(false);
+            Shattered?.Invoke(impactPosition, impactNormal, body.mass);
+            Destroy(gameObject);
         }
 
         public void UpdateHoldState(Vector3 targetPosition, Vector3 playerVelocity, bool canSwing, bool swingActivated, float minimumSwingSpeed)

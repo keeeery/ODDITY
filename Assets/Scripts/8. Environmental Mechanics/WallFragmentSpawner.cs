@@ -8,8 +8,11 @@ namespace TeamOdd.Arena
     {
         private const int MaxSpawnAttempts = 8;
         private const float SpawnClearance = 0.1f;
+        private const int MinimumImpactFragmentCount = 3;
+        private const float ImpactSpeedMultiplier = 0.4f;
 #if UNITY_EDITOR
-        private const float MinimumMediumScale = 0.55f;
+        private const float MinimumLargeScale = 1.28f;
+        private const float MinimumMediumScale = 0.66f;
 #endif
 
         [SerializeField] private PsychokinesisObject[] largeFragmentPrefabs;
@@ -20,6 +23,26 @@ namespace TeamOdd.Arena
         [SerializeField, Min(0f)] private float spawnRadius = 1.8f;
         [SerializeField] private Vector2 launchSpeed = new Vector2(4f, 8f);
         [SerializeField, Min(0f)] private float spinSpeed = 8f;
+        [SerializeField, Min(0f)] private float impactSpawnRadius = 0.15f;
+        [SerializeField, Min(0.01f)] private float impactFragmentsPerKilogram = 1f;
+        [SerializeField, Min(MinimumImpactFragmentCount)] private int maxImpactFragmentCount = 30;
+
+        private void OnEnable()
+        {
+            PsychokinesisObject.Shattered += SpawnImpactDebris;
+        }
+
+        private void OnDisable()
+        {
+            PsychokinesisObject.Shattered -= SpawnImpactDebris;
+        }
+
+        public void SpawnImpactDebris(Vector3 point, Vector3 normal, float mass)
+        {
+            int count = Mathf.Clamp(Mathf.RoundToInt(mass * impactFragmentsPerKilogram),
+                MinimumImpactFragmentCount, maxImpactFragmentCount);
+            SpawnFragments(smallVisualFragmentPrefabs, count, point, normal, impactSpawnRadius, ImpactSpeedMultiplier);
+        }
 
 #if UNITY_EDITOR
         [Header("Prefab Generation")]
@@ -27,8 +50,8 @@ namespace TeamOdd.Arena
         [SerializeField] private PsychokinesisObject fragmentTemplate;
         [FormerlySerializedAs("fragmentScale")]
         [SerializeField] private Vector2 mediumFragmentScale = new Vector2(MinimumMediumScale, 1.1f);
-        [SerializeField] private Vector2 smallFragmentScale = new Vector2(0.08f, 0.18f);
-        [SerializeField] private Vector2 largeFragmentScale = new Vector2(1.6f * 2f / 3f, 2.2f * 2f / 3f);
+        [SerializeField] private Vector2 smallFragmentScale = new Vector2(0.03528f, 0.07938f);
+        [SerializeField] private Vector2 largeFragmentScale = new Vector2(MinimumLargeScale, 2.2f * 2f / 3f);
         [SerializeField, Min(0.01f)] private float fragmentDensity = 5f;
 
         [ContextMenu("Generate Fragment Prefabs (10 Large, 20 Medium, 5 Small)")]
@@ -42,6 +65,8 @@ namespace TeamOdd.Arena
 
             UnityEditor.Undo.RecordObject(this, "Assign generated fragment prefabs");
             // 기존 Scene에 저장된 크기에도 새 최소값을 적용한다.
+            largeFragmentScale.x = Mathf.Max(MinimumLargeScale, largeFragmentScale.x);
+            largeFragmentScale.y = Mathf.Max(largeFragmentScale.x, largeFragmentScale.y);
             mediumFragmentScale.x = Mathf.Max(MinimumMediumScale, mediumFragmentScale.x);
             mediumFragmentScale.y = Mathf.Max(mediumFragmentScale.x, mediumFragmentScale.y);
             largeFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 10, largeFragmentScale, fragmentDensity, "Large");
@@ -58,14 +83,15 @@ namespace TeamOdd.Arena
         public void Spawn(Vector3 point, Vector3 normal)
         {
             normal.Normalize();
-            SpawnFragments(largeFragmentPrefabs, 1, point, normal);
-            SpawnFragments(mediumFragmentPrefabs, 5, point, normal);
-            SpawnFragments(smallVisualFragmentPrefabs, 9, point, normal);
+            SpawnFragments(largeFragmentPrefabs, 1, point, normal, spawnRadius);
+            SpawnFragments(mediumFragmentPrefabs, 5, point, normal, spawnRadius);
+            SpawnFragments(smallVisualFragmentPrefabs, 9, point, normal, spawnRadius);
         }
 
-        private void SpawnFragments(Component[] prefabs, int count, Vector3 point, Vector3 normal)
+        private void SpawnFragments(Component[] prefabs, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f)
         {
             Quaternion surfaceRotation = Quaternion.LookRotation(normal);
+            Vector2 speedRange = launchSpeed * speedMultiplier;
 
             for (int index = 0; index < count; index++)
             {
@@ -81,7 +107,7 @@ namespace TeamOdd.Arena
 
                 for (int attempt = 0; attempt < MaxSpawnAttempts; attempt++)
                 {
-                    Vector2 offset = Random.insideUnitCircle * spawnRadius;
+                    Vector2 offset = Random.insideUnitCircle * radius;
                     position = point + normal * clearance + surfaceRotation * new Vector3(offset.x, offset.y, 0f);
 
                     if (Physics.CheckBox(position + rotation * center, halfExtents, rotation,
@@ -98,7 +124,7 @@ namespace TeamOdd.Arena
                 fragment.SetActive(true);
                 Rigidbody body = fragment.GetComponent<Rigidbody>();
                 Vector3 direction = (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
-                body.linearVelocity = direction * Random.Range(launchSpeed.x, launchSpeed.y);
+                body.linearVelocity = direction * Random.Range(speedRange.x, speedRange.y);
                 body.angularVelocity = Random.onUnitSphere * spinSpeed;
             }
         }

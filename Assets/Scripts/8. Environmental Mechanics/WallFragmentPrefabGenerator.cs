@@ -166,10 +166,10 @@ namespace TeamOdd.Arena
             Vector3 firstFrequency = new Vector3(2.4f, 1.8f, 0f);
             Vector3 secondFrequency = new Vector3(0f, -1.6f, 2.2f);
             Vector3 detailFrequency = new Vector3(4.1f, -2.7f, 3.3f);
-            const float firstAmplitude = 0.18f;
-            const float secondAmplitude = 0.12f;
-            const float detailAmplitude = 0.05f;
-            const float dentDepth = 0.2f;
+            float firstAmplitude = 0.18f * deformationStrength;
+            float secondAmplitude = 0.12f * deformationStrength;
+            float detailAmplitude = 0.05f * deformationStrength;
+            float dentDepth = 0.2f * deformationStrength;
             const float dentSharpness = 5f;
             float firstWave = Vector3.Dot(direction, firstFrequency) + variation * 1.3f;
             float secondWave = Vector3.Dot(direction, secondFrequency) + variation * 2.1f;
@@ -184,8 +184,6 @@ namespace TeamOdd.Arena
                 + detailFrequency * (Mathf.Cos(detailWave) * detailAmplitude)
                 - dentDirection * (dent * dentSharpness);
 
-            radius = 1f + (radius - 1f) * deformationStrength;
-            gradient *= deformationStrength;
             position = Vector3.Scale(direction * radius, size);
             // 구면 위의 반지름 변화율에서 법선을 구하고, 축별 크기 차이는 역전치 변환으로 보정
             Vector3 surfaceNormal = direction * (radius + Vector3.Dot(gradient, direction)) - gradient;

@@ -1411,10 +1411,13 @@ MonoBehaviour:
   spawnRadius: 1.8
   launchSpeed: {x: 4, y: 8}
   spinSpeed: 8
+  impactSpawnRadius: 0.15
+  impactFragmentsPerKilogram: 1
+  maxImpactFragmentCount: 30
   fragmentTemplate: {fileID: 447538155, guid: c518e01e9a4141d5ad1d599376b683e4, type: 3}
-  mediumFragmentScale: {x: 0.55, y: 1.1}
-  smallFragmentScale: {x: 0.08, y: 0.18}
-  largeFragmentScale: {x: 1.0666667, y: 1.4666667}
+  mediumFragmentScale: {x: 0.66, y: 1.1}
+  smallFragmentScale: {x: 0.03528, y: 0.07938}
+  largeFragmentScale: {x: 1.28, y: 1.4666667}
   fragmentDensity: 5
 --- !u!1 &1442713834
 GameObject:
