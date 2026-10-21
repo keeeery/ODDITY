@@ -65,17 +65,19 @@ namespace TeamOdd.Player
             stamina = Mathf.Max(0, stamina - amount);
         }
         
-        public void TakeDamage(DamageEvent @event)
+        public int TakeDamage(DamageEvent @event)
         {
-            hp = Mathf.Max(0, hp - @event.DamageInfo.Damage);
+            hp = Mathf.Max(0, hp - @event.Info.Damage);
+            return @event.Info.Damage;
 
             // 필요한 경우 여기에서 피격 이펙트, 사망 처리 등을 호출합니다.
             // 피격 위치: @event.DamageInfo.HitPoint
         }
 
-        public void TakeHeal(HealEvent @event)
+        public int TakeHeal(HealEvent @event)
         {
             hp = Mathf.Min(maxHp, hp + @event.HealAmount);
+            return @event.HealAmount;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace FantasyGarden.FSM
         private MonoBehaviourState currentState;
         private readonly Dictionary<Type, MonoBehaviourState> stateMap = new();
         
-        #if UNITY_EDITOR
+        #if UNITY_EDITOR_
         [ShowInInspector, ReadOnly] private string CurrentState => currentState == null ? string.Empty : currentState.GetType().Name;
         #endif
 
@@ -23,7 +23,7 @@ namespace FantasyGarden.FSM
         {
             defaultStateType = defaultState.GetType();
             
-            MonoBehaviourState[] states = GetComponentsInChildren<MonoBehaviourState>();
+            MonoBehaviourState[] states = GetComponentsInChildren<MonoBehaviourState>(true);
 
             foreach (MonoBehaviourState state in states)
             {

@@ -4,9 +4,9 @@ using FantasyGarden.FSM;
 
 namespace TeamOdd.Boss
 {
-    public abstract class BossState : MonoBehaviourState
+    public abstract class BossStateBase : MonoBehaviourState
     {
-        private BossController controller;
+        protected BossController controller;
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
