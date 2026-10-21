@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -12,8 +11,7 @@ namespace TeamOdd.Psychokinesis
         [Header("Outline")]
         [SerializeField] private Material availableOutline;
         [SerializeField] private Material unavailableOutline;
-        [SerializeField] private Material meshOutline;
-        [SerializeField, Min(0f)] private float outlineWidth = 0.05f;
+        [SerializeField, Range(1f, 8f)] private float outlineWidthPixels = 3f;
 
         [Header("Swing Damage")]
         [FormerlySerializedAs("swingAssistRange")]
@@ -27,15 +25,19 @@ namespace TeamOdd.Psychokinesis
 
         private const float HitGizmoDuration = 0.3f;
         private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
-        private static readonly int outlineWidthId = Shader.PropertyToID("_OutlineWidth");
         private readonly Collider[] swingCandidates = new Collider[64];
         private readonly RaycastHit[] swingObstructions = new RaycastHit[64];
 
         private Rigidbody body;
         private BoxCollider hitBox;
-        private MeshRenderer outline;
-        private Mesh outlineMesh;
-        private MaterialPropertyBlock outlineProperties;
+        private MeshRenderer meshRenderer;
+        private int subMeshCount;
+
+        internal static PsychokinesisObject OutlinedObject { get; private set; }
+        internal MeshRenderer OutlineRenderer => meshRenderer;
+        internal int SubMeshCount => subMeshCount;
+        internal Color OutlineColor { get; private set; }
+        internal float OutlineWidthPixels => outlineWidthPixels;
         private Collider[] objectColliders;
         private Collider[] playerColliders;
         private bool[] originalIgnoredPairs;
@@ -61,13 +63,15 @@ namespace TeamOdd.Psychokinesis
             body = GetComponent<Rigidbody>();
             hitBox = GetComponent<BoxCollider>();
             objectColliders = GetComponentsInChildren<Collider>();
-            CreateOutline();
+            meshRenderer = GetComponent<MeshRenderer>();
+            subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
         }
 
         private void OnDisable()
         {
             canDealThrowDamage = false;
             damageSender = null;
+            SetFocused(false, true);
             Release(Vector3.zero);
         }
 
@@ -241,55 +245,16 @@ namespace TeamOdd.Psychokinesis
             }
         }
 
-        private void CreateOutline()
-        {
-            GameObject outlineObject = new GameObject("Focus Outline");
-            outlineObject.transform.SetParent(transform, false);
-            Mesh source = GetComponent<MeshFilter>().sharedMesh;
-            outlineMesh = Instantiate(source);
-            outlineMesh.name = source.name + " Outline";
-            Vector3[] vertices = outlineMesh.vertices;
-            Vector3[] normals = outlineMesh.normals;
-            Dictionary<Vector3, Vector3> smoothNormals = new Dictionary<Vector3, Vector3>();
-            // UV와 하드 에지 때문에 분리된 동일 위치 정점도 같은 방향으로 확장한다.
-            for (int index = 0; index < vertices.Length; index++)
-            {
-                smoothNormals.TryGetValue(vertices[index], out Vector3 sum);
-                smoothNormals[vertices[index]] = sum + normals[index];
-            }
-            for (int index = 0; index < vertices.Length; index++)
-                normals[index] = smoothNormals[vertices[index]].normalized;
-            outlineMesh.normals = normals;
-            Bounds bounds = outlineMesh.bounds;
-            bounds.Expand(outlineWidth * 2f);
-            outlineMesh.bounds = bounds;
-
-            outlineObject.AddComponent<MeshFilter>().sharedMesh = outlineMesh;
-            outline = outlineObject.AddComponent<MeshRenderer>();
-            Material[] materials = new Material[outlineMesh.subMeshCount];
-            for (int index = 0; index < materials.Length; index++) materials[index] = meshOutline;
-            outline.sharedMaterials = materials;
-            outline.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            outline.receiveShadows = false;
-            outlineProperties = new MaterialPropertyBlock();
-            outline.enabled = false;
-        }
-
         public void SetFocused(bool isFocused, bool available)
         {
-            outline.enabled = isFocused;
-
-            if (isFocused == false) return;
-
+            if (isFocused == false)
+            {
+                if (OutlinedObject == this) OutlinedObject = null;
+                return;
+            }
             Material colorMaterial = available ? availableOutline : unavailableOutline;
-            outlineProperties.SetColor(outlineColorId, colorMaterial.GetColor(outlineColorId));
-            outlineProperties.SetFloat(outlineWidthId, outlineWidth);
-            outline.SetPropertyBlock(outlineProperties);
-        }
-
-        private void OnDestroy()
-        {
-            Destroy(outlineMesh);
+            OutlineColor = colorMaterial.GetColor(outlineColorId);
+            OutlinedObject = this;
         }
 
         public void BeginHold(Collider[] ownerColliders, ICombatable sender)
