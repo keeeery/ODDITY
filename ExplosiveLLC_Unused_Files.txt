@@ -1,0 +1,1861 @@
+# Assets/Scenes/SampleScene.unity 기준 사용/미사용 파일 정리
+# 생성일: 2026-10-21
+# 판단 기준
+#  - 사용: 씬에서 시작해 프리팹/애니메이터/클립/머티리얼/텍스처/모델/아바타 원본 등 GUID 참조를 재귀 추적해 도달한 파일
+#  - 컴파일 의존: 씬에서 직접 쓰진 않지만, 프로젝트의 다른 스크립트가 타입으로 참조해 삭제하면 컴파일 에러가 나는 스크립트
+#  - 미사용: 위 두 가지에 해당하지 않는 파일 (삭제 시 각 파일의 .meta도 함께 삭제)
+
+# 요약 (Assets/ExplosiveLLC)
+#  전체 1474개 = 사용 0개 + 컴파일 의존 104개 + 미사용 1370개
+
+
+########## 1. 씬에서 사용 중인 파일 - 프로젝트 전체 (146개) ##########
+
+[Assets/Animations/1. Player]
+Assets/Animations/1. Player/Player Animator.controller
+
+[Assets/Animations/1. Player/0. Basic]
+Assets/Animations/1. Player/0. Basic/Anim_Idle.fbx
+Assets/Animations/1. Player/0. Basic/RPG-Character.FBX
+
+[Assets/Animations/1. Player/1. Movement]
+Assets/Animations/1. Player/1. Movement/Anim_M_Walking.fbx
+Assets/Animations/1. Player/1. Movement/Locomotion--Run_N.anim.fbx
+Assets/Animations/1. Player/1. Movement/RPG-Character@Unarmed-DiveRoll-Forward1.FBX
+
+[Assets/Models/Cyborg Characters/Common/DEMO/HDRP_Settings/DiffusionProfiles]
+Assets/Models/Cyborg Characters/Common/DEMO/HDRP_Settings/DiffusionProfiles/Skin.asset
+
+[Assets/Models/Cyborg Characters/Common/DEMO/Scripts/TPS Scrips/Controllers/ThirdPersonController/Character/Models]
+Assets/Models/Cyborg Characters/Common/DEMO/Scripts/TPS Scrips/Controllers/ThirdPersonController/Character/Models/Armature.fbx
+
+[Assets/Models/Cyborg Characters/Common/DawnShader_SG]
+Assets/Models/Cyborg Characters/Common/DawnShader_SG/ClothingShader.shadergraph
+Assets/Models/Cyborg Characters/Common/DawnShader_SG/EyeShader.shadergraph
+Assets/Models/Cyborg Characters/Common/DawnShader_SG/EyeTearShader.shadergraph
+Assets/Models/Cyborg Characters/Common/DawnShader_SG/Floor.shadergraph
+Assets/Models/Cyborg Characters/Common/DawnShader_SG/HairShader.shadergraph
+Assets/Models/Cyborg Characters/Common/DawnShader_SG/SkinShader.shadergraph
+
+[Assets/Models/Cyborg Characters/Common/Materials]
+Assets/Models/Cyborg Characters/Common/Materials/MI_Avatar.mat
+Assets/Models/Cyborg Characters/Common/Materials/MI_Eyes.mat
+Assets/Models/Cyborg Characters/Common/Materials/MI_EyesTear.mat
+Assets/Models/Cyborg Characters/Common/Materials/MI_Teeth.mat
+
+[Assets/Models/Cyborg Characters/Common/Meshes/Avatar]
+Assets/Models/Cyborg Characters/Common/Meshes/Avatar/SK_Human.fbx
+
+[Assets/Models/Cyborg Characters/Common/Scrips/PhysicBone]
+Assets/Models/Cyborg Characters/Common/Scrips/PhysicBone/ClassLibrary1.dll
+
+[Assets/Models/Cyborg Characters/Common/Textures/Eyes]
+Assets/Models/Cyborg Characters/Common/Textures/Eyes/T_Eye_BC.tga
+Assets/Models/Cyborg Characters/Common/Textures/Eyes/T_Eye_MT.tga
+Assets/Models/Cyborg Characters/Common/Textures/Eyes/T_Eye_R.tga
+Assets/Models/Cyborg Characters/Common/Textures/Eyes/T_Eyes_D.tga
+Assets/Models/Cyborg Characters/Common/Textures/Eyes/T_Eyes_M.tga
+Assets/Models/Cyborg Characters/Common/Textures/Eyes/T_Flakes_N.png
+
+[Assets/Models/Cyborg Characters/Common/Textures/Floor]
+Assets/Models/Cyborg Characters/Common/Textures/Floor/T_Grid_BC.png
+
+[Assets/Models/Cyborg Characters/Common/Textures/HumanSkins]
+Assets/Models/Cyborg Characters/Common/Textures/HumanSkins/T_MBody_M.tga
+Assets/Models/Cyborg Characters/Common/Textures/HumanSkins/T_MHead_M.tga
+Assets/Models/Cyborg Characters/Common/Textures/HumanSkins/T_Noise_BC.tga
+Assets/Models/Cyborg Characters/Common/Textures/HumanSkins/T_RoughnessMod_R.tga
+Assets/Models/Cyborg Characters/Common/Textures/HumanSkins/T_SkinPore_N.tga
+
+[Assets/Models/Cyborg Characters/Common/Textures/Teeth]
+Assets/Models/Cyborg Characters/Common/Textures/Teeth/T_Teeth_BC.tga
+Assets/Models/Cyborg Characters/Common/Textures/Teeth/T_Teeth_Dirt.tga
+Assets/Models/Cyborg Characters/Common/Textures/Teeth/T_Teeth_M.tga
+Assets/Models/Cyborg Characters/Common/Textures/Teeth/T_Teeth_N.tga
+Assets/Models/Cyborg Characters/Common/Textures/Teeth/T_Teeth_ORM.tga
+
+[Assets/Models/Cyborg Characters/Common/Textures/Tilling Textures]
+Assets/Models/Cyborg Characters/Common/Textures/Tilling Textures/T_CloudPattern2_BC.tga
+Assets/Models/Cyborg Characters/Common/Textures/Tilling Textures/T_PatternA_BC.png
+Assets/Models/Cyborg Characters/Common/Textures/Tilling Textures/T_TextureSample5_BC.png
+Assets/Models/Cyborg Characters/Common/Textures/Tilling Textures/T_TextureSample7_BC.tga
+Assets/Models/Cyborg Characters/Common/Textures/Tilling Textures/T_TextureSample8_BC.tga
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Characters/Hairs]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Characters/Hairs/MI_Eyeslash.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Characters/Hairs/MI_Hairs.mat
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Characters/Skins]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Characters/Skins/MI_MCyborgBody.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Characters/Skins/MI_MCyborgHead.mat
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_CyborgArms.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_CyborgBoots.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_Dreadlock.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_Glass_Blue.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_Glasses.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_Helmet.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_HoodCloth.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_JetPack.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_MPant.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_MShirt.mat
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Materials/Clothings/MI_Underwear.mat
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Meshes]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Meshes/SK_Dreadlock.fbx
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Meshes/SK_MHair.fbx
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Meshes/SK_PP801_SourceMeshes.fbx
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Prefabs/Prefabs Original]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Prefabs/Prefabs Original/SK_Dreadlock.prefab
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Prefabs/Prefabs Original/SK_PP801_SourceMeshes.prefab
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_AO.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_Alpha.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_D.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_DyeMask.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_Flow.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_ID.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Hairs/T_Hair_Root.tga
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MBody_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgBody_AMS.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgBody_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgBody_EM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgBody_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgBody_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgBody_TattooMask.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgHead_AMS.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgHead_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgHead_EM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgHead_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgHead_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MCyborgHead_TattooMask.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Characters/Skins/T_MHead_Dirt.tga
+
+[Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings]
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgArms_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgArms_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgArms_EM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgArms_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgArms_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgArms_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgBoots_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgBoots_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgBoots_EM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgBoots_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgBoots_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_CyborgBoots_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Dreadlock_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Dreadlock_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Dreadlock_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Dreadlock_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Dreadlock_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Glasses_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Glasses_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Glasses_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Glasses_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Glasses_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Helmet_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Helmet_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Helmet_EM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Helmet_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Helmet_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Helmet_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_HoodCloth_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_HoodCloth_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_HoodCloth_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_HoodCloth_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_HoodCloth_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_JetPack_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_JetPack_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_JetPack_EM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_JetPack_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_JetPack_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_JetPack_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MPant_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MPant_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MPant_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MPant_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MPant_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MShirt_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MShirt_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MShirt_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MShirt_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_MShirt_ORM.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Underwear_BC.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Underwear_Dirt.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Underwear_M.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Underwear_N.tga
+Assets/Models/Cyborg Characters/G2_CyborgCharacters/Textures/Clothings/T_Underwear_ORM.tga
+
+[Assets/Prefabs/1. Player]
+Assets/Prefabs/1. Player/Player.prefab
+
+[Assets/Scripts/1. Player]
+Assets/Scripts/1. Player/AnimStateEventListener.cs
+Assets/Scripts/1. Player/AnimStateEventSender.cs
+Assets/Scripts/1. Player/Player.cs
+Assets/Scripts/1. Player/PlayerController.cs
+
+[Assets/Scripts/2. Camera]
+Assets/Scripts/2. Camera/CameraController.cs
+
+[Assets/Settings]
+Assets/Settings/SampleSceneProfile.asset
+
+
+########## 2. Assets/ExplosiveLLC - 사용 중 (0개) ##########
+
+
+########## 3. Assets/ExplosiveLLC - 컴파일 의존, 삭제 금지 (104개) ##########
+
+[Assets/ExplosiveLLC/PerfectLookAt/Code]
+Assets/ExplosiveLLC/PerfectLookAt/Code/FABRIKSolver.cs
+Assets/ExplosiveLLC/PerfectLookAt/Code/PerfectLookAt.cs
+Assets/ExplosiveLLC/PerfectLookAt/Code/PerfectLookAtData.cs
+Assets/ExplosiveLLC/PerfectLookAt/Code/PerfectLookAtLegStabilizer.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/AnimationData.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/AnimationVariations.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/CoroutineQueue.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/IKHands.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterAnimatorEvents.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterController.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterMovementController.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterNavigationController.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterWeaponController.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/ActionHandler.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/BaseActionHandler.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/EmptyContext.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/InstantActionHandler.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Null.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/SimpleActionHandler.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Attack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/AttackCast.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/AttackCastContext.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/AttackContext.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Cast.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/CastContext.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Dodge.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Emote.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/EmoteCombat.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Reload.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Shoot.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/SlowTime.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Talk.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Character/Turn.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/ClimbLadder.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Crawl.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/DiveRoll.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/DoubleJump.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Fall.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/GetHit.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/HitContext.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Idle.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Jump.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Knockback.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Knockdown.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Move.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/MovementActionHandler.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Navigation.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Roll.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Movement/Swim.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Weapon]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Weapon/Relax.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Actions/Weapon/SwitchWeapon.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/AnimationParameters.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/AnimatorWeapon.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/CharacterState.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/HandlerTypes.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Weapon.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/AnimatorTrigger.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/AttackCastType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/BlockedHitType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/CastType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/ClimbType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/CrawlType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/DaggerAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/DiveRollType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/DodgeType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/DualAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/EmoteType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/HitType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/ItemAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/KickType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/KnockbackType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/KnockdownType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/MaceAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/PistolAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/RollType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/ShieldAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/ShootingAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/Side.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/SpearAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/SwordAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TalkType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TurnType.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TwoHandedAxeAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TwoHandedBowAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TwoHandedCrossbowAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TwoHandedSpearAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TwoHandedSwordAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/UnarmedAttack.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code/CameraController.cs
+
+[Assets/ExplosiveLLC/SuperCharacterController/Code]
+Assets/ExplosiveLLC/SuperCharacterController/Code/DebugDraw.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Math3d.cs
+
+[Assets/ExplosiveLLC/SuperCharacterController/Code/Core]
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/BSPTree.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/CollisionSphere.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/IgnoredCollider.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperCharacterController.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperCollider.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperCollision.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperCollisionType.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperGround.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperStateMachine.cs
+
+[Assets/ExplosiveLLC/SuperCharacterController/Code/Examples]
+Assets/ExplosiveLLC/SuperCharacterController/Code/Examples/Gravity.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Examples/PlayerInputController.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Examples/PlayerMachine.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Examples/SimpleStateMachine.cs
+
+
+########## 4. Assets/ExplosiveLLC - 미사용, 삭제 가능 (1370개) ##########
+
+[Assets/ExplosiveLLC/Editor]
+Assets/ExplosiveLLC/Editor/SetupInputLayers.cs
+
+[Assets/ExplosiveLLC/PerfectLookAt/Animations]
+Assets/ExplosiveLLC/PerfectLookAt/Animations/SimpleAnimationController.controller
+Assets/ExplosiveLLC/PerfectLookAt/Animations/run.FBX
+Assets/ExplosiveLLC/PerfectLookAt/Animations/walk.FBX
+
+[Assets/ExplosiveLLC/PerfectLookAt/Animations/Materials]
+Assets/ExplosiveLLC/PerfectLookAt/Animations/Materials/InverseSoldier_BodyP1_LOD2_Diff.mat
+Assets/ExplosiveLLC/PerfectLookAt/Animations/Materials/InverseSoldier_BodyP2_LOD2_Diff.mat
+Assets/ExplosiveLLC/PerfectLookAt/Animations/Materials/InverseSoldier_Head_LOD2_Diff.mat
+
+[Assets/ExplosiveLLC/PerfectLookAt/Code/Demo]
+Assets/ExplosiveLLC/PerfectLookAt/Code/Demo/MoveObjectTestCode.cs
+
+[Assets/ExplosiveLLC/PerfectLookAt/Documentation]
+Assets/ExplosiveLLC/PerfectLookAt/Documentation/PerfectLookAt-UserGuide.pdf
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/Human]
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_BodyP1_LOD2_Diff.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_BodyP1_LOD2_Spec.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_BodyP2_LOD2_Diff.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_BodyP2_LOD2_NM.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_BodyP2_LOD2_Spec.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_Head_LOD2_Diff.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_Head_LOD2_NM.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/InverseSoldier_Head_LOD2_Spec.jpg
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/inverse.FBX
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/Human/Materials]
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/Materials/InverseSoldier_BodyP1_LOD2_Diff.mat
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/Materials/InverseSoldier_BodyP2_LOD2_Diff.mat
+Assets/ExplosiveLLC/PerfectLookAt/Models/Human/Materials/InverseSoldier_Head_LOD2_Diff.mat
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Materials]
+Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Materials/Robot_Color.mat
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Model]
+Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Model/Robot Kyle.fbx
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Textures]
+Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Textures/Robot_Color.tga
+Assets/ExplosiveLLC/PerfectLookAt/Models/Robot Kyle/Textures/Robot_Normal.tga
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel]
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbx
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm]
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/body normal.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/body_color_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/body_specular_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/eyes_color_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/eyes_specular_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/face normal.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/DefaultAvatar.fbm/face_color_map.png
+
+[Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials]
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/DefaultAvatar-body.mat
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/DefaultAvatar-eyes.mat
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/DefaultAvatar-face.mat
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/body normal.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/body_color_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/body_specular_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/eyes_color_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/eyes_specular_map.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/face normal.png
+Assets/ExplosiveLLC/PerfectLookAt/Models/UnityModel/Materials/face_color_map.png
+
+[Assets/ExplosiveLLC/PerfectLookAt/Prefabs]
+Assets/ExplosiveLLC/PerfectLookAt/Prefabs/Human.prefab
+Assets/ExplosiveLLC/PerfectLookAt/Prefabs/RobotKyle.prefab
+Assets/ExplosiveLLC/PerfectLookAt/Prefabs/UnityModel.prefab
+
+[Assets/ExplosiveLLC/PerfectLookAt/Scenes]
+Assets/ExplosiveLLC/PerfectLookAt/Scenes/PerfectLookAt_Scene1_UnityModel.unity
+Assets/ExplosiveLLC/PerfectLookAt/Scenes/PerfectLookAt_Scene2_Human.unity
+Assets/ExplosiveLLC/PerfectLookAt/Scenes/PerfectLookAt_Scene3_RobotKyle.unity
+Assets/ExplosiveLLC/PerfectLookAt/Scenes/PerfectLookAt_Scene4_PerformanceTest.unity
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animation Controller]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animation Controller/RPG-Character-Animation-Controller.controller
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger/RPG-Character@Dagger-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger/RPG-Character@Dagger-Attack-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger/RPG-Character@Dagger-Attack-L3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger/RPG-Character@Dagger-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger/RPG-Character@Dagger-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Dagger/RPG-Character@Dagger-Attack-R3.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-L3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-L4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-R3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Item/RPG-Character@Item-Attack-R4.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace/RPG-Character@Mace-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace/RPG-Character@Mace-Attack-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace/RPG-Character@Mace-Attack-L3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace/RPG-Character@Mace-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace/RPG-Character@Mace-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Mace/RPG-Character@Mace-Attack-R3.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-Dual1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-Dual2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-Dual3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-L3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Attack-R3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Reload-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Pistol/RPG-Character@Pistol-Reload-R1.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Spear/RPG-Character@Spear-Attack-R7.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-L7.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/1Hand-Sword/RPG-Character@Sword-Attack-R7.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Air-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Attack6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-DiveRoll-Forward1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Forward-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Special1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/RPG-Character@2Hand-Axe-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Air-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Attack6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Idle-Crouch.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Forward-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Special1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Axe/Old Pose/RPG-Character@2Hand-Axe-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Aiming-Fire.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Aiming-Pull.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Aiming.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Attack6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-DiveRoll-Forward1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Foward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Foward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Foward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Bow/RPG-Character@2Hand-Bow-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Aiming-Fire.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Aiming.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Attack6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-DiveRoll-Forward1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Reload.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Crossbow/RPG-Character@2Hand-Crossbow-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Aiming-Fire.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Aiming.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-DiveRoll-Forward1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Fire-Rifle1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Fire-Rifle2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Idle-Alt.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Pain1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Reload-Rifle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Shooting/RPG-Character@2Hand-Shooting-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Air-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack10.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack11.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack7.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack8.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Attack9.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-DiveRoll-Forward1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Forward-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Special1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Spear/RPG-Character@2Hand-Spear-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Activate.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Air-Attack1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack-Kick-L1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack-Kick-L2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack-Kick-R1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack-Kick-R2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack3.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack4.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack5.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Attack6.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Block.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Boost1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-Attack1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-Attack2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-Attack3.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-L-AOE1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-L-AOE2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-L-Buff1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-L-Buff2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-L-Summon1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Cast-L-Summon2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Idle.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Death1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-DiveRoll-Forward1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Dodge-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Dodge-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Fall.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Idle-Alert1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Idle-Injured1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Idle-Static.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Idle.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Pickup.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Revive1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Backward-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Backward-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Backward.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Forward-Attack1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Forward-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Forward-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Forward.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Run-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Sheath-Back-Relax.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Sheath-Back-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Sheath-Hips-Relax.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Sheath-Hips-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Special1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Unsheath-Back-Relax.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Unsheath-Back-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Unsheath-Hips-Relax.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Unsheath-Hips-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Walk-Slow-WithStaff.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Walk-WithStaff.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Staff/RPG-Character@2Hand-Staff-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Air-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack10.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack11.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack7.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack8.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Attack9.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-DiveRoll-Forward1.max.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Forward-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Sheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Sheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Sheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Sheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Special1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Unsheath-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Unsheath-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Unsheath-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Unsheath-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/2Hand-Sword/RPG-Character@2Hand-Sword-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Activate-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Activate-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Air-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Air-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Dual1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Dual2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Dual3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-Dual-Break.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-Dual-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-Dual-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-Dual-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-Dual.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-L-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-L-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-L-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-L.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-R-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-R-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-R-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Block-R.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-AOE1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-AOE2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Attack-Hand1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Attack-Hand2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Attack-Hand3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Buff1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Buff2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Summon1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-L-Summon2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-AOE1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-AOE2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Attack-Hand1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Attack-Hand2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Attack-Hand3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Buff1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Buff2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Summon1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Cast-R-Summon2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-DiveRoll-Forward1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-Dual-Crouch.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-Dual-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-Dual-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-Dual.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-L-Crouch.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-L-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-L-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-L.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-R-Crouch.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-R-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-R-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Pistol-R.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Pickup-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Pickup-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Attack-Dual.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-Dual-ToArmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-Dual-ToArmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-Dual-ToRelax-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-Dual-ToRelax-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-Dual-ToUnarmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-Dual-ToUnarmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-L-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-L-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-L-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-L-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-L-ToArmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-L-ToArmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-R-Back-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-R-Back-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-R-Hips-Relax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-R-Hips-Unarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-R-ToArmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Sheath-R-ToArmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Special1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-UnSheath-L-FromArmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-UnSheath-L-FromArmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Unsheath-Dual-FromArmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Unsheath-Dual-FromArmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Unsheath-R-FromArmed-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Unsheath-R-FromArmed-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-Walk.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-WeaponSwitch-Dual-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-WeaponSwitch-Dual-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-WeaponSwitch-L-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-WeaponSwitch-L-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-WeaponSwitch-R-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed/RPG-Character@Armed-WeaponSwitch-R-Hips.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Activate.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Attack1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Attack2.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Attack3.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Block.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Idle-Crouch.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Idle-Static.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Idle.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Pickup.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Backward-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Backward-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Backward.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Forward-Block.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Forward-Charge.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Forward-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Forward-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Forward.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Left.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Run-Right.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Sheath-ToArmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Sheath-ToRelax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Sheath-ToUnarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Unsheath-FromArmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Unsheath-FromRelax.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Unsheath-FromUnarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Walk-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Walk-Slow-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Armed-Shield/RPG-Character@Armed-Shield-Walk.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Down.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Idle.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Off-Bottom-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Off-Bottom.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Off-Top-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Off-Top.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-On-Bottom-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-On-Bottom.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-On-Top-Unarmed.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-On-Top.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ladder/RPG-Character@Climb-Ladder-Up.fbx
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Climb.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Drop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Grab.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Left_S.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Climb-Ledge/RPG-Character@Ledge-Right_S.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Crawl]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Crawl/RPG-Character@Crawl-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Crawl/RPG-Character@Crawl-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Crawl/RPG-Character@Unarmed-Crawl-ToCrouch.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Crawl/RPG-Character@Unarmed-Crouch-ToCrawl.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Bow1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Bow2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Drink1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Idle-Crouch.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Idle-Drunk-Female1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Idle-Drunk-Female2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Idle-Drunk1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Idle-Drunk2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Laydown-Getup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Laydown-Laydown.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Laydown-Sleep.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-No.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Sit-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Sit-Sitdown.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Sit-Standup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk4.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk5.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk6.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk7.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Talk8.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-UnSheath-ToUnarmed.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-Dual-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-Dual-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-L-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-L-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-R-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-R-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Unsheath-Shield.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk-Female1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk-Stumble1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk-Stumble2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk-Stumble3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Drunk3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Female1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Female2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Female3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Slow-Drunk1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Slow-Drunk2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Slow-Female.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Walk-Slow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Relax/RPG-Character@Relax-Yes.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim-Ascend-Loop.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim-Ascend.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim-Descend-Loop.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim-Descend.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim-TreadWater.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim1-Fast.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim1.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim2-Fast.fbx
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Swimming/RPG-Character@Swim2.fbx
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Activate.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Air-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-Kick-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-Kick-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-Kick-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-Kick-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-L2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-L3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-R2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Attack-R3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Block-Break1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Block-GetHit1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Block-GetHit2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Block.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Boost1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-AOE1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-AOE2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Buff1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Buff2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Summon1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-Dual-Summon2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-AOE1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-AOE2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Buff1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Buff2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Summon1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-L-Summon2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-AOE1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-AOE2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Attack1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Attack2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Attack3.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Buff1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Buff2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Summon1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Cast-R-Summon2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Crouch-Walk-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Death1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Dodge-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Dodge-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Dodge-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Fall.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-GetHit-B1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-GetHit-F1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-GetHit-F2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-GetHit-L1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-GetHit-R1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Getup1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Idle-Alert1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Idle-Injured1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Idle-Static.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Idle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Jump-Flip.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Jump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Knockback-Back1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Knockback-Back2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Knockdown1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Land.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Pickup.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Revive1.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Roll-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Roll-Forward-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Roll-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Roll-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Roll-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward-Attack1-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward-Attack1-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Forward2.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Run-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Sheath.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Sprint.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Backward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Backward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Backward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Forward-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Forward-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Forward.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Left.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Strafe-Right.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Stunned.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Turn-Left-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Turn-Left-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Turn-Left-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Turn-Right-180.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Turn-Right-90.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Turn-Right-Loop.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-Dual-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-Dual-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-L-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-L-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-R-Back.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-R-Hips.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Unsheath-Shield.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/RPG-Character@Unarmed-Walk-Injured.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Animations/Unarmed/TempGround.controller
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Avatars]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Avatars/RPG-Character-Avatar.ht
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Avatars/RPG-Character-Upperbody-AvatarMask.mask
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterInputController.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/RPGCharacterInputSystemController.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Extensions]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Extensions/AnimatorExtensions.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Extensions/CollectionExtensions.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Extensions/ControllerExtensions.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Extensions/WeaponExtensions.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/WeaponGroupings.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/DualPistolAttack.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Code/Lookups/Animations/TwoHandedStaffAttack.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Animation]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Animation/Moving Platform Animation.anim
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Animation/Moving Platform.controller
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Animation/TargetUpDown.anim
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code/GUIControls.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code/HighJumpTrampoline.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code/NPC.cs
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Code/NoJumpSlime.cs
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Crate.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/NoJumpSlime.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Platform.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Target.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Trampoline.mat
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Stage]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Stage/Rock.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Stage/Stage.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Stage/Tree.mat
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Materials/Stage/Water.mat
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Nav.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Target.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage/Ladder.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage/NavBlock.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage/Rock.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage/Stage.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage/Tree-Stump.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Models/Stage/Tree.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Camera.prefab
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Nav.prefab
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Target.prefab
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Stage]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Stage/Level.prefab
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Stage/Rock.prefab
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Prefabs/Stage/Tree-Stump.prefab
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Crate.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/NoJumpSlime.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Platform.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Target.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Trampoline.psd
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Stage]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Stage/Rock.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Stage/Stage.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/Textures/Stage/Tree.psd
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/UI]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/UI/Controller.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/UI/Controls.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/UI/Controls2.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/UI/ControlsCamera.psd
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Demo Elements/UI/ControlsCamera2.psd
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Documentation]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Documentation/RPG Character Mecanim Animation Pack Actions API Reference.url
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Documentation/RPG Character Mecanim Animation Pack Component API Reference.url
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Documentation/RPG Character Mecanim Animation Pack Extensions Reference.url
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Documentation/RPG Character Mecanim Animation Pack ReadMe.url
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Materials]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Materials/RPG-Character.mat
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Axe.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Bow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Crossbow.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Rifle.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Spear.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Staff.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/2Hand-Sword.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Dagger.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Knife.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Mace.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Pistol.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Shield.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Spear.FBX
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Models/Weapons/Sword.FBX
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Prefabs/Character]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Prefabs/Character/RPG-Character-NPC.prefab
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Prefabs/Character/RPG-Character.prefab
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Prefabs/Props]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Prefabs/Props/Ladder.prefab
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Presets]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Presets/Input.preset
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Presets/TagLayer.preset
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Scenes]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Scenes/RPG-Character.unity
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Scenes/RPG-Character]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Scenes/RPG-Character/NavMesh.asset
+
+[Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Textures]
+Assets/ExplosiveLLC/RPG Character Mecanim Animation Pack/Textures/RPG-Character.psd
+
+[Assets/ExplosiveLLC/SuperCharacterController/Code]
+Assets/ExplosiveLLC/SuperCharacterController/Code/README.txt
+
+[Assets/ExplosiveLLC/SuperCharacterController/Code/Core]
+Assets/ExplosiveLLC/SuperCharacterController/Code/Core/SuperMath.cs
+
+[Assets/ExplosiveLLC/SuperCharacterController/Code/Examples]
+Assets/ExplosiveLLC/SuperCharacterController/Code/Examples/PlayerCamera.cs
+Assets/ExplosiveLLC/SuperCharacterController/Code/Examples/PlayerMachineDebug.cs
+
+[Assets/ExplosiveLLC/SuperCharacterController/Documentation]
+Assets/ExplosiveLLC/SuperCharacterController/Documentation/SuperCharacterControllerV2_README.pdf
+
+[Assets/ExplosiveLLC/SuperCharacterController/Materials]
+Assets/ExplosiveLLC/SuperCharacterController/Materials/BluePlastic.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/Default.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/GreenWall.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/GreyGrid.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/GreyGridLarger.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/LightBlueWall.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/NeonGreen.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/OrangeWall.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/PurpleWall.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/RedWall.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/ReflectiveOrange.mat
+Assets/ExplosiveLLC/SuperCharacterController/Materials/Shiny.mat
+
+[Assets/ExplosiveLLC/SuperCharacterController/Mesh]
+Assets/ExplosiveLLC/SuperCharacterController/Mesh/DemoZone.FBX
+Assets/ExplosiveLLC/SuperCharacterController/Mesh/Platform.FBX
+Assets/ExplosiveLLC/SuperCharacterController/Mesh/SphereDemoLevel.FBX
+Assets/ExplosiveLLC/SuperCharacterController/Mesh/Staircase.FBX
+
+[Assets/ExplosiveLLC/SuperCharacterController/Prefabs]
+Assets/ExplosiveLLC/SuperCharacterController/Prefabs/Player.prefab
+
+[Assets/ExplosiveLLC/SuperCharacterController/Scenes]
+Assets/ExplosiveLLC/SuperCharacterController/Scenes/LowResTerrain.asset
+Assets/ExplosiveLLC/SuperCharacterController/Scenes/SpaceZone.unity
+Assets/ExplosiveLLC/SuperCharacterController/Scenes/TerrainTest.unity
+Assets/ExplosiveLLC/SuperCharacterController/Scenes/TestTerrain.asset
+Assets/ExplosiveLLC/SuperCharacterController/Scenes/TestZone-RPGCharacter.unity
+Assets/ExplosiveLLC/SuperCharacterController/Scenes/TestZone.unity
+
+[Assets/ExplosiveLLC/SuperCharacterController/Textures]
+Assets/ExplosiveLLC/SuperCharacterController/Textures/Tile.png
