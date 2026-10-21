@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -12,8 +12,7 @@ namespace TeamOdd.Psychokinesis
         [Header("Outline")]
         [SerializeField] private Material availableOutline;
         [SerializeField] private Material unavailableOutline;
-        [SerializeField] private Material meshOutline;
-        [SerializeField, Min(0f)] private float outlineWidth = 0.05f;
+        [SerializeField, Range(1f, 8f)] private float outlineWidthPixels = 3f;
 
         [Header("Swing Damage")]
         [FormerlySerializedAs("swingAssistRange")]
@@ -27,15 +26,19 @@ namespace TeamOdd.Psychokinesis
 
         private const float HitGizmoDuration = 0.3f;
         private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
-        private static readonly int outlineWidthId = Shader.PropertyToID("_OutlineWidth");
         private readonly Collider[] swingCandidates = new Collider[64];
         private readonly RaycastHit[] swingObstructions = new RaycastHit[64];
 
         private Rigidbody body;
         private BoxCollider hitBox;
-        private MeshRenderer outline;
-        private Mesh outlineMesh;
-        private MaterialPropertyBlock outlineProperties;
+        private MeshRenderer meshRenderer;
+        private int subMeshCount;
+
+        internal static PsychokinesisObject OutlinedObject { get; private set; }
+        internal MeshRenderer OutlineRenderer => meshRenderer;
+        internal int SubMeshCount => subMeshCount;
+        internal Color OutlineColor { get; private set; }
+        internal float OutlineWidthPixels => outlineWidthPixels;
         private Collider[] objectColliders;
         private Collider[] playerColliders;
         private bool[] originalIgnoredPairs;
@@ -52,6 +55,13 @@ namespace TeamOdd.Psychokinesis
         private Vector3 swingHitPoint;
         private float lastSwingHitTime = float.NegativeInfinity;
 
+        private CombatManager pendingDamageManager;
+        private DamageEvent pendingDamage;
+        private Vector3 impactPosition;
+        private Vector3 impactNormal;
+
+        public static event Action<Vector3, Vector3, float> Shattered;
+
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
         public bool IsAvailable(float maxMass) => isActiveAndEnabled && Body.isKinematic == false && Body.mass <= maxMass;
@@ -61,13 +71,16 @@ namespace TeamOdd.Psychokinesis
             body = GetComponent<Rigidbody>();
             hitBox = GetComponent<BoxCollider>();
             objectColliders = GetComponentsInChildren<Collider>();
-            CreateOutline();
+            meshRenderer = GetComponent<MeshRenderer>();
+            subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
         }
 
         private void OnDisable()
         {
+            ClearPendingDamage();
             canDealThrowDamage = false;
             damageSender = null;
+            SetFocused(false, true);
             Release(Vector3.zero);
         }
 
@@ -94,9 +107,37 @@ namespace TeamOdd.Psychokinesis
 
         private void SendDamage(ICombatable target, Collider collider, Vector3 point, int damage)
         {
+            if (pendingDamage != null) return;
+
+            impactPosition = body.worldCenterOfMass;
+            Vector3 direction = impactPosition - point;
+            impactNormal = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
             DamageInfo info = new DamageInfo(damage, point, collider);
-            DamageEvent damageEvent = new DamageEvent(damageSender, target, info);
-            CombatManager.Instance.AddCombatEvent(damageEvent);
+            pendingDamage = new DamageEvent(damageSender, target, info);
+            pendingDamageManager = CombatManager.Instance;
+            pendingDamageManager.OnDamageEventExecuted += HandleDamageExecuted;
+            pendingDamageManager.AddCombatEvent(pendingDamage);
+        }
+
+        private void ClearPendingDamage()
+        {
+            if (pendingDamage == null) return;
+            if (pendingDamageManager != null) pendingDamageManager.OnDamageEventExecuted -= HandleDamageExecuted;
+            pendingDamage = null;
+        }
+
+        private void HandleDamageExecuted(DamageEvent damageEvent, int receivedDamage)
+        {
+            if (ReferenceEquals(damageEvent, pendingDamage) == false) return;
+
+            ClearPendingDamage();
+            if (receivedDamage <= 0) return;
+
+            Release(Vector3.zero);
+            // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
+            gameObject.SetActive(false);
+            Shattered?.Invoke(impactPosition, impactNormal, body.mass);
+            Destroy(gameObject);
         }
 
         public void UpdateHoldState(Vector3 targetPosition, Vector3 playerVelocity, bool canSwing, bool swingActivated, float minimumSwingSpeed)
@@ -241,55 +282,16 @@ namespace TeamOdd.Psychokinesis
             }
         }
 
-        private void CreateOutline()
-        {
-            GameObject outlineObject = new GameObject("Focus Outline");
-            outlineObject.transform.SetParent(transform, false);
-            Mesh source = GetComponent<MeshFilter>().sharedMesh;
-            outlineMesh = Instantiate(source);
-            outlineMesh.name = source.name + " Outline";
-            Vector3[] vertices = outlineMesh.vertices;
-            Vector3[] normals = outlineMesh.normals;
-            Dictionary<Vector3, Vector3> smoothNormals = new Dictionary<Vector3, Vector3>();
-            // UV와 하드 에지 때문에 분리된 동일 위치 정점도 같은 방향으로 확장한다.
-            for (int index = 0; index < vertices.Length; index++)
-            {
-                smoothNormals.TryGetValue(vertices[index], out Vector3 sum);
-                smoothNormals[vertices[index]] = sum + normals[index];
-            }
-            for (int index = 0; index < vertices.Length; index++)
-                normals[index] = smoothNormals[vertices[index]].normalized;
-            outlineMesh.normals = normals;
-            Bounds bounds = outlineMesh.bounds;
-            bounds.Expand(outlineWidth * 2f);
-            outlineMesh.bounds = bounds;
-
-            outlineObject.AddComponent<MeshFilter>().sharedMesh = outlineMesh;
-            outline = outlineObject.AddComponent<MeshRenderer>();
-            Material[] materials = new Material[outlineMesh.subMeshCount];
-            for (int index = 0; index < materials.Length; index++) materials[index] = meshOutline;
-            outline.sharedMaterials = materials;
-            outline.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            outline.receiveShadows = false;
-            outlineProperties = new MaterialPropertyBlock();
-            outline.enabled = false;
-        }
-
         public void SetFocused(bool isFocused, bool available)
         {
-            outline.enabled = isFocused;
-
-            if (isFocused == false) return;
-
+            if (isFocused == false)
+            {
+                if (OutlinedObject == this) OutlinedObject = null;
+                return;
+            }
             Material colorMaterial = available ? availableOutline : unavailableOutline;
-            outlineProperties.SetColor(outlineColorId, colorMaterial.GetColor(outlineColorId));
-            outlineProperties.SetFloat(outlineWidthId, outlineWidth);
-            outline.SetPropertyBlock(outlineProperties);
-        }
-
-        private void OnDestroy()
-        {
-            Destroy(outlineMesh);
+            OutlineColor = colorMaterial.GetColor(outlineColorId);
+            OutlinedObject = this;
         }
 
         public void BeginHold(Collider[] ownerColliders, ICombatable sender)
