@@ -115,7 +115,7 @@ namespace TeamOdd.Psychokinesis
                 else if (rightHeld)
                 {
                     swingActiveUntil = float.NegativeInfinity;
-                    throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - player.bounds.center;
+                    throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - GetHoldOrigin();
                     throwPrepareStartTime = Time.time;
                     targetInitialized = false;
                 }
@@ -376,7 +376,7 @@ namespace TeamOdd.Psychokinesis
                 swingActiveUntil = Time.time + swingActiveDuration;
 
             if (IsPreparingThrow)
-                return player.bounds.center + Vector3.Lerp(throwPrepareStartOffset,
+                return GetHoldOrigin() + Vector3.Lerp(throwPrepareStartOffset,
                     cameraRay.direction * throwPrepareDistance, GetThrowPrepareBlend());
 
             float lagAmount = Mathf.InverseLerp(swingRotationSpeed * 0.25f, swingRotationSpeed, rotationSpeed);
@@ -384,7 +384,13 @@ namespace TeamOdd.Psychokinesis
             float blend = 1f - Mathf.Exp(-Time.deltaTime / lag);
             holdDirection = Vector3.Slerp(holdDirection, cameraRay.direction, blend).normalized;
             holdDirection = Vector3.RotateTowards(cameraRay.direction, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
-            return player.bounds.center + holdDirection * holdDistance;
+            return GetHoldOrigin() + holdDirection * holdDistance;
+        }
+
+        private Vector3 GetHoldOrigin()
+        {
+            Bounds bounds = player.bounds;
+            return bounds.center + Vector3.up * (bounds.extents.y * 0.8f);
         }
 
         private float GetThrowPrepareBlend()
@@ -451,7 +457,7 @@ namespace TeamOdd.Psychokinesis
             Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
             Gizmos.matrix = Matrix4x4.identity;
             Gizmos.color = new Color(1f, 0.65f, 0.15f, 0.8f);
-            Vector3 orbitCenter = player.bounds.center;
+            Vector3 orbitCenter = GetHoldOrigin();
             Gizmos.DrawWireSphere(orbitCenter, holdDistance);
             Vector3 direction = heldObject != null ? holdDirection : aimCamera.transform.forward;
             Vector3 orbitPoint = orbitCenter + direction * holdDistance;
