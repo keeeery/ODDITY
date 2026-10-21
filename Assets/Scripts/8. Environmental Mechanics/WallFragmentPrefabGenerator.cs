@@ -9,25 +9,34 @@ namespace TeamOdd.Arena
     internal static class WallFragmentPrefabGenerator
     {
         private const int MaxSubdivisions = 5;
+        private const int MediumMaxSubdivisions = 3;
+        private const float MediumDeformationStrength = 1.25f;
         private const string OutputFolder = "Assets/Prefabs/8. Environmental Mechanics/GeneratedFragments";
 
-        internal static PsychokinesisObject[] Generate(PsychokinesisObject template, int count, Vector2 scaleRange, float density, bool large)
+        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 scaleRange, float density, string group, bool visualOnly = false) where T : Component
         {
-            string folder = OutputFolder + (large ? "/Large" : "/Small");
+            string folder = OutputFolder + "/" + group;
             Directory.CreateDirectory(folder);
             AssetDatabase.Refresh();
-            PsychokinesisObject[] prefabs = new PsychokinesisObject[count];
+            T[] prefabs = new T[count];
+            string templatePath = AssetDatabase.GetAssetPath(template);
+            int maxSubdivisions = group == "Medium" ? MediumMaxSubdivisions : MaxSubdivisions;
+            float deformationStrength = group == "Medium" ? MediumDeformationStrength : 1f;
 
             for (int index = 0; index < count; index++)
             {
-                string name = (large ? "LargeObject" : "SmallObject") + (index + 1).ToString("D2");
+                string name = (group + "Object") + (index + 1).ToString("D2");
                 float scale = Mathf.Lerp(scaleRange.x, scaleRange.y, (index + 0.5f) / count);
-                Mesh generated = CreateFragmentMesh(scale, index + (large ? 20 : 0));
+                Mesh generated = CreateFragmentMesh(scale, index + (group == "Large" ? 20 : 0), maxSubdivisions, deformationStrength);
                 generated.name = name;
                 string meshPath = folder + "/" + name + ".asset";
                 Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
 
-                if (mesh == null) AssetDatabase.CreateAsset(generated, meshPath);
+                if (mesh == null)
+                {
+                    mesh = generated;
+                    AssetDatabase.CreateAsset(mesh, meshPath);
+                }
                 else
                 {
                     EditorUtility.CopySerialized(generated, mesh);
@@ -35,8 +44,7 @@ namespace TeamOdd.Arena
                     EditorUtility.SetDirty(mesh);
                 }
 
-                mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
-                GameObject root = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(template));
+                GameObject root = PrefabUtility.LoadPrefabContents(templatePath);
 
                 try
                 {
@@ -47,10 +55,14 @@ namespace TeamOdd.Arena
                     collider.center = mesh.bounds.center;
                     collider.size = mesh.bounds.size;
                     root.GetComponent<Rigidbody>().mass = Mathf.Max(0.1f, CalculateVolume(mesh) * density);
-                    // Mesh와 Collider, 질량을 저장한 완성 Prefab은 활성 상태로 사용한다.
+                    if (visualOnly)
+                    {
+                        Object.DestroyImmediate(root.GetComponent<PsychokinesisObject>());
+                        root.AddComponent<WallFragmentDebris>();
+                    }
                     root.SetActive(true);
                     GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, folder + "/" + name + ".prefab");
-                    prefabs[index] = prefab.GetComponent<PsychokinesisObject>();
+                    prefabs[index] = prefab.GetComponent<T>();
                 }
                 finally
                 {
@@ -91,7 +103,7 @@ namespace TeamOdd.Arena
             return subdivisions;
         }
 
-        private static Mesh CreateFragmentMesh(float scale, int variation)
+        private static Mesh CreateFragmentMesh(float scale, int variation, int maxSubdivisions, float deformationStrength)
         {
             float goldenRatio = (1f + Mathf.Sqrt(5f)) * 0.5f;
             Vector3[] corners =
@@ -116,7 +128,7 @@ namespace TeamOdd.Arena
                 new Vector3(0.6f, 0.8f, 0.65f), new Vector3(0.85f, 0.55f, 0.5f),
                 new Vector3(0.65f, 0.6f, 0.8f), new Vector3(0.75f, 0.7f, 0.55f)
             };
-            int subdivisions = GetSubdivisions(scale);
+            int subdivisions = Mathf.Min(GetSubdivisions(scale), maxSubdivisions);
             Vector3 size = sizes[variation % sizes.Length] * scale;
             Vector3[] vertices = new Vector3[faces.Length * (1 << (subdivisions * 2))];
             int vertexIndex = 0;
@@ -135,13 +147,12 @@ namespace TeamOdd.Arena
             for (int vertex = 0; vertex < vertices.Length; vertex++)
             {
                 Vector3 direction = vertices[vertex];
-                EvaluateSurface(direction, size, variation, out vertices[vertex], out normals[vertex]);
+                EvaluateSurface(direction, size, variation, deformationStrength, out vertices[vertex], out normals[vertex]);
                 triangles[vertex] = vertex;
             }
 
             Mesh mesh = new Mesh
             {
-                name = "Wall Object " + (variation + 1) + " Detail " + subdivisions,
                 vertices = vertices,
                 triangles = triangles,
                 normals = normals
@@ -150,18 +161,31 @@ namespace TeamOdd.Arena
             return mesh;
         }
 
-        private static void EvaluateSurface(Vector3 direction, Vector3 size, int variation, out Vector3 position, out Vector3 normal)
+        private static void EvaluateSurface(Vector3 direction, Vector3 size, int variation, float deformationStrength, out Vector3 position, out Vector3 normal)
         {
             Vector3 firstFrequency = new Vector3(2.4f, 1.8f, 0f);
             Vector3 secondFrequency = new Vector3(0f, -1.6f, 2.2f);
-            const float firstAmplitude = 0.045f;
-            const float secondAmplitude = 0.025f;
+            Vector3 detailFrequency = new Vector3(4.1f, -2.7f, 3.3f);
+            const float firstAmplitude = 0.18f;
+            const float secondAmplitude = 0.12f;
+            const float detailAmplitude = 0.05f;
+            const float dentDepth = 0.2f;
+            const float dentSharpness = 5f;
             float firstWave = Vector3.Dot(direction, firstFrequency) + variation * 1.3f;
             float secondWave = Vector3.Dot(direction, secondFrequency) + variation * 2.1f;
-            float radius = 1f + Mathf.Sin(firstWave) * firstAmplitude + Mathf.Sin(secondWave) * secondAmplitude;
+            float detailWave = Vector3.Dot(direction, detailFrequency) + variation * 0.7f;
+            Vector3 dentDirection = new Vector3(Mathf.Sin(variation * 1.7f + 0.4f),
+                Mathf.Cos(variation * 2.3f + 0.8f), Mathf.Sin(variation * 0.9f + 1.2f)).normalized;
+            float dent = dentDepth * Mathf.Exp((Vector3.Dot(direction, dentDirection) - 1f) * dentSharpness);
+            float radius = 1f + Mathf.Sin(firstWave) * firstAmplitude + Mathf.Sin(secondWave) * secondAmplitude
+                + Mathf.Sin(detailWave) * detailAmplitude - dent;
             Vector3 gradient = firstFrequency * (Mathf.Cos(firstWave) * firstAmplitude)
-                + secondFrequency * (Mathf.Cos(secondWave) * secondAmplitude);
+                + secondFrequency * (Mathf.Cos(secondWave) * secondAmplitude)
+                + detailFrequency * (Mathf.Cos(detailWave) * detailAmplitude)
+                - dentDirection * (dent * dentSharpness);
 
+            radius = 1f + (radius - 1f) * deformationStrength;
+            gradient *= deformationStrength;
             position = Vector3.Scale(direction * radius, size);
             // 구면 위의 반지름 변화율에서 법선을 구하고, 축별 크기 차이는 역전치 변환으로 보정
             Vector3 surfaceNormal = direction * (radius + Vector3.Dot(gradient, direction)) - gradient;
@@ -186,7 +210,6 @@ namespace TeamOdd.Arena
             SubdivideTriangle(vertices, ref index, c, ca, bc, subdivisions - 1);
             SubdivideTriangle(vertices, ref index, ab, bc, ca, subdivisions - 1);
         }
-
     }
 }
 #endif

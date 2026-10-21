@@ -63,8 +63,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.1208968, y: 2.0291042, z: 1.6248966}
-  m_Center: {x: 0.03290713, y: 0.05287069, z: -0.007062733}
+  m_Size: {x: 1.9594076, y: 2.0365248, z: 1.7422409}
+  m_Center: {x: 0.13601437, y: 0.19063917, z: -0.04411432}
 --- !u!23 &4672976787091309081
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -122,7 +122,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907235209911483027}
   serializedVersion: 5
-  m_Mass: 18.154316
+  m_Mass: 17.813353
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -155,8 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4

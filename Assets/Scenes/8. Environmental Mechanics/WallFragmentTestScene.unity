@@ -1380,34 +1380,40 @@ MonoBehaviour:
   - {fileID: 1961805795668700809, guid: 368ebf2e2d8c04360b587e1a2f2f34b7, type: 3}
   - {fileID: 5473310782530472577, guid: b8ecc2bce1d2d4d99910eee05ac88600, type: 3}
   - {fileID: 8547738411499394956, guid: 6182d4a9f9fb04500875f987a965d29b, type: 3}
-  smallFragmentPrefabs:
-  - {fileID: 4953727606861675732, guid: 9dbc250e8e5fe40cd9ff7f14cde60838, type: 3}
-  - {fileID: 3093214378017544744, guid: 5e5d1359ecf8141cf9984a4ce800d5b6, type: 3}
-  - {fileID: 5367296970984682728, guid: 29c861232ff7f4089acbceb6219d0b6a, type: 3}
-  - {fileID: 6850558265241552206, guid: 9bac800aeef2b4bfdb55afd7a5815fc1, type: 3}
-  - {fileID: 9091831134093444757, guid: 879a514d18f1c49e0a646095b2093829, type: 3}
-  - {fileID: 8766405190144313040, guid: b97360a40bb7e4bf5bf79ebe007e44c5, type: 3}
-  - {fileID: 7192982558605084883, guid: d00803087aca54e0199b368aae8f6632, type: 3}
-  - {fileID: 8858119778473475080, guid: 1b1939768c0ca48f4b4cfffe5b051a6e, type: 3}
-  - {fileID: 5644284773017662164, guid: e218e145828f945c5a22194617502271, type: 3}
-  - {fileID: 6114233163619716293, guid: 0f6160cc6024f42eeb2920d52f80a675, type: 3}
-  - {fileID: 716044394329612505, guid: 32bd1a278f3ea4799a3fb36b035edcb6, type: 3}
-  - {fileID: 3658612207872099513, guid: ad0aa25a41f5e49c4b8e0c5e8d122b74, type: 3}
-  - {fileID: 1679995370706541151, guid: 6ac23936e511245d594fefd3fb0986b6, type: 3}
-  - {fileID: 2667955633933643466, guid: 05dcc464542c84d3780fcba45768a38a, type: 3}
-  - {fileID: 4551487302755007605, guid: fe53cacbcc3b342bdb2cef7a11125931, type: 3}
-  - {fileID: 469085347400787841, guid: 491393e7144364b56b9f0d8cdbfe8a43, type: 3}
-  - {fileID: 487302911011954762, guid: 302045bd3ea6340eda1e09614ef87ee1, type: 3}
-  - {fileID: 5501074613953051510, guid: 89e7873253377404897568f863fcc07b, type: 3}
-  - {fileID: 2010042164806184178, guid: fd05058858b664d4998dc85ff96d0987, type: 3}
-  - {fileID: 3921933039204281885, guid: 7eac4b82b2e5d4a6788d230d980b3b78, type: 3}
+  mediumFragmentPrefabs:
+  - {fileID: 3667675066296721332, guid: ab2d1ba7e58b04be6a7780630366d8ed, type: 3}
+  - {fileID: 5564302200455212589, guid: ca1e8816109ea449eaa1df5eecd48f4c, type: 3}
+  - {fileID: 2523104364417293058, guid: 38cf5ea62ea3f4be4ab426b578d28147, type: 3}
+  - {fileID: 7801743170434155243, guid: 8345bca194b6d4932b5556d252f4dab8, type: 3}
+  - {fileID: 763378378587373163, guid: 1cfc4fa488c76498fb757ac7bf7e81ac, type: 3}
+  - {fileID: 1937242183828870233, guid: 8336e59f0547a4ab8bdd88bb7ea9c310, type: 3}
+  - {fileID: 5797527390585838951, guid: 3bd33bf74c49c48a3b8d3747947cc8ec, type: 3}
+  - {fileID: 734860536534237636, guid: ae5c6704aa19f4c339f7e40f075ecdf1, type: 3}
+  - {fileID: 3066916484966251811, guid: 5e7c942749c38425097c80f2936421a1, type: 3}
+  - {fileID: 2416547084687706708, guid: d50db2da670ba4554a20b81039b25abf, type: 3}
+  - {fileID: 9058352564938399275, guid: 632542f0ecc5a4933a69ae75d01465ac, type: 3}
+  - {fileID: 428107950404671106, guid: 60a32a3875a8144249702436874626fb, type: 3}
+  - {fileID: 8445031168939716549, guid: f761e13ace36b4f88a224752c65b66fd, type: 3}
+  - {fileID: 4072230275595241343, guid: e31bc37a2eaff4e12ba73a0c61f33a04, type: 3}
+  - {fileID: 6713890296992683394, guid: fa75171eb28414819993527551d6a12d, type: 3}
+  - {fileID: 6101214096947475095, guid: 1ea40873d374b40268c5c7fb2dfc1409, type: 3}
+  - {fileID: 4886104558020294505, guid: e0ca2763c63674f9fb5bdae07c2d43db, type: 3}
+  - {fileID: 8123128035100403280, guid: 40453276ce1404f46b2059f16ae75100, type: 3}
+  - {fileID: 480331280387683565, guid: 0e0f787b510694cc2914bf9d622c6e94, type: 3}
+  - {fileID: 2159762826908127474, guid: 932714c2dc31c4adc99669428e7c825b, type: 3}
+  smallVisualFragmentPrefabs:
+  - {fileID: 2946474148908765596, guid: 9dbc250e8e5fe40cd9ff7f14cde60838, type: 3}
+  - {fileID: 3449302948714881657, guid: 5e5d1359ecf8141cf9984a4ce800d5b6, type: 3}
+  - {fileID: 5958717546450965173, guid: 29c861232ff7f4089acbceb6219d0b6a, type: 3}
+  - {fileID: 9105829553262659977, guid: 9bac800aeef2b4bfdb55afd7a5815fc1, type: 3}
+  - {fileID: 2992500339128823242, guid: 879a514d18f1c49e0a646095b2093829, type: 3}
   fragmentParent: {fileID: 273411543}
-  fragmentCount: 6
   spawnRadius: 1.8
   launchSpeed: {x: 4, y: 8}
   spinSpeed: 8
   fragmentTemplate: {fileID: 447538155, guid: c518e01e9a4141d5ad1d599376b683e4, type: 3}
-  fragmentScale: {x: 0.25, y: 1.1}
+  mediumFragmentScale: {x: 0.55, y: 1.1}
+  smallFragmentScale: {x: 0.08, y: 0.18}
   largeFragmentScale: {x: 1.0666667, y: 1.4666667}
   fragmentDensity: 5
 --- !u!1 &1442713834

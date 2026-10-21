@@ -1,17 +1,22 @@
 using TeamOdd.Psychokinesis;
 using UnityEngine;
-#if UNITY_EDITOR
 using UnityEngine.Serialization;
-#endif
 
 namespace TeamOdd.Arena
 {
     public sealed class WallFragmentSpawner : MonoBehaviour
     {
+        private const int MaxSpawnAttempts = 8;
+        private const float SpawnClearance = 0.1f;
+#if UNITY_EDITOR
+        private const float MinimumMediumScale = 0.55f;
+#endif
+
         [SerializeField] private PsychokinesisObject[] largeFragmentPrefabs;
-        [SerializeField] private PsychokinesisObject[] smallFragmentPrefabs;
+        [FormerlySerializedAs("smallFragmentPrefabs")]
+        [SerializeField] private PsychokinesisObject[] mediumFragmentPrefabs;
+        [SerializeField] private Rigidbody[] smallVisualFragmentPrefabs;
         [SerializeField] private Transform fragmentParent;
-        [SerializeField, Min(1)] private int fragmentCount = 6;
         [SerializeField, Min(0f)] private float spawnRadius = 1.8f;
         [SerializeField] private Vector2 launchSpeed = new Vector2(4f, 8f);
         [SerializeField, Min(0f)] private float spinSpeed = 8f;
@@ -20,11 +25,13 @@ namespace TeamOdd.Arena
         [Header("Prefab Generation")]
         [FormerlySerializedAs("fragmentPrefab")]
         [SerializeField] private PsychokinesisObject fragmentTemplate;
-        [SerializeField] private Vector2 fragmentScale = new Vector2(0.25f, 1.1f);
+        [FormerlySerializedAs("fragmentScale")]
+        [SerializeField] private Vector2 mediumFragmentScale = new Vector2(MinimumMediumScale, 1.1f);
+        [SerializeField] private Vector2 smallFragmentScale = new Vector2(0.08f, 0.18f);
         [SerializeField] private Vector2 largeFragmentScale = new Vector2(1.6f * 2f / 3f, 2.2f * 2f / 3f);
         [SerializeField, Min(0.01f)] private float fragmentDensity = 5f;
 
-        [ContextMenu("Generate Fragment Prefabs (10 Large, 20 Small)")]
+        [ContextMenu("Generate Fragment Prefabs (10 Large, 20 Medium, 5 Small)")]
         private void GenerateFragmentPrefabs()
         {
             if (Application.isPlaying)
@@ -34,36 +41,45 @@ namespace TeamOdd.Arena
             }
 
             UnityEditor.Undo.RecordObject(this, "Assign generated fragment prefabs");
-            largeFragmentPrefabs = WallFragmentPrefabGenerator.Generate(fragmentTemplate, 10, largeFragmentScale, fragmentDensity, true);
-            smallFragmentPrefabs = WallFragmentPrefabGenerator.Generate(fragmentTemplate, 20, fragmentScale, fragmentDensity, false);
+            // 기존 Scene에 저장된 크기에도 새 최소값을 적용한다.
+            mediumFragmentScale.x = Mathf.Max(MinimumMediumScale, mediumFragmentScale.x);
+            mediumFragmentScale.y = Mathf.Max(mediumFragmentScale.x, mediumFragmentScale.y);
+            largeFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 10, largeFragmentScale, fragmentDensity, "Large");
+            mediumFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 20, mediumFragmentScale, fragmentDensity, "Medium");
+            smallVisualFragmentPrefabs = WallFragmentPrefabGenerator.Generate<Rigidbody>(fragmentTemplate, 5, smallFragmentScale, fragmentDensity, "Small", true);
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
-            Debug.Log("큰 파편 10개와 작은 파편 20개의 Prefab을 생성하고 목록에 할당했습니다.", this);
+            Debug.Log("큰 파편 10개, 중간 파편 20개, 연출용 작은 파편 5개의 Prefab을 생성하고 목록에 할당했습니다.", this);
         }
-
 #endif
 
         // point는 월드 좌표의 피격 위치, normal은 벽 바깥쪽을 향하는 표면 법선
         public void Spawn(Vector3 point, Vector3 normal)
         {
             normal.Normalize();
+            SpawnFragments(largeFragmentPrefabs, 1, point, normal);
+            SpawnFragments(mediumFragmentPrefabs, 5, point, normal);
+            SpawnFragments(smallVisualFragmentPrefabs, 9, point, normal);
+        }
+
+        private void SpawnFragments(Component[] prefabs, int count, Vector3 point, Vector3 normal)
+        {
             Quaternion surfaceRotation = Quaternion.LookRotation(normal);
 
-            for (int index = 0; index < fragmentCount; index++)
+            for (int index = 0; index < count; index++)
             {
-                PsychokinesisObject[] prefabs = index == 0 ? largeFragmentPrefabs : smallFragmentPrefabs;
-                PsychokinesisObject prefab = prefabs[Random.Range(0, prefabs.Length)];
+                Component prefab = prefabs[Random.Range(0, prefabs.Length)];
                 BoxCollider sourceCollider = prefab.GetComponent<BoxCollider>();
                 Vector3 scale = prefab.transform.localScale;
                 Vector3 halfExtents = Vector3.Scale(sourceCollider.size * 0.5f, scale);
                 Vector3 center = Vector3.Scale(sourceCollider.center, scale);
                 Quaternion rotation = Random.rotation;
-                float clearance = halfExtents.magnitude + center.magnitude + 0.1f;
+                float clearance = halfExtents.magnitude + center.magnitude + SpawnClearance;
                 Vector3 position = Vector3.zero;
                 bool foundSpace = false;
 
-                for (int attempt = 0; attempt < 8; attempt++)
+                for (int attempt = 0; attempt < MaxSpawnAttempts; attempt++)
                 {
                     Vector2 offset = Random.insideUnitCircle * spawnRadius;
                     position = point + normal * clearance + surfaceRotation * new Vector3(offset.x, offset.y, 0f);
@@ -78,11 +94,12 @@ namespace TeamOdd.Arena
 
                 if (foundSpace == false) continue;
 
-                PsychokinesisObject fragment = Instantiate(prefab, position, rotation, fragmentParent);
-                fragment.gameObject.SetActive(true);
+                GameObject fragment = Instantiate(prefab.gameObject, position, rotation, fragmentParent);
+                fragment.SetActive(true);
+                Rigidbody body = fragment.GetComponent<Rigidbody>();
                 Vector3 direction = (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
-                fragment.Body.linearVelocity = direction * Random.Range(launchSpeed.x, launchSpeed.y);
-                fragment.Body.angularVelocity = Random.onUnitSphere * spinSpeed;
+                body.linearVelocity = direction * Random.Range(launchSpeed.x, launchSpeed.y);
+                body.angularVelocity = Random.onUnitSphere * spinSpeed;
             }
         }
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7049546071574301549}
   - component: {fileID: 1810441547825413250}
   - component: {fileID: 2992500339128823242}
-  - component: {fileID: 9091831134093444757}
+  - component: {fileID: 7126978980417857490}
   m_Layer: 0
   m_Name: SmallObject05
   m_TagString: Untagged
@@ -63,8 +63,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.60269654, y: 0.53395236, z: 0.66905594}
-  m_Center: {x: 0.004084483, y: 0.008871391, z: -0.0037051141}
+  m_Size: {x: 0.26561207, y: 0.22740126, z: 0.24350326}
+  m_Center: {x: 0.00946524, y: 0.013659801, z: -0.00064496696}
 --- !u!23 &1810441547825413250
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -122,7 +122,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5023783321904278703}
   serializedVersion: 5
-  m_Mass: 0.54676396
+  m_Mass: 0.1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -141,7 +141,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &9091831134093444757
+--- !u!114 &7126978980417857490
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,15 +150,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5023783321904278703}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f50d5f6e7c50540358d848270f6d70d0, type: 3}
+  m_Script: {fileID: 11500000, guid: ee079633abb94e1987d15299112fbdc9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
-  availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
-  unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
-  swingHitPadding: 0.5
-  swingDamageScale: 1
-  holdArrivalDistance: 0.4
-  holdArrivalSpeed: 1
-  throwDamageScale: 1
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragmentDebris
+  stableDuration: 1
+  despawnDelay: 3
+  linearSpeedThreshold: 0.15
+  angularSpeedThreshold: 0.3
