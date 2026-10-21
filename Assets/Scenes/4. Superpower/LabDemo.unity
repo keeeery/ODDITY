@@ -3074,9 +3074,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 11127901}
     m_Modifications:
+    - target: {fileID: 42256578227723575, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1191858992388173251, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
       propertyPath: m_Name
-      value: Augmentation Chip UI
+      value: Augmentation Chip Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3243436379130767525, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
       propertyPath: m_SortingOrder
