@@ -9,6 +9,8 @@ namespace TeamOdd.Player
     public class PlayerMovement : MonoBehaviour
     {
         private static readonly int Rolling = Animator.StringToHash("Rolling");
+        private static readonly int Walk = Animator.StringToHash("IsWalk");
+        private static readonly int Run = Animator.StringToHash("IsRun");
         
         [Header("이동")]
         [SerializeField] private float walkSpeed = 4f;
@@ -22,9 +24,9 @@ namespace TeamOdd.Player
         [SerializeField] private float turnSpeed = 720f;
         
         [Header("구르기")]
-        [SerializeField] private float rollDistance = 4f;   // 한 번 구를 때 이동하는 거리
-        public float rollDuration = 0.6f; // 구르기에 걸리는 시간
-        [SerializeField] private float invincibleTime = 0.4f;
+        [SerializeField] private float rollDistance = 4f;
+        [SerializeField] private float rollDuration = 0.6f;
+        
         [SerializeField] private Animator animator;
         
         private CharacterController controller;
@@ -86,6 +88,13 @@ namespace TeamOdd.Player
             }
 
             Vector3 totalMove = (moveVector * speed) + new Vector3(0, velocity.y, 0);
+            
+            bool isMove = moveVector.x != 0 || moveVector.z != 0;
+            bool isRun = SimpleInput.GetKey(Key.LeftShift);
+            
+            animator.SetBool(Walk, isMove);
+            animator.SetBool(Run, isRun);
+            
             controller.Move(totalMove * Time.deltaTime);
 
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
@@ -136,6 +145,22 @@ namespace TeamOdd.Player
             const float AXIS_SPEED = 3f;
             if (target != 0f && current * target < 0f) current = 0f;
             return Mathf.MoveTowards(current, target, AXIS_SPEED * Time.deltaTime);
+        }
+
+        // 애니메이션 클립(Run_N 등)에 포함된 애니메이션 이벤트 수신용. 없으면 "has no receiver" 에러가 발생합니다.
+        private void OnFootstep(AnimationEvent animationEvent)
+        {
+            // 블렌드 중 비중이 낮은 클립의 이벤트는 무시
+            if (animationEvent.animatorClipInfo.weight < 0.5f) return;
+
+            // TODO: 발소리 재생
+        }
+
+        private void OnLand(AnimationEvent animationEvent)
+        {
+            if (animationEvent.animatorClipInfo.weight < 0.5f) return;
+
+            // TODO: 착지 사운드 재생
         }
     }
 }
