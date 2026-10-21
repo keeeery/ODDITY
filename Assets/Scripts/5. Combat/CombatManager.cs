@@ -8,18 +8,17 @@ namespace TeamOdd.Combat
 {
     public class CombatManager : SingletonBase<CombatManager>
     {
-        public event Action<DamageEvent> OnDamageEventExecuted;
-        public event Action<HealEvent> OnHealEventExecuted;
+        public event Action<DamageEvent, int> OnDamageEventExecuted;
+        public event Action<HealEvent, int> OnHealEventExecuted;
 
         private readonly Queue<CombatEvent> eventQueue = new();
         
         private void Update()
         {
-            while (true)
-            {
-                if (eventQueue.Count <= 0) break;
+            int eventCount = eventQueue.Count;
+
+            for (int i = 0; i < eventCount; i++)
                 ExecuteEvent();
-            }
         }
 
         private void ExecuteEvent()
@@ -44,15 +43,15 @@ namespace TeamOdd.Combat
             void ExecuteDamageEvent()
             {
                 DamageEvent damageEvent = combatEvent as DamageEvent;
-                combatEvent.Receiver.TakeDamage(damageEvent);
-                OnDamageEventExecuted?.Invoke(damageEvent);
+                int receivedDmg = combatEvent.Receiver.TakeDamage(damageEvent);
+                OnDamageEventExecuted?.Invoke(damageEvent, receivedDmg);
             }
 
             void ExecuteHealEvent()
             {
                 HealEvent healEvent = combatEvent as HealEvent;
-                combatEvent.Receiver.TakeHeal(healEvent);
-                OnHealEventExecuted?.Invoke(healEvent);
+                int receivedHeal = combatEvent.Receiver.TakeHeal(healEvent);
+                OnHealEventExecuted?.Invoke(healEvent, receivedHeal);
             }
         }
 
