@@ -1,3 +1,4 @@
+using TeamOdd.Player;
 using Study.Utilities;
 using UnityEngine;
 
@@ -28,8 +29,9 @@ namespace TeamOdd.CameraMove
 
         private void Start()
         {
-            LockCursor();
-            if (target != null) yaw = target.eulerAngles.y; // 시작할 때 캐릭터 뒤에서 출발합니다.
+           // LockCursor();
+           target = Player.Player.Instance.transform;
+            yaw = target.eulerAngles.y; // 시작할 때 캐릭터 뒤에서 출발합니다.
         }
 
         private void LateUpdate()
