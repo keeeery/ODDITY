@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 namespace TeamOdd.Player
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerController : MonoBehaviour
     {
         private static readonly int Rolling = Animator.StringToHash("Rolling");
         private static readonly int Walk = Animator.StringToHash("IsWalk");
@@ -76,6 +76,11 @@ namespace TeamOdd.Player
             Vector3 right = Vector3.ProjectOnPlane(reference.right, Vector3.up).normalized;
 
             Vector3 moveVector = (right * moveX) + (forward * moveZ);
+            
+            /*Vector3 LookForward = new Vector3(CameraArm.forward.x, 0f, CameraArm.forward.z).normalized;
+            Vector3 LookRight = new Vector3(CameraArm.right.x, 0f, CameraArm.right.z).normalized;
+            Vector3 MoveDir = LookForward * inputRaw.y + LookRight * inputRaw.x;
+            transform.forward = MoveDir;*/
 
             // 기본 중력 처리
             if (IsGrounded && velocity.y < 0)
