@@ -9,21 +9,19 @@ namespace TeamOdd.Boss
     public class BossIdleState : BossStateBase
     {
         [Title("Patterns")]
-        [SerializeField] private BossLeftClawPattern tempPattern;
-        [SerializeField] private BossPsychokinesisDropPattern roarDropPattern;
+        [SerializeField] private BossStateBase[] attackPatterns;
 
-        protected override async void OnEnter()
+        protected override void OnEnter()
         {
-            await UniTask.WaitForSeconds(0.5f);
-
-            // 내부쿨 패턴은 발동 조건(쿨 포함)을 만족하면 우선 사용
-            if (roarDropPattern.CanUse)
+            // TODO: 일단 간단하게 구현, 점점 복잡해지겠지...? 야발
+            if (root.IsTargetInSight())
             {
-                StateMachine.ChangeState(roarDropPattern.GetType());
+                BossStateBase attack = attackPatterns[Random.Range(0, attackPatterns.Length)];
+                StateMachine.ChangeState(attack.GetType());
                 return;
             }
 
-            StateMachine.ChangeState(tempPattern.GetType());
+            StateMachine.ChangeState(typeof(BossChaseState));
         }
         
         protected override void OnExit()
