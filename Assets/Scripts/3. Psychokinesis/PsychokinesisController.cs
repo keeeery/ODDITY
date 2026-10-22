@@ -332,8 +332,8 @@ namespace TeamOdd.Psychokinesis
 
             if (hitCollider != null && MonsterRegistry.TryGetMonster(hitCollider, out ICombatable target))
             {
-                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Stats.Atk = {combatEntity.Stats.Atk}", this);
-                DamageInfo info = new DamageInfo(combatEntity.Stats.Atk, end, hitCollider);
+                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Atk = {combatEntity.CurrentStats.Atk}", this);
+                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, end, hitCollider);
                 DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
                 CombatManager.Instance.AddCombatEvent(damageEvent);
             }
