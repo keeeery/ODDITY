@@ -82,6 +82,7 @@ namespace TeamOdd.Psychokinesis
         private float swingActiveUntil = float.NegativeInfinity;
         
         public PsychokinesisObject HeldObject => heldObject;
+        public Vector3 Viewport => aimCamera.WorldToViewportPoint(new Vector3(0.5f, 0.5f));
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
 

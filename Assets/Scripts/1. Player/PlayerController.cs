@@ -113,6 +113,8 @@ namespace TeamOdd.Player
             }
         }
 
+        #region 애니메이션
+
         private void WalkAnimation()
         {
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
@@ -126,9 +128,15 @@ namespace TeamOdd.Player
         
         private void OnAnimatorIK(int layerIndex)
         {
-            if (heldObject == null) return;
+            if (heldObject != null)
+            {
+                UpdateIK(AvatarIKGoal.LeftHand, heldObject.TargetPoint, heldObject.IkWeight);
+            }
 
-            UpdateIK(AvatarIKGoal.LeftHand, heldObject.TargetPoint, heldObject.IkWeight);
+            /*Transform aim;
+            aim.position = psychokinesisController.Viewport;
+            
+            UpdateIK(AvatarIKGoal.RightHand, , heldObject.IkWeight);*/
         }
 
         private void UpdateIK(AvatarIKGoal goal, Transform target, float ikWeight)
@@ -136,6 +144,8 @@ namespace TeamOdd.Player
             animator.SetIKPosition(goal, target.position);
             animator.SetIKPositionWeight(goal, ikWeight);
         }
+
+        #endregion
 
         #region 구르기
 
