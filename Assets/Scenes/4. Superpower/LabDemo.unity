@@ -551,8 +551,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4
@@ -1178,8 +1177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4
@@ -1340,8 +1338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4
@@ -1467,6 +1464,7 @@ GameObject:
   - component: {fileID: 1013557266}
   - component: {fileID: 1013557265}
   - component: {fileID: 2147000010}
+  - component: {fileID: 2147000011}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1705,6 +1703,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1077103739 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6870243690095875944, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+  m_PrefabInstance: {fileID: 2147000040}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e85de2421ba694c8f9fc88dbcd97ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipPanel
+--- !u!1 &1291087804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1291087806}
+  - component: {fileID: 1291087805}
+  m_Layer: 0
+  m_Name: Augmentation Chip Installer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1291087805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291087804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfa0d07147af4704ca0356f41fcde080, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInstaller
+  inventory: {fileID: 2147000011}
+  panel: {fileID: 1077103739}
+--- !u!4 &1291087806
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291087804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 522.72815, y: 0.00001, z: 7520.0527}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1330346370
 GameObject:
   m_ObjectHideFlags: 0
@@ -1867,8 +1922,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4
@@ -2029,8 +2083,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4
@@ -2303,8 +2356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisObject
   availableOutline: {fileID: 2100000, guid: f3b99a2c6866c409590101f734ad2919, type: 2}
   unavailableOutline: {fileID: 2100000, guid: 377fdfdf7470143c3bb82f261b771d59, type: 2}
-  meshOutline: {fileID: 2100000, guid: af23f5b79fd54f92ac850447d2ffd7c7, type: 2}
-  outlineWidth: 0.05
+  outlineWidthPixels: 3
   swingHitPadding: 0.5
   swingDamageScale: 1
   holdArrivalDistance: 0.4
@@ -3035,6 +3087,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
   <Collider>k__BackingField: {fileID: 1013557267}
   <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
+--- !u!114 &2147000011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013557263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
 --- !u!114 &2147000020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3118,3 +3182,4 @@ SceneRoots:
   - {fileID: 273411543}
   - {fileID: 11127901}
   - {fileID: 1073963104}
+  - {fileID: 1291087806}
