@@ -34,6 +34,13 @@ namespace Study.Utilities
         private const float PanelGap = 30f;
         private const float ScrollbarWidth = 66f;
 
+        // 상세 패널 하단 (설명 스크롤 + 수락 버튼)
+        private const float DescriptionScrollbarWidth = 40f;
+        private const float AcceptButtonWidth = 800f;
+        private const float AcceptButtonHeight = 160f;
+        private const float AcceptButtonBottom = 80f;
+        private const float AcceptButtonGap = 50f;
+
         // 미션 목록 (항목 1100 x 500, 간격 130, 위아래 여백 85)
         private const float QuestEntryHeight = 500f;
         private const float ListSpacing = 130f;
@@ -47,6 +54,7 @@ namespace Study.Utilities
         private static readonly Color TitleBarColor = new Color(0.11f, 0.21f, 0.35f, 1f);
         private static readonly Color TitleTextColor = new Color(0.95f, 0.90f, 0.78f, 1f);
         private static readonly Color ExitButtonColor = new Color(0.55f, 0.12f, 0.07f, 1f);
+        private static readonly Color AcceptButtonColor = new Color(0.16f, 0.36f, 0.20f, 1f);
         private static readonly Color DetailTitleBarColor = new Color(0.17f, 0.16f, 0.15f, 1f);
         private static readonly Color PanelInner = new Color(0.10f, 0.11f, 0.12f, 1f);
         private static readonly Color ChapterHeaderColor = new Color(0.55f, 0.12f, 0.07f, 1f);
@@ -137,6 +145,34 @@ namespace Study.Utilities
             {
                 Debug.Log($"[MissionUIBuilder] 삭제할 '{RootName}' 이(가) 없습니다.", this);
             }
+        }
+
+        // 이미 만들어진 UI 에서 DescriptionText 를 스크롤 영역으로 바꾸고 수락 버튼을 추가한다.
+        // (전체를 다시 빌드하지 않아 다른 오브젝트의 참조가 유지된다.)
+        [ContextMenu("3. Add Description Scroll & Accept Button")]
+        private void UpgradeDetailPanel()
+        {
+            GameObject root = FindRoot();
+            Transform detail = root != null ? root.transform.Find("JournalWindow/MissionPage/DetailPanel") : null;
+            if (detail == null)
+            {
+                Debug.LogWarning("[MissionUIBuilder] DetailPanel 을 찾을 수 없습니다. 먼저 '1. Build UI' 를 실행하세요.", this);
+                return;
+            }
+
+            foreach (string childName in new[] { "DescriptionText", "DescriptionScrollView", "AcceptButton" })
+            {
+                Transform old = detail.Find(childName);
+                if (old != null)
+                    Undo.DestroyObjectImmediate(old.gameObject);
+            }
+
+            CreateDescriptionArea(detail, out GameObject scrollView, out GameObject acceptButton);
+            Undo.RegisterCreatedObjectUndo(scrollView, "Add Description Scroll");
+            Undo.RegisterCreatedObjectUndo(acceptButton, "Add Accept Button");
+
+            EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            Debug.Log("[MissionUIBuilder] 설명 스크롤 · 수락 버튼 추가 완료.", detail);
         }
 
         private GameObject FindRoot()
@@ -443,18 +479,69 @@ namespace Study.Utilities
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 new Vector2(0f, -illustrationTop), new Vector2(-80f, illustrationHeight));
 
-            // 설명 텍스트 (삽화 아래 ~ 패널 하단)
-            const float descriptionTop = illustrationTop + illustrationHeight + 60f;
-            const float descriptionBottom = 80f;
+            CreateDescriptionArea(detail.transform, out _, out _);
+        }
 
-            TMP_Text description = NewText("DescriptionText", detail.transform, DetailDescription, 64f, TextAlignmentOptions.TopLeft);
-            description.color = MainTextColor;
-            description.richText = true;
-            description.lineSpacing = 10f;
-            SetRect(description.rectTransform,
+        private void CreateDescriptionArea(Transform detail, out GameObject scrollView, out GameObject acceptButton)
+        {
+            // 설명 영역 (삽화 아래 ~ 수락 버튼 위). 상단 위치는 CreateDetailPanel 의 제목 띠 · 삽화 배치와 맞춘다.
+            const float descriptionTop = 180f + 40f + 860f + 60f;
+            const float descriptionBottom = AcceptButtonBottom + AcceptButtonHeight + AcceptButtonGap;
+
+            scrollView = NewUI("DescriptionScrollView", detail);
+            SetRect(scrollView.GetComponent<RectTransform>(),
                 Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
                 new Vector2(0f, (descriptionBottom - descriptionTop) * 0.5f),
                 new Vector2(-160f, -(descriptionTop + descriptionBottom)));
+
+            ScrollRect scrollRect = scrollView.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+            scrollRect.vertical = true;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.scrollSensitivity = 80f;
+
+            // 텍스트는 레이캐스트를 받지 않으므로, 휠 · 드래그 입력을 받을 투명 이미지를 뷰포트에 둔다.
+            GameObject viewport = NewUI("Viewport", scrollView.transform);
+            viewport.AddComponent<Image>().color = Color.clear;
+            viewport.AddComponent<RectMask2D>();
+            Stretch(viewport.GetComponent<RectTransform>(), 0f);
+
+            // 설명 텍스트 = 스크롤 Content. 글 길이에 맞춰 높이가 늘어난다.
+            TMP_Text description = NewText("DescriptionText", viewport.transform, DetailDescription, 64f, TextAlignmentOptions.TopLeft);
+            description.color = MainTextColor;
+            description.richText = true;
+            description.lineSpacing = 10f;
+            description.textWrappingMode = TextWrappingModes.Normal;
+            SetRect(description.rectTransform,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                Vector2.zero, Vector2.zero);
+
+            ContentSizeFitter fitter = description.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            Scrollbar scrollbar = CreateVerticalScrollbar(scrollView.transform, DescriptionScrollbarWidth);
+
+            // 글이 짧으면 스크롤바를 숨기고 뷰포트를 넓힌다.
+            scrollRect.viewport = viewport.GetComponent<RectTransform>();
+            scrollRect.content = description.rectTransform;
+            scrollRect.verticalScrollbar = scrollbar;
+            scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+            scrollRect.verticalScrollbarSpacing = 20f;
+
+            // 미션 수락 버튼 (패널 하단 중앙)
+            Button accept = NewButton("AcceptButton", detail, "Accept", out TMP_Text label);
+            accept.GetComponent<Image>().color = AcceptButtonColor;
+            AddFrame(accept.gameObject, FrameGold, 4f);
+            SetRect(accept.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(0f, AcceptButtonBottom), new Vector2(AcceptButtonWidth, AcceptButtonHeight));
+
+            label.fontSize = 72f;
+            label.fontStyle = FontStyles.Bold;
+            label.color = Color.white;
+
+            acceptButton = accept.gameObject;
         }
 
         #endregion

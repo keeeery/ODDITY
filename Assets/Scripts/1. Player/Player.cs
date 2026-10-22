@@ -18,7 +18,7 @@ namespace TeamOdd.Player
         public float Hp => hp;
         public float Stamina => stamina;
         
-        private CharacterController characterController;
+        public CharacterController characterController;
         private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
