@@ -9,12 +9,19 @@ namespace TeamOdd.Boss
     public class BossIdleState : BossStateBase
     {
         [Title("Patterns")]
-        [SerializeField] private BossLeftClawPattern tempPattern;
+        [SerializeField] private BossStateBase[] attackPatterns;
 
-        protected override async void OnEnter()
+        protected override void OnEnter()
         {
-            await UniTask.WaitForSeconds(0.5f);
-            StateMachine.ChangeState(tempPattern.GetType());
+            // TODO: 일단 간단하게 구현, 점점 복잡해지겠지...? 야발
+            if (root.IsTargetInSight())
+            {
+                BossStateBase attack = attackPatterns[Random.Range(0, attackPatterns.Length)];
+                StateMachine.ChangeState(attack.GetType());
+                return;
+            }
+
+            StateMachine.ChangeState(typeof(BossChaseState));
         }
         
         protected override void OnExit()
