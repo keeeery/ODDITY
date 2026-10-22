@@ -57,12 +57,16 @@ namespace TeamOdd.Arena
                     collider.center = mesh.bounds.center;
                     collider.size = mesh.bounds.size;
                     root.GetComponent<Rigidbody>().mass = Mathf.Max(0.1f, CalculateVolume(mesh) * density);
+
                     if (visualOnly)
                     {
                         Object.DestroyImmediate(root.GetComponent<PsychokinesisObject>());
                         root.AddComponent<WallFragmentDebris>();
                     }
+                    root.layer = LayerMask.NameToLayer("Psychokinesis");
+
                     if (root.GetComponent<WallFragment>() == null) root.AddComponent<WallFragment>();
+
                     root.SetActive(true);
                     GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, folder + "/" + name + ".prefab");
                     prefabs[index] = prefab.GetComponent<T>();

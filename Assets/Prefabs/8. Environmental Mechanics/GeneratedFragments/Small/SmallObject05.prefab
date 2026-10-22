@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7049546071574301549}
   - component: {fileID: 1810441547825413250}
   - component: {fileID: 2992500339128823242}
-  - component: {fileID: 7126978980417857490}
   - component: {fileID: 4336860220639148687}
-  m_Layer: 0
+  - component: {fileID: 7126978980417857490}
+  m_Layer: 8
   m_Name: SmallObject05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,6 +142,19 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &4336860220639148687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5023783321904278703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 190befecb2c44389ac019b8359a514e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragment
+  poolKey: 
 --- !u!114 &7126978980417857490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,16 +171,3 @@ MonoBehaviour:
   despawnDelay: 3
   linearSpeedThreshold: 0.15
   angularSpeedThreshold: 0.3
---- !u!114 &4336860220639148687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5023783321904278703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190befecb2c44389ac019b8359a514e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragment
-  poolKey: 

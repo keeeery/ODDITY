@@ -717,7 +717,7 @@ GameObject:
   - component: {fileID: 669482519}
   - component: {fileID: 669482518}
   - component: {fileID: 669482517}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1112,7 +1112,7 @@ MonoBehaviour:
   combatEntity: {fileID: 2147000010}
   queryLayers:
     serializedVersion: 2
-    m_Bits: 243
+    m_Bits: 320
   pickupDistance: 12
   castHalfWidth: 2
   maxMass: 20
@@ -2165,7 +2165,7 @@ GameObject:
   - component: {fileID: 2034567482}
   - component: {fileID: 2034567481}
   - component: {fileID: 2034567484}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,4 +1,3 @@
-using Study3D.FpsGame;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,7 +9,7 @@ namespace TeamOdd.Arena
         private const int MaxSpawnAttempts = 8;
         private const float SpawnClearance = 0.1f;
         private const int MinimumImpactFragmentCount = 3;
-        private const float ImpactSpeedMultiplier = 0.4f;
+        private const float ImpactSpeedMultiplier = 0.3f;
         private readonly Collider[] spawnOverlaps = new Collider[128];
 
         [SerializeField] private PsychokinesisObject[] largeFragmentPrefabs;
