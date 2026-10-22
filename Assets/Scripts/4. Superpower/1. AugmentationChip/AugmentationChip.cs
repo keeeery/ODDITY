@@ -25,14 +25,10 @@ namespace TeamOdd.Superpower
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        // 장착 시 StatHandler에 넘겨줄 효과
-        public IStat Effect { get; private set; }
-
         public void Init(AugmentationChipDef def)
         {
             // 매개변수로 전달된 AugmentationChipDef 객체(레퍼런스 타입)를 캐싱한다
             refDef = def;
-            Effect = new AugmentationChipStat(def.StatType, def.Value);
 
             // 회전하면 좌표가 바뀌므로 Def의 배열을 공유하지 않고 복사해서 쓴다
             Cells = (Vector2Int[])refDef.Cells.Clone();
