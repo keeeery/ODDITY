@@ -83,7 +83,7 @@ namespace TeamOdd.Superpower
         private void OnClickSort(ChipSortKey key)
         {
             // 같은 키를 다시 누르면 오름/내림차순 전환
-            sortAscending = (sortKey == key) ? !sortAscending : true;
+            sortAscending = (sortKey != key) || !sortAscending;
             sortKey = key;
 
             RefreshSortLabels();
