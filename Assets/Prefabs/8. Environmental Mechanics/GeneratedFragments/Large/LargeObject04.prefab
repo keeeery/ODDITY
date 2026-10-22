@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 6197686704338958296}
   - component: {fileID: 1588275932065384972}
   - component: {fileID: 5915153130175992771}
-  m_Layer: 0
+  - component: {fileID: 1098735899271726747}
+  m_Layer: 8
   m_Name: LargeObject04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,8 +64,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.1229684, y: 2.0980365, z: 1.4239591}
-  m_Center: {x: 0.015574336, y: 0.08476904, z: -0.034911454}
+  m_Size: {x: 1.8699999, y: 1.8480389, z: 1.2542832}
+  m_Center: {x: 0.013718575, y: 0.07466817, z: -0.030751497}
 --- !u!23 &6197686704338958296
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -122,7 +123,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3478855667640866878}
   serializedVersion: 5
-  m_Mass: 13.751474
+  m_Mass: 9.3981695
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -161,3 +162,16 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+--- !u!114 &1098735899271726747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3478855667640866878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 190befecb2c44389ac019b8359a514e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragment
+  poolKey: 
