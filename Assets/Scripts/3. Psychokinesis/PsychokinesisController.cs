@@ -277,17 +277,26 @@ namespace TeamOdd.Psychokinesis
             return best;
         }
 
+        // 카메라 광선 위에서 플레이어 깊이부터 pickupDistance까지를 타겟팅 구간으로 사용
+        // 카메라와 플레이어 사이(플레이어 뒤쪽)는 타겟팅 범위로 사용하지 않음
+        private void GetTargetingRange(Ray ray, out float start, out float end)
+        {
+            start = Mathf.Max(0f, Vector3.Dot(player.transform.position - ray.origin, ray.direction));
+            end = start + pickupDistance;
+        }
+
         private float GetTargetingDistance(Ray ray)
         {
-            return pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            GetTargetingRange(ray, out _, out float end);
+            return end;
         }
 
         private void GetTargetingBox(out Ray ray, out Vector3 center, out Vector3 halfExtents)
         {
             ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float length = GetTargetingDistance(ray);
-            center = ray.GetPoint(length * 0.5f);
-            halfExtents = new Vector3(castHalfWidth, castHalfWidth, length * 0.5f);
+            GetTargetingRange(ray, out float start, out float end);
+            center = ray.GetPoint((start + end) * 0.5f);
+            halfExtents = new Vector3(castHalfWidth, castHalfWidth, pickupDistance * 0.5f);
         }
 
         private int CollectTargetingCandidates(out Ray ray)
@@ -301,16 +310,19 @@ namespace TeamOdd.Psychokinesis
 
         private Vector3 GetTargetingPosition(Collider target, Ray ray)
         {
-            float length = GetTargetingDistance(ray);
-            if (target.Raycast(ray, out RaycastHit hit, length)) return hit.point;
+            GetTargetingRange(ray, out float start, out float end);
+            Ray rangeRay = new Ray(ray.GetPoint(start), ray.direction);
 
-            float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), 0f, length);
+            if (target.Raycast(rangeRay, out RaycastHit hit, pickupDistance)) return hit.point;
+
+            float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), start, end);
             return target.ClosestPoint(ray.GetPoint(depth));
         }
 
         private void NormalAttack()
         {
             if (Time.time < nextAttackTime) return;
+
             nextAttackTime = Time.time + attackInterval;
 
             Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
