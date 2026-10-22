@@ -1,16 +1,13 @@
 ﻿using System;
+using Jay;
 using Study3D.FpsGame;
 using TeamOdd.Combat;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 
 namespace TeamOdd.Player
 {
-    public class Player : MonoBehaviour, ICombatable
+    public class Player : SingletonBase<Player>, ICombatable
     {
-        private CharacterController characterController;
-        
         [SerializeField] private float hp = 100;
         [SerializeField] private float maxHp = 100;
         [SerializeField] private float stamina = 100;
@@ -21,11 +18,14 @@ namespace TeamOdd.Player
         public float Hp => hp;
         public float Stamina => stamina;
         
+        public CharacterController characterController;
         private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
         private void Awake()
         {
+            DontDestroyOnLoad(this);
+            
             characterController = GetComponent<CharacterController>();
             playerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
