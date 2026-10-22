@@ -137,7 +137,9 @@ namespace TeamOdd.Psychokinesis
             // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
             gameObject.SetActive(false);
             Shattered?.Invoke(impactPosition, impactNormal, body.mass);
-            Destroy(gameObject);
+
+            if (TryGetComponent(out IObjectPoolItem poolItem)) poolItem.ReturnToPool();
+            else Destroy(gameObject);
         }
 
         public void UpdateHoldState(Vector3 targetPosition, Vector3 playerVelocity, bool canSwing, bool swingActivated, float minimumSwingSpeed)
