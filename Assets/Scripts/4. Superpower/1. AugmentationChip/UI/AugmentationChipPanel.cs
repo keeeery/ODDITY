@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -9,8 +10,8 @@ namespace TeamOdd.Superpower
     /// <summary>
     /// 증강칩 장착 패널의 컨트롤러.
     /// Init으로 받은 보유 칩을 트레이에 넣고, 드래그로 트레이 ↔ 그리드를 오가게 한다. 그리드에 올라간 칩이 장착된 칩이다.
-    /// 칩 목록은 바깥(AugmentationChipInstaller 등)에서 넣어준다. 패널은 테이블을 모른다.
-    /// 지금은 장착만 하고, 장착에 따른 스탯 반영(강화)은 하지 않는다.
+    /// 칩 목록과 플레이어의 RuntimeStats는 바깥(AugmentationChipInstaller 등)에서 넣어준다. 패널은 테이블을 모른다.
+    /// 장착하면 칩의 StatType/Value만큼 보너스를 더하고, 해제하면 뺀다.
     /// </summary>
     public class AugmentationChipPanel : MonoBehaviour
     {
@@ -21,6 +22,7 @@ namespace TeamOdd.Superpower
 
         private readonly List<ChipItemView> chips = new();
         private RectTransform root; // 드래그 중인 칩을 올려두는 최상단
+        private RuntimeStats stats;
         private ChipItemView dragging;
         // 회전할 때 포인터 위치를 다시 읽기 위해 보관
         // PointerEventData는 입력 모듈이 버튼끼리 돌려쓰므로 이벤트 밖에서 읽으면 안 되고, 위치만 복사해 둔다
@@ -28,11 +30,12 @@ namespace TeamOdd.Superpower
 
         public bool IsDragging => dragging != null;
 
-        // 플레이어가 보유한 칩 목록을 받아 트레이(플레이스홀더)에 배치한다
+        // 플레이어가 보유한 칩 목록을 받아 트레이(플레이스홀더)에 배치하고, 장착 결과를 반영할 스탯을 받는다
         // 패널이 꺼져 있어도(토글로 닫힌 상태) 호출할 수 있다
-        public void Init(IEnumerable<AugmentationChipDef> ownedChips)
+        public void Init(IEnumerable<AugmentationChipDef> ownedChips, RuntimeStats stats)
         {
             root = (RectTransform)transform;
+            this.stats = stats;
 
             foreach (AugmentationChipDef def in ownedChips)
                 AddChip(def);
@@ -70,6 +73,7 @@ namespace TeamOdd.Superpower
             if (chip.GridOrigin.HasValue)
             {
                 grid.Remove(chip);
+                stats.Remove(chip.Chip.StatType, chip.Chip.Value);
             }
             else
             {
@@ -103,6 +107,7 @@ namespace TeamOdd.Superpower
             {
                 // 그리드에 올리면 장착
                 grid.Place(chip, origin);
+                stats.Add(chip.Chip.StatType, chip.Chip.Value);
             }
             else
             {
@@ -148,7 +153,8 @@ namespace TeamOdd.Superpower
 
             string state = chip.GridOrigin.HasValue ? $"장착됨 ({chip.GridOrigin.Value.x}, {chip.GridOrigin.Value.y})" : "미장착";
             AugmentationChip info = chip.Chip;
-            infoText.text = $"[{info.ID}] {info.Name} - {info.Description} ({info.StatType} +{info.Value})  |  {state}\n장착 칩 {placed}/{chips.Count}";
+            infoText.text = $"[{info.ID}] {info.Name} - {info.Description} ({info.StatType} +{info.Value})  |  {state}\n장착 칩 {placed}/{chips.Count}  |  " +
+                            $"MaxHp {stats.MaxHp}(+{stats.GetBonus(StatType.MaxHp)})  Atk {stats.Atk}(+{stats.GetBonus(StatType.Atk)})  Def {stats.Def}(+{stats.GetBonus(StatType.Def)})";
         }
 
         #endregion

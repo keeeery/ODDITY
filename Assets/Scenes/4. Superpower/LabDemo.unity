@@ -1744,6 +1744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInstaller
   inventory: {fileID: 2147000011}
+  player: {fileID: 2147000010}
   panel: {fileID: 1077103739}
 --- !u!4 &1291087806
 Transform:
