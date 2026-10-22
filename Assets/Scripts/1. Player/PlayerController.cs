@@ -45,11 +45,6 @@ namespace TeamOdd.Player
             animator = GetComponent<Animator>();
         }
 
-        private void Start()
-        {
-            if (moveReference == null && Camera.main != null) moveReference = Camera.main.transform;
-        }
-
         private void Update()
         {
             // 구르는 동안에는 일반 이동 및 입력 처리를 막습니다.
@@ -60,6 +55,7 @@ namespace TeamOdd.Player
             }
 
             UpdateMovement();
+            WalkAnimation();
             CheckRollInput();
         }
 
@@ -68,19 +64,21 @@ namespace TeamOdd.Player
             float speed = SimpleInput.GetKey(Key.LeftShift) ? runSpeed : walkSpeed;
 
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
+            
             moveX = SmoothAxis(moveX, inputRaw.x);
             moveZ = SmoothAxis(moveZ, inputRaw.y);
 
-            Transform reference = moveReference != null ? moveReference : transform;
+            if (moveReference == null)
+            {
+                moveReference = Camera.main.transform;
+            }
+
+            Transform reference = moveReference;
+            
             Vector3 forward = Vector3.ProjectOnPlane(reference.forward, Vector3.up).normalized;
             Vector3 right = Vector3.ProjectOnPlane(reference.right, Vector3.up).normalized;
 
             Vector3 moveVector = (right * moveX) + (forward * moveZ);
-            
-            /*Vector3 LookForward = new Vector3(CameraArm.forward.x, 0f, CameraArm.forward.z).normalized;
-            Vector3 LookRight = new Vector3(CameraArm.right.x, 0f, CameraArm.right.z).normalized;
-            Vector3 MoveDir = LookForward * inputRaw.y + LookRight * inputRaw.x;
-            transform.forward = MoveDir;*/
 
             // 기본 중력 처리
             if (IsGrounded && velocity.y < 0)
@@ -94,12 +92,6 @@ namespace TeamOdd.Player
 
             Vector3 totalMove = (moveVector * speed) + new Vector3(0, velocity.y, 0);
             
-            bool isMove = moveVector.x != 0 || moveVector.z != 0;
-            bool isRun = SimpleInput.GetKey(Key.LeftShift);
-            
-            animator.SetBool(Walk, isMove);
-            animator.SetBool(Run, isRun);
-            
             controller.Move(totalMove * Time.deltaTime);
 
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
@@ -107,6 +99,17 @@ namespace TeamOdd.Player
                 Quaternion targetRotation = Quaternion.LookRotation(moveVector);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             }
+        }
+
+        private void WalkAnimation()
+        {
+            Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
+
+            bool isMove = inputRaw != Vector2.zero;
+            bool isRun = SimpleInput.GetKey(Key.LeftShift);
+            
+            animator.SetBool(Walk, isMove);
+            animator.SetBool(Run, isRun);
         }
         
         private void CheckRollInput()

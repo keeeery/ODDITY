@@ -13,12 +13,14 @@ namespace TeamOdd.Arena
         private const float MediumDeformationStrength = 1.25f;
         private const string OutputFolder = "Assets/Prefabs/8. Environmental Mechanics/GeneratedFragments";
 
-        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 scaleRange, float density, string group, bool visualOnly = false) where T : Component
+        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 diameterRange, float density, string group, bool visualOnly = false) where T : Component
         {
             string folder = OutputFolder + "/" + group;
             Directory.CreateDirectory(folder);
             AssetDatabase.Refresh();
             T[] prefabs = new T[count];
+            float minimumDiameter = Mathf.Max(0.01f, diameterRange.x);
+            float maximumDiameter = Mathf.Max(minimumDiameter, diameterRange.y);
             string templatePath = AssetDatabase.GetAssetPath(template);
             int maxSubdivisions = group == "Medium" ? MediumMaxSubdivisions : MaxSubdivisions;
             float deformationStrength = group == "Medium" ? MediumDeformationStrength : 1f;
@@ -26,8 +28,8 @@ namespace TeamOdd.Arena
             for (int index = 0; index < count; index++)
             {
                 string name = (group + "Object") + (index + 1).ToString("D2");
-                float scale = Mathf.Lerp(scaleRange.x, scaleRange.y, (index + 0.5f) / count);
-                Mesh generated = CreateFragmentMesh(scale, index + (group == "Large" ? 20 : 0), maxSubdivisions, deformationStrength);
+                float diameter = Mathf.Lerp(minimumDiameter, maximumDiameter, (index + 0.5f) / count);
+                Mesh generated = CreateFragmentMesh(diameter, index + (group == "Large" ? 20 : 0), maxSubdivisions, deformationStrength);
                 generated.name = name;
                 string meshPath = folder + "/" + name + ".asset";
                 Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
@@ -39,7 +41,7 @@ namespace TeamOdd.Arena
                 }
                 else
                 {
-                    EditorUtility.CopySerialized(generated, mesh);
+                    UpdateMesh(mesh, generated);
                     Object.DestroyImmediate(generated);
                     EditorUtility.SetDirty(mesh);
                 }
@@ -55,11 +57,16 @@ namespace TeamOdd.Arena
                     collider.center = mesh.bounds.center;
                     collider.size = mesh.bounds.size;
                     root.GetComponent<Rigidbody>().mass = Mathf.Max(0.1f, CalculateVolume(mesh) * density);
+
                     if (visualOnly)
                     {
                         Object.DestroyImmediate(root.GetComponent<PsychokinesisObject>());
                         root.AddComponent<WallFragmentDebris>();
                     }
+                    root.layer = LayerMask.NameToLayer("Psychokinesis");
+
+                    if (root.GetComponent<WallFragment>() == null) root.AddComponent<WallFragment>();
+
                     root.SetActive(true);
                     GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, folder + "/" + name + ".prefab");
                     prefabs[index] = prefab.GetComponent<T>();
@@ -72,6 +79,17 @@ namespace TeamOdd.Arena
 
             AssetDatabase.SaveAssets();
             return prefabs;
+        }
+
+        private static void UpdateMesh(Mesh mesh, Mesh generated)
+        {
+            mesh.Clear();
+            mesh.indexFormat = generated.indexFormat;
+            mesh.vertices = generated.vertices;
+            mesh.normals = generated.normals;
+            mesh.triangles = generated.triangles;
+            mesh.bounds = generated.bounds;
+            mesh.UploadMeshData(false);
         }
 
         private static float CalculateVolume(Mesh mesh)
@@ -90,12 +108,12 @@ namespace TeamOdd.Arena
             return Mathf.Abs(volume);
         }
 
-        private static int GetSubdivisions(float scale)
+        private static int GetSubdivisions(float diameter)
         {
             int subdivisions = 2;
             float threshold = 0.5f;
 
-            while (scale > threshold && subdivisions < MaxSubdivisions)
+            while (diameter > threshold && subdivisions < MaxSubdivisions)
             {
                 threshold *= 2f;
                 subdivisions++;
@@ -103,7 +121,7 @@ namespace TeamOdd.Arena
             return subdivisions;
         }
 
-        private static Mesh CreateFragmentMesh(float scale, int variation, int maxSubdivisions, float deformationStrength)
+        private static Mesh CreateFragmentMesh(float diameter, int variation, int maxSubdivisions, float deformationStrength)
         {
             float goldenRatio = (1f + Mathf.Sqrt(5f)) * 0.5f;
             Vector3[] corners =
@@ -128,8 +146,8 @@ namespace TeamOdd.Arena
                 new Vector3(0.6f, 0.8f, 0.65f), new Vector3(0.85f, 0.55f, 0.5f),
                 new Vector3(0.65f, 0.6f, 0.8f), new Vector3(0.75f, 0.7f, 0.55f)
             };
-            int subdivisions = Mathf.Min(GetSubdivisions(scale), maxSubdivisions);
-            Vector3 size = sizes[variation % sizes.Length] * scale;
+            int subdivisions = Mathf.Min(GetSubdivisions(diameter), maxSubdivisions);
+            Vector3 size = sizes[variation % sizes.Length];
             Vector3[] vertices = new Vector3[faces.Length * (1 << (subdivisions * 2))];
             int vertexIndex = 0;
 
@@ -151,6 +169,8 @@ namespace TeamOdd.Arena
                 triangles[vertex] = vertex;
             }
 
+            NormalizeDiameter(vertices, diameter);
+
             Mesh mesh = new Mesh
             {
                 vertices = vertices,
@@ -159,6 +179,17 @@ namespace TeamOdd.Arena
             };
             mesh.RecalculateBounds();
             return mesh;
+        }
+
+        private static void NormalizeDiameter(Vector3[] vertices, float diameter)
+        {
+            Bounds bounds = new Bounds(vertices[0], Vector3.zero);
+            foreach (Vector3 vertex in vertices) bounds.Encapsulate(vertex);
+
+            Vector3 size = bounds.size;
+            float multiplier = diameter / Mathf.Max(size.x, Mathf.Max(size.y, size.z));
+            // 균일 배율이므로 곡면 Normal의 방향은 그대로 유지된다.
+            for (int index = 0; index < vertices.Length; index++) vertices[index] *= multiplier;
         }
 
         private static void EvaluateSurface(Vector3 direction, Vector3 size, int variation, float deformationStrength, out Vector3 position, out Vector3 normal)
