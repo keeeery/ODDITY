@@ -54,7 +54,7 @@ namespace TeamOdd.Mission
             }
             
             Player.Player.Instance.characterController.enabled = false;
-            Player.Player.Instance.GameObject.transform.position = Vector3.zero;
+            Player.Player.Instance.transform.position = Vector3.zero;
             Player.Player.Instance.characterController.enabled = true;
             SceneManager.LoadScene(stageSceneName);
         }

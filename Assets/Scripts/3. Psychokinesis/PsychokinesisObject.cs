@@ -62,6 +62,13 @@ namespace TeamOdd.Psychokinesis
 
         public static event Action<Vector3, Vector3, float> Shattered;
 
+        // IK 추가
+        [SerializeField] private Transform targetPoint;
+        [Range(0.0f, 1.0f)]
+        [SerializeField] private float ikWeight;
+        public Transform TargetPoint => targetPoint;
+        public float IkWeight => ikWeight;
+
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
         public bool IsAvailable(float maxMass) => isActiveAndEnabled && Body.isKinematic == false && Body.mass <= maxMass;

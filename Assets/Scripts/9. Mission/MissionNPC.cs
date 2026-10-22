@@ -13,8 +13,7 @@ namespace TeamOdd.Mission
             if (SimpleInput.GetKeyDown(Key.F))
             {
                 missionUI.SetActive(true);
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
+                Player.Player.LockCursor(false);
             }
         }
     }

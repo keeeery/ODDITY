@@ -1,24 +1,22 @@
-﻿using System;
-using Jay;
+﻿using Jay;
+using Study.Utilities;
 using Study3D.FpsGame;
-using TeamOdd.Combat;
+using TeamOdd.CameraMove;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace TeamOdd.Player
 {
-    public class Player : SingletonBase<Player>, ICombatable
+    public class Player : SingletonBase<Player>
     {
-        [SerializeField] private float hp = 100;
-        [SerializeField] private float maxHp = 100;
         [SerializeField] private float stamina = 100;
         [SerializeField] private float maxStamina = 100;
         
-        public Collider Collider => characterController; 
-        public GameObject GameObject => gameObject;
-        public float Hp => hp;
         public float Stamina => stamina;
         
         public CharacterController characterController;
+        public CameraController cameraController;
+        
         private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
@@ -30,13 +28,23 @@ namespace TeamOdd.Player
             playerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
             
-            hp = maxHp;
             stamina = maxStamina;
         }
 
         private void Update()
         {
             if(stamina <= maxStamina) stamina += Time.deltaTime;
+            
+            if (SimpleInput.GetKeyDown(Key.Escape))
+                LockCursor(false);
+            else if (Cursor.lockState != CursorLockMode.Locked &&
+                     (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) ||
+                      SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
+                LockCursor(true);
+
+            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
+            playerController.enabled = cursorLocked;
+            cameraController.enabled = cursorLocked;
         }
 
         private void OnEnable()
@@ -72,14 +80,10 @@ namespace TeamOdd.Player
             stamina = Mathf.Max(0, stamina - amount);
         }
         
-        public int TakeDamage(DamageEvent @event)
+        public static void LockCursor(bool locked)
         {
-            throw new NotImplementedException();
-        }
-
-        public int TakeHeal(HealEvent @event)
-        {
-            throw new NotImplementedException();
+            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = locked == false;
         }
     }
 }

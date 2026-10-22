@@ -1,5 +1,6 @@
 using System;
 using Study.Utilities;
+using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -29,20 +30,25 @@ namespace TeamOdd.Player
         [SerializeField] private float rollDuration = 0.6f;
         
         [SerializeField] private Animator animator;
+        [SerializeField] private PsychokinesisObject heldObject;
         
         private CharacterController controller;
+        private PsychokinesisController psychokinesisController;
         private Vector3 velocity;
         private Vector3 rollDir;
         private float moveX, moveZ;
 
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
+
+        [SerializeField] private float a;
         
         public event Action OnRollRequested;
 
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
+            psychokinesisController = GetComponent<PsychokinesisController>();
             animator = GetComponent<Animator>();
         }
 
@@ -58,6 +64,9 @@ namespace TeamOdd.Player
             UpdateMovement();
             WalkAnimation();
             CheckRollInput();
+            
+            heldObject = psychokinesisController.HeldObject;
+            animator.SetLayerWeight(1, heldObject == null ? 0.0f : 1.0f);
         }
 
         private void UpdateMovement()
@@ -97,7 +106,9 @@ namespace TeamOdd.Player
 
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(moveVector);
+                Quaternion targetRotation = 
+                    SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)?
+                        Quaternion.LookRotation(Vector3.forward) : Quaternion.LookRotation(moveVector);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             }
         }
@@ -113,6 +124,21 @@ namespace TeamOdd.Player
             animator.SetBool(Run, isRun);
         }
         
+        private void OnAnimatorIK(int layerIndex)
+        {
+            if (heldObject == null) return;
+
+            UpdateIK(AvatarIKGoal.LeftHand, heldObject.TargetPoint, heldObject.IkWeight);
+        }
+
+        private void UpdateIK(AvatarIKGoal goal, Transform target, float ikWeight)
+        {
+            animator.SetIKPosition(goal, target.position);
+            animator.SetIKPositionWeight(goal, ikWeight);
+        }
+
+        #region 구르기
+
         private void CheckRollInput()
         {
             if (SimpleInput.GetKeyDown(Key.G) == false) return;
@@ -148,6 +174,8 @@ namespace TeamOdd.Player
             Vector3 rollMove = (rollDir * rollSpeed) + new Vector3(0, gravity, 0);
             controller.Move(rollMove * Time.deltaTime);
         }
+
+        #endregion
         
         private static float SmoothAxis(float current, float target)
         {

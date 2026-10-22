@@ -80,6 +80,8 @@ namespace TeamOdd.Psychokinesis
         private bool attackRequested;
         private float nextAttackTime;
         private float swingActiveUntil = float.NegativeInfinity;
+        
+        public PsychokinesisObject HeldObject => heldObject;
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
 

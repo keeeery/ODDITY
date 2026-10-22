@@ -1,3 +1,4 @@
+using System;
 using TeamOdd.Player;
 using Study.Utilities;
 using UnityEngine;
@@ -18,6 +19,8 @@ namespace TeamOdd.CameraMove
         [SerializeField] private float mouseSensitivity = 2f;
         [SerializeField] private float minPitch = -40f;
         [SerializeField] private float maxPitch = 70f;
+        [SerializeField] private float minYaw = -40f;
+        [SerializeField] private float maxYaw = 70f;
 
         [Header("충돌")]
         [Tooltip("카메라가 막힐 레이어")]
@@ -29,8 +32,9 @@ namespace TeamOdd.CameraMove
 
         private void Start()
         {
-           LockCursor();
+           Player.Player.LockCursor(true);
            target = Player.Player.Instance.transform;
+           Player.Player.Instance.cameraController = this;
            yaw = target.eulerAngles.y; // 시작할 때 캐릭터 뒤에서 출발합니다.
         }
 
@@ -50,6 +54,9 @@ namespace TeamOdd.CameraMove
             yaw += delta.x * mouseSensitivity;
             pitch -= delta.y * mouseSensitivity;
             pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+            
+            if(SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)) 
+                yaw = Mathf.Clamp(yaw, minYaw, maxYaw);
 
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }
