@@ -8,6 +8,7 @@ namespace TeamOdd.Player
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
+        private static readonly int Dead = Animator.StringToHash("Dead");
         private static readonly int Rolling = Animator.StringToHash("Rolling");
         private static readonly int Walk = Animator.StringToHash("IsWalk");
         private static readonly int Run = Animator.StringToHash("IsRun");
