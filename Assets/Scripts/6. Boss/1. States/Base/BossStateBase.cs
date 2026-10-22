@@ -6,12 +6,14 @@ namespace TeamOdd.Boss
 {
     public abstract class BossStateBase : MonoBehaviourState
     {
-        protected BossController controller;
+        protected BossMonster root;
+        
+        protected Transform Target => root.Target;
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
             base.Initialize(stateMachine);
-            controller = stateMachine.GetComponent<BossController>();
+            root = stateMachine.GetComponent<BossMonster>();
         }
     }
 }

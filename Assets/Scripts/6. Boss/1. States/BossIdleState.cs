@@ -1,25 +1,25 @@
 ﻿using UnityEngine;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
 namespace TeamOdd.Boss
 {
-    // Idle State에서 할 것?
-    // 기본적으로 플레이어를 추격함
-    
+    // 시야각? 이게 필요하네
+    // 만약에 
     public class BossIdleState : BossStateBase
     {
-        // 일단 임시용임, 나중에 바꿔야할거같음
-        [Title("Temp Settings")]
-        [SerializeField] private Transform tempTarget;
+        [Title("Patterns")]
+        [SerializeField] private BossLeftClawPattern tempPattern;
 
-        protected override void OnEnter()
+        protected override async void OnEnter()
         {
-
+            await UniTask.WaitForSeconds(0.5f);
+            StateMachine.ChangeState(tempPattern.GetType());
         }
         
         protected override void OnExit()
         {
-
+            
         }
     }
 }

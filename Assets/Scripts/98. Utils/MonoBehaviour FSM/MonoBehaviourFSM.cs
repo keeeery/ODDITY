@@ -12,12 +12,10 @@ namespace FantasyGarden.FSM
 
         private Type defaultStateType;
         
-        private MonoBehaviourState currentState;
+        [ShowInInspector, ReadOnly] private MonoBehaviourState currentState;
         private readonly Dictionary<Type, MonoBehaviourState> stateMap = new();
-        
-        #if UNITY_EDITOR_
-        [ShowInInspector, ReadOnly] private string CurrentState => currentState == null ? string.Empty : currentState.GetType().Name;
-        #endif
+
+        private MonoBehaviourState reservedState;
 
         protected virtual void Awake()
         {
@@ -39,7 +37,7 @@ namespace FantasyGarden.FSM
             ChangeState(defaultStateType);
         }
 
-        public void ChangeState(Type nextState)
+        public void ChangeState(Type nextState, bool ignoreReservedState = false)
         {
             // 만약 미구현된 혹은 정의했는데 깜빡하고 구현 못한게 있다면 로그를 날리고 기본 상태로 돌림
             if (stateMap.TryGetValue(nextState, out MonoBehaviourState state) == false)
@@ -47,11 +45,23 @@ namespace FantasyGarden.FSM
                 Debug.LogWarning($"[BossStateMachine] State {nextState} not found!");
                 state = stateMap[defaultStateType];
             }
+            
+            // 예약된 상태가 있고, 이를 무시하는 설정이 아니라면 예약된 상태로 강제
+            if (ignoreReservedState == false && reservedState != null)
+            {
+                state = reservedState;
+                reservedState = null;
+            }
 
             currentState?.SetActive(false);
             
             currentState = state;
             currentState.SetActive(true);
+        }
+
+        public void ReserveState(Type state)
+        {
+            reservedState = stateMap[state];
         }
     }
 }

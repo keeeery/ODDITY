@@ -145,6 +145,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 12.5, z: 1}
   m_Center: {x: 0, y: 0, z: 0.5}
+--- !u!4 &107622777 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4342459653410400, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
+  m_PrefabInstance: {fileID: 1169169917}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &113165350
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,6 +309,53 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &665419247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 665419248}
+  - component: {fileID: 665419249}
+  m_Layer: 0
+  m_Name: Breath Pattern
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &665419248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665419247}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1268333138}
+  m_Father: {fileID: 857577282}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &665419249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665419247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawPattern
+  attackDistance: 10
+  forwardAttackDistance: 20
 --- !u!1 &817418213
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,6 +419,7 @@ Transform:
   m_Children:
   - {fileID: 1114196297}
   - {fileID: 1903192568}
+  - {fileID: 665419248}
   m_Father: {fileID: 1169169921}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &863179904
@@ -464,7 +517,7 @@ Transform:
   m_GameObject: {fileID: 1044474251}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: -2}
+  m_LocalPosition: {x: 0, y: -0.5, z: -13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -751,7 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1657b5e6ce18487d8e128193228a1aa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossIdleState
-  tempTarget: {fileID: 1079831923}
+  tempPattern: {fileID: 665419249}
 --- !u!1001 &1169169917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -786,7 +839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000371407898506, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4000371407898506, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -865,8 +918,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 95867641270033838, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 57f49ee0942e532458eb060bc791ca1c, type: 2}
+    - target: {fileID: 95867641270033838, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -881,6 +938,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1748376073914612, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1169169922}
+    - targetCorrespondingSourceObject: {fileID: 1748376073914612, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1169169924}
     - targetCorrespondingSourceObject: {fileID: 1212523512708496, guid: eda0f154d1686e74e96b011f67d2c4d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 107622776}
@@ -912,9 +972,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a787f25a2c5040479f8efdf1b4674e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossController
-  defaultState: {fileID: 1903192569}
+  defaultState: {fileID: 1114196298}
   <Animator>k__BackingField: {fileID: 1169169919}
-  <Rigidbody>k__BackingField: {fileID: 1169169923}
+  <Body>k__BackingField: {fileID: 1169169923}
+  <Root>k__BackingField: {fileID: 107622777}
+  <Target>k__BackingField: {fileID: 1044474252}
+  <AnimEventListener>k__BackingField: {fileID: 1169169924}
 --- !u!54 &1169169923
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -939,9 +1002,52 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
+  m_Interpolate: 1
+  m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &1169169924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169169918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43d5013f84bc96846ab2b7997218a7f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.AnimStateEventListener
+--- !u!1 &1268333137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1268333138}
+  m_Layer: 0
+  m_Name: "\uBE0C\uB808\uC2A4"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1268333138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268333137}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 665419248}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1516192318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1267,9 +1373,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aaa66fa0d9247d0b3ee9acea73a2069, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseStateBase
-  tempTarget: {fileID: 1079831923}
   chaseSpeed: 5
   chaseEndDistance: 10
+  rotateSpeed: 2.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

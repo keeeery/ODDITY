@@ -1,44 +1,41 @@
 ﻿using System;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using Study.Utilities;
 
 namespace TeamOdd.Boss
 {
+    // 
     public class BossChaseState : BossStateBase
     {
-        // 일단 임시용임, 나중에 바꿔야할거같음
-        [Title("Temp Settings")]
-        [SerializeField] private Transform tempTarget;
-
         [Title("Settings")]
         [SerializeField] private float chaseSpeed = 5f; // 추격 속도
         [SerializeField] private float chaseEndDistance = 10f; // 추격을 종료할 거리
+        [SerializeField] private float rotateSpeed = 2.5f; // 몹이 방향을 부드럽게 도는 속도? 뭐라 말해야하냐 이거
 
-        private Vector3 TargetPosition => tempTarget.position;
-        
         private void Update()
         {
             // TODO: 일단 대충 구현하고 나중에 수정
-            Rigidbody body = controller.Rigidbody;
-            
-            if (Vector3.Distance(transform.position, TargetPosition) > chaseEndDistance)
+            if (root.IsTargetInRange(chaseEndDistance))
             {
-                controller.transform.LookAt(tempTarget);
-                
-                Vector3 dir = controller.transform.forward;
-                dir.y = 0;
-                body.linearVelocity = dir * chaseSpeed;
+                StateMachine.ChangeState(typeof(BossIdleState));
+                return;
             }
+
+            root.transform.SmoothLookAtFlat(Target, 2f);
+            
+            Vector3 dir = root.transform.forward;
+            root.Body.linearVelocity = dir * chaseSpeed;
         }
 
         protected override void OnEnter()
         {
-            controller.Animator.SetBool(BossAnimParams.IS_WALKING, true);
+            root.Animator.SetBool(BossAnimParams.IS_CHASING, true);
         }
         
         protected override void OnExit()
         {
-            controller.Animator.SetBool(BossAnimParams.IS_WALKING, true);
+            root.Animator.SetBool(BossAnimParams.IS_CHASING, false);
         }
     }
 }
