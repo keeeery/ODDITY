@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -24,12 +25,18 @@ namespace TeamOdd.Psychokinesis
         [Header("Throw Damage")]
         [SerializeField, Min(0f)] private float throwDamageScale = 1f;
 
+        [Title("Monster Push")]
+        [Tooltip("몬스터에 닿아 있는 동안 몬스터 진행 방향의 좌우로 가할 가속도(m/s²), 질량과 무관하게 적용한다. " +
+                 "바닥 마찰을 이겨야 움직이므로 마찰이 크면 이 값도 키워야 한다.")]
+        [SerializeField, Min(0f)] private float monsterPushAcceleration = 20f;
+
         private const float HitGizmoDuration = 0.3f;
         private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
         private readonly Collider[] swingCandidates = new Collider[64];
         private readonly RaycastHit[] swingObstructions = new RaycastHit[64];
         private LayerMask heldExcludeLayer;
         private LayerMask originalExcludeLayer;
+        private int monsterLayer;
 
         private Rigidbody body;
         private BoxCollider hitBox;
@@ -76,6 +83,7 @@ namespace TeamOdd.Psychokinesis
             meshRenderer = GetComponent<MeshRenderer>();
             subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
             heldExcludeLayer = LayerMask.GetMask("Psychokinesis");
+            monsterLayer = LayerMask.NameToLayer("Monster");
         }
 
         private void OnDisable()
@@ -89,7 +97,11 @@ namespace TeamOdd.Psychokinesis
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (canDealThrowDamage == false) return;
+            if (canDealThrowDamage == false)
+            {
+                PushAsideFromMonster(collision);
+                return;
+            }
             if (TryGetDamageTarget(collision.collider, out ICombatable target) == false) return;
 
             canDealThrowDamage = false;
@@ -99,6 +111,25 @@ namespace TeamOdd.Psychokinesis
                 + $"RoundToInt(질량 {body.mass:F2} × 충돌 상대속도 {impactSpeed:F2} × 배율 {throwDamageScale:F2}) = {damage}", this);
             SendDamage(target, collision.collider, collision.GetContact(0).point, damage);
             damageSender = null;
+        }
+
+        private void OnCollisionStay(Collision collision)
+        {
+            if (canDealThrowDamage == false) PushAsideFromMonster(collision);
+        }
+
+        // 바닥에 놓인 오브젝트가 몬스터의 길목을 막지 않도록 몬스터 진행 방향의 좌우로 밀어낸다.
+        private void PushAsideFromMonster(Collision collision)
+        {
+            if (IsHeld || collision.collider.gameObject.layer != monsterLayer) return;
+
+            // 몬스터의 오른쪽에 있으면 오른쪽, 왼쪽에 있으면 왼쪽으로 밀어냄
+            Transform monster = collision.transform;
+            Vector3 right = Vector3.ProjectOnPlane(monster.right, Vector3.up).normalized;
+            Vector3 side = Vector3.Dot(body.position - monster.position, right) >= 0f ? right : -right;
+
+            // 속도를 덮어쓰지 않고 힘을 더해, 충돌로 밀리는 움직임이 그대로 섞이게 함
+            body.AddForce(side * monsterPushAcceleration, ForceMode.Acceleration);
         }
 
         private static bool TryGetDamageTarget(Collider collider, out ICombatable target)

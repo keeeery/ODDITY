@@ -10,10 +10,19 @@ namespace TeamOdd.Boss
     {
         [Title("Patterns")]
         [SerializeField] private BossLeftClawPattern tempPattern;
+        [SerializeField] private BossPsychokinesisDropPattern roarDropPattern;
 
         protected override async void OnEnter()
         {
             await UniTask.WaitForSeconds(0.5f);
+
+            // 내부쿨 패턴은 발동 조건(쿨 포함)을 만족하면 우선 사용
+            if (roarDropPattern.CanUse)
+            {
+                StateMachine.ChangeState(roarDropPattern.GetType());
+                return;
+            }
+
             StateMachine.ChangeState(tempPattern.GetType());
         }
         
