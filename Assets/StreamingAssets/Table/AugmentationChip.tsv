@@ -1,0 +1,10 @@
+Id	Name	Description	StatType	Value	UnitSpriteKey	GridData
+1001	강화 근섬유 칩(S)	초능력의 기본 공격력이 5 증가합니다.	Atk	5	AugmentationChip/ChipUnit_Red	110/011
+1002	강화 근섬유 칩(M)	초능력의 기본 공격력이 10 증가합니다.	Atk	10	AugmentationChip/ChipUnit_Red	010/111
+1003	강화 근섬유 칩(L)	초능력의 기본 공격력이 15 증가합니다.	Atk	15	AugmentationChip/ChipUnit_Red	011/111
+1011	경화 외피 칩(S)	방어력이 3 증가합니다.	Def	3	AugmentationChip/ChipUnit_Blue	1/1
+1012	경화 외피 칩(M)	방어력이 6 증가합니다.	Def	6	AugmentationChip/ChipUnit_Blue	10/11
+1013	경화 외피 칩(L)	방어력이 9 증가합니다.	Def	9	AugmentationChip/ChipUnit_Blue	110/111
+1021	생체 증폭 칩(S)	최대 체력이 20 증가합니다.	MaxHp	20	AugmentationChip/ChipUnit_Green	11
+1022	생체 증폭 칩(M)	최대 체력이 40 증가합니다.	MaxHp	40	AugmentationChip/ChipUnit_Green	11/10
+1023	생체 증폭 칩(L)	최대 체력이 60 증가합니다.	MaxHp	60	AugmentationChip/ChipUnit_Green	11/11

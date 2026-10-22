@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/6. Boss/01. Boss Test.unity.meta
 guid: e23c0dba8d6220a409e803d11e920ef8
+========
+guid: d9f5142b1640a5349a14904e2913d78d
+>>>>>>>> main:Assets/Scenes/9. Mission/Accept Mission Scene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

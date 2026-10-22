@@ -115,7 +115,7 @@ namespace TeamOdd.Psychokinesis
                 else if (rightHeld)
                 {
                     swingActiveUntil = float.NegativeInfinity;
-                    throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - player.bounds.center;
+                    throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - GetHoldOrigin();
                     throwPrepareStartTime = Time.time;
                     targetInitialized = false;
                 }
@@ -277,17 +277,26 @@ namespace TeamOdd.Psychokinesis
             return best;
         }
 
+        // 카메라 광선 위에서 플레이어 깊이부터 pickupDistance까지를 타겟팅 구간으로 사용
+        // 카메라와 플레이어 사이(플레이어 뒤쪽)는 타겟팅 범위로 사용하지 않음
+        private void GetTargetingRange(Ray ray, out float start, out float end)
+        {
+            start = Mathf.Max(0f, Vector3.Dot(player.transform.position - ray.origin, ray.direction));
+            end = start + pickupDistance;
+        }
+
         private float GetTargetingDistance(Ray ray)
         {
-            return pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            GetTargetingRange(ray, out _, out float end);
+            return end;
         }
 
         private void GetTargetingBox(out Ray ray, out Vector3 center, out Vector3 halfExtents)
         {
             ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float length = GetTargetingDistance(ray);
-            center = ray.GetPoint(length * 0.5f);
-            halfExtents = new Vector3(castHalfWidth, castHalfWidth, length * 0.5f);
+            GetTargetingRange(ray, out float start, out float end);
+            center = ray.GetPoint((start + end) * 0.5f);
+            halfExtents = new Vector3(castHalfWidth, castHalfWidth, pickupDistance * 0.5f);
         }
 
         private int CollectTargetingCandidates(out Ray ray)
@@ -301,16 +310,19 @@ namespace TeamOdd.Psychokinesis
 
         private Vector3 GetTargetingPosition(Collider target, Ray ray)
         {
-            float length = GetTargetingDistance(ray);
-            if (target.Raycast(ray, out RaycastHit hit, length)) return hit.point;
+            GetTargetingRange(ray, out float start, out float end);
+            Ray rangeRay = new Ray(ray.GetPoint(start), ray.direction);
 
-            float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), 0f, length);
+            if (target.Raycast(rangeRay, out RaycastHit hit, pickupDistance)) return hit.point;
+
+            float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), start, end);
             return target.ClosestPoint(ray.GetPoint(depth));
         }
 
         private void NormalAttack()
         {
             if (Time.time < nextAttackTime) return;
+
             nextAttackTime = Time.time + attackInterval;
 
             Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
@@ -332,8 +344,8 @@ namespace TeamOdd.Psychokinesis
 
             if (hitCollider != null && MonsterRegistry.TryGetMonster(hitCollider, out ICombatable target))
             {
-                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Stats.Atk = {combatEntity.Stats.Atk}", this);
-                DamageInfo info = new DamageInfo(combatEntity.Stats.Atk, end, hitCollider);
+                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Atk = {combatEntity.CurrentStats.Atk}", this);
+                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, end, hitCollider);
                 DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
                 CombatManager.Instance.AddCombatEvent(damageEvent);
             }
@@ -376,7 +388,7 @@ namespace TeamOdd.Psychokinesis
                 swingActiveUntil = Time.time + swingActiveDuration;
 
             if (IsPreparingThrow)
-                return player.bounds.center + Vector3.Lerp(throwPrepareStartOffset,
+                return GetHoldOrigin() + Vector3.Lerp(throwPrepareStartOffset,
                     cameraRay.direction * throwPrepareDistance, GetThrowPrepareBlend());
 
             float lagAmount = Mathf.InverseLerp(swingRotationSpeed * 0.25f, swingRotationSpeed, rotationSpeed);
@@ -384,7 +396,13 @@ namespace TeamOdd.Psychokinesis
             float blend = 1f - Mathf.Exp(-Time.deltaTime / lag);
             holdDirection = Vector3.Slerp(holdDirection, cameraRay.direction, blend).normalized;
             holdDirection = Vector3.RotateTowards(cameraRay.direction, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
-            return player.bounds.center + holdDirection * holdDistance;
+            return GetHoldOrigin() + holdDirection * holdDistance;
+        }
+
+        private Vector3 GetHoldOrigin()
+        {
+            Bounds bounds = player.bounds;
+            return bounds.center + Vector3.up * (bounds.extents.y * 0.8f);
         }
 
         private float GetThrowPrepareBlend()
@@ -451,7 +469,7 @@ namespace TeamOdd.Psychokinesis
             Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
             Gizmos.matrix = Matrix4x4.identity;
             Gizmos.color = new Color(1f, 0.65f, 0.15f, 0.8f);
-            Vector3 orbitCenter = player.bounds.center;
+            Vector3 orbitCenter = GetHoldOrigin();
             Gizmos.DrawWireSphere(orbitCenter, holdDistance);
             Vector3 direction = heldObject != null ? holdDirection : aimCamera.transform.forward;
             Vector3 orbitPoint = orbitCenter + direction * holdDistance;

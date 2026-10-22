@@ -1,14 +1,13 @@
-﻿using Study3D.FpsGame;
+﻿using System;
+using Jay;
+using Study3D.FpsGame;
 using TeamOdd.Combat;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace TeamOdd.Player
 {
-    public class Player : MonoBehaviour, ICombatable
+    public class Player : SingletonBase<Player>, ICombatable
     {
-        private CharacterController characterController;
-        
         [SerializeField] private float hp = 100;
         [SerializeField] private float maxHp = 100;
         [SerializeField] private float stamina = 100;
@@ -16,31 +15,39 @@ namespace TeamOdd.Player
         
         public Collider Collider => characterController; 
         public GameObject GameObject => gameObject;
-        
         public float Hp => hp;
         public float Stamina => stamina;
         
-        [SerializeField] private PlayerMovement movement;
+        public CharacterController characterController;
+        private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
         private void Awake()
         {
+            DontDestroyOnLoad(this);
+            
             characterController = GetComponent<CharacterController>();
+            playerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
             
             hp = maxHp;
             stamina = maxStamina;
         }
-        
+
+        private void Update()
+        {
+            if(stamina <= maxStamina) stamina += Time.deltaTime;
+        }
+
         private void OnEnable()
         {
-            movement.OnRollRequested += HandleRollRequested;
+            playerController.OnRollRequested += HandleRollRequested;
             eventListener.OnOccursAnimStateEvent += HandleAnimStateEvent;
         }
 
         private void OnDisable()
         {
-            movement.OnRollRequested -= HandleRollRequested;
+            playerController.OnRollRequested -= HandleRollRequested;
             eventListener.OnOccursAnimStateEvent -= HandleAnimStateEvent;
         }
         
@@ -49,14 +56,14 @@ namespace TeamOdd.Player
             if (stamina < 100f) return;
 
             ConsumeStamina(100f);
-            movement.InputRolling();
+            playerController.InputRolling();
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
         { 
             if (eventName == "EndRolling")
             {
-                movement.EndRoll();
+                playerController.EndRoll();
             }
         }
 
@@ -67,17 +74,12 @@ namespace TeamOdd.Player
         
         public int TakeDamage(DamageEvent @event)
         {
-            hp = Mathf.Max(0, hp - @event.Info.Damage);
-            return @event.Info.Damage;
-
-            // 필요한 경우 여기에서 피격 이펙트, 사망 처리 등을 호출합니다.
-            // 피격 위치: @event.DamageInfo.HitPoint
+            throw new NotImplementedException();
         }
 
         public int TakeHeal(HealEvent @event)
         {
-            hp = Mathf.Min(maxHp, hp + @event.HealAmount);
-            return @event.HealAmount;
+            throw new NotImplementedException();
         }
     }
 }

@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 namespace TeamOdd.Combat
 {
     [CreateAssetMenu(fileName = "Stats", menuName = "Scriptable/Combat/Stats", order = 0)]
-    public class CombatStats : ScriptableObject
+    public class CombatStats : ScriptableObject, IReadOnlyStats
     {
         [field: Title("Settings")]
         [field: SerializeField] public int MaxHp { get; private set; }
