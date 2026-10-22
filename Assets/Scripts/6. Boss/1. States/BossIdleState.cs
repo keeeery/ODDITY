@@ -10,9 +10,17 @@ namespace TeamOdd.Boss
     {
         [Title("Patterns")]
         [SerializeField] private BossStateBase[] attackPatterns;
+        [SerializeField] private BossPsychokinesisDropPattern roarDropPattern;
 
         protected override void OnEnter()
         {
+            // 내부쿨 패턴은 발동 조건(쿨 포함)을 만족하면 우선 사용
+            if (roarDropPattern.CanUse)
+            {
+                StateMachine.ChangeState(roarDropPattern.GetType());
+                return;
+            }
+
             // TODO: 일단 간단하게 구현, 점점 복잡해지겠지...? 야발
             if (root.IsTargetInSight())
             {
