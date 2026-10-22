@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 4645649717993364274}
   - component: {fileID: 3986091134394664913}
   - component: {fileID: 9105829553262659977}
-  - component: {fileID: 8824151485857305734}
   - component: {fileID: 6158543679943579895}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: SmallObject04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,8 +63,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.28499997, y: 0.17679098, z: 0.14089212}
-  m_Center: {x: -0.006649688, y: -0.01487815, z: 0.008836549}
+  m_Size: {x: 0.12332621, y: 0.07650163, z: 0.06096735}
+  m_Center: {x: -0.0028774757, y: -0.006438125, z: 0.0038237842}
 --- !u!23 &3986091134394664913
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -142,19 +141,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &8824151485857305734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3570772610632851259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190befecb2c44389ac019b8359a514e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragment
-  poolKey: 
 --- !u!114 &6158543679943579895
 MonoBehaviour:
   m_ObjectHideFlags: 0

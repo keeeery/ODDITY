@@ -14,8 +14,7 @@ GameObject:
   - component: {fileID: 8406190384914590167}
   - component: {fileID: 5870552007399591220}
   - component: {fileID: 5644284773017662164}
-  - component: {fileID: 2844803734514623300}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: SmallObject09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,16 +162,3 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
---- !u!114 &2844803734514623300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3567417167862316816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190befecb2c44389ac019b8359a514e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragment
-  poolKey: 

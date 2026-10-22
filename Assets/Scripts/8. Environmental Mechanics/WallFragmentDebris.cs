@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace TeamOdd.Arena
 {
-    // 연출용 작은 파편이 바닥에 멈춘 뒤 일정 시간이 지나면 풀로 귀환시킴
-    [RequireComponent(typeof(WallFragment))]
     public sealed class WallFragmentDebris : MonoBehaviour
     {
         [SerializeField, Min(0f)] private float stableDuration = 1f;
@@ -13,45 +11,25 @@ namespace TeamOdd.Arena
         [SerializeField, Min(0f)] private float angularSpeedThreshold = 0.3f;
 
         private Rigidbody body;
-        private WallFragment fragment;
         private readonly HashSet<Collider> supports = new HashSet<Collider>();
         private float stableTime;
 
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
-            fragment = GetComponent<WallFragment>();
-        }
-
-        private void OnEnable()
-        {
-            ResetState();
-        }
-
-        private void OnDisable()
-        {
-            ResetState();
-        }
-
-        private void ResetState()
-        {
-            supports.Clear();
-            stableTime = 0f;
         }
 
         private void FixedUpdate()
         {
-            if (supports.Count == 0 ||
-                body.linearVelocity.sqrMagnitude > linearSpeedThreshold * linearSpeedThreshold ||
-                body.angularVelocity.sqrMagnitude > angularSpeedThreshold * angularSpeedThreshold)
+            if (supports.Count == 0 || body.linearVelocity.sqrMagnitude > linearSpeedThreshold * linearSpeedThreshold
+                || body.angularVelocity.sqrMagnitude > angularSpeedThreshold * angularSpeedThreshold)
             {
                 stableTime = 0f;
                 return;
             }
 
             stableTime += Time.fixedDeltaTime;
-
-            if (stableTime >= stableDuration + despawnDelay) fragment.ReturnToPool();
+            if (stableTime >= stableDuration + despawnDelay) Destroy(gameObject);
         }
 
         private void OnCollisionEnter(Collision collision)
