@@ -1449,24 +1449,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1112a24c03fbf74478959de9701c09a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.ChipGridView
-  gridSize: 4
-  cells:
-  - {fileID: 9179701041273962112}
-  - {fileID: 1700229918296993036}
-  - {fileID: 5202978474974123933}
-  - {fileID: 634311712559986858}
-  - {fileID: 4598523544669220130}
-  - {fileID: 9165658843910922440}
-  - {fileID: 1422802936734373575}
-  - {fileID: 7999973945327979847}
-  - {fileID: 113629345036500873}
-  - {fileID: 7053148152085697421}
-  - {fileID: 8699116805778005689}
-  - {fileID: 4443658347554491552}
-  - {fileID: 3141589076878547157}
-  - {fileID: 6205982618403496119}
-  - {fileID: 3059417751912172897}
-  - {fileID: 5374161240445991097}
   cellColor: {r: 0.2, g: 0.22, b: 0.27, a: 1}
   validColor: {r: 0.3, g: 0.75, b: 0.45, a: 1}
   invalidColor: {r: 0.85, g: 0.3, b: 0.3, a: 1}
@@ -2961,6 +2943,7 @@ GameObject:
   - component: {fileID: 2737029706851118530}
   - component: {fileID: 273791156298002243}
   - component: {fileID: 6870243690095875944}
+  - component: {fileID: 4815162342108765432}
   m_Layer: 5
   m_Name: AugmentationChipDemo
   m_TagString: Untagged
@@ -3044,10 +3027,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipPanel
   grid: {fileID: 7224722093420738102}
   tray: {fileID: 334026971224177826}
-  statText: {fileID: 1528829877047173948}
   infoText: {fileID: 3497471268812547610}
   labelFont: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  baseStats: {fileID: 0}
+--- !u!114 &4815162342108765432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7288965885736802409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c35919f2d9a4e358aca3c6c6c46a96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipLayout
+  gridSize: 5
+  trayMinChipCells: 5
+  trayMinHeight: 372
+  padding: 24
+  spacing: 20
+  headerHeight: 64
+  titleTop: 16
+  titleHeight: 32
+  infoGap: 10
+  infoHeight: 64
+  grid: {fileID: 7224722093420738102}
+  tray: {fileID: 334026971224177826}
+  title: {fileID: 8770623079386478769}
+  info: {fileID: 3908853886306890590}
 --- !u!1 &7300899242179991716
 GameObject:
   m_ObjectHideFlags: 0

@@ -37,6 +37,9 @@ namespace TeamOdd.Superpower
             root = (RectTransform)transform;
             this.stats = stats;
 
+            // 칸과 트레이 폭은 에디터에서 AugmentationChipLayout으로 미리 만들어 둔 것을 쓴다
+            grid.Init();
+
             foreach (AugmentationChipDef def in ownedChips)
                 AddChip(def);
 
