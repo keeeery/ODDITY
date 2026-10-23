@@ -15,7 +15,7 @@ namespace FantasyGarden.FSM
         [ShowInInspector, ReadOnly] private MonoBehaviourState currentState;
         private readonly Dictionary<Type, MonoBehaviourState> stateMap = new();
 
-        private MonoBehaviourState reservedState;
+        public MonoBehaviourState ReservedState { get; private set; }
 
         protected virtual void Awake()
         {
@@ -47,10 +47,10 @@ namespace FantasyGarden.FSM
             }
             
             // 예약된 상태가 있고, 이를 무시하는 설정이 아니라면 예약된 상태로 강제
-            if (ignoreReservedState == false && reservedState != null)
+            if (ignoreReservedState == false && ReservedState != null)
             {
-                state = reservedState;
-                reservedState = null;
+                state = ReservedState;
+                ReservedState = null;
             }
 
             currentState?.SetActive(false);
@@ -59,9 +59,15 @@ namespace FantasyGarden.FSM
             currentState.SetActive(true);
         }
 
-        public void ReserveState(Type state)
+        public void ReserveState(Type state) => ReservedState = stateMap[state];
+
+        public void ReserveState(MonoBehaviourState state)
         {
-            reservedState = stateMap[state];
+            if (state == null) return;
+            if (stateMap.ContainsValue(state) == false) return;
+            ReservedState = state;
         }
+
+        public void ClearReservedState() => ReservedState = null;
     }
 }

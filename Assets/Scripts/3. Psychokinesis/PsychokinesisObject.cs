@@ -1,4 +1,5 @@
 using System;
+using TeamOdd.Boss;
 using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -26,13 +27,14 @@ namespace TeamOdd.Psychokinesis
 
         private const float HitGizmoDuration = 0.3f;
         private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
-        private readonly Collider[] swingCandidates = new Collider[64];
         private readonly RaycastHit[] swingObstructions = new RaycastHit[64];
         private LayerMask heldExcludeLayer;
         private LayerMask originalExcludeLayer;
 
         private Rigidbody body;
         private BoxCollider hitBox;
+        private BoxCollider hitTrigger;
+        private Vector3 throwVelocity;
         private MeshRenderer meshRenderer;
         private int subMeshCount;
 
@@ -74,15 +76,50 @@ namespace TeamOdd.Psychokinesis
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
         public bool IsAvailable(float maxMass) => isActiveAndEnabled && Body.isKinematic == false && Body.mass <= maxMass;
+        private bool IsSwingActive => IsHeld && readyToSwing && swingActivated && swingSpeed >= swingMinSpeed;
 
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
             hitBox = GetComponent<BoxCollider>();
+            CreateHitTrigger();
             objectColliders = GetComponentsInChildren<Collider>();
             meshRenderer = GetComponent<MeshRenderer>();
             subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
             heldExcludeLayer = LayerMask.GetMask("Psychokinesis");
+        }
+
+        // 피격 판정용 Trigger, 보스 Rigidbody가 Psychokinesis 레이어를 제외하므로 별도 레이어에 두고 몬스터하고만 반응
+        private void CreateHitTrigger()
+        {
+            GameObject triggerObject = new GameObject("HitTrigger") { layer = LayerMask.NameToLayer("PsychokinesisHit") };
+            triggerObject.transform.SetParent(transform, false);
+            hitTrigger = triggerObject.AddComponent<BoxCollider>();
+            hitTrigger.isTrigger = true;
+            hitTrigger.excludeLayers = ~LayerMask.GetMask("Monster");
+        }
+
+        // 풀에서 꺼낼 때 ApplyVariant로 바뀐 형태에 맞춤
+        private void OnEnable()
+        {
+            ResizeHitTrigger(false);
+        }
+
+        // 들고 있는 동안에만 휘두르기 여유 범위를 더함
+        private void ResizeHitTrigger(bool withSwingPadding)
+        {
+            Vector3 scale = transform.lossyScale;
+            Vector3 padding = withSwingPadding
+                ? new Vector3(1f / Mathf.Abs(scale.x), 1f / Mathf.Abs(scale.y), 1f / Mathf.Abs(scale.z)) * (swingHitPadding * 2f)
+                : Vector3.zero;
+            hitTrigger.center = hitBox.center;
+            hitTrigger.size = hitBox.size + padding;
+        }
+
+        // 트리거 판정은 물리 스텝 이후에 오므로 스텝 직전 속도로 투척 피해를 계산
+        private void FixedUpdate()
+        {
+            if (canDealThrowDamage) throwVelocity = body.linearVelocity;
         }
 
         private void OnDisable()
@@ -94,18 +131,47 @@ namespace TeamOdd.Psychokinesis
             Release(Vector3.zero);
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
-            if (canDealThrowDamage == false) return;
-            if (TryGetDamageTarget(collision.collider, out ICombatable target) == false) return;
+            if (TryThrowHit(other)) return;
+            TryShatterByBoss(other);
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (IsSwingActive && TrySwingHit(other)) return;
+            TryShatterByBoss(other);
+        }
+
+        private bool TryThrowHit(Collider other)
+        {
+            if (canDealThrowDamage == false || TryGetDamageTarget(other, out ICombatable target) == false) return false;
 
             canDealThrowDamage = false;
-            float impactSpeed = collision.relativeVelocity.magnitude;
+            Vector3 targetVelocity = other.attachedRigidbody != null ? other.attachedRigidbody.linearVelocity : Vector3.zero;
+            float impactSpeed = (throwVelocity - targetVelocity).magnitude;
             int damage = Mathf.RoundToInt(body.mass * impactSpeed * throwDamageScale);
             Debug.Log($"[투척 피해 요청] {name} → {target.GameObject.name}: "
                 + $"RoundToInt(질량 {body.mass:F2} × 충돌 상대속도 {impactSpeed:F2} × 배율 {throwDamageScale:F2}) = {damage}", this);
-            SendDamage(target, collision.collider, collision.GetContact(0).point, damage);
+            SendDamage(target, other, other.ClosestPoint(body.worldCenterOfMass), damage);
             damageSender = null;
+            return true;
+        }
+
+        // 보스에 밟히거나 피해를 줄 수 없는 보스에 맞으면 피격된 것처럼 파편화함
+        // 들고만 있을 때는 통과시키고, 피해 처리를 기다리는 중이면 그쪽 결과를 따름
+        private bool TryShatterByBoss(Collider other)
+        {
+            if ((IsHeld && IsSwingActive == false) ||
+                pendingDamage != null)
+                return false;
+            if (other.attachedRigidbody == null ||
+                other.attachedRigidbody.TryGetComponent(out BossMonster _) == false)
+                return false;
+
+            SetImpact(other.ClosestPoint(body.worldCenterOfMass));
+            Shatter();
+            return true;
         }
 
         private static bool TryGetDamageTarget(Collider collider, out ICombatable target)
@@ -119,9 +185,7 @@ namespace TeamOdd.Psychokinesis
         {
             if (pendingDamage != null) return;
 
-            impactPosition = body.worldCenterOfMass;
-            Vector3 direction = impactPosition - point;
-            impactNormal = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
+            SetImpact(point);
             DamageInfo info = new DamageInfo(damage, point, collider);
             pendingDamage = new DamageEvent(damageSender, target, info);
             pendingDamageManager = CombatManager.Instance;
@@ -143,6 +207,18 @@ namespace TeamOdd.Psychokinesis
             ClearPendingDamage();
             if (receivedDamage <= 0) return;
 
+            Shatter();
+        }
+
+        private void SetImpact(Vector3 point)
+        {
+            impactPosition = body.worldCenterOfMass;
+            Vector3 direction = impactPosition - point;
+            impactNormal = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
+        }
+
+        private void Shatter()
+        {
             Release(Vector3.zero);
             // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
             gameObject.SetActive(false);
@@ -171,8 +247,6 @@ namespace TeamOdd.Psychokinesis
                 Vector3.Distance(body.worldCenterOfMass, targetPosition) <= holdArrivalDistance &&
                 arrivalSpeed <= holdArrivalSpeed)
                 readyToSwing = true;
-
-            if (readyToSwing && this.swingActivated && swingSpeed >= swingMinSpeed) CheckSwingHit();
         }
 
         private void GetSwingHitBox(out Vector3 center, out Vector3 halfExtents)
@@ -188,42 +262,24 @@ namespace TeamOdd.Psychokinesis
             swingSpeed = (velocity - playerVelocity).magnitude;
         }
 
-        private void CheckSwingHit()
+        // 휘두르는 중 트리거에 처음 닿은 유효한 대상에게 피해를 준다.
+        private bool TrySwingHit(Collider other)
         {
-            GetSwingHitBox(out Vector3 center, out Vector3 halfExtents);
-            int count = Physics.OverlapBoxNonAlloc(center, halfExtents,
-                swingCandidates, hitBox.transform.rotation, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
-            Collider nearest = null;
-            ICombatable receiver = null;
-            Vector3 nearestPoint = Vector3.zero;
-            float nearestDistance = float.PositiveInfinity;
+            if (TryGetDamageTarget(other, out ICombatable receiver) == false) return false;
 
-            for (int index = 0; index < count; index++)
-            {
-                Collider candidate = swingCandidates[index];
-                if (TryGetDamageTarget(candidate, out ICombatable target) == false) continue;
+            GetSwingHitBox(out Vector3 center, out _);
+            Vector3 point = other.ClosestPoint(center);
+            if (HasSwingLineOfSight(point, receiver.GameObject.transform) == false) return false;
 
-                Vector3 point = candidate.ClosestPoint(center);
-                float distance = Vector3.Distance(center, point);
-                if (distance >= nearestDistance || HasSwingLineOfSight(point, target.GameObject.transform) == false)
-                    continue;
-
-                nearest = candidate;
-                receiver = target;
-                nearestPoint = point;
-                nearestDistance = distance;
-            }
-
-            if (nearest == null) return;
-
-            swingHitTarget = nearest;
-            swingHitPoint = nearestPoint;
+            swingHitTarget = other;
+            swingHitPoint = point;
             lastSwingHitTime = Time.time;
             int damage = Mathf.RoundToInt(body.mass * swingSpeed * swingDamageScale);
             Debug.Log($"[휘두르기 피해 요청] {name} → {receiver.GameObject.name}: "
                 + $"RoundToInt(질량 {body.mass:F2} × 직전 물리 스텝 속도 {swingSpeed:F2} × 배율 {swingDamageScale:F2}) = {damage}", this);
-            SendDamage(receiver, nearest, nearestPoint, damage);
+            SendDamage(receiver, other, point, damage);
             Release(body.linearVelocity);
+            return true;
         }
 
         private bool HasSwingLineOfSight(Vector3 point, Transform target)
@@ -294,6 +350,7 @@ namespace TeamOdd.Psychokinesis
             body.angularVelocity = Vector3.zero;
             originalExcludeLayer = body.excludeLayers;
             body.excludeLayers = originalExcludeLayer | heldExcludeLayer;
+            ResizeHitTrigger(true);
             IsHeld = true;
         }
 
@@ -306,11 +363,13 @@ namespace TeamOdd.Psychokinesis
             damageSender = isThrowing ? sender : null;
             body.useGravity = originalGravity;
             body.excludeLayers = originalExcludeLayer;
+            ResizeHitTrigger(false);
             SetPlayerCollisionsIgnored(false);
             readyToSwing = false;
             swingActivated = false;
             body.angularDamping = originalAngularDamping;
             body.linearVelocity = velocity;
+            throwVelocity = velocity;
             body.angularVelocity = Vector3.zero;
             SetFocused(false, true);
         }
@@ -323,7 +382,7 @@ namespace TeamOdd.Psychokinesis
             Matrix4x4 originalMatrix = Gizmos.matrix;
             Color originalColor = Gizmos.color;
             GetSwingHitBox(out Vector3 center, out Vector3 halfExtents);
-            bool active = IsHeld && readyToSwing && swingActivated && swingSpeed >= swingMinSpeed;
+            bool active = IsSwingActive;
             Gizmos.matrix = Matrix4x4.TRS(center, hitBox.transform.rotation, Vector3.one);
             Gizmos.color = active ? Color.magenta : Color.gray;
             Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
