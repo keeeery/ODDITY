@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -20,14 +21,25 @@ namespace TeamOdd.Superpower
     ///   │ Info                                          │
     ///   └───────────────────────────────────────────────┘
     /// </summary>
-    public class AugmentationChipLayout : MonoBehaviour
+    public class AugmentationChipLayoutBuilder : MonoBehaviour
     {
         [Header("Grid")]
         [SerializeField, Min(1)] private int gridSize = 4;
 
         [Header("Tray")]
         [SerializeField, Min(1)] private int trayMinChipCells = 4; // 트레이 한 줄에 최소 들어가야 하는 칩 폭(칸)
+        // 트레이 자체 폭 패딩
+        // trayMinChipCells는 칸 사이 틈(CellGap)으로 폭을 재지만, 트레이에서는 칩끼리 ChipSpacing만큼 떨어져 놓인다
+        // 예) 폭 3짜리 칩 두 개를 한 줄에 놓으려면 6칸 폭에 (ChipSpacing - CellGap)만큼 더 필요하다
+        [SerializeField] private float trayPadding = 8;
         [SerializeField] private float trayMinHeight = 372f;       // 그리드가 이보다 작아도 트레이는 이 높이를 유지한다
+        [SerializeField] private float trayInnerPadding = 12f;     // 트레이 가장자리 ~ 정렬 버튼/스크롤 영역
+        [SerializeField] private float sortButtonTop = 36f;        // 트레이 위쪽 ~ 정렬 버튼 (위는 "보유 칩" 제목)
+        [SerializeField] private float sortButtonHeight = 24f;
+        [SerializeField] private float sortButtonGap = 6f;
+        [SerializeField] private float scrollTop = 68f;            // 트레이 위쪽 ~ 스크롤 영역
+        [SerializeField] private float scrollbarWidth = 12f;
+        [SerializeField] private float scrollbarGap = 4f;
 
         [Header("Spacing")]
         [SerializeField] private float padding = 24f;
@@ -51,7 +63,7 @@ namespace TeamOdd.Superpower
         {
             if (PrefabUtility.IsPartOfPrefabInstance(this))
             {
-                Debug.LogWarning("[AugmentationChipLayout] 프리팹을 열어서(Prefab Mode) Build Layout을 실행해 주세요.", this);
+                Debug.LogWarning("[AugmentationChipLayoutBuilder] 프리팹을 열어서(Prefab Mode) Build Layout을 실행해 주세요.", this);
                 return;
             }
 
@@ -61,8 +73,8 @@ namespace TeamOdd.Superpower
             grid.Build(gridSize);
 
             float gridLength = ChipGridMetrics.Length(gridSize);
-            Vector2 traySize = new Vector2(tray.GetMinWidth(trayMinChipCells), Mathf.Max(gridLength, trayMinHeight));
-            tray.Resize(traySize);
+            Vector2 traySize = new Vector2(GetTrayMinWidth() + trayPadding, Mathf.Max(gridLength, trayMinHeight));
+            LayoutTray(traySize);
 
             float width = padding + gridLength + spacing + traySize.x + padding;
             float height = headerHeight + traySize.y + infoGap + infoHeight + padding;
@@ -78,6 +90,66 @@ namespace TeamOdd.Superpower
             SetTopLeft((RectTransform)tray.transform, new Vector2(padding + gridLength + spacing, -headerHeight), traySize);
             SetTopLeft(info, new Vector2(padding, -(headerHeight + traySize.y + infoGap)), new Vector2(innerWidth, infoHeight));
         }
+
+        #region Tray
+
+        // 칩 trayMinChipCells칸 폭이 스크롤 영역 한 줄에 들어가는 최소 트레이 폭
+        //   트레이 안쪽 여백 + content 안쪽 여백(ChipTrayView가 칩을 놓을 때 쓰는 ChipSpacing) + 스크롤바
+        private float GetTrayMinWidth()
+        {
+            float contentWidth = ChipGridMetrics.Length(trayMinChipCells) + tray.ChipSpacing * 2f;
+            return trayInnerPadding + contentWidth + scrollbarGap + scrollbarWidth + trayInnerPadding;
+        }
+
+        // 트레이 크기에 맞춰 정렬 버튼 폭과 스크롤 영역을 다시 잡는다
+        private void LayoutTray(Vector2 size)
+        {
+            ((RectTransform)tray.transform).sizeDelta = size;
+
+            float innerWidth = size.x - trayInnerPadding * 2f;
+            LayoutSortButtons(innerWidth);
+            LayoutScrollView(new Vector2(innerWidth, size.y - scrollTop - trayInnerPadding));
+        }
+
+        // 버튼 개수만큼 폭을 똑같이 나눈다
+        private void LayoutSortButtons(float width)
+        {
+            int count = tray.SortButtonCount;
+            if (count == 0)
+                return;
+
+            float buttonWidth = (width - sortButtonGap * (count - 1)) / count;
+            for (int i = 0; i < count; i++)
+            {
+                RectTransform button = tray.GetSortButtonRect(i);
+                button.anchoredPosition = new Vector2(trayInnerPadding + i * (buttonWidth + sortButtonGap), -sortButtonTop);
+                button.sizeDelta = new Vector2(buttonWidth, sortButtonHeight);
+                tray.GetSortLabelRect(i).sizeDelta = button.sizeDelta;
+            }
+        }
+
+        // ScrollView > Viewport > Content 와 옆의 Scrollbar 크기를 맞춘다
+        private void LayoutScrollView(Vector2 size)
+        {
+            RectTransform content = tray.Content;
+            ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>(true);
+
+            RectTransform view = (RectTransform)scrollRect.transform;
+            view.anchoredPosition = new Vector2(trayInnerPadding, -scrollTop);
+            view.sizeDelta = size;
+
+            float viewportWidth = size.x - scrollbarWidth - scrollbarGap;
+            scrollRect.viewport.sizeDelta = new Vector2(viewportWidth, size.y);
+
+            RectTransform bar = (RectTransform)scrollRect.verticalScrollbar.transform;
+            bar.anchoredPosition = new Vector2(size.x - scrollbarWidth, 0f);
+            bar.sizeDelta = new Vector2(scrollbarWidth, size.y);
+
+            // ChipTrayView가 칩을 줄바꿈할 때 이 폭을 기준으로 삼는다
+            content.sizeDelta = new Vector2(viewportWidth, content.sizeDelta.y);
+        }
+
+        #endregion
 
         // 부모 좌상단 기준으로 배치 (anchor/pivot 모두 좌상단)
         private static void SetTopLeft(RectTransform rect, Vector2 position, Vector2 size)

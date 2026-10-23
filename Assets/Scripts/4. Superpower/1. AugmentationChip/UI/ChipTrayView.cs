@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TeamOdd.Superpower
@@ -9,7 +10,7 @@ namespace TeamOdd.Superpower
 
     /// <summary>
     /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
-    /// 트레이 크기는 AugmentationChipLayout이 정하고, 정렬 버튼과 스크롤 영역은 그 폭에 맞춰 늘어난다.
+    /// 트레이 크기와 정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
     /// </summary>
     public class ChipTrayView : MonoBehaviour
     {
@@ -24,75 +25,20 @@ namespace TeamOdd.Superpower
 
         [SerializeField] private RectTransform content;
         [SerializeField] private SortButton[] sortButtons;
-        [SerializeField] private float padding = 12f;
-
-        [Header("Layout")]
-        [SerializeField] private float sortButtonTop = 36f;  // 트레이 위쪽 ~ 정렬 버튼 (위는 "보유 칩" 제목)
-        [SerializeField] private float sortButtonHeight = 24f;
-        [SerializeField] private float sortButtonGap = 6f;
-        [SerializeField] private float scrollTop = 68f;      // 트레이 위쪽 ~ 스크롤 영역
-        [SerializeField] private float scrollbarWidth = 12f;
-        [SerializeField] private float scrollbarGap = 4f;
+        // content 안쪽 여백이자 칩 사이 간격
+        [SerializeField, FormerlySerializedAs("padding")] private float chipSpacing = 12f;
 
         private readonly List<ChipItemView> chips = new();
         private ChipSortKey sortKey = ChipSortKey.ID;
         private bool sortAscending = true;
 
-        public Transform Content => content;
+        public RectTransform Content => content;
 
-        // 칩 chipCells칸 폭이 스크롤 영역 한 줄에 들어가는 최소 트레이 폭
-        //   트레이 안쪽 여백 + content 안쪽 여백(Layout에서 쓰는 padding) + 스크롤바
-        public float GetMinWidth(int chipCells)
-        {
-            float contentWidth = ChipGridMetrics.Length(chipCells) + padding * 2f;
-            return padding + contentWidth + scrollbarGap + scrollbarWidth + padding;
-        }
-
-        // 트레이 크기에 맞춰 정렬 버튼 폭과 스크롤 영역을 다시 잡는다
-        public void Resize(Vector2 size)
-        {
-            ((RectTransform)transform).sizeDelta = size;
-
-            float innerWidth = size.x - padding * 2f;
-            LayoutSortButtons(innerWidth);
-            LayoutScrollView(new Vector2(innerWidth, size.y - scrollTop - padding));
-        }
-
-        // 버튼 개수만큼 폭을 똑같이 나눈다
-        private void LayoutSortButtons(float width)
-        {
-            int count = sortButtons.Length;
-            if (count == 0)
-                return;
-
-            float buttonWidth = (width - sortButtonGap * (count - 1)) / count;
-            for (int i = 0; i < count; i++)
-            {
-                RectTransform rect = (RectTransform)sortButtons[i].button.transform;
-                rect.anchoredPosition = new Vector2(padding + i * (buttonWidth + sortButtonGap), -sortButtonTop);
-                rect.sizeDelta = new Vector2(buttonWidth, sortButtonHeight);
-                sortButtons[i].text.rectTransform.sizeDelta = rect.sizeDelta;
-            }
-        }
-
-        // ScrollView > Viewport > Content 와 옆의 Scrollbar 크기를 맞춘다
-        private void LayoutScrollView(Vector2 size)
-        {
-            ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>(true);
-
-            RectTransform view = (RectTransform)scrollRect.transform;
-            view.anchoredPosition = new Vector2(padding, -scrollTop);
-            view.sizeDelta = size;
-
-            float viewportWidth = size.x - scrollbarWidth - scrollbarGap;
-            scrollRect.viewport.sizeDelta = new Vector2(viewportWidth, size.y);
-
-            RectTransform bar = (RectTransform)scrollRect.verticalScrollbar.transform;
-            bar.anchoredPosition = new Vector2(size.x - scrollbarWidth, 0f);
-            bar.sizeDelta = new Vector2(scrollbarWidth, size.y);
-
-            content.sizeDelta = new Vector2(viewportWidth, content.sizeDelta.y);
-        }
+        // 아래는 AugmentationChipLayoutBuilder가 트레이 크기와 정렬 버튼을 배치할 때 읽는다
+        public float ChipSpacing => chipSpacing;
+        public int SortButtonCount => sortButtons.Length;
+        public RectTransform GetSortButtonRect(int index) => (RectTransform)sortButtons[index].button.transform;
+        public RectTransform GetSortLabelRect(int index) => sortButtons[index].text.rectTransform;
 
         private void Awake()
         {
@@ -119,27 +65,27 @@ namespace TeamOdd.Superpower
             chips.Sort(Compare);
 
             float contentWidth = content.sizeDelta.x;
-            Vector2 cursor = new Vector2(padding, -padding);
+            Vector2 cursor = new Vector2(chipSpacing, -chipSpacing);
             float rowHeight = 0f;
             foreach (ChipItemView chip in chips)
             {
                 float chipWidth = ChipGridMetrics.Length(chip.Chip.Width);
                 float chipHeight = ChipGridMetrics.Length(chip.Chip.Height);
 
-                if (cursor.x > padding && cursor.x + chipWidth > contentWidth - padding)
+                if (cursor.x > chipSpacing && cursor.x + chipWidth > contentWidth - chipSpacing)
                 {
-                    cursor = new Vector2(padding, cursor.y - rowHeight - padding);
+                    cursor = new Vector2(chipSpacing, cursor.y - rowHeight - chipSpacing);
                     rowHeight = 0f;
                 }
 
                 chip.Rect.SetParent(content, false);
                 chip.Rect.anchoredPosition = cursor;
-                cursor.x += chipWidth + padding;
+                cursor.x += chipWidth + chipSpacing;
                 rowHeight = Mathf.Max(rowHeight, chipHeight);
             }
 
             // 마지막 줄까지 포함한 높이로 content 크기를 맞춰야 스크롤 범위가 정해진다
-            float contentHeight = -cursor.y + rowHeight + padding;
+            float contentHeight = -cursor.y + rowHeight + chipSpacing;
             content.sizeDelta = new Vector2(contentWidth, contentHeight);
         }
 
