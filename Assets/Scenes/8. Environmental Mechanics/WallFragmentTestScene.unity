@@ -1714,7 +1714,7 @@ PrefabInstance:
       objectReference: {fileID: 827924717}
     - target: {fileID: 592612764365491377, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: attackPatterns.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 592612764365491377, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: 'attackPatterns.Array.data[0]'
@@ -1764,6 +1764,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1645604712900597172, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1747056200578454141, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -1807,6 +1811,18 @@ PrefabInstance:
     - target: {fileID: 2709261037458011130, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: trigger
+      value: -433983702
+      objectReference: {fileID: 0}
+    - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: attackRange
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: forwardAttackRange
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2990994583457717620, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Layer
@@ -1890,7 +1906,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5363785815632091185, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Mass
-      value: 30
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5363785815632091185, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 5426821876405360342, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: interruptPatterns.Array.size

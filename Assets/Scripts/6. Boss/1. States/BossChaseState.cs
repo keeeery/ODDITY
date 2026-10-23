@@ -37,12 +37,13 @@ namespace TeamOdd.Boss
                 return;
             }
 
-            // 추격 중에도 쿨 패턴을 쓸 수 있게 되면 Idle로 복귀, 예약된 근접 패턴에 가로채이지 않도록 예약은 무시
+            // 추격 중에도 쿨 패턴을 쓸 수 있게 되면 Idle로 복귀, Idle이 고른 패턴이 예약된 근접 패턴에 가로채이지 않도록 예약을 비움
             foreach (BossCooldownPatternBase pattern in interruptPatterns)
             {
                 if (pattern.CanUse == false) continue;
 
-                StateMachine.ChangeState(typeof(BossIdleState), true);
+                StateMachine.ClearReservedState();
+                StateMachine.ChangeState(typeof(BossIdleState));
                 return;
             }
 
