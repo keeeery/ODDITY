@@ -6,16 +6,16 @@ using UnityEngine.UI;
 namespace TeamOdd.Superpower
 {
     /// <summary>
-    /// 트레이/그리드 위에 놓이는 칩 하나의 UI 상태와 포인터 입력.
+    /// 트레이/그리드 위에 놓이는 칩 하나의 UI와 포인터 입력.
     /// 입력은 이벤트로만 넘기고, 어디에 놓을지는 AugmentationChipPanel이 결정한다.
+    /// 장착 여부와 위치는 들고 있지 않는다. 그건 AugmentationChipEquipment가 Owned 기준으로 들고 있다.
     /// </summary>
     // 휠(IScrollHandler)은 구현하지 않아야 부모 ScrollRect로 그대로 전달된다
     public class ChipItemView : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
+        public OwnedChip Owned { get; private set; }
         public AugmentationChip Chip { get; private set; }
         public RectTransform Rect { get; private set; }
-        public Vector2Int? GridOrigin { get; set; }
-        public Vector2 DragOffset { get; set; }
 
         private RectTransform label;
 
@@ -25,9 +25,10 @@ namespace TeamOdd.Superpower
         public event Action<ChipItemView, PointerEventData> Dragged;
         public event Action<ChipItemView, PointerEventData> DragEnded;
 
-        // 테이블 데이터로 칩 UI를 만든다. 칩 목록은 런타임에 테이블에서 읽으므로 생성도 런타임에 한다
-        public static ChipItemView Create(AugmentationChipDef def, Transform parent, Font font)
+        // 보유 칩으로 칩 UI를 만든다. 칩 목록은 런타임에 정해지므로 생성도 런타임에 한다
+        public static ChipItemView Create(OwnedChip owned, Transform parent, Font font)
         {
+            AugmentationChipDef def = owned.Def;
             GameObject go = new GameObject($"Chip_{def.ID}", typeof(RectTransform));
             go.layer = parent.gameObject.layer;
             RectTransform rect = (RectTransform)go.transform;
@@ -55,6 +56,7 @@ namespace TeamOdd.Superpower
             text.raycastTarget = false;
 
             ChipItemView view = go.AddComponent<ChipItemView>();
+            view.Owned = owned;
             view.Chip = chip;
             view.Rect = rect;
             view.label = labelRect;
@@ -65,6 +67,12 @@ namespace TeamOdd.Superpower
         public void RotateClockwise()
         {
             Chip.RotateClockwise();
+            RefreshLabel();
+        }
+
+        public void SetRotation(int rotation)
+        {
+            Chip.SetRotation(rotation);
             RefreshLabel();
         }
 

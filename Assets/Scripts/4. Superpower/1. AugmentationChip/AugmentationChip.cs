@@ -25,6 +25,7 @@ namespace TeamOdd.Superpower
         public Vector2Int[] Cells { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public int Rotation { get; private set; } // 시계 방향 90도 회전 횟수 (0~3). 장착할 때 이 값이 장착 상태로 넘어간다
 
         public void Init(AugmentationChipDef def)
         {
@@ -62,15 +63,22 @@ namespace TeamOdd.Superpower
                 units[i].anchoredPosition = new Vector2(Cells[i].x * step, -Cells[i].y * step);
         }
 
-        // 시계 방향 90도 회전. (x, y) -> (Height-1-y, x)
+        // 시계 방향 90도 회전. 계산은 장착 규칙과 같은 ChipShape를 쓴다
         // Cells의 순서는 그대로 두므로 i번째 단위 칩은 회전 후에도 같은 칸을 따라간다
         public void RotateClockwise()
         {
-            Vector2Int[] rotated = new Vector2Int[Cells.Length];
-            for (int i = 0; i < Cells.Length; i++)
-                rotated[i] = new Vector2Int(Height - 1 - Cells[i].y, Cells[i].x);
+            Cells = ChipShape.RotateClockwise(Cells);
+            Rotation = ChipShape.Normalize(Rotation + 1);
+            RefreshSize();
+            RefreshUnits();
+            BuildOutline();
+        }
 
-            Cells = rotated;
+        // 장착 상태에 저장된 방향으로 맞출 때 쓴다
+        public void SetRotation(int rotation)
+        {
+            Cells = ChipShape.Rotate(refDef.Cells, rotation);
+            Rotation = ChipShape.Normalize(rotation);
             RefreshSize();
             RefreshUnits();
             BuildOutline();
@@ -79,13 +87,9 @@ namespace TeamOdd.Superpower
         // 칩이 차지하는 가로/세로 칸 수를 실제 Cells 범위로 계산한다
         private void RefreshSize()
         {
-            Width = 0;
-            Height = 0;
-            foreach (Vector2Int cell in Cells)
-            {
-                Width = Mathf.Max(Width, cell.x + 1);
-                Height = Mathf.Max(Height, cell.y + 1);
-            }
+            Vector2Int size = ChipShape.GetSize(Cells);
+            Width = size.x;
+            Height = size.y;
         }
 
         #region Outline

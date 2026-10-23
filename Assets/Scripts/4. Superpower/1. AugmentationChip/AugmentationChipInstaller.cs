@@ -32,7 +32,8 @@ namespace TeamOdd.Superpower
         // 다른 컴포넌트의 Awake(토글이 패널을 끄는 것, CombatEntity가 CurrentStats를 만드는 것 등)가 끝난 뒤에 주입한다
         private void Start()
         {
-            Equipment = new AugmentationChipEquipment(player.CurrentStats);
+            // 보드 크기는 일단 프리팹 그리드 칸 수에 맞춘다
+            Equipment = new AugmentationChipEquipment(panel.GridSize, player.CurrentStats);
             panel.Init(inventory.Chips, Equipment);
             panelInitialized = true;
         }
@@ -41,10 +42,10 @@ namespace TeamOdd.Superpower
         // 패널 Init 전에 들어온 칩은 Init이 인벤토리를 읽을 때 같이 들어가므로, Init 이후에 들어온 칩만 패널에 직접 넣는다
         public void AddChip(AugmentationChipDef def)
         {
-            inventory.Add(def);
+            OwnedChip owned = inventory.Add(def);
 
             if (panelInitialized)
-                panel.Add(def);
+                panel.Add(owned);
         }
     }
 }
