@@ -98,6 +98,21 @@ namespace TeamOdd.Superpower
             return true;
         }
 
+        // 위쪽 줄부터, 같은 줄에서는 왼쪽부터 훑어서 칩을 놓을 수 있는 첫 자리를 찾는다
+        public bool TryFindOrigin(ChipItemView chip, out Vector2Int origin)
+        {
+            for (int y = 0; y <= gridSize - chip.Chip.Height; y++)
+                for (int x = 0; x <= gridSize - chip.Chip.Width; x++)
+                {
+                    origin = new Vector2Int(x, y);
+                    if (CanPlace(chip, origin))
+                        return true;
+                }
+
+            origin = default;
+            return false;
+        }
+
         public void Place(ChipItemView chip, Vector2Int origin)
         {
             chip.GridOrigin = origin;

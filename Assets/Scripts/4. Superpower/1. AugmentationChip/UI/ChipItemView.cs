@@ -10,7 +10,7 @@ namespace TeamOdd.Superpower
     /// 입력은 이벤트로만 넘기고, 어디에 놓을지는 AugmentationChipPanel이 결정한다.
     /// </summary>
     // 휠(IScrollHandler)은 구현하지 않아야 부모 ScrollRect로 그대로 전달된다
-    public class ChipItemView : MonoBehaviour, IPointerEnterHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class ChipItemView : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public AugmentationChip Chip { get; private set; }
         public RectTransform Rect { get; private set; }
@@ -20,6 +20,7 @@ namespace TeamOdd.Superpower
         private RectTransform label;
 
         public event Action<ChipItemView> PointerEntered;
+        public event Action<ChipItemView> RightClicked;
         public event Action<ChipItemView, PointerEventData> DragBegan;
         public event Action<ChipItemView, PointerEventData> Dragged;
         public event Action<ChipItemView, PointerEventData> DragEnded;
@@ -75,8 +76,30 @@ namespace TeamOdd.Superpower
         }
 
         public void OnPointerEnter(PointerEventData eventData) => PointerEntered?.Invoke(this);
-        public void OnBeginDrag(PointerEventData eventData) => DragBegan?.Invoke(this, eventData);
-        public void OnDrag(PointerEventData eventData) => Dragged?.Invoke(this, eventData);
-        public void OnEndDrag(PointerEventData eventData) => DragEnded?.Invoke(this, eventData);
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+                RightClicked?.Invoke(this);
+        }
+
+        // 드래그는 왼쪽 버튼만 받는다. 오른쪽 버튼은 빠른 장착/해제(클릭)에 쓴다
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Left)
+                DragBegan?.Invoke(this, eventData);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Left)
+                Dragged?.Invoke(this, eventData);
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Left)
+                DragEnded?.Invoke(this, eventData);
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace TeamOdd.Superpower
     /// Init으로 받은 보유 칩을 트레이에 넣고, 드래그로 트레이 ↔ 그리드를 오가게 한다. 그리드에 올라간 칩이 장착된 칩이다.
     /// 칩 목록과 플레이어의 RuntimeStats는 바깥(AugmentationChipInstaller 등)에서 넣어준다. 패널은 테이블을 모른다.
     /// 장착하면 칩의 StatType/Value만큼 보너스를 더하고, 해제하면 뺀다.
+    /// 마우스 오른쪽 클릭은 빠른 장착/해제다. 트레이 칩은 그리드의 빈 자리에 바로 넣고, 그리드 칩은 트레이로 돌려보낸다.
     /// </summary>
     public class AugmentationChipPanel : MonoBehaviour
     {
@@ -57,6 +58,7 @@ namespace TeamOdd.Superpower
         {
             ChipItemView chip = ChipItemView.Create(def, tray.Content, labelFont);
             chip.PointerEntered += ShowInfo;
+            chip.RightClicked += OnRightClick;
             chip.DragBegan += OnBeginDrag;
             chip.Dragged += OnDrag;
             chip.DragEnded += OnEndDrag;
@@ -64,6 +66,58 @@ namespace TeamOdd.Superpower
             chips.Add(chip);
             tray.Add(chip);
         }
+
+        #region Quick Equip
+
+        private void OnRightClick(ChipItemView chip)
+        {
+            // 드래그 중에는 들고 있는 칩과 꼬이지 않도록 무시한다
+            if (dragging != null)
+                return;
+
+            if (chip.GridOrigin.HasValue)
+            {
+                Unequip(chip);
+            }
+            else if (TryQuickEquip(chip) == false)
+            {
+                ShowInfo(chip);
+                infoText.text += "\n장착할 자리가 없습니다.";
+                return;
+            }
+
+            tray.Layout();
+            ShowInfo(chip);
+        }
+
+        private void Unequip(ChipItemView chip)
+        {
+            grid.Remove(chip);
+            stats.Remove(chip.Chip.StatType, chip.Chip.Value);
+            tray.Add(chip);
+        }
+
+        // 지금 방향부터 시계 방향으로 돌려 가며 들어갈 자리를 찾는다
+        // 네 방향 모두 안 되면 네 번 돌아 원래 방향으로 돌아온 채 트레이에 남는다
+        private bool TryQuickEquip(ChipItemView chip)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (grid.TryFindOrigin(chip, out Vector2Int origin))
+                {
+                    tray.Remove(chip);
+                    grid.Place(chip, origin);
+                    stats.Add(chip.Chip.StatType, chip.Chip.Value);
+                    return true;
+                }
+
+                chip.RotateClockwise();
+            }
+
+            return false;
+        }
+
+        #endregion
 
         #region Drag
 
