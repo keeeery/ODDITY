@@ -70,7 +70,7 @@ namespace TeamOdd.Superpower
             // 패널 아래 RectTransform 변경을 한 번에 기록해 Ctrl+Z로 되돌릴 수 있게 한다
             Undo.RegisterFullObjectHierarchyUndo(gameObject, "Build Augmentation Chip Layout");
 
-            grid.Build(gridSize);
+            BuildGrid();
 
             float gridLength = ChipGridMetrics.Length(gridSize);
             Vector2 traySize = new Vector2(GetTrayMinWidth() + trayPadding, Mathf.Max(gridLength, trayMinHeight));
@@ -90,6 +90,50 @@ namespace TeamOdd.Superpower
             SetTopLeft((RectTransform)tray.transform, new Vector2(padding + gridLength + spacing, -headerHeight), traySize);
             SetTopLeft(info, new Vector2(padding, -(headerHeight + traySize.y + infoGap)), new Vector2(innerWidth, infoHeight));
         }
+
+        #region Grid
+
+        // 그리드 칸을 gridSize x gridSize로 새로 깐다. 기존 자식(이전에 만든 칸 등)은 지운다
+        // 칸 배열은 행 우선 (y * gridSize + x) 순서로 채운다. ChipGridView.GetCell이 이 순서를 전제로 읽는다
+        private void BuildGrid()
+        {
+            Transform gridTransform = grid.transform;
+            for (int i = gridTransform.childCount - 1; i >= 0; i--)
+                Undo.DestroyObjectImmediate(gridTransform.GetChild(i).gameObject);
+
+            Image[] cells = new Image[gridSize * gridSize];
+            for (int y = 0; y < gridSize; y++)
+                for (int x = 0; x < gridSize; x++)
+                    cells[y * gridSize + x] = CreateCell(gridTransform, new Vector2Int(x, y));
+
+            // ChipGridView의 private 직렬화 필드라 SerializedObject로 쓴다 (Undo 기록과 저장 표시도 같이 된다)
+            SerializedObject so = new SerializedObject(grid);
+            so.FindProperty("gridSize").intValue = gridSize;
+            SerializedProperty cellsProperty = so.FindProperty("cells");
+            cellsProperty.arraySize = cells.Length;
+            for (int i = 0; i < cells.Length; i++)
+                cellsProperty.GetArrayElementAtIndex(i).objectReferenceValue = cells[i];
+            so.ApplyModifiedProperties();
+        }
+
+        private Image CreateCell(Transform parent, Vector2Int cell)
+        {
+            GameObject go = new GameObject($"Cell_{cell.x}_{cell.y}", typeof(RectTransform));
+            Undo.RegisterCreatedObjectUndo(go, "Build Augmentation Chip Layout");
+            go.layer = parent.gameObject.layer;
+            RectTransform cellRect = (RectTransform)go.transform;
+            cellRect.SetParent(parent, false);
+            cellRect.anchorMin = cellRect.anchorMax = cellRect.pivot = new Vector2(0f, 1f); // 좌상단 기준
+            cellRect.anchoredPosition = ChipGridMetrics.CellPosition(cell);
+            cellRect.sizeDelta = new Vector2(ChipGridMetrics.CellSize, ChipGridMetrics.CellSize);
+
+            Image image = go.AddComponent<Image>();
+            image.color = grid.CellColor;
+            image.raycastTarget = false;
+            return image;
+        }
+
+        #endregion
 
         #region Tray
 

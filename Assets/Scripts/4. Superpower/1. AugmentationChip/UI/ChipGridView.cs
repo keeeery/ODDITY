@@ -1,14 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace TeamOdd.Superpower
 {
     /// <summary>
     /// 장착 그리드. 칸 점유 상태, 배치 가능 여부, 드래그 미리보기를 담당한다.
-    /// 칸은 에디터에서 AugmentationChipLayout의 "Build Layout"으로 만들어 프리팹에 저장해 두고, 런타임에는 Init으로 읽기만 한다.
+    /// 칸은 에디터에서 AugmentationChipLayoutBuilder의 "Build Layout"으로 만들어 프리팹에 저장해 두고, 런타임에는 Init으로 읽기만 한다.
     /// </summary>
     public class ChipGridView : MonoBehaviour
     {
@@ -16,7 +13,7 @@ namespace TeamOdd.Superpower
         [SerializeField] private Color validColor = new(0.30f, 0.75f, 0.45f, 1f);
         [SerializeField] private Color invalidColor = new(0.85f, 0.30f, 0.30f, 1f);
 
-        // Build Layout이 채운다. 직접 고치지 않는다
+        // AugmentationChipLayoutBuilder가 SerializedObject로 채운다(필드 이름으로 찾으므로 이름을 바꾸면 빌더도 같이 고친다). 직접 고치지 않는다
         [SerializeField, HideInInspector] private int gridSize;
         [SerializeField, HideInInspector] private Image[] cells; // 행 우선 (y * gridSize + x)
 
@@ -24,6 +21,7 @@ namespace TeamOdd.Superpower
         private RectTransform rect;
 
         public int GridSize => gridSize;
+        public Color CellColor => cellColor; // 빌더가 칸을 만들 때 기본 색으로 쓴다
 
         // 칩을 올리기 전에 한 번 호출한다
         // 패널이 꺼져 있어도 호출할 수 있도록 Awake에 기대지 않는다
@@ -33,47 +31,8 @@ namespace TeamOdd.Superpower
             occupied = new ChipItemView[gridSize, gridSize];
 
             if (cells == null || cells.Length != gridSize * gridSize)
-                Debug.LogError("[ChipGridView] 그리드 칸이 없습니다. 프리팹에서 AugmentationChipLayout → Build Layout을 실행해 주세요.", this);
+                Debug.LogError("[ChipGridView] 그리드 칸이 없습니다. 프리팹에서 AugmentationChipLayoutBuilder → Build Layout을 실행해 주세요.", this);
         }
-
-#if UNITY_EDITOR
-        // 칸을 size x size로 새로 깐다. 기존 자식(이전에 만든 칸 등)은 지운다
-        // 호출하는 쪽(AugmentationChipLayout)이 Undo 기록을 시작해 둔다
-        public void Build(int size)
-        {
-            rect = (RectTransform)transform;
-            gridSize = size;
-
-            for (int i = rect.childCount - 1; i >= 0; i--)
-                Undo.DestroyObjectImmediate(rect.GetChild(i).gameObject);
-
-            cells = new Image[size * size];
-            for (int y = 0; y < size; y++)
-                for (int x = 0; x < size; x++)
-                    cells[y * size + x] = CreateCell(new Vector2Int(x, y));
-
-            float length = ChipGridMetrics.Length(size);
-            rect.sizeDelta = new Vector2(length, length);
-            EditorUtility.SetDirty(this);
-        }
-
-        private Image CreateCell(Vector2Int cell)
-        {
-            GameObject go = new GameObject($"Cell_{cell.x}_{cell.y}", typeof(RectTransform));
-            Undo.RegisterCreatedObjectUndo(go, "Build Augmentation Chip Layout");
-            go.layer = gameObject.layer;
-            RectTransform cellRect = (RectTransform)go.transform;
-            cellRect.SetParent(rect, false);
-            cellRect.anchorMin = cellRect.anchorMax = cellRect.pivot = new Vector2(0f, 1f); // 좌상단 기준
-            cellRect.anchoredPosition = ChipGridMetrics.CellPosition(cell);
-            cellRect.sizeDelta = new Vector2(ChipGridMetrics.CellSize, ChipGridMetrics.CellSize);
-
-            Image image = go.AddComponent<Image>();
-            image.color = cellColor;
-            image.raycastTarget = false;
-            return image;
-        }
-#endif
 
         public Vector2Int GetHoveredOrigin(ChipItemView chip)
         {
