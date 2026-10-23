@@ -471,30 +471,6 @@ Transform:
   - {fileID: 669482516}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &277684357 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1263119241}
-  m_PrefabAsset: {fileID: 0}
---- !u!143 &277684360 stripped
-CharacterController:
-  m_CorrespondingSourceObject: {fileID: 677289072813033125, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1263119241}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &277684365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 277684357}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
-  <Collider>k__BackingField: {fileID: 1013557267}
-  <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
 --- !u!1 &313939639
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,8 +789,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 1438912217}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &473145749
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1830,8 +1806,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 838645211}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &909953738
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1994,8 +1970,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 345637855}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &968351263
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2332,8 +2308,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 491908614}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1015399318
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2575,8 +2551,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 1515147587}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1212451014
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2739,8 +2715,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 1237493782}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1216130961
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2933,7 +2909,7 @@ MonoBehaviour:
   minPitch: -40
   maxPitch: 70
   minYaw: -40
-  maxYaw: 50
+  maxYaw: 70
   collisionMask:
     serializedVersion: 2
     m_Bits: 255
@@ -3053,22 +3029,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 277684360}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: aimCamera
       value: 
       objectReference: {fileID: 1245396452}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: combatEntity
-      value: 
-      objectReference: {fileID: 277684365}
     - target: {fileID: 2205336347187439273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.40927
@@ -3109,6 +3073,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: <Collider>k__BackingField
+      value: 
+      objectReference: {fileID: 1013557267}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: heldObject
       value: 
@@ -3116,10 +3084,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 277684365}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
 --- !u!1 &1268286659
 GameObject:
@@ -3565,8 +3530,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 1962811836}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1387716297
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4291,8 +4256,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 433216810}
-  ikWeight: 0.5
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1975311427
 Rigidbody:
   m_ObjectHideFlags: 0
