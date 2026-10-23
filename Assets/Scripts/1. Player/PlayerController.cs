@@ -37,6 +37,7 @@ namespace TeamOdd.Player
         private Vector3 rollDir;
         private float moveX, moveZ;
 
+        [SerializeField] private Transform hint;
         public PsychokinesisObject heldObject;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
@@ -125,9 +126,40 @@ namespace TeamOdd.Player
         
         private void OnAnimatorIK(int layerIndex)
         {
-            if (heldObject != null)
+            bool rightClick = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool grab = psychokinesisController.GrabRequested;
+            bool release = psychokinesisController.ReleaseRequested;
+            
+            if (heldObject)
             {
-                UpdateIK(AvatarIKGoal.LeftHand, heldObject.transform, heldObject.IkWeight);
+                float handReach = 0.3f;
+                
+                Vector3 shoulder = animator.GetBoneTransform(HumanBodyBones.LeftShoulder).position;
+                Vector3 hand = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+                shoulder.x = hand.x;
+                
+                Vector3 dir = (heldObject.transform.position - shoulder).normalized;
+                Vector3 handTarget = shoulder + dir * handReach;
+
+                if (SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left))
+                {
+                    animator.SetIKHintPosition(AvatarIKHint.LeftElbow, hint.position);
+                    animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, 1.0f);
+                    
+                    animator.SetIKPosition(AvatarIKGoal.LeftHand, handTarget);
+                    animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, heldObject.IkWeight);
+                    return;
+                }
+                
+                animator.SetIKPosition(AvatarIKGoal.LeftHand, heldObject.transform.position);
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, heldObject.IkWeight);
+            }
+
+            if (SimpleInput.GetMouseButtonUp(SimpleInput.MouseButton.Left))
+            {
+                Debug.Log("aaa");
+                animator.SetIKPosition(AvatarIKGoal.LeftHand, Camera.main.transform.forward);
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1.0f);
             }
         }
 
