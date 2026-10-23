@@ -30,19 +30,17 @@ namespace TeamOdd.Player
         [SerializeField] private float rollDuration = 0.6f;
         
         [SerializeField] private Animator animator;
-        
-        public PsychokinesisObject heldObject;
-        
+
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
         private Vector3 velocity;
         private Vector3 rollDir;
         private float moveX, moveZ;
 
+        public PsychokinesisObject heldObject;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
-
-        [SerializeField] private float a;
+        public bool IsSprinting { get; private set; }
         
         public event Action OnRollRequested;
 
@@ -75,6 +73,7 @@ namespace TeamOdd.Player
             float speed = SimpleInput.GetKey(Key.LeftShift) ? runSpeed : walkSpeed;
 
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
+            IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed);
             
             moveX = SmoothAxis(moveX, inputRaw.x);
             moveZ = SmoothAxis(moveZ, inputRaw.y);
@@ -128,13 +127,8 @@ namespace TeamOdd.Player
         {
             if (heldObject != null)
             {
-                UpdateIK(AvatarIKGoal.LeftHand, heldObject.TargetPoint, heldObject.IkWeight);
+                UpdateIK(AvatarIKGoal.LeftHand, heldObject.transform, heldObject.IkWeight);
             }
-
-            /*Transform aim;
-            aim.position = psychokinesisController.Viewport;
-            
-            UpdateIK(AvatarIKGoal.RightHand, , heldObject.IkWeight);*/
         }
 
         private void UpdateIK(AvatarIKGoal goal, Transform target, float ikWeight)

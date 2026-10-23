@@ -18,6 +18,7 @@ namespace TeamOdd.CameraMove
         [SerializeField] private Vector3 holdPivotOffset = new(0f, 1.6f, 0f);
         [SerializeField] private float distance = 4f;
         [SerializeField] private float holdDistance = 4f;
+        [SerializeField] private float sprintDistance = 4f;
         [SerializeField] private float transitionSpeed = 10f;
         private Vector3 currentOffset;
         private float currentDistance; 
@@ -39,7 +40,7 @@ namespace TeamOdd.CameraMove
         private float yaw;   // 좌우 회전 누적값
         private float pitch; // 상하 회전 누적값
 
-        private bool mouseRightClick;
+        private bool isHeld;
 
         private void Start()
         {
@@ -56,7 +57,7 @@ namespace TeamOdd.CameraMove
 
         private void Update()
         {
-            mouseRightClick = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            isHeld = target.PlayerController.heldObject;
 
             if (SimpleInput.GetKeyDown(Key.Digit7))
             {
@@ -73,8 +74,8 @@ namespace TeamOdd.CameraMove
             if (target == null) return;
 
             UpdateRotation();
-            transform.position = UpdatePosition() + transform.rotation * shakeOffset;
-
+            Vector3 moveUpdate = UpdatePosition() + transform.rotation * shakeOffset;
+            transform.position = moveUpdate;
         }
 
         private void UpdateRotation()
@@ -86,7 +87,7 @@ namespace TeamOdd.CameraMove
             pitch -= delta.y * mouseSensitivity;
             pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-            if (mouseRightClick)
+            if (isHeld)
                 yaw = Mathf.Clamp(yaw, minYaw, maxYaw);
 
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
@@ -94,11 +95,12 @@ namespace TeamOdd.CameraMove
 
         private Vector3 UpdatePosition()
         {
-            Vector3 targetOffset = mouseRightClick ? holdPivotOffset : pivotOffset;
-            float targetDistance = mouseRightClick ? holdDistance : distance;
-            
-            currentOffset = Vector3.Lerp(currentOffset, targetOffset, transitionSpeed * Time.deltaTime);
-            currentDistance = Mathf.Lerp(currentDistance, targetDistance, transitionSpeed * Time.deltaTime);
+            var (targetOffset, targetDistance, speed) = GetCameraTarget();
+
+            // 프레임 독립 감쇠: FPS와 관계없이 같은 속도로 수렴합니다.
+            float t = 1f - Mathf.Exp(-speed * Time.deltaTime);
+            currentOffset = Vector3.Lerp(currentOffset, targetOffset, t);
+            currentDistance = Mathf.Lerp(currentDistance, targetDistance, t);
             
             Vector3 pivot = target.transform.position + currentOffset;
             // 피벗에서 회전 방향의 뒤쪽(distance)으로 물러난 곳이 카메라가 있고 싶은 위치 입니다.
@@ -120,6 +122,20 @@ namespace TeamOdd.CameraMove
             }
 
             return pivot + direction * length;
+        }
+        
+        private (Vector3 offset, float distance, float speed) GetCameraTarget()
+        {
+            if (isHeld)
+                return (holdPivotOffset, holdDistance, transitionSpeed);
+
+            if (target.PlayerController.IsSprinting)
+                return (pivotOffset, distance + sprintDistance, transitionSpeed);
+            
+            if (isHeld && target.PlayerController.IsSprinting)
+                return (holdPivotOffset, distance + sprintDistance, transitionSpeed);
+
+            return (pivotOffset, distance, transitionSpeed);
         }
     }
 }
