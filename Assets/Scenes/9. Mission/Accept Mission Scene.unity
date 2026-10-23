@@ -1101,12 +1101,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.CameraMove.TpsCameraController
   target: {fileID: 0}
-  pivotOffset: {x: 0, y: 1.6, z: 0}
   shoulderOffset: {x: 0.5, y: 0, z: 0}
+  pivotOffset: {x: 0, y: 1.6, z: 0}
+  holdPivotOffset: {x: -1, y: 1.6, z: 0}
   distance: 4
+  holdDistance: 1
+  transitionSpeed: 1
   mouseSensitivity: 2
   minPitch: -40
   maxPitch: 70
+  minYaw: -40
+  maxYaw: 70
   collisionMask:
     serializedVersion: 2
     m_Bits: 0
@@ -4436,6 +4441,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SK_PP801_Style (4) Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: aimCamera
+      value: 
+      objectReference: {fileID: 330585545}
     - target: {fileID: 2205336347187439273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6543,7 +6552,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38f40c56780204e488d116c48d65e6fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionNPC
-  missionUI: {fileID: 0}
+  missionUI: {fileID: 493629851}
+  distance: 2
+  player: {fileID: 0}
 --- !u!1 &1668712905
 GameObject:
   m_ObjectHideFlags: 0

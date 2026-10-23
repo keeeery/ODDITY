@@ -30,7 +30,8 @@ namespace TeamOdd.Player
         [SerializeField] private float rollDuration = 0.6f;
         
         [SerializeField] private Animator animator;
-        [SerializeField] private PsychokinesisObject heldObject;
+        
+        public PsychokinesisObject heldObject;
         
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
@@ -78,10 +79,7 @@ namespace TeamOdd.Player
             moveX = SmoothAxis(moveX, inputRaw.x);
             moveZ = SmoothAxis(moveZ, inputRaw.y);
 
-            if (moveReference == null)
-            {
-                moveReference = Camera.main.transform;
-            }
+            if (moveReference == null) moveReference = Camera.main.transform;
 
             Transform reference = moveReference;
             

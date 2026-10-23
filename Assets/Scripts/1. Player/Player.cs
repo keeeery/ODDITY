@@ -14,18 +14,18 @@ namespace TeamOdd.Player
         
         public float Stamina => stamina;
         
-        public CharacterController characterController;
-        public CameraController cameraController;
+        public CharacterController CharacterController;
+        public CameraController CameraController;
+        public PlayerController PlayerController;
         
-        private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
         private void Awake()
         {
             DontDestroyOnLoad(this);
             
-            characterController = GetComponent<CharacterController>();
-            playerController = GetComponent<PlayerController>();
+            CharacterController = GetComponent<CharacterController>();
+            PlayerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
             
             stamina = maxStamina;
@@ -42,20 +42,18 @@ namespace TeamOdd.Player
                       SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
                 LockCursor(true);
 
-            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
-            playerController.enabled = cursorLocked;
-            cameraController.enabled = cursorLocked;
+            ControllerActive();
         }
 
         private void OnEnable()
         {
-            playerController.OnRollRequested += HandleRollRequested;
+            PlayerController.OnRollRequested += HandleRollRequested;
             eventListener.OnOccursAnimStateEvent += HandleAnimStateEvent;
         }
 
         private void OnDisable()
         {
-            playerController.OnRollRequested -= HandleRollRequested;
+            PlayerController.OnRollRequested -= HandleRollRequested;
             eventListener.OnOccursAnimStateEvent -= HandleAnimStateEvent;
         }
         
@@ -64,14 +62,14 @@ namespace TeamOdd.Player
             if (stamina < 100f) return;
 
             ConsumeStamina(100f);
-            playerController.InputRolling();
+            PlayerController.InputRolling();
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
         { 
             if (eventName == "EndRolling")
             {
-                playerController.EndRoll();
+                PlayerController.EndRoll();
             }
         }
 
@@ -79,8 +77,16 @@ namespace TeamOdd.Player
         {
             stamina = Mathf.Max(0, stamina - amount);
         }
+
+        public void ControllerActive()
+        {
+            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
+            
+            PlayerController.enabled = cursorLocked;
+            CameraController.enabled = cursorLocked;
+        }
         
-        public static void LockCursor(bool locked)
+        public void LockCursor(bool locked)
         {
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = locked == false;
