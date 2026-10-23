@@ -14,5 +14,6 @@ namespace TeamOdd.Boss
         public static readonly int LEFT_CLAW_ATTACK = Animator.StringToHash("leftClawAttack");
         public static readonly int ROAR = Animator.StringToHash("roar");
         public static readonly int THROW = Animator.StringToHash("throw");
+        public static readonly int SHOCKWAVE = Animator.StringToHash("shockwave");
     }
 }
