@@ -20,15 +20,15 @@ namespace Study.Utilities
     {
         #region 키보드 입력
 
-        public static bool GetKeyDown(Key key)
+        public static bool GetKeyDown(this Key key)
         {
             return Keyboard.current[key].wasPressedThisFrame;
         }
-        public static bool GetKeyUp(Key key)
+        public static bool GetKeyUp(this Key key)
         {
             return Keyboard.current[key].wasReleasedThisFrame;
         }
-        public static bool GetKey(Key key)
+        public static bool GetKey(this Key key)
         {
             return Keyboard.current[key].isPressed;
         }

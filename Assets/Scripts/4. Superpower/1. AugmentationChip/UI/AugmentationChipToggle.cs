@@ -22,7 +22,7 @@ namespace TeamOdd.Superpower
             if (panel == null)
                 panel = GetComponentInChildren<AugmentationChipPanel>(true);
 
-            // 닫힌 채로 시작한다. 패널의 Start(칩 생성)는 처음 열 때 실행된다
+            // 닫힌 채로 시작한다. 칩은 꺼진 상태에서도 AugmentationChipInstaller가 Init으로 넣어준다
             panel.gameObject.SetActive(false);
         }
 

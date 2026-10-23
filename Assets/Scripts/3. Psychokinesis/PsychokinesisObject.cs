@@ -28,6 +28,8 @@ namespace TeamOdd.Psychokinesis
         private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
         private readonly Collider[] swingCandidates = new Collider[64];
         private readonly RaycastHit[] swingObstructions = new RaycastHit[64];
+        private LayerMask heldExcludeLayer;
+        private LayerMask originalExcludeLayer;
 
         private Rigidbody body;
         private BoxCollider hitBox;
@@ -80,6 +82,7 @@ namespace TeamOdd.Psychokinesis
             objectColliders = GetComponentsInChildren<Collider>();
             meshRenderer = GetComponent<MeshRenderer>();
             subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
+            heldExcludeLayer = LayerMask.GetMask("Psychokinesis");
         }
 
         private void OnDisable()
@@ -144,7 +147,9 @@ namespace TeamOdd.Psychokinesis
             // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
             gameObject.SetActive(false);
             Shattered?.Invoke(impactPosition, impactNormal, body.mass);
-            Destroy(gameObject);
+
+            if (TryGetComponent(out IObjectPoolItem poolItem)) poolItem.ReturnToPool();
+            else Destroy(gameObject);
         }
 
         public void UpdateHoldState(Vector3 targetPosition, Vector3 playerVelocity, bool canSwing, bool swingActivated, float minimumSwingSpeed)
@@ -237,36 +242,6 @@ namespace TeamOdd.Psychokinesis
             return true;
         }
 
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            if (IsHeld == false && Time.time > lastSwingHitTime + HitGizmoDuration) return;
-
-            Matrix4x4 originalMatrix = Gizmos.matrix;
-            Color originalColor = Gizmos.color;
-            GetSwingHitBox(out Vector3 center, out Vector3 halfExtents);
-            bool active = IsHeld && readyToSwing && swingActivated && swingSpeed >= swingMinSpeed;
-            Gizmos.matrix = Matrix4x4.TRS(center, hitBox.transform.rotation, Vector3.one);
-            Gizmos.color = active ? Color.magenta : Color.gray;
-            Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
-            Gizmos.matrix = Matrix4x4.identity;
-            UnityEditor.Handles.Label(center + Vector3.up * (halfExtents.magnitude + 0.2f),
-                $"Swing hit box: padding {swingHitPadding:F2} m [{(active ? "Active" : "Inactive")}]\n"
-                + $"Camera: {(swingActivated ? "Active" : "Inactive")}, Previous speed: {swingSpeed:F2} / {swingMinSpeed:F2} m/s, Ready: {readyToSwing}");
-
-            if (swingHitTarget != null && Time.time <= lastSwingHitTime + HitGizmoDuration)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(swingHitTarget.bounds.center, swingHitTarget.bounds.size);
-                Gizmos.DrawLine(center, swingHitPoint);
-                Gizmos.DrawSphere(swingHitPoint, 0.12f);
-                UnityEditor.Handles.Label(swingHitPoint + Vector3.up * 0.2f, "Hit: " + swingHitTarget.name);
-            }
-            Gizmos.matrix = originalMatrix;
-            Gizmos.color = originalColor;
-        }
-#endif
-
         private void SetPlayerCollisionsIgnored(bool ignored)
         {
             for (int objectIndex = 0; objectIndex < objectColliders.Length; objectIndex++)
@@ -317,6 +292,8 @@ namespace TeamOdd.Psychokinesis
             body.angularDamping = 6f;
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
+            originalExcludeLayer = body.excludeLayers;
+            body.excludeLayers = originalExcludeLayer | heldExcludeLayer;
             IsHeld = true;
         }
 
@@ -328,6 +305,7 @@ namespace TeamOdd.Psychokinesis
             canDealThrowDamage = isThrowing;
             damageSender = isThrowing ? sender : null;
             body.useGravity = originalGravity;
+            body.excludeLayers = originalExcludeLayer;
             SetPlayerCollisionsIgnored(false);
             readyToSwing = false;
             swingActivated = false;
@@ -336,5 +314,35 @@ namespace TeamOdd.Psychokinesis
             body.angularVelocity = Vector3.zero;
             SetFocused(false, true);
         }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (IsHeld == false && Time.time > lastSwingHitTime + HitGizmoDuration) return;
+
+            Matrix4x4 originalMatrix = Gizmos.matrix;
+            Color originalColor = Gizmos.color;
+            GetSwingHitBox(out Vector3 center, out Vector3 halfExtents);
+            bool active = IsHeld && readyToSwing && swingActivated && swingSpeed >= swingMinSpeed;
+            Gizmos.matrix = Matrix4x4.TRS(center, hitBox.transform.rotation, Vector3.one);
+            Gizmos.color = active ? Color.magenta : Color.gray;
+            Gizmos.DrawWireCube(Vector3.zero, halfExtents * 2f);
+            Gizmos.matrix = Matrix4x4.identity;
+            UnityEditor.Handles.Label(center + Vector3.up * (halfExtents.magnitude + 0.2f),
+                $"Swing hit box: padding {swingHitPadding:F2} m [{(active ? "Active" : "Inactive")}]\n"
+                + $"Camera: {(swingActivated ? "Active" : "Inactive")}, Previous speed: {swingSpeed:F2} / {swingMinSpeed:F2} m/s, Ready: {readyToSwing}");
+
+            if (swingHitTarget != null && Time.time <= lastSwingHitTime + HitGizmoDuration)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireCube(swingHitTarget.bounds.center, swingHitTarget.bounds.size);
+                Gizmos.DrawLine(center, swingHitPoint);
+                Gizmos.DrawSphere(swingHitPoint, 0.12f);
+                UnityEditor.Handles.Label(swingHitPoint + Vector3.up * 0.2f, "Hit: " + swingHitTarget.name);
+            }
+            Gizmos.matrix = originalMatrix;
+            Gizmos.color = originalColor;
+        }
+#endif
     }
 }
