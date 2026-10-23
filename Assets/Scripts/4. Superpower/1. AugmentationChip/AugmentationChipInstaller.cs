@@ -14,23 +14,32 @@ namespace TeamOdd.Superpower
         [SerializeField] private CombatEntity player;                 // 씬의 Player. 장착 결과를 CurrentStats에 반영한다
         [SerializeField] private AugmentationChipPanel panel;         // Canvas 안의 패널
 
+        private bool panelInitialized;
+
+        // 칩을 지급하는 쪽(ChipDispenser 등)이 무작위로 고를 때 쓴다
+        public AugmentationChipTable Table { get; private set; }
+
+        private void Awake()
+        {
+            Table = new AugmentationChipTable();
+            Table.Load();
+        }
+
         // 다른 컴포넌트의 Awake(토글이 패널을 끄는 것, CombatEntity가 CurrentStats를 만드는 것 등)가 끝난 뒤에 주입한다
         private void Start()
         {
-            AugmentationChipTable table = new AugmentationChipTable();
-            table.Load();
-
-            // 아직 칩을 얻는 경로가 없으므로 데모로 테이블의 칩 전부를 지급한다
-            foreach (AugmentationChipDef def in table.GetDefs())
-                AddChip(def);
-
             panel.Init(inventory.Chips, player.CurrentStats);
+            panelInitialized = true;
         }
 
         // 칩 획득 시 부르면 된다
+        // 패널 Init 전에 들어온 칩은 Init이 인벤토리를 읽을 때 같이 들어가므로, Init 이후에 들어온 칩만 패널에 직접 넣는다
         public void AddChip(AugmentationChipDef def)
         {
             inventory.Add(def);
+
+            if (panelInitialized)
+                panel.Add(def);
         }
     }
 }

@@ -54,6 +54,13 @@ namespace TeamOdd.Superpower
                 RotateDragging();
         }
 
+        // Init 이후에 새로 얻은 칩을 트레이에 넣는다
+        public void Add(AugmentationChipDef def)
+        {
+            AddChip(def);
+            tray.Layout();
+        }
+
         private void AddChip(AugmentationChipDef def)
         {
             ChipItemView chip = ChipItemView.Create(def, tray.Content, labelFont);
