@@ -420,7 +420,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1245396448}
   - {fileID: 1753645884}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -789,8 +788,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
-  ikWeight: 0
+  targetPoint: {fileID: 1438912217}
+  ikWeight: 0.5
 --- !u!54 &473145749
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1806,7 +1805,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 838645211}
   ikWeight: 0
 --- !u!54 &909953738
 Rigidbody:
@@ -1970,7 +1969,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 345637855}
   ikWeight: 0
 --- !u!54 &968351263
 Rigidbody:
@@ -2308,7 +2307,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 491908614}
   ikWeight: 0
 --- !u!54 &1015399318
 Rigidbody:
@@ -2551,7 +2550,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 1515147587}
   ikWeight: 0
 --- !u!54 &1212451014
 Rigidbody:
@@ -2715,7 +2714,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 1237493782}
   ikWeight: 0
 --- !u!54 &1216130961
 Rigidbody:
@@ -2885,9 +2884,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.2, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1268286660}
-  m_Father: {fileID: 263756323}
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1245396449
 MonoBehaviour:
@@ -2902,9 +2900,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.CameraMove.CameraController
   target: {fileID: 0}
-  pivotOffset: {x: 0, y: 2, z: 0}
   shoulderOffset: {x: 0.5, y: 0, z: 0}
-  distance: 1
+  pivotOffset: {x: 0, y: 1.6, z: 0}
+  holdPivotOffset: {x: 0, y: 1.6, z: 0}
+  distance: 4
+  holdDistance: 1
+  sprintDistance: 0.5
+  transitionSpeed: 10
   mouseSensitivity: 2
   minPitch: -40
   maxPitch: 70
@@ -2914,6 +2916,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 255
   collisionRadius: 0.2
+  shakeOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &1245396450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3080,124 +3083,12 @@ PrefabInstance:
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: heldObject
       value: 
-      objectReference: {fileID: 909953737}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
---- !u!1 &1268286659
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1268286660}
-  - component: {fileID: 1268286663}
-  - component: {fileID: 1268286662}
-  - component: {fileID: 1268286661}
-  m_Layer: 0
-  m_Name: Sphere
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1268286660
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268286659}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2.79}
-  m_LocalScale: {x: 0.14, y: 0.14, z: 0.14}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 1245396448}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1268286661
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268286659}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &1268286662
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268286659}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1268286663
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268286659}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1330346370
 GameObject:
   m_ObjectHideFlags: 0
@@ -3530,7 +3421,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 1962811836}
   ikWeight: 0
 --- !u!54 &1387716297
 Rigidbody:
@@ -4256,7 +4147,7 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
-  targetPoint: {fileID: 0}
+  targetPoint: {fileID: 433216810}
   ikWeight: 0
 --- !u!54 &1975311427
 Rigidbody:
@@ -4588,7 +4479,7 @@ Canvas:
   m_GameObject: {fileID: 2010411286}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 1245396452}
   m_PlaneDistance: 2.73
   m_PixelPerfect: 0
@@ -4808,6 +4699,7 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1245396448}
   - {fileID: 263756323}
   - {fileID: 1555280786}
   - {fileID: 313939640}
