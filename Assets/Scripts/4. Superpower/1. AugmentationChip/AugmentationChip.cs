@@ -15,6 +15,7 @@ namespace TeamOdd.Superpower
         private RectTransform outlineRoot;
 
         // UI에서 칩 정보를 읽어갈 때 사용한다
+        public AugmentationChipDef Def => refDef;
         public int ID => refDef.ID;
         public string Name => refDef.Name;
         public string Description => refDef.Description;

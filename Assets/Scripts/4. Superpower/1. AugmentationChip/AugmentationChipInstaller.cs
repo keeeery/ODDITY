@@ -5,7 +5,8 @@ namespace TeamOdd.Superpower
 {
     /// <summary>
     /// 증강칩 패널의 주입자. 씬에 하나 둔다.
-    /// 테이블을 로드하고, 플레이어의 인벤토리와 런타임 스탯을 AugmentationChipPanel.Init으로 넘긴다.
+    /// 테이블을 로드하고, 플레이어의 런타임 스탯으로 장착 상태(AugmentationChipEquipment)를 만들어
+    /// 인벤토리와 함께 AugmentationChipPanel.Init으로 넘긴다.
     /// 패널(Canvas 프리팹)과 인벤토리(씬의 Player)를 둘 다 참조해야 하므로 프리팹이 아니라 씬에서 연결한다.
     /// </summary>
     public class AugmentationChipInstaller : MonoBehaviour
@@ -19,6 +20,9 @@ namespace TeamOdd.Superpower
         // 칩을 지급하는 쪽(ChipDispenser 등)이 무작위로 고를 때 쓴다
         public AugmentationChipTable Table { get; private set; }
 
+        // 장착된 칩 목록과 스탯 반영. 정비소 등 UI 밖에서도 이걸로 장착 상태를 읽는다
+        public AugmentationChipEquipment Equipment { get; private set; }
+
         private void Awake()
         {
             Table = new AugmentationChipTable();
@@ -28,7 +32,8 @@ namespace TeamOdd.Superpower
         // 다른 컴포넌트의 Awake(토글이 패널을 끄는 것, CombatEntity가 CurrentStats를 만드는 것 등)가 끝난 뒤에 주입한다
         private void Start()
         {
-            panel.Init(inventory.Chips, player.CurrentStats);
+            Equipment = new AugmentationChipEquipment(player.CurrentStats);
+            panel.Init(inventory.Chips, Equipment);
             panelInitialized = true;
         }
 
