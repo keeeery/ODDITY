@@ -7,19 +7,26 @@ using UnityEngine;
 
 namespace TeamOdd.Boss
 {
-    public interface IRangedPattern
+    public interface IBossPattern
     {
         public float RequiredRange { get; }
+        public float RequiredHalfAngle { get; }
+        public float Weight { get; }
+        public bool CanUse { get; }
     }
     
-    public abstract class BossMeleePattern : BossStateBase, IRangedPattern
+    public abstract class BossMeleePattern : BossStateBase, IBossPattern
     {
         [Title("Settings")]
         [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
         [SerializeField] private float attackRange;
         [SerializeField] private float forwardAttackRange;
+        
+        [field: SerializeField] public float RequiredHalfAngle { get; private set; }
+        [field: SerializeField] public float Weight { get; private set; }
 
         public float RequiredRange => Mathf.Max(attackRange, forwardAttackRange);
+        public virtual bool CanUse => true;
 
         protected override void OnEnter()
         {

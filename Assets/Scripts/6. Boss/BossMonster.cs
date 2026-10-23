@@ -12,11 +12,10 @@ namespace TeamOdd.Boss
         [field: Title("Components")]
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public Rigidbody Body { get; private set; }
-        [field: SerializeField] public Transform Root { get; private set; }
+        [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [field: Title("References")]
         [field: SerializeField] public Transform Target { get; private set; } // 임시용, 어차피 우리 게임은 플레이어 한 명이니 플레이어 싱글톤 박아서 참조하면 될거같기도 하고?
-        [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [TitleGroup("Settings")]
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightHalfAngle = 60f;

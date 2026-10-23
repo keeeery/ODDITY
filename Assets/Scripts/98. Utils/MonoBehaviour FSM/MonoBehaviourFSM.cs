@@ -67,5 +67,7 @@ namespace FantasyGarden.FSM
             if (stateMap.ContainsValue(state) == false) return;
             ReservedState = state;
         }
+        
+        public void CancleReservedState() => ReservedState = null;
     }
 }

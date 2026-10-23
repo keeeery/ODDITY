@@ -7,8 +7,11 @@ namespace TeamOdd.Boss
 {
     public class BossChaseState : BossStateBase
     {
+        private static readonly int RUN_HASH = Animator.StringToHash("Run");
+        
         [Title("Settings")]
-        [SerializeField] private float chaseSpeed = 5f; // 추격 속도
+        [SerializeField] private float walkSpeed = 5f; // 추격 속도
+        [SerializeField] private float runSpeed = 10f;
         [SerializeField] private float chaseEndRange = 10f; // 추격을 종료할 거리
         [SerializeField] private float chaseEndMargin = 0.5f;
         [SerializeField] private float rotateSpeed = 2.5f; // 몹이 방향을 부드럽게 도는 속도? 뭐라 말해야하냐 이거
@@ -17,7 +20,7 @@ namespace TeamOdd.Boss
         
         protected override void OnEnter()
         {
-            finalChaseEndRange = StateMachine.ReservedState is IRangedPattern pattern ? 
+            finalChaseEndRange = StateMachine.ReservedState is IBossPattern pattern ? 
                     pattern.RequiredRange - chaseEndMargin : 
                     chaseEndRange;
             
@@ -35,7 +38,10 @@ namespace TeamOdd.Boss
 
             root.transform.SmoothLookAtFlat(Target, 2f);
 
-            Vector3 velocity = root.transform.forward * chaseSpeed;
+            AnimatorStateInfo currState = Animator.GetCurrentAnimatorStateInfo(0);
+            float speed = currState.shortNameHash == RUN_HASH ? runSpeed : walkSpeed;
+
+            Vector3 velocity = root.transform.forward * speed;
             Body.linearVelocity = velocity;
         }
         
