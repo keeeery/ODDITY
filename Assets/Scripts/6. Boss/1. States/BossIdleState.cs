@@ -11,6 +11,7 @@ namespace TeamOdd.Boss
         [Title("Patterns")]
         [SerializeField] private BossStateBase[] attackPatterns;
         [SerializeField] private BossPsychokinesisDropPattern roarDropPattern;
+        [SerializeField] private BossPsychokinesisThrowPattern throwPattern;
 
         protected override void OnEnter()
         {
@@ -21,8 +22,18 @@ namespace TeamOdd.Boss
                 return;
             }
 
+            // TODO: 거리 조건 원인 확인용 임시 로그, 확인 후 제거
+            Debug.Log($"[Idle] 투척 판정 거리 {root.DistanceToTarget:F2}m, 투척 CanUse {throwPattern.CanUse}, 남은 쿨 {throwPattern.RemainingCooldown:F1}s", this);
+
+            if (throwPattern.CanUse)
+            {
+                StateMachine.ChangeState(throwPattern.GetType());
+                return;
+            }
+
             // TODO: 일단 간단하게 구현, 점점 복잡해지겠지...? 야발
-            if (root.IsTargetInSight())
+            // 근접 공격 패턴이 없으면 공격하지 않고 추격
+            if (root.IsTargetInSight() && attackPatterns.Length > 0)
             {
                 BossStateBase attack = attackPatterns[Random.Range(0, attackPatterns.Length)];
                 StateMachine.ChangeState(attack.GetType());

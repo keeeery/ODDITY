@@ -619,7 +619,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1199669460}
   m_Father: {fileID: 1738154723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &658303669
@@ -634,13 +635,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2484913e8c7ed41938bc40e1760aeac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossPsychokinesisThrowPattern
+  cooldown: 5
+  minUseDistance: 15
   fragmentSpawner: {fileID: 1433546535}
-  throwOrigin: {fileID: 1738154724}
-  holdDuration: 0.8
-  recoveryDuration: 1
+  throwOrigin: {fileID: 1199669460}
   ownerIgnoreDuration: 0.3
   holdSpinSpeed: 90
-  throwSpeed: 25
+  throwSpeed: 40
   aimHeight: 1
   compensateGravity: 1
   throwSpinSpeed: 3
@@ -1237,6 +1238,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1013557263}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1013940548 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+  m_PrefabInstance: {fileID: 1738154721}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawPattern
 --- !u!1 &1073963101
 GameObject:
   m_ObjectHideFlags: 0
@@ -1386,6 +1398,37 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
   m_PrefabInstance: {fileID: 1738154721}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1199669459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1199669460}
+  m_Layer: 6
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1199669460
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1199669459}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.3, y: 4.3, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 658303668}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1433546533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1662,9 +1705,21 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 592612764365491377, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: throwPattern
+      value: 
+      objectReference: {fileID: 658303669}
+    - target: {fileID: 592612764365491377, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: roarDropPattern
       value: 
       objectReference: {fileID: 827924717}
+    - target: {fileID: 592612764365491377, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: attackPatterns.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 592612764365491377, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: 'attackPatterns.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1013940548}
     - target: {fileID: 628497947562117113, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -1837,6 +1892,18 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 5426821876405360342, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: interruptPatterns.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426821876405360342, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: 'interruptPatterns.Array.data[0]'
+      value: 
+      objectReference: {fileID: 827924717}
+    - target: {fileID: 5426821876405360342, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: 'interruptPatterns.Array.data[1]'
+      value: 
+      objectReference: {fileID: 658303669}
     - target: {fileID: 5478982242377312444, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -2191,10 +2258,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2484913e8c7ed41938bc40e1760aeac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.PsychokinesisThrowPattern
+  cooldown: 0
+  minUseDistance: 6
   fragmentSpawner: {fileID: 1433546535}
   throwOrigin: {fileID: 2034567480}
-  holdDuration: 0.8
-  recoveryDuration: 1
   ownerIgnoreDuration: 0.3
   holdSpinSpeed: 90
   throwSpeed: 25
