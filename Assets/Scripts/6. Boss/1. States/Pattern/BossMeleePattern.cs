@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FantasyGarden.Utility;
@@ -7,49 +8,106 @@ using UnityEngine;
 
 namespace TeamOdd.Boss
 {
-    public interface IBossPattern
+    public abstract class BossMeleePattern : BossStateBase
     {
-        public float RequiredRange { get; }
-        public float RequiredHalfAngle { get; }
-        public float Weight { get; }
-        public bool CanUse { get; }
-    }
-    
-    public abstract class BossMeleePattern : BossStateBase, IBossPattern
-    {
-        [Title("Settings")]
-        [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
-        [SerializeField] private float attackRange;
-        [SerializeField] private float forwardAttackRange;
+        [Title("Attack Range")]
+        [field: SerializeField] public float MinDistance { get; private set; }
+        [field: SerializeField] public float MaxDistance { get; private set; }
+        [SerializeField] private float minAngle;
+        [SerializeField] private float maxAngle;
         
-        [field: SerializeField] public float RequiredHalfAngle { get; private set; }
+        [Title("Usage Condition")]
+        [SerializeField] private float cooldown;
         [field: SerializeField] public float Weight { get; private set; }
+        [field: SerializeField] public bool IsUrgent { get; private set; } // 우선 처리 여부
+        [field: SerializeField] public bool CanApproach { get; private set; } // 범위 밖일 경우 근접하여 사용할지 여부
 
-        public float RequiredRange => Mathf.Max(attackRange, forwardAttackRange);
-        public virtual bool CanUse => true;
+        [Title("Animation")]
+        [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
+        [SerializeField] private bool useRootMotion;
 
+        [Title("Tracking")]
+        [SerializeField] private float trackDuration;
+        [SerializeField] private float trackSpeed = 90f;
+
+        [Title("Delay")]
+        [field: SerializeField] public float Recovery { get; private set; } // 공격 후딜
+
+        private float readyTime;
+        private float trackEndTime;
+
+        public virtual bool CanUse => Time.time >= readyTime;
+        
+        public bool IsTooClose => root.DistanceToTarget < MinDistance;
+        public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance;
+        public bool IsInRange => IsDistanceInRange && IsAngleInside(root.SignedAngleToTarget);
+        
+        
+        private float AngleWidth => minAngle <= maxAngle ? maxAngle - minAngle : maxAngle - minAngle + 360f;
+        
+        
         protected override void OnEnter()
         {
-            if (root.IsTargetInRange(attackRange))
-            {
-                Animator.SetTrigger(trigger);
-                return;
-            }
+            readyTime = Time.time + cooldown;
+            trackEndTime = Time.time + trackDuration;
 
-            if (root.IsTargetInRange(forwardAttackRange))
-            {
-                Animator.applyRootMotion = true;
-                Animator.SetTrigger(trigger);
-                return;
-            }
+            root.AnimEventListener.OnOccursAnimStateEvent += OnOccursAnimEvent;
+            
+            Animator.applyRootMotion = useRootMotion;
+            Animator.SetTrigger(trigger);
 
-            StateMachine.ReserveState(this);
-            StateMachine.ChangeState(typeof(BossChaseState), true);
+            OnPatternEnter();
+        }
+
+        protected virtual void Update()
+        {
+            if (Time.time >= trackEndTime) return;
+            root.RotateYaw(root.SignedAngleToTarget, trackSpeed * Time.deltaTime);
         }
 
         protected override void OnExit()
         {
+            root.AnimEventListener.OnOccursAnimStateEvent -= OnOccursAnimEvent;
+
             Animator.applyRootMotion = false;
+            Animator.ResetTrigger(trigger);
+
+            OnPatternExit();
+        }
+
+        protected virtual void OnPatternEnter() { }
+        protected virtual void OnPatternExit() { }
+        protected virtual void OnPatternAnimEventOccurs(string name, string param) { }
+
+        private void OnOccursAnimEvent(string name, string param)
+        {
+            if (string.Equals(name, "OnTrackEnd"))
+            {
+                trackEndTime = 0f;
+                return;
+            }
+            
+            OnPatternAnimEventOccurs(name, param);
+        }
+
+        private bool IsAngleInside(float angle)
+        {
+            return minAngle <= maxAngle ? 
+                angle >= minAngle && angle <= maxAngle : 
+                angle >= minAngle || angle <= maxAngle;
+        }
+
+        public float ClampAngle(float angle, float margin)
+        {
+            if (IsAngleInside(angle)) return angle;
+
+            float lower = Mathf.DeltaAngle(0f, minAngle + margin);
+            float upper = Mathf.DeltaAngle(0f, maxAngle - margin);
+
+            float lowerAngleDistance = Mathf.Abs(Mathf.DeltaAngle(angle, lower));
+            float upperAngleDistance = Mathf.Abs(Mathf.DeltaAngle(angle, upper));
+            
+            return lowerAngleDistance <= upperAngleDistance ? lower : upper;
         }
         
         #region RANGE_VISUALIZATION
@@ -78,23 +136,35 @@ namespace TeamOdd.Boss
             };
         }
 
+        // 거리 판정이 FlatDistanceTo(XZ 평면)이므로 바닥에 부채꼴로 표시
         private void DrawRange()
         {
-            // 에디트 모드에서는 Initialize가 호출되지 않아 root가 비어있으므로 직접 찾아옴
             Transform center = root != null ? root.transform : GetComponentInParent<BossMonster>(true)?.transform;
             if (center == null) center = transform;
 
-            // 거리 판정이 FlatDistanceTo(XZ 평면)이므로 바닥 원으로 표시
             Vector3 position = center.position;
+            Vector3 forward = Quaternion.Euler(0f, center.eulerAngles.y, 0f) * Vector3.forward;
+            Vector3 from = Quaternion.AngleAxis(minAngle, Vector3.up) * forward;
+            float width = AngleWidth;
             Color originalColor = UnityEditor.Handles.color;
 
-            UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.DrawWireDisc(position, Vector3.up, attackRange);
-            UnityEditor.Handles.Label(position + center.forward * attackRange, $"Attack ({attackRange})");
+            UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);
+            UnityEditor.Handles.DrawSolidArc(position, Vector3.up, from, width, MaxDistance);
 
-            UnityEditor.Handles.color = Color.yellow;
-            UnityEditor.Handles.DrawWireDisc(position, Vector3.up, forwardAttackRange);
-            UnityEditor.Handles.Label(position + center.forward * forwardAttackRange, $"Forward Attack ({forwardAttackRange})");
+            UnityEditor.Handles.color = Color.red;
+            UnityEditor.Handles.DrawWireArc(position, Vector3.up, from, width, MaxDistance);
+            if (MinDistance > 0f) UnityEditor.Handles.DrawWireArc(position, Vector3.up, from, width, MinDistance);
+
+            if (width < 360f)
+            {
+                Vector3 to = Quaternion.AngleAxis(minAngle + width, Vector3.up) * forward;
+                UnityEditor.Handles.DrawLine(position + from * MinDistance, position + from * MaxDistance);
+                UnityEditor.Handles.DrawLine(position + to * MinDistance, position + to * MaxDistance);
+            }
+
+            Vector3 labelDirection = Quaternion.AngleAxis(minAngle + width * 0.5f, Vector3.up) * forward;
+            UnityEditor.Handles.Label(position + labelDirection * MaxDistance,
+                $"{GetType().Name} ({MinDistance}~{MaxDistance}m, {minAngle}°~{maxAngle}°)");
 
             UnityEditor.Handles.color = originalColor;
         }

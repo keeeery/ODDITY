@@ -15,16 +15,22 @@ namespace TeamOdd.Boss
         [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [field: Title("References")]
-        [field: SerializeField] public Transform Target { get; private set; } // 임시용, 어차피 우리 게임은 플레이어 한 명이니 플레이어 싱글톤 박아서 참조하면 될거같기도 하고?
+        [field: SerializeField] public Transform Target { get; private set; } // 임시용
 
         [TitleGroup("Settings")]
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightHalfAngle = 60f;
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightRange = 10f;
-        
+        [SerializeField, TabGroup("Settings/Type", "Movement")] private float moveHalfAngle = 45f;
+
+        [Title("States")]
+        [ShowInInspector, ReadOnly] public float IntentStartTime { get; private set; }
+        [ShowInInspector, ReadOnly] public BossMeleePattern Intent { get; private set; }
+
         public float DistanceToTarget => transform.FlatDistanceTo(Target);
-        
         public float SignedAngleToTarget => Mathf.DeltaAngle(transform.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
+        
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
+        public bool CanMoveToTarget => Mathf.Abs(SignedAngleToTarget) <= moveHalfAngle;
         
         private void Update()
         {
@@ -35,6 +41,20 @@ namespace TeamOdd.Boss
         
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
         public bool IsTargetInSight() => IsTargetInRange(sightRange) && Mathf.Abs(SignedAngleToTarget) <= sightHalfAngle;
+        
+        public void SetIntent(BossMeleePattern intent)
+        {
+            Intent = intent;
+            IntentStartTime = Time.time;
+        }
+        
+        public void ClearIntent() => Intent = null;
+
+        public void RotateYaw(float deltaAngle, float maxDegrees)
+        {
+            float step = Mathf.Clamp(deltaAngle, -maxDegrees, maxDegrees);
+            transform.rotation = Quaternion.Euler(0f, step, 0f) * transform.rotation;
+        }
         
         #endregion
         

@@ -14,7 +14,7 @@ namespace TeamOdd.Boss
     // 터지는 순간 범위 안의 대상이 바닥 근처에 있으면 피격, 점프해서 떠 있으면 회피
     // 범위 안의 염동력 오브젝트는 위로 살짝 떠올랐다가 중력으로 떨어짐
     // 사거리 밖이면 근접 패턴처럼 예약 후 추격
-    public sealed class BossShockwavePattern : BossStateBase, IRangedPattern
+    public sealed class BossShockwavePattern : BossMeleePattern
     {
         [Serializable]
         private class Wave
@@ -24,11 +24,7 @@ namespace TeamOdd.Boss
             [Min(0)] public int damage = 10;
             [Min(0f)] public float radius = 10f;
         }
-
-        [Title("Use Distance")]
-        [Tooltip("이 거리 밖이면 추격 후 사용(m), 보스 콜라이더 때문에 약 6.75m보다 커야 추격이 끝난다.")]
-        [SerializeField, Min(0f)] private float useRange = 9f;
-
+        
         [Title("Waves")]
         // 충격 발생: OnShockwave 신호(매개변수는 waves 인덱스, 비어 있으면 0), 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
         [SerializeField] private Wave[] waves;
@@ -70,43 +66,26 @@ namespace TeamOdd.Boss
 
         private Collider targetCollider;
         private Material rangeMaterial;
-
-        public float RequiredRange => useRange;
-
+        
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
             base.Initialize(stateMachine);
             rangeMaterial = new Material(Shader.Find("Sprites/Default"));
         }
 
-        protected override void OnEnter()
+        protected override void OnPatternEnter()
         {
-            if (root.IsTargetInRange(useRange) == false)
-            {
-                StateMachine.ReserveState(this);
-                StateMachine.ChangeState(typeof(BossChaseState), true);
-                return;
-            }
-
             targetCollider = Target.GetComponent<Collider>();
-            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
-            Animator.SetTrigger(BossAnimParams.SHOCKWAVE);
         }
 
-        protected override void OnExit()
+        protected override void OnPatternAnimEventOccurs(string name, string param)
         {
-            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
-            Animator.ResetTrigger(BossAnimParams.SHOCKWAVE);
-        }
+            if (name != "OnShockwave") return;
 
-        private void OnAnimEvent(string eventName, string eventParam)
-        {
-            if (eventName != "OnShockwave") return;
-
-            int index = string.IsNullOrEmpty(eventParam) ? 0 : int.Parse(eventParam);
+            int index = string.IsNullOrEmpty(param) ? 0 : int.Parse(param);
             Explode(waves[index]);
         }
-
+        
         private void Explode(Wave wave)
         {
             Vector3 center = wave.origin.position;

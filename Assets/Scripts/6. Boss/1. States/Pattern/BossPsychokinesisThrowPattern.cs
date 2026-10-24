@@ -9,12 +9,8 @@ namespace TeamOdd.Boss
 {
     // 투척 시작 시점(추후 보스 손 같은 지점)에 큰 염동력 오브젝트를 띄웠다가 플레이어 방향으로 던지는 패턴
     // 내부쿨이 돌아오고 플레이어가 minUseDistance보다 멀리 있을 때만 사용
-    public sealed class BossPsychokinesisThrowPattern : BossCooldownPatternBase
+    public sealed class BossPsychokinesisThrowPattern : BossMeleePattern
     {
-        [Title("Use Distance")]
-        [Tooltip("플레이어가 이 거리보다 가까우면 쓰지 않음(m)")]
-        [SerializeField, Min(0f)] private float minUseDistance = 6f;
-
         [Title("References")]
         [SerializeField] private WallFragmentSpawner fragmentSpawner;
         [Tooltip("오브젝트를 띄우고 던질 위치, 비어 있으면 이 오브젝트의 Transform을 사용한다.")]
@@ -43,47 +39,31 @@ namespace TeamOdd.Boss
 
         private Transform Origin => throwOrigin != null ? throwOrigin : transform;
 
-        public override bool CanUse => base.CanUse
-            && root.IsTargetInRange(minUseDistance) == false;
-
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
             base.Initialize(stateMachine);
             ownerColliders = root.GetComponentsInChildren<Collider>();
         }
 
-        protected override void OnEnter()
+        protected override void OnPatternExit()
         {
-            // TODO: 거리 조건 원인 확인용 임시 로그, 확인 후 제거
-            Debug.Log($"[Throw] 진입 거리 {root.DistanceToTarget:F2}m, minUseDistance {minUseDistance}m, 예약 상태 {StateMachine.ReservedState}", this);
-
-            StartCooldown();
-            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
-            root.Animator.SetTrigger(BossAnimParams.THROW);
-        }
-
-        protected override void OnExit()
-        {
-            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
-            root.Animator.ResetTrigger(BossAnimParams.THROW);
-
             // 띄운 채로 패턴이 끊기면 그 자리에 떨어뜨림
             if (heldBody != null) heldBody.isKinematic = false;
             heldBody = null;
             RestoreOwnerCollisions();
         }
 
-        private void OnAnimEvent(string eventName, string eventParam)
+        protected override void OnPatternAnimEventOccurs(string name, string param)
         {
             // 오브젝트가 보스 몸과 겹쳐 보이지 않도록 던지기 직전의 OnThrowPrepare 신호에 등장시킴
-            if (eventName == "OnThrowPrepare")
+            if (name == "OnThrowPrepare")
             {
                 Spawn();
                 StartCoroutine(Hold());
                 return;
             }
 
-            if (eventName != "OnThrow") return;
+            if (name != "OnThrow") return;
 
             Throw();
             heldBody = null;
@@ -167,11 +147,6 @@ namespace TeamOdd.Boss
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(Origin.position, 0.3f);
             Gizmos.DrawLine(Origin.position, Target.position + Vector3.up * aimHeight);
-
-            // 사용 거리 판정이 IsTargetInRange(XZ 평면)이므로 바닥 원으로 표시
-            Vector3 center = root.transform.position;
-            UnityEditor.Handles.color = Color.yellow;
-            UnityEditor.Handles.DrawWireDisc(center, Vector3.up, minUseDistance);
         }
 #endif
     }

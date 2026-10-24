@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 namespace TeamOdd.Boss
 {
     // 플레이어 위치를 중심으로 한 원형 범위 안에 염동력 오브젝트를 무작위로 투하하는 패턴
-    public sealed class BossPsychokinesisDropPattern : BossCooldownPatternBase
+    public sealed class BossPsychokinesisDropPattern : BossMeleePattern
     {
         private const int MaxPositionAttempts = 12;
 
@@ -61,24 +61,14 @@ namespace TeamOdd.Boss
         private readonly Collider[] spawnOverlaps = new Collider[32];
         private Vector3 dropCenter;
 
-        protected override void OnEnter()
+        protected override void OnPatternEnter()
         {
-            StartCooldown();
             dropCenter = Target.position;
-            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
-            root.Animator.SetTrigger(BossAnimParams.ROAR);
         }
 
-        // 비활성화되면 투하 코루틴은 자동으로 멈춤
-        protected override void OnExit()
+        protected override void OnPatternAnimEventOccurs(string name, string param)
         {
-            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
-            root.Animator.ResetTrigger(BossAnimParams.ROAR);
-        }
-
-        private void OnAnimEvent(string eventName, string eventParam)
-        {
-            if (eventName == "OnRoarDrop") StartCoroutine(Run());
+            if (name == "OnRoarDrop") StartCoroutine(Run());
         }
 
         private IEnumerator Run()
