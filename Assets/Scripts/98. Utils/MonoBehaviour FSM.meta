@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scripts/98. Utils/MonoBehaviour FSM.meta
-guid: 9a9e31cbf49bbde4ca07a0fb17fdfdb1
-========
-guid: 010ae305f750740f98fb2dadd75c0118
->>>>>>>> main:Assets/Scripts/98. Utils/ObjectPool.meta
+guid: dff0a9d7e949f6d4fb438bcb91e665e7
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
