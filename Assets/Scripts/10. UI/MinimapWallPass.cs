@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
-namespace TeamOdd.Player
+namespace TeamOdd.UI
 {
     // 미니맵 카메라 전용 패스, 불투명 렌더링 뒤에 Wall 레이어를 단색 머티리얼로 다시 그려 바닥을 가린다.
     public sealed class MinimapWallPass : ScriptableRenderPass

@@ -2,7 +2,7 @@ using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TeamOdd.Player
+namespace TeamOdd.UI
 {
     // 플레이어 체력(CombatEntity)과 스태미나(Player)를 바 Image Fill로 보여주는 간단한 HUD
     public class PlayerHUD : MonoBehaviour
@@ -10,7 +10,7 @@ namespace TeamOdd.Player
         private const string FillSpritePath = "WhiteSquare";
 
         [Header("References")]
-        [SerializeField] private Player player;
+        [SerializeField] private Player.Player player;
         [SerializeField] private CombatEntity combatEntity;
 
         [Header("Bars")]
@@ -23,7 +23,7 @@ namespace TeamOdd.Player
 
         private void Awake()
         {
-            if (player == null) player = FindAnyObjectByType<Player>();
+            if (player == null) player = FindAnyObjectByType<Player.Player>();
             if (combatEntity == null && player != null) combatEntity = player.GetComponent<CombatEntity>();
 
             Sprite fillSprite = Resources.Load<Sprite>(FillSpritePath);
