@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TeamOdd.Boss;
 using TeamOdd.Combat;
 using UnityEngine;
@@ -66,6 +67,10 @@ namespace TeamOdd.Psychokinesis
 
         public static event Action<Vector3, Vector3, float> Shattered;
 
+        // 미니맵 등에서 순회하기 위한 활성 오브젝트 목록
+        private static readonly List<PsychokinesisObject> activeObjects = new();
+        public static IReadOnlyList<PsychokinesisObject> ActiveObjects => activeObjects;
+
         // IK 추가
         [SerializeField] private Transform targetPoint;
         [Range(0.0f, 1.0f)]
@@ -103,6 +108,7 @@ namespace TeamOdd.Psychokinesis
         private void OnEnable()
         {
             ResizeHitTrigger(false);
+            activeObjects.Add(this);
         }
 
         // 들고 있는 동안에만 휘두르기 여유 범위를 더함
@@ -124,6 +130,7 @@ namespace TeamOdd.Psychokinesis
 
         private void OnDisable()
         {
+            activeObjects.Remove(this);
             ClearPendingDamage();
             canDealThrowDamage = false;
             damageSender = null;
