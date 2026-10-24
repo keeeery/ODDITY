@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TeamOdd.Superpower
@@ -26,7 +25,7 @@ namespace TeamOdd.Superpower
         [SerializeField] private RectTransform content;
         [SerializeField] private SortButton[] sortButtons;
         // content 안쪽 여백이자 칩 사이 간격
-        [SerializeField, FormerlySerializedAs("padding")] private float chipSpacing = 12f;
+        [SerializeField] private float chipSpacing = 12f;
 
         private readonly List<ChipItemView> chips = new();
         private ChipSortKey sortKey = ChipSortKey.ID;
@@ -59,6 +58,9 @@ namespace TeamOdd.Superpower
 
         public void Remove(ChipItemView chip) => chips.Remove(chip);
 
+        // 패널을 열 때 칩 뷰를 새로 만들기 전에 비운다
+        public void Clear() => chips.Clear();
+
         // 트레이에 남아있는 칩을 정렬해서 왼쪽부터 채우고, 폭을 넘으면 다음 줄로 내린다
         public void Layout()
         {
@@ -69,8 +71,8 @@ namespace TeamOdd.Superpower
             float rowHeight = 0f;
             foreach (ChipItemView chip in chips)
             {
-                float chipWidth = ChipGridMetrics.Length(chip.Chip.Width);
-                float chipHeight = ChipGridMetrics.Length(chip.Chip.Height);
+                float chipWidth = ChipGridMetrics.Length(chip.Width);
+                float chipHeight = ChipGridMetrics.Length(chip.Height);
 
                 if (cursor.x > chipSpacing && cursor.x + chipWidth > contentWidth - chipSpacing)
                 {
@@ -110,8 +112,8 @@ namespace TeamOdd.Superpower
 
         private int Compare(ChipItemView a, ChipItemView b)
         {
-            AugmentationChip x = a.Chip;
-            AugmentationChip y = b.Chip;
+            AugmentationChipDef x = a.Owned.Def;
+            AugmentationChipDef y = b.Owned.Def;
             int result = sortKey switch
             {
                 ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),

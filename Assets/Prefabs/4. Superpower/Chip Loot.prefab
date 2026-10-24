@@ -125,4 +125,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ce1503a55eaef743abc4698c2d189a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.ChipDispenser
-  installer: {fileID: 0}

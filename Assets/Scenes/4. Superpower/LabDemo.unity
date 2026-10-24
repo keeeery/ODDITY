@@ -162,10 +162,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (27)
@@ -228,10 +224,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (30)
@@ -289,10 +281,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (7)
@@ -687,10 +675,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (11)
@@ -794,10 +778,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (4)
@@ -855,10 +835,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (16)
@@ -1077,10 +1053,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (14)
@@ -1270,10 +1242,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (17)
@@ -1542,10 +1510,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (2)
@@ -1757,10 +1721,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (28)
@@ -1818,10 +1778,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (21)
@@ -2276,10 +2232,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (8)
@@ -2342,10 +2294,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (1)
@@ -2403,10 +2351,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (33)
@@ -2464,10 +2408,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (6)
@@ -2795,10 +2735,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (25)
@@ -2856,10 +2792,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (34)
@@ -2927,10 +2859,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (15)
@@ -2988,10 +2916,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (26)
@@ -3049,10 +2973,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (20)
@@ -3112,53 +3032,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4485996938074031612, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
   m_PrefabInstance: {fileID: 1182696609}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1291087804
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1291087806}
-  - component: {fileID: 1291087805}
-  m_Layer: 0
-  m_Name: Augmentation Chip Installer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1291087805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1291087804}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfa0d07147af4704ca0356f41fcde080, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInstaller
-  inventory: {fileID: 2147000011}
-  player: {fileID: 2147000010}
-  panel: {fileID: 1077103739}
---- !u!4 &1291087806
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1291087804}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 522.72815, y: 0.00001, z: 7520.0527}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1324912568 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4485996938074031612, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
@@ -3926,10 +3799,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (18)
@@ -4024,10 +3893,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (12)
@@ -4085,10 +3950,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (13)
@@ -4151,10 +4012,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (10)
@@ -4212,10 +4069,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (23)
@@ -4273,10 +4126,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (3)
@@ -4469,10 +4318,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (31)
@@ -4535,10 +4380,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (24)
@@ -4596,10 +4437,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (29)
@@ -4657,10 +4494,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (5)
@@ -4718,10 +4551,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (32)
@@ -4779,10 +4608,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (19)
@@ -4845,10 +4670,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (9)
@@ -5284,10 +5105,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (22)
@@ -5355,10 +5172,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot (35)
@@ -5511,6 +5324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipToggle
   panel: {fileID: 0}
+  inventory: {fileID: 2147000011}
   disableWhileOpen:
   - {fileID: 1013557266}
   - {fileID: 1753645885}
@@ -5564,10 +5378,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 631482833}
     m_Modifications:
-    - target: {fileID: 554135933128705527, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
-      propertyPath: installer
-      value: 
-      objectReference: {fileID: 1291087805}
     - target: {fileID: 1133101695026160866, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
       propertyPath: m_Name
       value: Chip Loot
@@ -5627,4 +5437,3 @@ SceneRoots:
   - {fileID: 273411543}
   - {fileID: 11127901}
   - {fileID: 1073963104}
-  - {fileID: 1291087806}
