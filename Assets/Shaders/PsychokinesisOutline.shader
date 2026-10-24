@@ -74,22 +74,24 @@ Shader "TeamOdd/Psychokinesis Outline"
                 float2 uv = input.positionCS.xy / _ScaledScreenParams.xy;
                 // 원본 픽셀은 칠하지 않고 매 프레임 Mask의 바깥 경계만 합성한다.
                 clip(min(min(uv.x - _OutlineRect.x, uv.y - _OutlineRect.y), min(_OutlineRect.z - uv.x, _OutlineRect.w - uv.y)));
+                // Mask는 MSAA로 그린 뒤 Resolve되어 r = 픽셀 커버리지, g = 커버리지 × 깊이가 된다.
                 float2 original = SAMPLE_TEXTURE2D_X(_PsychokinesisOutlineMask, sampler_PointClamp, uv).rg;
-                clip(0.5 - original.r);
+                clip(0.999 - original.r);
                 float sceneDepth = EyeDepth(SampleSceneDepth(uv));
                 float width = clamp(_OutlineWidthPixels, 1.0, 8.0);
-                int radius = (int)ceil(width);
-                float closest = (width + 1.0) * (width + 1.0);
+                int radius = (int)ceil(width) + 1;
+                // 실제 경계까지의 거리, 이웃 픽셀 중심에서 (0.5 - 커버리지)만큼 떨어져 있다고 근사해 픽셀 단위 계단을 없앤다.
+                float closest = width + 1.0;
                 for (int y = -radius; y <= radius; y++)
                 for (int x = -radius; x <= radius; x++)
                 {
-                    float distanceSquared = (float)(x * x + y * y);
-                    if (distanceSquared >= closest) continue;
                     float2 neighborUV = uv + float2(x, y) / _ScaledScreenParams.xy;
                     float2 neighbor = SAMPLE_TEXTURE2D_X(_PsychokinesisOutlineMask, sampler_PointClamp, neighborUV).rg;
-                    if (neighbor.r > 0.5 && neighbor.g <= sceneDepth + 0.02) closest = distanceSquared;
+                    if (neighbor.r <= 0.001 || neighbor.g / neighbor.r > sceneDepth + 0.02) continue;
+                    closest = min(closest, length(float2(x, y)) + 0.5 - neighbor.r);
                 }
-                float alpha = saturate(width + 0.5 - sqrt(closest));
+                // 바깥 경계는 거리로, 안쪽 경계는 오브젝트가 덮지 않은 비율만큼만 칠해서 양쪽 모두 부드럽게 만든다.
+                float alpha = saturate(width + 0.5 - closest) * (1.0 - original.r);
                 return half4(_BaseColor.rgb, _BaseColor.a * alpha);
             }
             ENDHLSL

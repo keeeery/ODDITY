@@ -71,7 +71,9 @@ namespace TeamOdd.Psychokinesis
                 TextureDesc descriptor = renderGraph.GetTextureDesc(resources.activeColorTexture);
                 descriptor.name = "Psychokinesis silhouette";
                 descriptor.colorFormat = GraphicsFormat.R16G16_SFloat;
-                descriptor.msaaSamples = MSAASamples.None;
+                // 가장자리 커버리지를 얻기 위해 MSAA로 그리고, 읽을 때 자동 Resolve된 값 사용
+                descriptor.msaaSamples = MSAASamples.MSAA4x;
+                descriptor.bindTextureMS = false;
                 descriptor.depthBufferBits = DepthBits.None;
                 descriptor.clearBuffer = true;
                 descriptor.clearColor = Color.clear;
