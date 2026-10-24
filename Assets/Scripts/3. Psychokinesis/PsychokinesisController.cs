@@ -11,6 +11,7 @@ namespace TeamOdd.Psychokinesis
         [SerializeField] private Camera aimCamera;
         [SerializeField] private CharacterController player;
         [SerializeField] private CombatEntity combatEntity;
+        [SerializeField] private Player.Player playerStatus;
         [SerializeField] private LayerMask queryLayers = Physics.DefaultRaycastLayers;
 
         [Header("Targeting")]
@@ -38,6 +39,10 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(1f)] private float maxAcceleration = 400f;
         [SerializeField, Min(1f)] private float maxHoldSpeed = 26f;
         [SerializeField, Min(1f)] private float breakDistance = 16f;
+
+        [Header("Stamina")]
+        [SerializeField, Min(0f)] private float holdStaminaCostPerSecond = 20f;
+        [SerializeField, Min(0f)] private float minGrabStamina = 10f;
 
         [Header("Throwing")]
         [SerializeField, Min(0.01f)] private float throwPrepareDuration = 0.2f;
@@ -80,12 +85,19 @@ namespace TeamOdd.Psychokinesis
         private bool attackRequested;
         private float nextAttackTime;
         private float swingActiveUntil = float.NegativeInfinity;
+        
+        public PsychokinesisObject HeldObject => heldObject;
+        public bool GrabRequested => grabRequested;
+        public bool ReleaseRequested => releaseRequested;
+
+        public Vector3 Viewport => aimCamera.WorldToViewportPoint(new Vector3(0.5f, 0.5f));
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
 
         private void Awake()
         {
             playerColliders = player.GetComponentsInChildren<Collider>();
+            if (playerStatus == null) playerStatus = GetComponent<Player.Player>();
         }
 
         private void Update()
@@ -134,11 +146,12 @@ namespace TeamOdd.Psychokinesis
 
             if (grabRequested)
             {
-                if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass))
+                if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass) && HasGrabStamina())
                 {
                     heldObject = focusedObject;
-                    holdDirection = aimCamera.transform.forward;
-                    previousCameraDirection = holdDirection;
+                    Ray grabRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+                    holdDirection = GetCameraAlignedDirection(grabRay, holdDistance);
+                    previousCameraDirection = grabRay.direction;
 #if UNITY_EDITOR
                     horizontalRotationSpeed = 0f;
 #endif
@@ -150,6 +163,7 @@ namespace TeamOdd.Psychokinesis
                 }
 
                 grabRequested = false;
+                Debug.Log(grabRequested);
             }
 
             if (heldObject != null && throwRequested && releaseRequested == false)
@@ -164,7 +178,26 @@ namespace TeamOdd.Psychokinesis
                 attackRequested = false;
             }
 
-            if (heldObject != null) holdPosition = GetHoldPosition();
+            if (heldObject != null)
+            {
+                holdPosition = GetHoldPosition();
+                ConsumeHoldStamina();
+            }
+        }
+
+        private bool HasGrabStamina()
+        {
+            return playerStatus == null || playerStatus.Stamina >= minGrabStamina;
+        }
+
+        // 홀딩 중에는 매 프레임 스태미나를 소모하고, 바닥나면 다음 FixedUpdate에서 놓도록 요청한다
+        private void ConsumeHoldStamina()
+        {
+            if (playerStatus == null) return;
+
+            playerStatus.ConsumeStamina(holdStaminaCostPerSecond * Time.deltaTime);
+
+            if (playerStatus.Stamina <= 0f) releaseRequested = true;
         }
 
         private void FixedUpdate()
@@ -277,17 +310,26 @@ namespace TeamOdd.Psychokinesis
             return best;
         }
 
+        // 카메라 광선 위에서 플레이어 깊이부터 pickupDistance까지를 타겟팅 구간으로 사용
+        // 카메라와 플레이어 사이(플레이어 뒤쪽)는 타겟팅 범위로 사용하지 않음
+        private void GetTargetingRange(Ray ray, out float start, out float end)
+        {
+            start = Mathf.Max(0f, Vector3.Dot(player.transform.position - ray.origin, ray.direction));
+            end = start + pickupDistance;
+        }
+
         private float GetTargetingDistance(Ray ray)
         {
-            return pickupDistance + Vector3.Distance(ray.origin, player.transform.position);
+            GetTargetingRange(ray, out _, out float end);
+            return end;
         }
 
         private void GetTargetingBox(out Ray ray, out Vector3 center, out Vector3 halfExtents)
         {
             ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float length = GetTargetingDistance(ray);
-            center = ray.GetPoint(length * 0.5f);
-            halfExtents = new Vector3(castHalfWidth, castHalfWidth, length * 0.5f);
+            GetTargetingRange(ray, out float start, out float end);
+            center = ray.GetPoint((start + end) * 0.5f);
+            halfExtents = new Vector3(castHalfWidth, castHalfWidth, pickupDistance * 0.5f);
         }
 
         private int CollectTargetingCandidates(out Ray ray)
@@ -301,16 +343,19 @@ namespace TeamOdd.Psychokinesis
 
         private Vector3 GetTargetingPosition(Collider target, Ray ray)
         {
-            float length = GetTargetingDistance(ray);
-            if (target.Raycast(ray, out RaycastHit hit, length)) return hit.point;
+            GetTargetingRange(ray, out float start, out float end);
+            Ray rangeRay = new Ray(ray.GetPoint(start), ray.direction);
 
-            float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), 0f, length);
+            if (target.Raycast(rangeRay, out RaycastHit hit, pickupDistance)) return hit.point;
+
+            float depth = Mathf.Clamp(Vector3.Dot(target.bounds.center - ray.origin, ray.direction), start, end);
             return target.ClosestPoint(ray.GetPoint(depth));
         }
 
         private void NormalAttack()
         {
             if (Time.time < nextAttackTime) return;
+
             nextAttackTime = Time.time + attackInterval;
 
             Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
@@ -377,14 +422,35 @@ namespace TeamOdd.Psychokinesis
 
             if (IsPreparingThrow)
                 return GetHoldOrigin() + Vector3.Lerp(throwPrepareStartOffset,
-                    cameraRay.direction * throwPrepareDistance, GetThrowPrepareBlend());
+                    GetCameraAlignedDirection(cameraRay, throwPrepareDistance) * throwPrepareDistance, GetThrowPrepareBlend());
 
             float lagAmount = Mathf.InverseLerp(swingRotationSpeed * 0.25f, swingRotationSpeed, rotationSpeed);
             float lag = Mathf.Lerp(SmallRotationLag, holdRotationLag, lagAmount);
             float blend = 1f - Mathf.Exp(-Time.deltaTime / lag);
-            holdDirection = Vector3.Slerp(holdDirection, cameraRay.direction, blend).normalized;
-            holdDirection = Vector3.RotateTowards(cameraRay.direction, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
+            Vector3 aimDirection = GetCameraAlignedDirection(cameraRay, holdDistance);
+            holdDirection = Vector3.Slerp(holdDirection, aimDirection, blend).normalized;
+            holdDirection = Vector3.RotateTowards(aimDirection, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
             return GetHoldOrigin() + holdDirection * holdDistance;
+        }
+
+        // 홀딩 기준점(GetHoldOrigin)을 중심으로 한 반지름 radius 구와 카메라 중앙 광선의 먼 쪽 교점을 향하는 방향
+        // 카메라가 어깨 오프셋만큼 플레이어에서 떨어져 있어도 물체가 화면 중앙(Crosshair)에 오고, 플레이어와의 거리는 radius로 유지
+        private Vector3 GetCameraAlignedDirection(Ray cameraRay, float radius)
+        {
+            Vector3 origin = GetHoldOrigin();
+            Vector3 toRayOrigin = cameraRay.origin - origin;
+
+            float b = Vector3.Dot(toRayOrigin, cameraRay.direction);
+            float c = toRayOrigin.sqrMagnitude - radius * radius;
+            float discriminant = b * b - c;
+
+            // 카메라가 구 밖에 있어 광선이 구를 비켜 가는 경우에는 기존처럼 카메라 방향 사용
+            if (discriminant < 0f) return cameraRay.direction;
+
+            float distance = -b + Mathf.Sqrt(discriminant);
+            if (distance <= 0f) return cameraRay.direction;
+
+            return (cameraRay.GetPoint(distance) - origin).normalized;
         }
 
         private Vector3 GetHoldOrigin()

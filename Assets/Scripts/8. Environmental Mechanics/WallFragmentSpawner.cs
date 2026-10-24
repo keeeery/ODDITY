@@ -4,6 +4,13 @@ using UnityEngine.Serialization;
 
 namespace TeamOdd.Arena
 {
+    public enum FragmentSize
+    {
+        Large,
+        Medium,
+        Small
+    }
+
     public sealed class WallFragmentSpawner : MonoBehaviour
     {
         private const int MaxSpawnAttempts = 8;
@@ -128,11 +135,44 @@ namespace TeamOdd.Arena
             SpawnFragments(smallVisualFragmentPrefabs, smallFragmentPool, 9, point, normal, spawnRadius);
         }
 
+        // 크기별 풀에서 무작위 형태의 파편을 꺼내 배치
+        public WallFragment SpawnFragment(FragmentSize size, Vector3 position, Quaternion rotation)
+        {
+            Component[] prefabs = GetPrefabs(size);
+            return SpawnVariant(prefabs[Random.Range(0, prefabs.Length)], GetPool(size), position, rotation);
+        }
+
+        private Component[] GetPrefabs(FragmentSize size) => size switch
+        {
+            FragmentSize.Large => largeFragmentPrefabs,
+            FragmentSize.Medium => mediumFragmentPrefabs,
+            _ => smallVisualFragmentPrefabs
+        };
+
+        private ObjectPoolManager.ObjectPoolData GetPool(FragmentSize size) => size switch
+        {
+            FragmentSize.Large => largeFragmentPool,
+            FragmentSize.Medium => mediumFragmentPool,
+            _ => smallFragmentPool
+        };
+
+        private static WallFragment SpawnVariant(Component prefab, ObjectPoolManager.ObjectPoolData pool, Vector3 position, Quaternion rotation)
+        {
+            WallFragment fragment = (WallFragment)ObjectPoolManager.Instance.GetObjectOrNull(pool.Key);
+
+            if (fragment == null) return null;
+
+            fragment.ApplyVariant(prefab);
+            fragment.transform.SetPositionAndRotation(position, rotation);
+            fragment.gameObject.SetActive(true);
+            return fragment;
+        }
+
         private bool IsSpawnBlocked(Vector3 center, Vector3 halfExtents, Quaternion rotation, bool ignoreDebris)
         {
             if (ignoreDebris == false)
-                return Physics.CheckBox(center, halfExtents, rotation,
-                    Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+                return Physics.CheckBox(
+                    center, halfExtents, rotation, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 
             int count = Physics.OverlapBoxNonAlloc(center, halfExtents, spawnOverlaps, rotation,
                 Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
@@ -142,6 +182,7 @@ namespace TeamOdd.Arena
             for (int index = 0; index < count; index++)
             {
                 Rigidbody body = spawnOverlaps[index].attachedRigidbody;
+
                 if (body != null && body.TryGetComponent<WallFragmentDebris>(out _)) continue;
                 return true;
             }
@@ -180,12 +221,10 @@ namespace TeamOdd.Arena
 
                 if (foundSpace == false) continue;
 
-                WallFragment fragment = (WallFragment)ObjectPoolManager.Instance.GetObjectOrNull(pool.Key);
+                WallFragment fragment = SpawnVariant(prefab, pool, position, rotation);
+
                 if (fragment == null) continue;
 
-                fragment.ApplyVariant(prefab);
-                fragment.transform.SetPositionAndRotation(position, rotation);
-                fragment.gameObject.SetActive(true);
                 Rigidbody body = fragment.GetComponent<Rigidbody>();
                 Vector3 direction = (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
                 body.linearVelocity = direction * Random.Range(speedRange.x, speedRange.y);

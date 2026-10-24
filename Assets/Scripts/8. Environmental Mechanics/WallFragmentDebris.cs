@@ -21,6 +21,9 @@ namespace TeamOdd.Arena
         {
             body = GetComponent<Rigidbody>();
             fragment = GetComponent<WallFragment>();
+
+            // 바닥을 제외한 다른 오브젝트와는 충돌 무시
+            body.excludeLayers = ~LayerMask.GetMask("Ground");
         }
 
         private void OnEnable()

@@ -46,13 +46,26 @@ namespace Study3D.FpsGame
         {
             for (int i = 0; i < events.Length; i++)
             {
-                var eventData = events[i];
-                if (eventData.IsComplete) continue;
-                if (eventData.NormalizedTime > stateInfo.normalizedTime) continue; // 아직 보낼 시점이 아님
+                if (events[i].NormalizedTime > stateInfo.normalizedTime) 
+                    continue; // 아직 보낼 시점이 아님
 
-                eventData.IsComplete = true;
-                eventListener.OccursAnimStateEvent(eventData.Name, eventData.Parameter);
+                TrySendEvent(events[i]);
             }
+        }
+
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            // 상태가 끝날 때까지 못 보낸 신호(예: time = 1)를 마저 보냅니다
+            for (int i = 0; i < events.Length; i++)
+                TrySendEvent(events[i]);
+        }
+
+        private void TrySendEvent(AnimStateEvent eventData)
+        {
+            if (eventData.IsComplete) return;
+
+            eventData.IsComplete = true;
+            eventListener.OccursAnimStateEvent(eventData.Name, eventData.Parameter);
         }
     }
 }

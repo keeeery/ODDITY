@@ -17,6 +17,7 @@ namespace TeamOdd.Combat
         private int hp;
         private int prevMaxHp; // 최대 체력이 얼마나 바뀌었는지 알기 위해 보관
 
+        public int Hp => hp;
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
 

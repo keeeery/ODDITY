@@ -1,53 +1,65 @@
-﻿using System;
-using Jay;
+﻿using Jay;
+using Study.Utilities;
 using Study3D.FpsGame;
-using TeamOdd.Combat;
+using TeamOdd.CameraMove;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace TeamOdd.Player
 {
-    public class Player : SingletonBase<Player>, ICombatable
+    public class Player : SingletonBase<Player>
     {
-        [SerializeField] private float hp = 100;
-        [SerializeField] private float maxHp = 100;
         [SerializeField] private float stamina = 100;
         [SerializeField] private float maxStamina = 100;
-        
-        public Collider Collider => characterController; 
-        public GameObject GameObject => gameObject;
-        public float Hp => hp;
+        [SerializeField, Min(0f)] private float staminaRegenRate = 15f;
+        [SerializeField, Min(0f)] private float staminaRegenDelay = 1f; // 스태미나 사용 이후 회복 시작 대기시간
+
         public float Stamina => stamina;
+        public float MaxStamina => maxStamina;
+
+        private float lastConsumeTime = float.NegativeInfinity;
+
+        public CharacterController CharacterController;
+        public CameraController CameraController;
+        public PlayerController PlayerController;
         
-        public CharacterController characterController;
-        private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
         private void Awake()
         {
             DontDestroyOnLoad(this);
             
-            characterController = GetComponent<CharacterController>();
-            playerController = GetComponent<PlayerController>();
+            CharacterController = GetComponent<CharacterController>();
+            PlayerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
             
-            hp = maxHp;
             stamina = maxStamina;
         }
 
         private void Update()
         {
-            if(stamina <= maxStamina) stamina += Time.deltaTime;
+            if (Time.time >= lastConsumeTime + staminaRegenDelay)
+                stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
+            
+            if (SimpleInput.GetKeyDown(Key.Escape))
+                LockCursor(false);
+            else if (Cursor.lockState != CursorLockMode.Locked &&
+                     (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) ||
+                      SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
+                LockCursor(true);
+
+            ControllerActive();
         }
 
         private void OnEnable()
         {
-            playerController.OnRollRequested += HandleRollRequested;
+            PlayerController.OnRollRequested += HandleRollRequested;
             eventListener.OnOccursAnimStateEvent += HandleAnimStateEvent;
         }
 
         private void OnDisable()
         {
-            playerController.OnRollRequested -= HandleRollRequested;
+            PlayerController.OnRollRequested -= HandleRollRequested;
             eventListener.OnOccursAnimStateEvent -= HandleAnimStateEvent;
         }
         
@@ -56,30 +68,35 @@ namespace TeamOdd.Player
             if (stamina < 100f) return;
 
             ConsumeStamina(100f);
-            playerController.InputRolling();
+            PlayerController.InputRolling();
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
         { 
             if (eventName == "EndRolling")
             {
-                playerController.EndRoll();
+                PlayerController.EndRoll();
             }
         }
 
         public void ConsumeStamina(float amount)
         {
             stamina = Mathf.Max(0, stamina - amount);
-        }
-        
-        public int TakeDamage(DamageEvent @event)
-        {
-            throw new NotImplementedException();
+            lastConsumeTime = Time.time;
         }
 
-        public int TakeHeal(HealEvent @event)
+        public void ControllerActive()
         {
-            throw new NotImplementedException();
+            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
+            
+            PlayerController.enabled = cursorLocked;
+            CameraController.enabled = cursorLocked;
+        }
+        
+        public void LockCursor(bool locked)
+        {
+            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = locked == false;
         }
     }
 }
