@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-namespace TeamOdd.Player
+namespace TeamOdd.UI
 {
     // 플레이어를 중심으로 카메라 Yaw에 맞춰 회전하는 원형 미니맵
     // 바닥은 위에서 내려다보는 전용 카메라로 Ground 레이어만 그리고(Wall 등은 비어 보임),
@@ -20,7 +20,7 @@ namespace TeamOdd.Player
         private const int BackgroundSegments = 72; // 배경은 크게 그려지므로 각지지 않게 더 잘게 나눈다
 
         [Header("References")]
-        [SerializeField] private Player player;
+        [SerializeField] private Player.Player player;
         [SerializeField] private BossMonster boss;
         [SerializeField] private Transform viewCamera;
         // 비워두면 실행 시 이 오브젝트 바로 뒤(아래)에 형제로 생성
@@ -87,7 +87,7 @@ namespace TeamOdd.Player
             base.Start();
             if (Application.isPlaying == false) return;
 
-            if (player == null) player = FindAnyObjectByType<Player>();
+            if (player == null) player = FindAnyObjectByType<Player.Player>();
             if (boss == null) boss = FindAnyObjectByType<BossMonster>();
             if (viewCamera == null && Camera.main != null) viewCamera = Camera.main.transform;
             if (groundLayers == 0) groundLayers = LayerMask.GetMask("Ground");

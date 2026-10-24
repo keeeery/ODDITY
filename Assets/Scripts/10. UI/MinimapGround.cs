@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TeamOdd.Player
+namespace TeamOdd.UI
 {
     // 미니맵 카메라가 그린 RenderTexture를 원형으로 잘라서 보여주는 Graphic
     [RequireComponent(typeof(CanvasRenderer))]
