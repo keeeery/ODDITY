@@ -64,8 +64,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.28499997, y: 0.17679098, z: 0.14089212}
-  m_Center: {x: -0.006649688, y: -0.01487815, z: 0.008836549}
+  m_Size: {x: 0.185, y: 0.11475907, z: 0.091456294}
+  m_Center: {x: -0.0043164603, y: -0.009657748, z: 0.0057360064}
 --- !u!23 &3986091134394664913
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -169,5 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.WallFragmentDebris
   stableDuration: 1
   despawnDelay: 3
+  despawnDelayJitter: 1
   linearSpeedThreshold: 0.15
   angularSpeedThreshold: 0.3
+  shrinkDuration: 0.4
