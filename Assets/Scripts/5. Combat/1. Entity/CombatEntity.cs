@@ -16,6 +16,7 @@ namespace TeamOdd.Combat
 
         private int hp;
 
+        public int Hp => hp;
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
 

@@ -52,7 +52,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6909478563311126783}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 95d16c07cfab840f2a6162ea2520e3ad, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -162,6 +162,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0.5
 --- !u!114 &8315611190680556389
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -94,15 +94,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.40927
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.50515
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.w
@@ -134,7 +134,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_Name
-      value: SK_PP801_Style (4) Variant
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8992660382053568797, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_IsActive
@@ -156,6 +156,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6101258613780513084}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1595685480918527147}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4790431442688611916}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -211,11 +217,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eede01cf483a496388ffc51f31974940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.Player
-  hp: 100
-  maxHp: 100
   stamina: 100
   maxStamina: 100
-  movement: {fileID: 6101258613780513084}
+  characterController: {fileID: 0}
+  cameraController: {fileID: 0}
 --- !u!114 &6101258613780513084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,3 +243,57 @@ MonoBehaviour:
   rollDistance: 4
   rollDuration: 0.6
   animator: {fileID: 0}
+  heldObject: {fileID: 0}
+  a: 0
+--- !u!114 &1595685480918527147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d801150ce685542dc80e16963aa87176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisController
+  aimCamera: {fileID: 0}
+  player: {fileID: 677289072813033125}
+  combatEntity: {fileID: 4790431442688611916}
+  queryLayers:
+    serializedVersion: 2
+    m_Bits: 115
+  pickupDistance: 12
+  castHalfWidth: 2
+  maxMass: 20
+  attackInterval: 0.25
+  swingMinSpeed: 17.5
+  swingActivationSpeed: 180
+  swingActiveDuration: 0.12
+  holdRotationLag: 0.18
+  swingRotationSpeed: 180
+  maxHoldLagAngle: 60
+  holdDistance: 6.5
+  followStrength: 180
+  followDamping: 24
+  maxAcceleration: 400
+  maxHoldSpeed: 26
+  breakDistance: 16
+  throwPrepareDuration: 0.2
+  throwPrepareDistance: 3.5
+  throwPullMultiplier: 3
+  throwSpeed: 25
+--- !u!114 &4790431442688611916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
+  <Collider>k__BackingField: {fileID: 0}
+  <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}

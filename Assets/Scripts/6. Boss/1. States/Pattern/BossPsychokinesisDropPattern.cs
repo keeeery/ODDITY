@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,23 +8,22 @@ using Random = UnityEngine.Random;
 namespace TeamOdd.Boss
 {
     // 플레이어 위치를 중심으로 한 원형 범위 안에 염동력 오브젝트를 무작위로 투하하는 패턴
-    public sealed class PsychokinesisDropPattern : MonoBehaviour
+    public sealed class BossPsychokinesisDropPattern : BossCooldownPatternBase
     {
         private const int MaxPositionAttempts = 12;
 
-        [Header("References")]
+        [Title("References")]
         [SerializeField] private WallFragmentSpawner fragmentSpawner;
-        [SerializeField] private Transform target;
 
         [Tooltip("바닥, 벽, 천장 판정에 사용할 레이어. Rigidbody가 붙은 오브젝트와 대상은 판정에서 제외한다.")]
         [SerializeField] private LayerMask environmentLayers = Physics.DefaultRaycastLayers;
 
-        [Header("Count")]
+        [Title("Count")]
         [SerializeField, Min(0)] private int largeCount = 3;
         [SerializeField, Min(0)] private int mediumCount = 7;
         [SerializeField, Min(0)] private int smallCount = 10;
 
-        [Header("Area")]
+        [Title("Area")]
         [SerializeField, Min(0f)] private float radius = 6f;
         [Tooltip("투하 지점끼리 유지할 최소 수평 거리(m), 자리를 찾지 못하면 무시하고 배치한다.")]
         [SerializeField, Min(0f)] private float minSpacing = 1.2f;
@@ -33,7 +32,7 @@ namespace TeamOdd.Boss
         [Tooltip("투하 높이에 더할 무작위 편차(m)")]
         [SerializeField, Min(0f)] private float heightJitter = 2f;
 
-        [Header("Validation")]
+        [Title("Validation")]
         [Tooltip("대상 위치 기준으로 벽 가림과 바닥 탐색을 시작할 높이(m)")]
         [SerializeField, Min(0f)] private float probeHeight = 1.5f;
         [Tooltip("탐색 시작 높이에서 아래로 바닥을 찾을 거리(m)")]
@@ -45,17 +44,14 @@ namespace TeamOdd.Boss
         [Tooltip("생성 위치가 지형과 겹치는지 검사할 반경(m)")]
         [SerializeField, Min(0f)] private float spawnCheckRadius = 0.6f;
 
-        [Header("Timing")]
-        [Tooltip("패턴 시작 후 첫 투하까지의 대기 시간(초)")]
-        [SerializeField, Min(0f)] private float startDelay = 0.5f;
+        [Title("Timing")]
+        // 투하 시작: Roar 애니메이션의 OnRoarDrop 신호, 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
         [Tooltip("모든 오브젝트를 나누어 투하하는 데 걸리는 시간(초)")]
         [SerializeField, Min(0f)] private float dropDuration = 1f;
-        [Tooltip("마지막 투하 후 패턴 종료까지의 대기 시간(초)")]
-        [SerializeField, Min(0f)] private float recoveryDuration = 1f;
-        [Tooltip("켜면 첫 투하 직전까지 대상 위치를 따라가고, 끄면 패턴 시작 시점의 위치를 사용한다.")]
+        [Tooltip("켜면 OnRoarDrop 신호를 받는 순간까지 대상 위치를 따라갈지 여부")]
         [SerializeField] private bool trackTargetUntilDrop = true;
 
-        [Header("Motion")]
+        [Title("Motion")]
         [SerializeField, Min(0f)] private float initialFallSpeed = 0f;
         [SerializeField, Min(0f)] private float spinSpeed = 4f;
 
@@ -63,29 +59,31 @@ namespace TeamOdd.Boss
         private readonly List<Vector3> dropPositions = new List<Vector3>();
         private readonly RaycastHit[] probeHits = new RaycastHit[32];
         private readonly Collider[] spawnOverlaps = new Collider[32];
-        private Coroutine routine;
         private Vector3 dropCenter;
 
-        public event Action Completed;
-        public bool IsRunning => routine != null;
-
-        private void OnEnable()
+        protected override void OnEnter()
         {
-            routine = StartCoroutine(Run());
+            StartCooldown();
+            dropCenter = Target.position;
+            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
+            root.Animator.SetTrigger(BossAnimParams.ROAR);
         }
 
-        private void OnDisable()
+        // 비활성화되면 투하 코루틴은 자동으로 멈춤
+        protected override void OnExit()
         {
-            // 비활성화되면 코루틴은 자동으로 멈추므로 상태만 정리
-            routine = null;
+            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
+            root.Animator.ResetTrigger(BossAnimParams.ROAR);
+        }
+
+        private void OnAnimEvent(string eventName, string eventParam)
+        {
+            if (eventName == "OnRoarDrop") StartCoroutine(Run());
         }
 
         private IEnumerator Run()
         {
-            dropCenter = target.position;
-            yield return new WaitForSeconds(startDelay);
-
-            if (trackTargetUntilDrop) dropCenter = target.position;
+            if (trackTargetUntilDrop) dropCenter = Target.position;
 
             BuildDropOrder();
             dropPositions.Clear();
@@ -98,10 +96,6 @@ namespace TeamOdd.Boss
                 if (index < dropOrder.Count - 1 && interval > 0f)
                     yield return new WaitForSeconds(interval);
             }
-
-            yield return new WaitForSeconds(recoveryDuration);
-            routine = null;
-            Completed?.Invoke();
         }
 
         private void BuildDropOrder()
@@ -131,7 +125,7 @@ namespace TeamOdd.Boss
             body.angularVelocity = Random.onUnitSphere * spinSpeed;
         }
 
-        // 간격 조건까지 만족하는 지점을 우선 찾고, 없으면 마지막으로 찾은 유효 지점을 사용한다.
+        // 간격 조건까지 만족하는 지점을 우선 찾고, 없으면 마지막으로 찾은 유효 지점 사용
         private bool TryPickDropPosition(out Vector3 position)
         {
             position = Vector3.zero;
@@ -219,7 +213,7 @@ namespace TeamOdd.Boss
         // 떨어진 염동력 오브젝트나 대상 자신은 지형으로 취급하지 않는다.
         private bool IsEnvironment(Collider collider)
         {
-            return collider.attachedRigidbody == null && collider.transform.IsChildOf(target) == false;
+            return collider.attachedRigidbody == null && collider.transform.IsChildOf(Target) == false;
         }
 
         private bool IsTooClose(Vector3 position)
@@ -239,11 +233,12 @@ namespace TeamOdd.Boss
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            Vector3 center = IsRunning ? dropCenter : target.position;
+            if (Application.isPlaying == false) return;
+
             UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.DrawWireDisc(center, Vector3.up, radius);
+            UnityEditor.Handles.DrawWireDisc(dropCenter, Vector3.up, radius);
             UnityEditor.Handles.color = new Color(1f, 0.5f, 0f);
-            UnityEditor.Handles.DrawWireDisc(center + Vector3.up * dropHeight, Vector3.up, radius);
+            UnityEditor.Handles.DrawWireDisc(dropCenter + Vector3.up * dropHeight, Vector3.up, radius);
         }
 #endif
     }
