@@ -11,21 +11,26 @@ namespace TeamOdd.Player
     {
         [SerializeField] private float stamina = 100;
         [SerializeField] private float maxStamina = 100;
-        
+        [SerializeField, Min(0f)] private float staminaRegenRate = 15f;
+        [SerializeField, Min(0f)] private float staminaRegenDelay = 1f; // 스태미나 사용 이후 회복 시작 대기시간
+
         public float Stamina => stamina;
+        public float MaxStamina => maxStamina;
+
+        private float lastConsumeTime = float.NegativeInfinity;
+
+        public CharacterController CharacterController;
+        public CameraController CameraController;
+        public PlayerController PlayerController;
         
-        public CharacterController characterController;
-        public CameraController cameraController;
-        
-        private PlayerController playerController;
         private AnimStateEventListener eventListener;
         
         private void Awake()
         {
             DontDestroyOnLoad(this);
             
-            characterController = GetComponent<CharacterController>();
-            playerController = GetComponent<PlayerController>();
+            CharacterController = GetComponent<CharacterController>();
+            PlayerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
             
             stamina = maxStamina;
@@ -33,7 +38,8 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            if(stamina <= maxStamina) stamina += Time.deltaTime;
+            if (Time.time >= lastConsumeTime + staminaRegenDelay)
+                stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
             
             if (SimpleInput.GetKeyDown(Key.Escape))
                 LockCursor(false);
@@ -42,20 +48,18 @@ namespace TeamOdd.Player
                       SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
                 LockCursor(true);
 
-            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
-            playerController.enabled = cursorLocked;
-            cameraController.enabled = cursorLocked;
+            ControllerActive();
         }
 
         private void OnEnable()
         {
-            playerController.OnRollRequested += HandleRollRequested;
+            PlayerController.OnRollRequested += HandleRollRequested;
             eventListener.OnOccursAnimStateEvent += HandleAnimStateEvent;
         }
 
         private void OnDisable()
         {
-            playerController.OnRollRequested -= HandleRollRequested;
+            PlayerController.OnRollRequested -= HandleRollRequested;
             eventListener.OnOccursAnimStateEvent -= HandleAnimStateEvent;
         }
         
@@ -64,23 +68,32 @@ namespace TeamOdd.Player
             if (stamina < 100f) return;
 
             ConsumeStamina(100f);
-            playerController.InputRolling();
+            PlayerController.InputRolling();
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
         { 
             if (eventName == "EndRolling")
             {
-                playerController.EndRoll();
+                PlayerController.EndRoll();
             }
         }
 
         public void ConsumeStamina(float amount)
         {
             stamina = Mathf.Max(0, stamina - amount);
+            lastConsumeTime = Time.time;
+        }
+
+        public void ControllerActive()
+        {
+            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
+            
+            PlayerController.enabled = cursorLocked;
+            CameraController.enabled = cursorLocked;
         }
         
-        public static void LockCursor(bool locked)
+        public void LockCursor(bool locked)
         {
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = locked == false;

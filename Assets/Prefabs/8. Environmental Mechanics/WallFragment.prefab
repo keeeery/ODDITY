@@ -162,3 +162,5 @@ MonoBehaviour:
   holdArrivalSpeed: 1
   throwDamageScale: 1
   monsterPushAcceleration: 25
+  targetPoint: {fileID: 0}
+  ikWeight: 0.5
