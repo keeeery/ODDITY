@@ -12,6 +12,9 @@ namespace TeamOdd.Boss
         public float RequiredRange { get; }
     }
     
+    // 범위 예고: OnClawWarn 신호, 공격 시점: OnClawHit 신호, 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+    // 예고는 보스 앞쪽 부채꼴로 표시하고 공격 시점까지 보스를 따라감(앞으로 내딛는 공격 대응)
+    // 예고 신호가 없으면 공격 시점에만 범위를 잠깐 표시
     public abstract class BossMeleePattern : BossStateBase, IRangedPattern
     {
         [Title("Settings")]
@@ -19,20 +22,32 @@ namespace TeamOdd.Boss
         [SerializeField] private float attackRange;
         [SerializeField] private float forwardAttackRange;
 
+        [Title("Telegraph")]
+        [Tooltip("공격 범위, 보스 위치에서 보스 정면 방향으로 펼쳐진다. 피격 판정을 붙일 때도 이 모양을 사용한다.")]
+        [SerializeField] private TelegraphShape hitShape = TelegraphShape.Sector(8f, 120f);
+        [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), OnClawWarn에서 OnClawHit까지의 시간에 맞춘다.")]
+        [SerializeField, Min(0f)] private float warnDuration = 0.5f;
+        [Tooltip("공격 후 범위 표시가 사라지는 데 걸리는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float telegraphFadeDuration = 0.3f;
+
+        private AttackTelegraph telegraph;
+
         public float RequiredRange => Mathf.Max(attackRange, forwardAttackRange);
+
+        private Pose HitPose => new Pose(root.transform.position, root.transform.rotation);
 
         protected override void OnEnter()
         {
             if (root.IsTargetInRange(attackRange))
             {
-                Animator.SetTrigger(trigger);
+                StartAttack();
                 return;
             }
 
             if (root.IsTargetInRange(forwardAttackRange))
             {
                 Animator.applyRootMotion = true;
-                Animator.SetTrigger(trigger);
+                StartAttack();
                 return;
             }
 
@@ -43,6 +58,39 @@ namespace TeamOdd.Boss
         protected override void OnExit()
         {
             Animator.applyRootMotion = false;
+            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
+
+            if (telegraph != null) telegraph.Cancel();
+            telegraph = null;
+        }
+
+        // 공격 시점까지 보스를 따라감
+        private void Update()
+        {
+            if (telegraph != null) telegraph.SetPlacement(hitShape, HitPose);
+        }
+
+        private void StartAttack()
+        {
+            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
+            Animator.SetTrigger(trigger);
+        }
+
+        private void OnAnimEvent(string eventName, string eventParam)
+        {
+            if (eventName == "OnClawWarn")
+            {
+                if (telegraph != null) telegraph.Cancel();
+                telegraph = root.ShowTelegraph(hitShape, HitPose, warnDuration);
+                return;
+            }
+
+            if (eventName != "OnClawHit") return;
+
+            // TODO: 피격 판정은 표시와 같은 hitShape.Contains(HitPose, Target.position)로 처리
+            AttackTelegraph resolved = telegraph != null ? telegraph : root.ShowTelegraph(hitShape, HitPose, 0f);
+            telegraph = null;
+            if (resolved != null) resolved.Resolve(telegraphFadeDuration);
         }
         
         #region RANGE_VISUALIZATION
@@ -88,6 +136,9 @@ namespace TeamOdd.Boss
             UnityEditor.Handles.color = Color.yellow;
             UnityEditor.Handles.DrawWireDisc(position, Vector3.up, forwardAttackRange);
             UnityEditor.Handles.Label(position + center.forward * forwardAttackRange, $"Forward Attack ({forwardAttackRange})");
+
+            UnityEditor.Handles.color = new Color(1f, 0.5f, 0f);
+            hitShape.DrawHandles(new Pose(position, center.rotation));
 
             UnityEditor.Handles.color = originalColor;
         }

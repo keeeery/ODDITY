@@ -21,7 +21,13 @@ namespace TeamOdd.Boss
         [TitleGroup("Settings")]
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightHalfAngle = 60f;
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightRange = 10f;
-        
+
+        [Title("Telegraph")]
+        [Tooltip("패턴들이 공유하는 피격 범위 표시(AttackTelegraph) 풀의 키, 풀은 ObjectPoolManager에 등록")]
+        [SerializeField] private string telegraphPoolKey = "AttackTelegraph";
+
+        private bool isTelegraphPoolMissing;
+
         public float DistanceToTarget => transform.FlatDistanceTo(Target);
         
         public float SignedAngleToTarget => Mathf.DeltaAngle(transform.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
@@ -36,9 +42,30 @@ namespace TeamOdd.Boss
         
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
         public bool IsTargetInSight() => IsTargetInRange(sightRange) && Mathf.Abs(SignedAngleToTarget) <= sightHalfAngle;
-        
+
+        // 풀을 쓸 수 없으면 null을 반환하므로 호출하는 쪽은 null을 허용해야 함
+        // 풀이 없으면 한 번만 알리고 이후에는 표시 없이 진행
+        public AttackTelegraph ShowTelegraph(TelegraphShape shape, Pose origin, float warnDuration)
+        {
+            if (isTelegraphPoolMissing) return null;
+
+            AttackTelegraph telegraph = ObjectPoolManager.Instance != null
+                ? ObjectPoolManager.Instance.GetObjectOrNull(telegraphPoolKey) as AttackTelegraph
+                : null;
+
+            if (telegraph == null)
+            {
+                Debug.LogWarning($"{name}: ObjectPoolManager에 '{telegraphPoolKey}' 키의 AttackTelegraph 풀이 없어 피격 범위를 표시하지 않습니다.", this);
+                isTelegraphPoolMissing = true;
+                return null;
+            }
+
+            telegraph.Show(shape, origin, warnDuration);
+            return telegraph;
+        }
+
         #endregion
-        
+
         #region ANIMATION_EVENT
 
         private void OnEnable()

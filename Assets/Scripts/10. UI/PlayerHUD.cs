@@ -1,21 +1,18 @@
 using TeamOdd.Combat;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace TeamOdd.UI
 {
-    // 플레이어 체력(CombatEntity)과 스태미나(Player)를 바 Image Fill로 보여주는 간단한 HUD
+    // 플레이어 체력(CombatEntity)과 스태미나(Player)를 VectorBar로 보여주는 간단한 HUD
     public class PlayerHUD : MonoBehaviour
     {
-        private const string FillSpritePath = "WhiteSquare";
-
         [Header("References")]
         [SerializeField] private Player.Player player;
         [SerializeField] private CombatEntity combatEntity;
 
         [Header("Bars")]
-        [SerializeField] private Image hpFill;
-        [SerializeField] private Image staminaFill;
+        [SerializeField] private VectorBar hpBar;
+        [SerializeField] private VectorBar staminaBar;
 
         [Header("Display")]
         // 값이 바뀔 때 Fill이 따라가는 속도, 0이면 즉시 반영
@@ -23,42 +20,28 @@ namespace TeamOdd.UI
 
         private void Awake()
         {
-            if (player == null) player = FindAnyObjectByType<Player.Player>();
-            if (combatEntity == null && player != null) combatEntity = player.GetComponent<CombatEntity>();
-
-            Sprite fillSprite = Resources.Load<Sprite>(FillSpritePath);
-            SetupFill(hpFill, fillSprite);
-            SetupFill(staminaFill, fillSprite);
+            player ??= FindAnyObjectByType<Player.Player>();
+            combatEntity ??= player.GetComponent<CombatEntity>();
         }
 
         private void Start()
         {
-            hpFill.fillAmount = GetHpRatio();
-            staminaFill.fillAmount = GetStaminaRatio();
+            hpBar.FillAmount = GetHpRatio();
+            staminaBar.FillAmount = GetStaminaRatio();
         }
 
         private void Update()
         {
-            UpdateFill(hpFill, GetHpRatio());
-            UpdateFill(staminaFill, GetStaminaRatio());
+            UpdateFill(hpBar, GetHpRatio());
+            UpdateFill(staminaBar, GetStaminaRatio());
         }
 
-        private static void SetupFill(Image fill, Sprite sprite)
+        private void UpdateFill(VectorBar bar, float ratio)
         {
-            if (fill == null) return;
+            if (bar == null) return;
 
-            if (sprite != null) fill.sprite = sprite;
-            fill.type = Image.Type.Filled;
-            fill.fillMethod = Image.FillMethod.Horizontal;
-            fill.fillOrigin = (int)Image.OriginHorizontal.Left;
-        }
-
-        private void UpdateFill(Image fill, float ratio)
-        {
-            if (fill == null) return;
-
-            fill.fillAmount = fillLerpSpeed > 0f
-                ? Mathf.Lerp(fill.fillAmount, ratio, 1f - Mathf.Exp(-fillLerpSpeed * Time.deltaTime))
+            bar.FillAmount = fillLerpSpeed > 0f
+                ? Mathf.Lerp(bar.FillAmount, ratio, 1f - Mathf.Exp(-fillLerpSpeed * Time.deltaTime))
                 : ratio;
         }
 
