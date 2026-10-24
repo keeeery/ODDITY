@@ -87,8 +87,11 @@ namespace TeamOdd.CameraMove
             pitch -= delta.y * mouseSensitivity;
             pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-            if (isHeld)
-                yaw = Mathf.Clamp(yaw, minYaw, maxYaw);
+            // if (isHeld)
+            //     yaw = Mathf.Clamp(yaw, minYaw, maxYaw);
+            // 이거 아마 팔 뻗고 부자연스럽게 회전하는 거 막으려는 조치로 해두신 듯?
+            // 그 부분은 해결했으니 위에 주석 처리한 거 아예 지워버려도 될 것 같고
+            // 오히려 x축 회전 하한선 조정해야 할 듯, 카메라 아래로 쭉 당기면 플레이어 관통돼서 보임
 
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }

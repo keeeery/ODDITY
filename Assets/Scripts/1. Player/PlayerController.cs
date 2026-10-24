@@ -31,13 +31,47 @@ namespace TeamOdd.Player
         
         [SerializeField] private Animator animator;
 
+        [Header("밀기")]
+        [SerializeField, Min(0f)] private float pushForce = 150f;
+        [SerializeField, Min(0.01f)] private float maxPushMass = 50f;
+        [SerializeField, Range(0f, 1f)] private float minPushSpeedRatio = 0.3f;
+
+        [Header("홀딩")]
+        [SerializeField, Range(0f, 90f)] private float holdBodyLeadAngle = 50f;
+        [SerializeField, Range(0f, 90f)] private float armYawRange = 30f;
+        [SerializeField, Min(0.1f)] private float holdTurnSpeed = 15f;
+        [SerializeField, Min(0.1f)] private float armReach = 0.6f;
+        [SerializeField, Range(0f, 1f)] private float armIkWeight = 0.55f;
+        [SerializeField, Range(0f, 1f)] private float holdFingerBendScale = 0.5f;
+
+        [Header("던지기 준비")]
+        [SerializeField, Min(0.05f)] private float throwPrepareReach = 0.3f;
+        [SerializeField, Range(-90f, 90f)] private float throwPrepareWristBend = -40f;
+        // 팔꿈치가 굽는 방향, 플레이어 로컬 좌표, 기존 hint 객체를 추가하는 대신 오프셋 값으로 대체
+        [SerializeField] private Vector3 elbowHintOffset = new(-0.786f, 1.283f, -0.111f);
+
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
         private Vector3 velocity;
         private Vector3 rollDir;
         private float moveX, moveZ;
 
-        [SerializeField] private Transform hint;
+        private float pushSpeedRatio = 1f;        // 이번 프레임 Move 중 밀고 있는 물체로 계산
+        private float appliedPushSpeedRatio = 1f; // 이번 프레임 이동에 적용 (직전 프레임 계산값)
+
+        private bool defaultRotateTowardMove;
+        private bool isHolding;
+        private bool isRestoringFacing;
+        private float bodyTargetYaw;
+        private float restoreTargetYaw;
+        private float ikBlend;
+        private float throwPrepareBlend; // 0: 팔을 뻗은 홀딩 자세, 1: 던지기 준비 자세
+        private Vector3 lastHandTarget;
+        private Quaternion lastHandRotation;
+
+        private Transform[] leftFingers;
+        private Quaternion[] leftFingerRestRotations;
+
         public PsychokinesisObject heldObject;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
@@ -52,8 +86,17 @@ namespace TeamOdd.Player
             animator = GetComponent<Animator>();
         }
 
+        private void Start()
+        {
+            defaultRotateTowardMove = rotateTowardMove;
+            CacheLeftFingerRestPose();
+        }
+
         private void Update()
         {
+            UpdatePushSpeedRatio();
+            UpdateHoldFacing();
+
             // 구르는 동안에는 일반 이동 및 입력 처리를 막습니다.
             if (IsRolling)
             {
@@ -98,7 +141,7 @@ namespace TeamOdd.Player
                 velocity.y += gravity * Time.deltaTime;
             }
 
-            Vector3 totalMove = (moveVector * speed) + new Vector3(0, velocity.y, 0);
+            Vector3 totalMove = (moveVector * (speed * appliedPushSpeedRatio)) + new Vector3(0, velocity.y, 0);
             
             controller.Move(totalMove * Time.deltaTime);
 
@@ -126,47 +169,12 @@ namespace TeamOdd.Player
         
         private void OnAnimatorIK(int layerIndex)
         {
-            bool rightClick = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
-            bool grab = psychokinesisController.GrabRequested;
-            bool release = psychokinesisController.ReleaseRequested;
-            
-            if (heldObject)
-            {
-                float handReach = 0.3f;
-                
-                Vector3 shoulder = animator.GetBoneTransform(HumanBodyBones.LeftShoulder).position;
-                Vector3 hand = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
-                shoulder.x = hand.x;
-                
-                Vector3 dir = (heldObject.transform.position - shoulder).normalized;
-                Vector3 handTarget = shoulder + dir * handReach;
-
-                if (SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left))
-                {
-                    animator.SetIKHintPosition(AvatarIKHint.LeftElbow, hint.position);
-                    animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, 1.0f);
-                    
-                    animator.SetIKPosition(AvatarIKGoal.LeftHand, handTarget);
-                    animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, heldObject.IkWeight);
-                    return;
-                }
-                
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, heldObject.transform.position);
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, heldObject.IkWeight);
-            }
-
-            if (SimpleInput.GetMouseButtonUp(SimpleInput.MouseButton.Left))
-            {
-                Debug.Log("aaa");
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, Camera.main.transform.forward);
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1.0f);
-            }
+            UpdateHoldArmIK();
         }
 
-        private void UpdateIK(AvatarIKGoal goal, Transform target, float ikWeight)
+        private void LateUpdate()
         {
-            animator.SetIKPosition(goal, target.position);
-            animator.SetIKPositionWeight(goal, ikWeight);
+            ApplyHoldFingerBendScale();
         }
 
         #endregion
@@ -211,6 +219,179 @@ namespace TeamOdd.Player
 
         #endregion
         
+        #region 밀기
+
+        private void UpdatePushSpeedRatio()
+        {
+            appliedPushSpeedRatio = pushSpeedRatio;
+            pushSpeedRatio = 1f;
+        }
+
+        // CharacterController는 Rigidbody에 힘을 전달하지 못해 직접 물체를 밀어줌
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            Rigidbody body = hit.collider.attachedRigidbody;
+            if (body == null || body.isKinematic || body.mass >= maxPushMass) return;
+
+            // 밟고 있는 물체는 밀지 않음
+            if (hit.moveDirection.y < -0.3f) return;
+
+            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0f, hit.moveDirection.z).normalized;
+            if (pushDir == Vector3.zero) return;
+
+            pushSpeedRatio = Mathf.Min(pushSpeedRatio, Mathf.Lerp(1f, minPushSpeedRatio, body.mass / maxPushMass));
+
+            // 물체가 이미 플레이어보다 빠르게 밀려나는 중이면 더 밀지 않음
+            Vector3 playerVelocity = controller.velocity;
+            float playerSpeed = new Vector3(playerVelocity.x, 0f, playerVelocity.z).magnitude;
+            if (Vector3.Dot(body.linearVelocity, pushDir) >= playerSpeed) return;
+
+            // 프레임레이트와 무관하도록 힘 * deltaTime을 충격량으로 전달
+            body.AddForceAtPosition(pushDir * (pushForce * Time.deltaTime), hit.point, ForceMode.Impulse);
+        }
+
+        #endregion
+
+        #region 홀딩
+
+        // 잡으면 조준이 몸 기준 왼쪽 끝에 오도록 몸을 holdBodyLeadAngle만큼 오른쪽으로 회전,
+        // 조준이 거기서 오른쪽 armYawRange 안이면 팔만, 벗어나면 몸 회전, 놓으면 조준 방향으로 복원
+        private void UpdateHoldFacing()
+        {
+            // heldObject는 Update 끝에서 갱신되므로, 같은 프레임의 홀딩 상태와 IK가 어긋나지 않게 먼저 갱신
+            heldObject = psychokinesisController.HeldObject;
+
+            // 잡기 입력(우클릭) 중이거나 홀딩 중에는 이동 방향 회전 대신 여기서 몸 방향을 정함
+            bool aiming = heldObject != null || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            rotateTowardMove = defaultRotateTowardMove && aiming == false;
+
+            float aimYaw = Camera.main.transform.eulerAngles.y;
+            float t = 1f - Mathf.Exp(-holdTurnSpeed * Time.deltaTime);
+
+            if (heldObject == null || IsRolling)
+            {
+                if (isHolding)
+                {
+                    isHolding = false;
+                    isRestoringFacing = IsRolling == false;
+                    restoreTargetYaw = aimYaw;
+                }
+
+                ikBlend = Mathf.Lerp(ikBlend, 0f, t);
+                throwPrepareBlend = 0f;
+                RestoreFacing(t);
+                return;
+            }
+
+            if (isHolding == false)
+            {
+                isHolding = true;
+                isRestoringFacing = false;
+                bodyTargetYaw = aimYaw + holdBodyLeadAngle;
+            }
+
+            float armYaw = Mathf.DeltaAngle(bodyTargetYaw - holdBodyLeadAngle, aimYaw);
+
+            if (armYaw < 0f) bodyTargetYaw = aimYaw + holdBodyLeadAngle;
+            else if (armYaw > armYawRange) bodyTargetYaw = aimYaw + holdBodyLeadAngle - armYawRange;
+
+            SetBodyYaw(Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t));
+            ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
+
+            bool preparingThrow = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
+            throwPrepareBlend = Mathf.Lerp(throwPrepareBlend, preparingThrow ? 1f : 0f, t);
+        }
+
+        private void RestoreFacing(float t)
+        {
+            if (isRestoringFacing == false) return;
+
+            // 이동 입력이 들어오면 이동 방향 회전에 맡김
+            if (SimpleInput.GetMoveAxisRaw() != Vector2.zero)
+            {
+                isRestoringFacing = false;
+                return;
+            }
+
+            float bodyYaw = Mathf.LerpAngle(transform.eulerAngles.y, restoreTargetYaw, t);
+            SetBodyYaw(bodyYaw);
+
+            if (Mathf.Abs(Mathf.DeltaAngle(bodyYaw, restoreTargetYaw)) < 0.5f) isRestoringFacing = false;
+        }
+
+        private void SetBodyYaw(float yaw) => transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        // 홀딩 중 왼팔을 물체 쪽으로 뻗고, 던지기 준비 중에는 굽혀 당김. 놓으면 마지막 자세에서 서서히 해제
+        private void UpdateHoldArmIK()
+        {
+            if (isHolding == false)
+            {
+                // IK 가중치는 다시 설정할 때까지 유지되므로 다 풀린 뒤에는 0으로 정리
+                SetLeftHandIK(lastHandTarget, lastHandRotation, ikBlend > 0.01f ? ikBlend : 0f);
+                animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, 0f);
+                return;
+            }
+
+            Vector3 shoulder = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+            Vector3 direction = (heldObject.transform.position - shoulder).normalized;
+
+            // IK 적용 전 애니메이션의 팔 방향에서 새 팔 방향으로 돌린 만큼 손도 돌려 손목 각도 유지
+            Vector3 animatedArm = animator.GetIKPosition(AvatarIKGoal.LeftHand) - shoulder;
+            Quaternion handRotation = Quaternion.FromToRotation(animatedArm, direction) * animator.GetIKRotation(AvatarIKGoal.LeftHand);
+
+            lastHandTarget = shoulder + direction * Mathf.Lerp(armReach, throwPrepareReach, throwPrepareBlend);
+            lastHandRotation = BendWrist(handRotation, direction, throwPrepareWristBend * throwPrepareBlend);
+            SetLeftHandIK(lastHandTarget, lastHandRotation, ikBlend);
+
+            animator.SetIKHintPosition(AvatarIKHint.LeftElbow, transform.TransformPoint(elbowHintOffset));
+            animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, throwPrepareBlend * ikBlend);
+        }
+
+        // 손목을 현재 꺾인 방향(팔 → 손가락)으로 angle만큼 더 꺾음, 음수면 반대 방향
+        private Quaternion BendWrist(Quaternion handRotation, Vector3 armDirection, float angle)
+        {
+            Vector3 hand = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            Vector3 finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal).position;
+            Vector3 bendAxis = Vector3.Cross(armDirection, finger - hand).normalized;
+
+            return Quaternion.AngleAxis(angle, bendAxis) * handRotation;
+        }
+
+        private void SetLeftHandIK(Vector3 position, Quaternion rotation, float weight)
+        {
+            animator.SetIKPosition(AvatarIKGoal.LeftHand, position);
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, weight);
+            animator.SetIKRotation(AvatarIKGoal.LeftHand, rotation);
+            animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, weight);
+        }
+
+        // 애니메이션 적용 전(Start 시점) 손가락 회전을 기본 자세로 저장
+        private void CacheLeftFingerRestPose()
+        {
+            int count = HumanBodyBones.LeftLittleDistal - HumanBodyBones.LeftThumbProximal + 1;
+            leftFingers = new Transform[count];
+            leftFingerRestRotations = new Quaternion[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                leftFingers[i] = animator.GetBoneTransform(HumanBodyBones.LeftThumbProximal + i);
+                leftFingerRestRotations[i] = leftFingers[i].localRotation;
+            }
+        }
+
+        // 홀딩 손가락 포즈가 과하게 꺾여서 애니메이션 적용 후 기본 자세 쪽으로 굽힘을 줄임 (손목은 그대로)
+        private void ApplyHoldFingerBendScale()
+        {
+            if (ikBlend <= 0.01f) return;
+
+            float keep = Mathf.Lerp(1f, holdFingerBendScale, ikBlend / armIkWeight);
+
+            for (int i = 0; i < leftFingers.Length; i++)
+                leftFingers[i].localRotation = Quaternion.Slerp(leftFingerRestRotations[i], leftFingers[i].localRotation, keep);
+        }
+
+        #endregion
+
         private static float SmoothAxis(float current, float target)
         {
             const float AXIS_SPEED = 3f;

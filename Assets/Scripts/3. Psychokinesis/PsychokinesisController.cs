@@ -143,8 +143,9 @@ namespace TeamOdd.Psychokinesis
                 if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass))
                 {
                     heldObject = focusedObject;
-                    holdDirection = aimCamera.transform.forward;
-                    previousCameraDirection = holdDirection;
+                    Ray grabRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+                    holdDirection = GetCameraAlignedDirection(grabRay, holdDistance);
+                    previousCameraDirection = grabRay.direction;
 #if UNITY_EDITOR
                     horizontalRotationSpeed = 0f;
 #endif
@@ -396,14 +397,35 @@ namespace TeamOdd.Psychokinesis
 
             if (IsPreparingThrow)
                 return GetHoldOrigin() + Vector3.Lerp(throwPrepareStartOffset,
-                    cameraRay.direction * throwPrepareDistance, GetThrowPrepareBlend());
+                    GetCameraAlignedDirection(cameraRay, throwPrepareDistance) * throwPrepareDistance, GetThrowPrepareBlend());
 
             float lagAmount = Mathf.InverseLerp(swingRotationSpeed * 0.25f, swingRotationSpeed, rotationSpeed);
             float lag = Mathf.Lerp(SmallRotationLag, holdRotationLag, lagAmount);
             float blend = 1f - Mathf.Exp(-Time.deltaTime / lag);
-            holdDirection = Vector3.Slerp(holdDirection, cameraRay.direction, blend).normalized;
-            holdDirection = Vector3.RotateTowards(cameraRay.direction, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
+            Vector3 aimDirection = GetCameraAlignedDirection(cameraRay, holdDistance);
+            holdDirection = Vector3.Slerp(holdDirection, aimDirection, blend).normalized;
+            holdDirection = Vector3.RotateTowards(aimDirection, holdDirection, maxHoldLagAngle * Mathf.Deg2Rad, 0f);
             return GetHoldOrigin() + holdDirection * holdDistance;
+        }
+
+        // 홀딩 기준점(GetHoldOrigin)을 중심으로 한 반지름 radius 구와 카메라 중앙 광선의 먼 쪽 교점을 향하는 방향
+        // 카메라가 어깨 오프셋만큼 플레이어에서 떨어져 있어도 물체가 화면 중앙(Crosshair)에 오고, 플레이어와의 거리는 radius로 유지
+        private Vector3 GetCameraAlignedDirection(Ray cameraRay, float radius)
+        {
+            Vector3 origin = GetHoldOrigin();
+            Vector3 toRayOrigin = cameraRay.origin - origin;
+
+            float b = Vector3.Dot(toRayOrigin, cameraRay.direction);
+            float c = toRayOrigin.sqrMagnitude - radius * radius;
+            float discriminant = b * b - c;
+
+            // 카메라가 구 밖에 있어 광선이 구를 비켜 가는 경우에는 기존처럼 카메라 방향 사용
+            if (discriminant < 0f) return cameraRay.direction;
+
+            float distance = -b + Mathf.Sqrt(discriminant);
+            if (distance <= 0f) return cameraRay.direction;
+
+            return (cameraRay.GetPoint(distance) - origin).normalized;
         }
 
         private Vector3 GetHoldOrigin()
