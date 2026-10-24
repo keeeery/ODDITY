@@ -11,9 +11,14 @@ namespace TeamOdd.Player
     {
         [SerializeField] private float stamina = 100;
         [SerializeField] private float maxStamina = 100;
-        
+        [SerializeField, Min(0f)] private float staminaRegenRate = 15f;
+        [SerializeField, Min(0f)] private float staminaRegenDelay = 1f; // 스태미나 사용 이후 회복 시작 대기시간
+
         public float Stamina => stamina;
-        
+        public float MaxStamina => maxStamina;
+
+        private float lastConsumeTime = float.NegativeInfinity;
+
         public CharacterController CharacterController;
         public CameraController CameraController;
         public PlayerController PlayerController;
@@ -33,7 +38,8 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            if(stamina <= maxStamina) stamina += Time.deltaTime;
+            if (Time.time >= lastConsumeTime + staminaRegenDelay)
+                stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
             
             if (SimpleInput.GetKeyDown(Key.Escape))
                 LockCursor(false);
@@ -76,6 +82,7 @@ namespace TeamOdd.Player
         public void ConsumeStamina(float amount)
         {
             stamina = Mathf.Max(0, stamina - amount);
+            lastConsumeTime = Time.time;
         }
 
         public void ControllerActive()

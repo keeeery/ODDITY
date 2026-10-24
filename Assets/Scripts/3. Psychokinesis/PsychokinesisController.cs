@@ -11,6 +11,7 @@ namespace TeamOdd.Psychokinesis
         [SerializeField] private Camera aimCamera;
         [SerializeField] private CharacterController player;
         [SerializeField] private CombatEntity combatEntity;
+        [SerializeField] private Player.Player playerStatus;
         [SerializeField] private LayerMask queryLayers = Physics.DefaultRaycastLayers;
 
         [Header("Targeting")]
@@ -38,6 +39,10 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(1f)] private float maxAcceleration = 400f;
         [SerializeField, Min(1f)] private float maxHoldSpeed = 26f;
         [SerializeField, Min(1f)] private float breakDistance = 16f;
+
+        [Header("Stamina")]
+        [SerializeField, Min(0f)] private float holdStaminaCostPerSecond = 20f;
+        [SerializeField, Min(0f)] private float minGrabStamina = 10f;
 
         [Header("Throwing")]
         [SerializeField, Min(0.01f)] private float throwPrepareDuration = 0.2f;
@@ -92,6 +97,7 @@ namespace TeamOdd.Psychokinesis
         private void Awake()
         {
             playerColliders = player.GetComponentsInChildren<Collider>();
+            if (playerStatus == null) playerStatus = GetComponent<Player.Player>();
         }
 
         private void Update()
@@ -140,7 +146,7 @@ namespace TeamOdd.Psychokinesis
 
             if (grabRequested)
             {
-                if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass))
+                if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass) && HasGrabStamina())
                 {
                     heldObject = focusedObject;
                     Ray grabRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
@@ -172,7 +178,26 @@ namespace TeamOdd.Psychokinesis
                 attackRequested = false;
             }
 
-            if (heldObject != null) holdPosition = GetHoldPosition();
+            if (heldObject != null)
+            {
+                holdPosition = GetHoldPosition();
+                ConsumeHoldStamina();
+            }
+        }
+
+        private bool HasGrabStamina()
+        {
+            return playerStatus == null || playerStatus.Stamina >= minGrabStamina;
+        }
+
+        // 홀딩 중에는 매 프레임 스태미나를 소모하고, 바닥나면 다음 FixedUpdate에서 놓도록 요청한다
+        private void ConsumeHoldStamina()
+        {
+            if (playerStatus == null) return;
+
+            playerStatus.ConsumeStamina(holdStaminaCostPerSecond * Time.deltaTime);
+
+            if (playerStatus.Stamina <= 0f) releaseRequested = true;
         }
 
         private void FixedUpdate()
