@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 namespace TeamOdd.Boss
@@ -14,6 +13,7 @@ namespace TeamOdd.Boss
     // 터지는 순간 범위 안의 대상이 바닥 근처에 있으면 피격, 점프해서 떠 있으면 회피
     // 범위 안의 염동력 오브젝트는 위로 살짝 떠올랐다가 중력으로 떨어짐
     // 사거리 밖이면 근접 패턴처럼 예약 후 추격
+    // OnShockwaveWarn 신호에서 터질 위치를 고정하고 바닥에 범위를 예고, OnShockwave 신호에서 고정한 위치로 판정
     public sealed class BossShockwavePattern : BossStateBase, IRangedPattern
     {
         [Serializable]
@@ -30,7 +30,9 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float useRange = 9f;
 
         [Title("Waves")]
-        // 충격 발생: OnShockwave 신호(매개변수는 waves 인덱스, 비어 있으면 0), 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 범위 예고: OnShockwaveWarn 신호, 충격 발생: OnShockwave 신호(둘 다 매개변수는 waves 인덱스, 비어 있으면 0)
+        // 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 예고 신호가 없으면 터지는 순간의 위치로 판정하고 범위는 터질 때만 잠깐 표시
         [SerializeField] private Wave[] waves;
 
         [Title("Hit")]
@@ -52,11 +54,10 @@ namespace TeamOdd.Boss
         [Tooltip("떠오르는 데 걸리는 시간의 무작위 범위(초), 다 떠오르면 중력으로 떨어진다.")]
         [SerializeField, MinMaxSlider(0f, 1f, true)] private Vector2 liftDuration = new Vector2(0.15f, 0.3f);
 
-        [Title("Visual")]
-        [Tooltip("이펙트 연결 전 확인용, 켜면 터지는 범위를 Game 뷰에 LineRenderer로 표시")]
-        [SerializeField] private bool showRange = true;
-        [SerializeField] private Color rangeColor = new Color(1f, 0.5f, 0f, 0.5f);
-        [Tooltip("범위 표시가 사라지는 데 걸리는 시간(초)")]
+        [Title("Telegraph")]
+        [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), OnShockwaveWarn에서 OnShockwave까지의 시간에 맞춘다.")]
+        [SerializeField, Min(0f)] private float warnDuration = 0.8f;
+        [Tooltip("터진 뒤 범위 표시가 사라지는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f)] private float rangeFadeDuration = 0.4f;
 
         // 발밑 레이캐스트가 대상 콜라이더 안쪽에서 시작하도록 띄우는 높이
@@ -64,19 +65,21 @@ namespace TeamOdd.Boss
         // 충격 지점 아래 바닥을 찾을 때 시작 높이와 탐색 거리(m)
         private const float GroundSearchHeight = 2f;
         private const float GroundSearchDistance = 10f;
-        // 범위 표시가 바닥에 묻히지 않도록 띄우는 높이와 원의 분할 수
-        private const float RangeLineHeight = 0.05f;
-        private const int RangeSegments = 64;
-
         private Collider targetCollider;
-        private Material rangeMaterial;
+
+        // 예고 신호에서 고정한 터질 위치와 표시, waves와 같은 인덱스
+        private Vector3[] warnedCenters;
+        private bool[] isWarned;
+        private AttackTelegraph[] telegraphs;
 
         public float RequiredRange => useRange;
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
             base.Initialize(stateMachine);
-            rangeMaterial = new Material(Shader.Find("Sprites/Default"));
+            warnedCenters = new Vector3[waves.Length];
+            isWarned = new bool[waves.Length];
+            telegraphs = new AttackTelegraph[waves.Length];
         }
 
         protected override void OnEnter()
@@ -97,33 +100,61 @@ namespace TeamOdd.Boss
         {
             root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
             Animator.ResetTrigger(BossAnimParams.SHOCKWAVE);
+
+            // 터지기 전에 패턴이 끊기면 예고만 남지 않도록 바로 지움, 이미 터진 표시는 끝까지 사라지게 둠
+            for (int index = 0; index < waves.Length; index++)
+            {
+                if (telegraphs[index] != null) telegraphs[index].Cancel();
+                telegraphs[index] = null;
+                isWarned[index] = false;
+            }
         }
 
         private void OnAnimEvent(string eventName, string eventParam)
         {
-            if (eventName != "OnShockwave") return;
-
-            int index = string.IsNullOrEmpty(eventParam) ? 0 : int.Parse(eventParam);
-            Explode(waves[index]);
+            if (eventName == "OnShockwaveWarn") Warn(ParseIndex(eventParam));
+            else if (eventName == "OnShockwave") Explode(ParseIndex(eventParam));
         }
 
-        private void Explode(Wave wave)
+        private static int ParseIndex(string eventParam) => string.IsNullOrEmpty(eventParam) ? 0 : int.Parse(eventParam);
+
+        // 피격 판정과 예고 표시가 같은 모양을 쓰도록 한곳에서 만듦
+        private static TelegraphShape GetShape(Wave wave) => TelegraphShape.Circle(wave.radius);
+
+        // 원형이라 방향은 의미가 없으므로 회전은 기본값 사용
+        private Pose GetGroundPose(Wave wave)
         {
             Vector3 center = wave.origin.position;
             center.y = GetGroundHeight(center);
-
-            if (IsInRange(Target.position, center, wave.radius) && IsTargetGrounded()) Hit(wave);
-
-            LiftFragments(center, wave.radius);
-
-            if (showRange) ShowRange(center, wave.radius);
+            return new Pose(center, Quaternion.identity);
         }
 
-        private static bool IsInRange(Vector3 position, Vector3 center, float radius)
+        // origin이 애니메이션으로 움직이는 본이어도 예고한 위치에서 터지도록 위치를 고정
+        private void Warn(int index)
         {
-            Vector3 offset = position - center;
-            offset.y = 0f;
-            return offset.sqrMagnitude <= radius * radius;
+            Pose pose = GetGroundPose(waves[index]);
+            warnedCenters[index] = pose.position;
+            isWarned[index] = true;
+
+            if (telegraphs[index] != null) telegraphs[index].Cancel();
+            telegraphs[index] = root.ShowTelegraph(GetShape(waves[index]), pose, warnDuration);
+        }
+
+        private void Explode(int index)
+        {
+            Wave wave = waves[index];
+            Pose pose = isWarned[index] ? new Pose(warnedCenters[index], Quaternion.identity) : GetGroundPose(wave);
+            TelegraphShape shape = GetShape(wave);
+            isWarned[index] = false;
+
+            if (shape.Contains(pose, Target.position) && IsTargetGrounded()) Hit(wave);
+
+            LiftFragments(pose, shape);
+
+            // 예고 없이 터졌으면 터지는 순간에만 범위를 보여 줌
+            AttackTelegraph telegraph = telegraphs[index] != null ? telegraphs[index] : root.ShowTelegraph(shape, pose, 0f);
+            telegraphs[index] = null;
+            if (telegraph != null) telegraph.Resolve(rangeFadeDuration);
         }
 
         // 대상 피벗이 발이 아닐 수 있어(CharacterController 중앙 등) 콜라이더 바닥에서 아래로 바닥을 찾음
@@ -169,11 +200,11 @@ namespace TeamOdd.Boss
         // 떠오르는 동안 물리와 부딪히지 않도록 kinematic으로 띄우고, 다 떠오르면 되돌려 중력으로 떨어뜨림
         // 풀 오브젝트는 크기별 그룹(Large/Medium/Small) 아래에 있어 하위 전체에서 활성화된 오브젝트를 찾음
         // 플레이어가 들고 있거나 보스가 띄워 둔(kinematic) 오브젝트는 건드리지 않음
-        private void LiftFragments(Vector3 center, float radius)
+        private void LiftFragments(Pose pose, TelegraphShape shape)
         {
             foreach (Rigidbody body in fragmentRoot.GetComponentsInChildren<Rigidbody>())
             {
-                if (body.isKinematic || IsInRange(body.position, center, radius) == false) continue;
+                if (body.isKinematic || shape.Contains(pose, body.position) == false) continue;
                 if (body.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) continue;
 
                 body.isKinematic = true;
@@ -184,42 +215,6 @@ namespace TeamOdd.Boss
             }
         }
 
-        #region RANGE_VISUALIZATION
-
-        // 바닥에 눕힌 원으로 그리기 위해 Z축이 아래를 향하도록 돌려 TransformZ 정렬 사용
-        // 선 두께를 반경과 같게 해 중심까지 채운 원으로 표시하고, 패턴이 끝나도 끝까지 사라지도록 트윈으로 처리
-        private void ShowRange(Vector3 center, float radius)
-        {
-            LineRenderer line = new GameObject("ShockwaveRange").AddComponent<LineRenderer>();
-            line.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-            line.alignment = LineAlignment.TransformZ;
-            line.useWorldSpace = true;
-            line.loop = true;
-            line.positionCount = RangeSegments;
-            line.material = rangeMaterial;
-            line.widthMultiplier = radius;
-            line.shadowCastingMode = ShadowCastingMode.Off;
-            line.receiveShadows = false;
-
-            Vector3 lineCenter = center + Vector3.up * RangeLineHeight;
-
-            for (int index = 0; index < RangeSegments; index++)
-            {
-                float angle = index * Mathf.PI * 2f / RangeSegments;
-                line.SetPosition(index, lineCenter + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius * 0.5f);
-            }
-
-            Color clear = rangeColor;
-            clear.a = 0f;
-
-            line.DOColor(new Color2(rangeColor, rangeColor), new Color2(clear, clear), rangeFadeDuration)
-                .SetEase(Ease.OutQuad)
-                .SetLink(line.gameObject)
-                .OnComplete(() => Destroy(line.gameObject));
-        }
-
-        #endregion
-
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
@@ -227,8 +222,12 @@ namespace TeamOdd.Boss
 
             UnityEditor.Handles.color = new Color(1f, 0.5f, 0f);
 
-            foreach (Wave wave in waves)
-                UnityEditor.Handles.DrawWireDisc(wave.origin.position, Vector3.up, wave.radius);
+            for (int index = 0; index < waves.Length; index++)
+            {
+                // 예고한 뒤에는 실제로 터질 고정 위치를, 그 전에는 origin의 현재 위치를 그림
+                Vector3 center = isWarned != null && isWarned[index] ? warnedCenters[index] : waves[index].origin.position;
+                GetShape(waves[index]).DrawHandles(new Pose(center, Quaternion.identity));
+            }
         }
 #endif
     }

@@ -9,6 +9,7 @@ namespace TeamOdd.Boss
 {
     // 투척 시작 시점(추후 보스 손 같은 지점)에 큰 염동력 오브젝트를 띄웠다가 플레이어 방향으로 던지는 패턴
     // 내부쿨이 돌아오고 플레이어가 minUseDistance보다 멀리 있을 때만 사용
+    // 조준하는 동안 보스에서 대상 방향으로 날아갈 경로를 바닥에 예고하고, 던지는 순간 방향을 고정해 비행 시간 동안 채움
     public sealed class BossPsychokinesisThrowPattern : BossCooldownPatternBase
     {
         [Title("Use Distance")]
@@ -22,6 +23,7 @@ namespace TeamOdd.Boss
 
         [Title("Timing")]
         // 오브젝트 등장: OnThrowPrepare 신호, 투척: OnThrow 신호(둘 다 GetHitHeavy 애니메이션), 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 경로 예고: OnThrowWarn 신호, 없으면 OnThrowPrepare 신호에서 시작
         [Tooltip("투척 후 보스와의 충돌을 계속 무시하는 시간(초)")]
         [SerializeField, Min(0f)] private float ownerIgnoreDuration = 0.3f;
 
@@ -37,9 +39,20 @@ namespace TeamOdd.Boss
         [SerializeField] private bool compensateGravity = true;
         [SerializeField, Min(0f)] private float throwSpinSpeed = 3f;
 
+        [Title("Telegraph")]
+        [Tooltip("경로 예고의 폭(m), 던지는 오브젝트 크기에 맞춘다.")]
+        [SerializeField, Min(0f)] private float pathWidth = 1.5f;
+        [Tooltip("대상 너머로 더 늘일 경로 길이(m)")]
+        [SerializeField, Min(0f)] private float pathOvershoot = 2f;
+        [Tooltip("조준하는 동안 경로 예고가 다 차오르는 데 걸리는 시간(초), 예고 신호부터 OnThrow까지의 시간에 맞춘다.")]
+        [SerializeField, Min(0f)] private float aimWarnDuration = 0.5f;
+        [Tooltip("경로 표시가 사라지는 데 걸리는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float telegraphFadeDuration = 0.3f;
+
         private Rigidbody heldBody;
         private Collider[] ownerColliders;
         private Collider[] ignoredColliders;
+        private AttackTelegraph pathTelegraph;
 
         private Transform Origin => throwOrigin != null ? throwOrigin : transform;
 
@@ -71,13 +84,29 @@ namespace TeamOdd.Boss
             if (heldBody != null) heldBody.isKinematic = false;
             heldBody = null;
             RestoreOwnerCollisions();
+
+            if (pathTelegraph != null) pathTelegraph.Cancel();
+            pathTelegraph = null;
+        }
+
+        // 던지기 전까지 경로 예고가 대상을 따라 조준
+        private void Update()
+        {
+            if (pathTelegraph != null) pathTelegraph.SetPlacement(GetPathShape(), GetPathPose());
         }
 
         private void OnAnimEvent(string eventName, string eventParam)
         {
+            if (eventName == "OnThrowWarn")
+            {
+                ShowPathTelegraph();
+                return;
+            }
+
             // 오브젝트가 보스 몸과 겹쳐 보이지 않도록 던지기 직전의 OnThrowPrepare 신호에 등장시킴
             if (eventName == "OnThrowPrepare")
             {
+                ShowPathTelegraph();
                 Spawn();
                 StartCoroutine(Hold());
                 return;
@@ -85,9 +114,46 @@ namespace TeamOdd.Boss
 
             if (eventName != "OnThrow") return;
 
-            Throw();
+            float flightTime = Throw();
             heldBody = null;
             StartCoroutine(RestoreOwnerCollisionsAfterDelay());
+            LockPathTelegraph(flightTime);
+        }
+
+        // 이미 예고 중이면 그대로 둠
+        private void ShowPathTelegraph()
+        {
+            if (pathTelegraph != null) return;
+            pathTelegraph = root.ShowTelegraph(GetPathShape(), GetPathPose(), aimWarnDuration);
+        }
+
+        // 던진 방향으로 고정하고 비행 시간 동안 채운 뒤 스스로 사라지게 맡김
+        private void LockPathTelegraph(float flightTime)
+        {
+            if (pathTelegraph == null) return;
+
+            pathTelegraph.SetPlacement(GetPathShape(), GetPathPose());
+            pathTelegraph.ResolveWhenFilled(flightTime, telegraphFadeDuration);
+            pathTelegraph = null;
+        }
+
+        private TelegraphShape GetPathShape()
+        {
+            Vector3 offset = Target.position - Origin.position;
+            offset.y = 0f;
+            return TelegraphShape.Rectangle(pathWidth, offset.magnitude + pathOvershoot);
+        }
+
+        // 투척 지점 아래 보스 바닥 높이에서 대상 방향으로 시작
+        private Pose GetPathPose()
+        {
+            Vector3 start = Origin.position;
+            start.y = root.transform.position.y;
+
+            Vector3 direction = Target.position - start;
+            direction.y = 0f;
+            Quaternion rotation = direction.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(direction) : root.transform.rotation;
+            return new Pose(start, rotation);
         }
 
         // OnThrow 신호가 올 때까지 투척 지점에 띄워 둠
@@ -124,12 +190,14 @@ namespace TeamOdd.Boss
             SetOwnerCollisionsIgnored(true);
         }
 
-        private void Throw()
+        // 조준 지점까지의 예상 비행 시간(초)을 반환
+        private float Throw()
         {
             heldBody.isKinematic = false;
             Vector3 aimPoint = Target.position + Vector3.up * aimHeight;
             heldBody.linearVelocity = GetThrowVelocity(heldBody.worldCenterOfMass, aimPoint);
             heldBody.angularVelocity = Random.onUnitSphere * throwSpinSpeed;
+            return Vector3.Distance(heldBody.worldCenterOfMass, aimPoint) / throwSpeed;
         }
 
         private Vector3 GetThrowVelocity(Vector3 start, Vector3 aimPoint)

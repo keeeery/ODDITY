@@ -84,19 +84,17 @@ public class ObjectPoolManager : MonoBehaviour
         }
 
         Instance = this;
+
+        // 다른 오브젝트의 Start에서 바로 꺼내 쓸 수 있도록 Awake에서 미리 만듦
+        foreach (var data in objectPoolDatas)
+        {
+            CreatePool(data);
+        }
     }
 
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
-    }
-
-    private void Start()
-    {
-        foreach (var data in objectPoolDatas)
-        {
-            CreatePool(data);
-        }
     }
 
     public void CreatePool(ObjectPoolData data)

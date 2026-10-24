@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_Name: BossTelegraph
+  m_Shader: {fileID: 4800000, guid: 71cc5a3f0a1e2459fa4bffccc072eeec, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BackAlpha: 0.15
+    - _FillAlpha: 0.45
+    - _OutlineAlpha: 0.9
+    - _OutlineWidth: 0.15
+    m_Colors:
+    - _BaseColor: {r: 1, g: 0.25, b: 0.1, a: 1}

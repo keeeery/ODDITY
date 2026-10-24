@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 namespace TeamOdd.Boss
 {
     // 플레이어 위치를 중심으로 한 원형 범위 안에 염동력 오브젝트를 무작위로 투하하는 패턴
+    // 투하가 시작되면 큰/중간 오브젝트마다 착지 지점을 낙하 시간 동안 바닥에 예고
     public sealed class BossPsychokinesisDropPattern : BossCooldownPatternBase
     {
         private const int MaxPositionAttempts = 12;
@@ -55,6 +56,12 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float initialFallSpeed = 0f;
         [SerializeField, Min(0f)] private float spinSpeed = 4f;
 
+        [Title("Telegraph")]
+        [Tooltip("착지 지점 표시 반경에 곱할 배율, 1이면 오브젝트의 수평 크기와 같다.")]
+        [SerializeField, Min(0f)] private float markerRadiusScale = 1f;
+        [Tooltip("착지 지점 표시가 사라지는 데 걸리는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float telegraphFadeDuration = 0.3f;
+
         private readonly List<FragmentSize> dropOrder = new List<FragmentSize>();
         private readonly List<Vector3> dropPositions = new List<Vector3>();
         private readonly RaycastHit[] probeHits = new RaycastHit[32];
@@ -69,7 +76,7 @@ namespace TeamOdd.Boss
             root.Animator.SetTrigger(BossAnimParams.ROAR);
         }
 
-        // 비활성화되면 투하 코루틴은 자동으로 멈춤
+        // 비활성화되면 투하 코루틴은 자동으로 멈춤, 이미 떨어지는 오브젝트의 착지 표시는 끝까지 둠
         protected override void OnExit()
         {
             root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
@@ -117,19 +124,43 @@ namespace TeamOdd.Boss
         private void Drop(FragmentSize size)
         {
             // 유효한 지점을 찾지 못하면 벽 속이나 맵 밖에 떨어뜨리지 않고 건너뜀
-            if (TryPickDropPosition(out Vector3 position) == false) return;
+            if (TryPickDropPosition(out Vector3 position, out Vector3 ground) == false) return;
 
             WallFragment fragment = fragmentSpawner.SpawnFragment(size, position, Random.rotation);
             Rigidbody body = fragment.GetComponent<Rigidbody>();
             body.linearVelocity = Vector3.down * initialFallSpeed;
             body.angularVelocity = Random.onUnitSphere * spinSpeed;
+
+            // 작은 파편은 연출용이라 착지 지점을 예고하지 않음
+            if (size != FragmentSize.Small) ShowLandingMarker(fragment, position, ground);
+        }
+
+        // 착지 시점은 낙하 시간으로 추정, 표시는 다 차오르면 스스로 사라지므로 참조를 들고 있지 않음
+        // 콜라이더 bounds는 물리 동기화 전이라 이전 위치/크기일 수 있어 Renderer bounds로 크기를 잼
+        private void ShowLandingMarker(WallFragment fragment, Vector3 position, Vector3 ground)
+        {
+            Bounds bounds = fragment.GetComponent<Renderer>().bounds;
+            float markerRadius = Mathf.Max(bounds.extents.x, bounds.extents.z) * markerRadiusScale;
+            float fallTime = GetFallTime(position.y - ground.y);
+
+            AttackTelegraph marker = root.ShowTelegraph(TelegraphShape.Circle(markerRadius), new Pose(ground, Quaternion.identity), fallTime);
+            if (marker != null) marker.ResolveWhenFilled(fallTime, telegraphFadeDuration);
+        }
+
+        // 초기 낙하 속도와 중력만으로 height만큼 떨어지는 시간(공기 저항 무시)
+        private float GetFallTime(float height)
+        {
+            float gravity = -Physics.gravity.y;
+            if (gravity <= 0f) return height / Mathf.Max(initialFallSpeed, 0.01f);
+
+            return (Mathf.Sqrt(initialFallSpeed * initialFallSpeed + 2f * gravity * height) - initialFallSpeed) / gravity;
         }
 
         // 간격 조건까지 만족하는 지점을 우선 찾고, 없으면 마지막으로 찾은 유효 지점 사용
-        private bool TryPickDropPosition(out Vector3 position)
+        private bool TryPickDropPosition(out Vector3 position, out Vector3 ground)
         {
             position = Vector3.zero;
-            Vector3 ground = Vector3.zero;
+            ground = Vector3.zero;
             bool found = false;
 
             for (int attempt = 0; attempt < MaxPositionAttempts; attempt++)
