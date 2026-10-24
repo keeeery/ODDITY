@@ -14,7 +14,7 @@ namespace TeamOdd.Boss
     // 범위 안의 염동력 오브젝트는 위로 살짝 떠올랐다가 중력으로 떨어짐
     // 사거리 밖이면 근접 패턴처럼 예약 후 추격
     // OnShockwaveWarn 신호에서 터질 위치를 고정하고 바닥에 범위를 예고, OnShockwave 신호에서 고정한 위치로 판정
-    public sealed class BossShockwavePattern : BossStateBase, IRangedPattern
+    public sealed class BossShockwavePattern : BossMeleePattern
     {
         [Serializable]
         private class Wave
@@ -24,10 +24,6 @@ namespace TeamOdd.Boss
             [Min(0)] public int damage = 10;
             [Min(0f)] public float radius = 10f;
         }
-
-        [Title("Use Distance")]
-        [Tooltip("이 거리 밖이면 추격 후 사용(m), 보스 콜라이더 때문에 약 6.75m보다 커야 추격이 끝난다.")]
-        [SerializeField, Min(0f)] private float useRange = 9f;
 
         [Title("Waves")]
         // 범위 예고: OnShockwaveWarn 신호, 충격 발생: OnShockwave 신호(둘 다 매개변수는 waves 인덱스, 비어 있으면 0)
@@ -72,8 +68,6 @@ namespace TeamOdd.Boss
         private bool[] isWarned;
         private AttackTelegraph[] telegraphs;
 
-        public float RequiredRange => useRange;
-
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
             base.Initialize(stateMachine);
@@ -82,25 +76,13 @@ namespace TeamOdd.Boss
             telegraphs = new AttackTelegraph[waves.Length];
         }
 
-        protected override void OnEnter()
+        protected override void OnPatternEnter()
         {
-            if (root.IsTargetInRange(useRange) == false)
-            {
-                StateMachine.ReserveState(this);
-                StateMachine.ChangeState(typeof(BossChaseState), true);
-                return;
-            }
-
             targetCollider = Target.GetComponent<Collider>();
-            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
-            Animator.SetTrigger(BossAnimParams.SHOCKWAVE);
         }
 
-        protected override void OnExit()
+        protected override void OnPatternExit()
         {
-            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
-            Animator.ResetTrigger(BossAnimParams.SHOCKWAVE);
-
             // 터지기 전에 패턴이 끊기면 예고만 남지 않도록 바로 지움, 이미 터진 표시는 끝까지 사라지게 둠
             for (int index = 0; index < waves.Length; index++)
             {
@@ -110,13 +92,13 @@ namespace TeamOdd.Boss
             }
         }
 
-        private void OnAnimEvent(string eventName, string eventParam)
+        protected override void OnPatternAnimEventOccurs(string name, string param)
         {
-            if (eventName == "OnShockwaveWarn") Warn(ParseIndex(eventParam));
-            else if (eventName == "OnShockwave") Explode(ParseIndex(eventParam));
+            if (name == "OnShockwaveWarn") Warn(ParseIndex(param));
+            else if (name == "OnShockwave") Explode(ParseIndex(param));
         }
 
-        private static int ParseIndex(string eventParam) => string.IsNullOrEmpty(eventParam) ? 0 : int.Parse(eventParam);
+        private static int ParseIndex(string param) => string.IsNullOrEmpty(param) ? 0 : int.Parse(param);
 
         // 피격 판정과 예고 표시가 같은 모양을 쓰도록 한곳에서 만듦
         private static TelegraphShape GetShape(Wave wave) => TelegraphShape.Circle(wave.radius);

@@ -12,15 +12,19 @@ namespace TeamOdd.Boss
         [field: Title("Components")]
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public Rigidbody Body { get; private set; }
-        [field: SerializeField] public Transform Root { get; private set; }
+        [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [field: Title("References")]
-        [field: SerializeField] public Transform Target { get; private set; } // 임시용, 어차피 우리 게임은 플레이어 한 명이니 플레이어 싱글톤 박아서 참조하면 될거같기도 하고?
-        [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
+        [field: SerializeField] public Transform Target { get; private set; } // 임시용
 
         [TitleGroup("Settings")]
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightHalfAngle = 60f;
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightRange = 10f;
+        [SerializeField, TabGroup("Settings/Type", "Movement")] private float moveHalfAngle = 45f;
+
+        [Title("States")]
+        [ShowInInspector, ReadOnly] public float IntentStartTime { get; private set; }
+        [ShowInInspector, ReadOnly] public BossMeleePattern Intent { get; private set; }
 
         [Title("Telegraph")]
         [Tooltip("패턴들이 공유하는 피격 범위 표시(AttackTelegraph) 풀의 키, 풀은 ObjectPoolManager에 등록")]
@@ -29,9 +33,10 @@ namespace TeamOdd.Boss
         private bool isTelegraphPoolMissing;
 
         public float DistanceToTarget => transform.FlatDistanceTo(Target);
-        
         public float SignedAngleToTarget => Mathf.DeltaAngle(transform.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
+        
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
+        public bool CanMoveToTarget => Mathf.Abs(SignedAngleToTarget) <= moveHalfAngle;
         
         private void Update()
         {
@@ -42,7 +47,21 @@ namespace TeamOdd.Boss
         
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
         public bool IsTargetInSight() => IsTargetInRange(sightRange) && Mathf.Abs(SignedAngleToTarget) <= sightHalfAngle;
+        
+        public void SetIntent(BossMeleePattern intent)
+        {
+            Intent = intent;
+            IntentStartTime = Time.time;
+        }
+        
+        public void ClearIntent() => Intent = null;
 
+        public void RotateYaw(float deltaAngle, float maxDegrees)
+        {
+            float step = Mathf.Clamp(deltaAngle, -maxDegrees, maxDegrees);
+            transform.rotation = Quaternion.Euler(0f, step, 0f) * transform.rotation;
+        }
+        
         // 풀을 쓸 수 없으면 null을 반환하므로 호출하는 쪽은 null을 허용해야 함
         // 풀이 없으면 한 번만 알리고 이후에는 표시 없이 진행
         public AttackTelegraph ShowTelegraph(TelegraphShape shape, Pose origin, float warnDuration)

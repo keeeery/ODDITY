@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FantasyGarden.Utility;
@@ -7,90 +8,146 @@ using UnityEngine;
 
 namespace TeamOdd.Boss
 {
-    public interface IRangedPattern
-    {
-        public float RequiredRange { get; }
-    }
-    
-    // 범위 예고: OnClawWarn 신호, 공격 시점: OnClawHit 신호, 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+    // 할퀴기 범위 예고: OnClawWarn 신호, 공격 시점: OnClawHit 신호, 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
     // 예고는 보스 앞쪽 부채꼴로 표시하고 공격 시점까지 보스를 따라감(앞으로 내딛는 공격 대응)
-    // 예고 신호가 없으면 공격 시점에만 범위를 잠깐 표시
-    public abstract class BossMeleePattern : BossStateBase, IRangedPattern
+    // 예고 신호가 없으면 공격 시점에만 범위를 잠깐 표시, 두 신호를 쓰지 않는 패턴은 표시하지 않음
+    public abstract class BossMeleePattern : BossStateBase
     {
-        [Title("Settings")]
+        [Title("Attack Range")]
+        [field: SerializeField] public float MinDistance { get; private set; }
+        [field: SerializeField] public float MaxDistance { get; private set; }
+        [SerializeField] private float minAngle;
+        [SerializeField] private float maxAngle;
+        
+        [Title("Usage Condition")]
+        [SerializeField] private float cooldown;
+        [field: SerializeField] public float Weight { get; private set; }
+        [field: SerializeField] public bool IsUrgent { get; private set; } // 우선 처리 여부
+        [field: SerializeField] public bool CanApproach { get; private set; } // 범위 밖일 경우 근접하여 사용할지 여부
+
+        [Title("Animation")]
         [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
-        [SerializeField] private float attackRange;
-        [SerializeField] private float forwardAttackRange;
+        [SerializeField] private bool useRootMotion;
+
+        [Title("Tracking")]
+        [SerializeField] private float trackDuration;
+        [SerializeField] private float trackSpeed = 90f;
+
+        [Title("Delay")]
+        [field: SerializeField] public float Recovery { get; private set; } // 공격 후딜
 
         [Title("Telegraph")]
         [Tooltip("공격 범위, 보스 위치에서 보스 정면 방향으로 펼쳐진다. 피격 판정을 붙일 때도 이 모양을 사용한다.")]
         [SerializeField] private TelegraphShape hitShape = TelegraphShape.Sector(8f, 120f);
         [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), OnClawWarn에서 OnClawHit까지의 시간에 맞춘다.")]
-        [SerializeField, Min(0f)] private float warnDuration = 0.5f;
+        [SerializeField, Min(0f)] private float hitWarnDuration = 0.5f;
         [Tooltip("공격 후 범위 표시가 사라지는 데 걸리는 시간(초)")]
-        [SerializeField, Min(0.01f)] private float telegraphFadeDuration = 0.3f;
+        [SerializeField, Min(0.01f)] private float hitFadeDuration = 0.3f;
 
+        private float readyTime;
+        private float trackEndTime;
         private AttackTelegraph telegraph;
 
-        public float RequiredRange => Mathf.Max(attackRange, forwardAttackRange);
-
+        public virtual bool CanUse => Time.time >= readyTime;
+        
+        public bool IsTooClose => root.DistanceToTarget < MinDistance;
+        public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance;
+        public bool IsInRange => IsDistanceInRange && IsAngleInside(root.SignedAngleToTarget);
+        
+        
+        private float AngleWidth => minAngle <= maxAngle ? maxAngle - minAngle : maxAngle - minAngle + 360f;
         private Pose HitPose => new Pose(root.transform.position, root.transform.rotation);
-
+        
+        
         protected override void OnEnter()
         {
-            if (root.IsTargetInRange(attackRange))
-            {
-                StartAttack();
-                return;
-            }
+            readyTime = Time.time + cooldown;
+            trackEndTime = Time.time + trackDuration;
 
-            if (root.IsTargetInRange(forwardAttackRange))
-            {
-                Animator.applyRootMotion = true;
-                StartAttack();
-                return;
-            }
+            root.AnimEventListener.OnOccursAnimStateEvent += OnOccursAnimEvent;
+            
+            Animator.applyRootMotion = useRootMotion;
+            Animator.SetTrigger(trigger);
 
-            StateMachine.ReserveState(this);
-            StateMachine.ChangeState(typeof(BossChaseState), true);
+            OnPatternEnter();
+        }
+
+        protected virtual void Update()
+        {
+            // 공격 시점까지 예고가 보스를 따라감
+            if (telegraph != null) telegraph.SetPlacement(hitShape, HitPose);
+
+            if (Time.time >= trackEndTime) return;
+            root.RotateYaw(root.SignedAngleToTarget, trackSpeed * Time.deltaTime);
         }
 
         protected override void OnExit()
         {
+            root.AnimEventListener.OnOccursAnimStateEvent -= OnOccursAnimEvent;
+
             Animator.applyRootMotion = false;
-            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
+            Animator.ResetTrigger(trigger);
 
             if (telegraph != null) telegraph.Cancel();
             telegraph = null;
+
+            OnPatternExit();
         }
 
-        // 공격 시점까지 보스를 따라감
-        private void Update()
-        {
-            if (telegraph != null) telegraph.SetPlacement(hitShape, HitPose);
-        }
+        protected virtual void OnPatternEnter() { }
+        protected virtual void OnPatternExit() { }
+        protected virtual void OnPatternAnimEventOccurs(string name, string param) { }
 
-        private void StartAttack()
+        private void OnOccursAnimEvent(string name, string param)
         {
-            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
-            Animator.SetTrigger(trigger);
-        }
-
-        private void OnAnimEvent(string eventName, string eventParam)
-        {
-            if (eventName == "OnClawWarn")
+            if (string.Equals(name, "OnTrackEnd"))
             {
-                if (telegraph != null) telegraph.Cancel();
-                telegraph = root.ShowTelegraph(hitShape, HitPose, warnDuration);
+                trackEndTime = 0f;
                 return;
             }
 
-            if (eventName != "OnClawHit") return;
+            if (string.Equals(name, "OnClawWarn"))
+            {
+                if (telegraph != null) telegraph.Cancel();
+                telegraph = root.ShowTelegraph(hitShape, HitPose, hitWarnDuration);
+                return;
+            }
 
-            // TODO: 피격 판정은 표시와 같은 hitShape.Contains(HitPose, Target.position)로 처리
+            if (string.Equals(name, "OnClawHit"))
+            {
+                ResolveClawTelegraph();
+                return;
+            }
+            
+            OnPatternAnimEventOccurs(name, param);
+        }
+
+        // TODO: 피격 판정은 표시와 같은 hitShape.Contains(HitPose, Target.position)로 처리
+        private void ResolveClawTelegraph()
+        {
             AttackTelegraph resolved = telegraph != null ? telegraph : root.ShowTelegraph(hitShape, HitPose, 0f);
             telegraph = null;
-            if (resolved != null) resolved.Resolve(telegraphFadeDuration);
+            if (resolved != null) resolved.Resolve(hitFadeDuration);
+        }
+
+        private bool IsAngleInside(float angle)
+        {
+            return minAngle <= maxAngle ? 
+                angle >= minAngle && angle <= maxAngle : 
+                angle >= minAngle || angle <= maxAngle;
+        }
+
+        public float ClampAngle(float angle, float margin)
+        {
+            if (IsAngleInside(angle)) return angle;
+
+            float lower = Mathf.DeltaAngle(0f, minAngle + margin);
+            float upper = Mathf.DeltaAngle(0f, maxAngle - margin);
+
+            float lowerAngleDistance = Mathf.Abs(Mathf.DeltaAngle(angle, lower));
+            float upperAngleDistance = Mathf.Abs(Mathf.DeltaAngle(angle, upper));
+            
+            return lowerAngleDistance <= upperAngleDistance ? lower : upper;
         }
         
         #region RANGE_VISUALIZATION
@@ -119,23 +176,35 @@ namespace TeamOdd.Boss
             };
         }
 
+        // 거리 판정이 FlatDistanceTo(XZ 평면)이므로 바닥에 부채꼴로 표시
         private void DrawRange()
         {
-            // 에디트 모드에서는 Initialize가 호출되지 않아 root가 비어있으므로 직접 찾아옴
             Transform center = root != null ? root.transform : GetComponentInParent<BossMonster>(true)?.transform;
             if (center == null) center = transform;
 
-            // 거리 판정이 FlatDistanceTo(XZ 평면)이므로 바닥 원으로 표시
             Vector3 position = center.position;
+            Vector3 forward = Quaternion.Euler(0f, center.eulerAngles.y, 0f) * Vector3.forward;
+            Vector3 from = Quaternion.AngleAxis(minAngle, Vector3.up) * forward;
+            float width = AngleWidth;
             Color originalColor = UnityEditor.Handles.color;
 
-            UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.DrawWireDisc(position, Vector3.up, attackRange);
-            UnityEditor.Handles.Label(position + center.forward * attackRange, $"Attack ({attackRange})");
+            UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);
+            UnityEditor.Handles.DrawSolidArc(position, Vector3.up, from, width, MaxDistance);
 
-            UnityEditor.Handles.color = Color.yellow;
-            UnityEditor.Handles.DrawWireDisc(position, Vector3.up, forwardAttackRange);
-            UnityEditor.Handles.Label(position + center.forward * forwardAttackRange, $"Forward Attack ({forwardAttackRange})");
+            UnityEditor.Handles.color = Color.red;
+            UnityEditor.Handles.DrawWireArc(position, Vector3.up, from, width, MaxDistance);
+            if (MinDistance > 0f) UnityEditor.Handles.DrawWireArc(position, Vector3.up, from, width, MinDistance);
+
+            if (width < 360f)
+            {
+                Vector3 to = Quaternion.AngleAxis(minAngle + width, Vector3.up) * forward;
+                UnityEditor.Handles.DrawLine(position + from * MinDistance, position + from * MaxDistance);
+                UnityEditor.Handles.DrawLine(position + to * MinDistance, position + to * MaxDistance);
+            }
+
+            Vector3 labelDirection = Quaternion.AngleAxis(minAngle + width * 0.5f, Vector3.up) * forward;
+            UnityEditor.Handles.Label(position + labelDirection * MaxDistance,
+                $"{GetType().Name} ({MinDistance}~{MaxDistance}m, {minAngle}°~{maxAngle}°)");
 
             UnityEditor.Handles.color = new Color(1f, 0.5f, 0f);
             hitShape.DrawHandles(new Pose(position, center.rotation));
