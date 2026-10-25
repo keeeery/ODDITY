@@ -1392,13 +1392,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 916268414}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df9b383168351490aaf4943b4471aae4, type: 3}
+  m_Script: {fileID: 11500000, guid: eaad445b08d84daabe715036bf06d4bb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.PlayerHUD
-  player: {fileID: 2205336347470601074}
-  combatEntity: {fileID: 2205336347470601075}
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.BossHUD
+  boss: {fileID: 0}
   hpBar: {fileID: 420760886}
-  staminaBar: {fileID: 0}
+  groggyBar: {fileID: 1544739492}
   fillLerpSpeed: 12
 --- !u!1 &1073963101
 GameObject:
