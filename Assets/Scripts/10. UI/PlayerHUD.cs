@@ -14,10 +14,6 @@ namespace TeamOdd.UI
         [SerializeField] private VectorBar hpBar;
         [SerializeField] private VectorBar staminaBar;
 
-        [Header("Display")]
-        // 값이 바뀔 때 Fill이 따라가는 속도, 0이면 즉시 반영
-        [SerializeField, Min(0f)] private float fillLerpSpeed = 12f;
-
         private void Awake()
         {
             player ??= FindAnyObjectByType<Player.Player>();
@@ -27,8 +23,8 @@ namespace TeamOdd.UI
         private void Start()
         {
             // 보스 정보 UI처럼 바를 하나만 쓰는 경우가 있어 비어 있는 바는 건너뜀
-            if (hpBar != null) hpBar.FillAmount = GetHpRatio();
-            if (staminaBar != null) staminaBar.FillAmount = GetStaminaRatio();
+            if (hpBar != null) hpBar.SetFillImmediate(GetHpRatio());
+            if (staminaBar != null) staminaBar.SetFillImmediate(GetStaminaRatio());
         }
 
         private void Update()
@@ -41,9 +37,7 @@ namespace TeamOdd.UI
         {
             if (bar == null) return;
 
-            bar.FillAmount = fillLerpSpeed > 0f
-                ? Mathf.Lerp(bar.FillAmount, ratio, 1f - Mathf.Exp(-fillLerpSpeed * Time.deltaTime))
-                : ratio;
+            bar.FillAmount = ratio;
         }
 
         private float GetHpRatio()
