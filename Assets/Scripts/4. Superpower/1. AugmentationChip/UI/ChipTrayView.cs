@@ -117,8 +117,8 @@ namespace TeamOdd.Superpower
             int result = sortKey switch
             {
                 ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
-                ChipSortKey.StatType => x.StatType.CompareTo(y.StatType),
-                ChipSortKey.Value => x.Value.CompareTo(y.Value),
+                ChipSortKey.StatType => CompareType(x, y),
+                ChipSortKey.Value => CompareValue(x, y),
                 ChipSortKey.Size => x.CellCount.CompareTo(y.CellCount),
                 _ => 0,
             };
@@ -128,6 +128,27 @@ namespace TeamOdd.Superpower
                 result = x.ID.CompareTo(y.ID);
 
             return sortAscending ? result : -result;
+        }
+
+        // 스탯/수치 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
+        // 스킬 칩의 StatType/Value는 쓰지 않는 기본값이라 그대로 비교하면 능력치 칩 사이에 섞인다
+        private static int CompareType(AugmentationChipDef x, AugmentationChipDef y)
+        {
+            int result = x.ChipType.CompareTo(y.ChipType);
+            if (result != 0)
+                return result;
+
+            return x.ChipType == ChipType.Stat ? x.StatType.CompareTo(y.StatType) : x.SkillType.CompareTo(y.SkillType);
+        }
+
+        // 스킬 칩은 수치 대신 쿨타임으로 비교한다
+        private static int CompareValue(AugmentationChipDef x, AugmentationChipDef y)
+        {
+            int result = x.ChipType.CompareTo(y.ChipType);
+            if (result != 0)
+                return result;
+
+            return x.ChipType == ChipType.Stat ? x.Value.CompareTo(y.Value) : x.Cooldown.CompareTo(y.Cooldown);
         }
     }
 }

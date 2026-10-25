@@ -90,12 +90,13 @@ namespace TeamOdd.Superpower
                         occupied[x, y] = null;
         }
 
-        public void ShowPreview(ChipItemView chip)
+        // blocked: 자리와 상관없이 장착할 수 없는 칩 (스킬 슬롯이 가득 찬 스킬 칩). 놓을 수 없는 색으로 보여준다
+        public void ShowPreview(ChipItemView chip, bool blocked)
         {
             ClearPreview();
 
             Vector2Int origin = GetHoveredOrigin(chip);
-            Color color = CanPlace(chip, origin) ? validColor : invalidColor;
+            Color color = blocked == false && CanPlace(chip, origin) ? validColor : invalidColor;
             foreach (Vector2Int offset in chip.Cells)
             {
                 Vector2Int p = origin + offset;

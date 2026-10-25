@@ -940,6 +940,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &447538156
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1958,6 +1960,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &819711301
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2119,6 +2123,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &842963583
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2473,6 +2479,7 @@ GameObject:
   - component: {fileID: 1013557265}
   - component: {fileID: 2147000010}
   - component: {fileID: 2147000011}
+  - component: {fileID: 2147000012}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2510,6 +2517,7 @@ MonoBehaviour:
   aimCamera: {fileID: 1982781878}
   player: {fileID: 1013557267}
   combatEntity: {fileID: 2147000010}
+  playerStatus: {fileID: 0}
   queryLayers:
     serializedVersion: 2
     m_Bits: 115
@@ -2529,6 +2537,8 @@ MonoBehaviour:
   maxAcceleration: 400
   maxHoldSpeed: 26
   breakDistance: 16
+  holdStaminaCostPerSecond: 20
+  minGrabStamina: 10
   throwPrepareDuration: 0.2
   throwPrepareDistance: 3.5
   throwPullMultiplier: 3
@@ -2711,17 +2721,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1077103739 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6870243690095875944, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
-  m_PrefabInstance: {fileID: 2147000040}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00e85de2421ba694c8f9fc88dbcd97ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipPanel
 --- !u!4 &1079551417 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4485996938074031612, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
@@ -3205,6 +3204,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1332778108
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3315,6 +3316,58 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4485996938074031612, guid: b78cfd211e182384eb82ce461d4d74e1, type: 3}
   m_PrefabInstance: {fileID: 305456326}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1375318763
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1375318764}
+  - component: {fileID: 1375318765}
+  m_Layer: 5
+  m_Name: Skill Bar HUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1375318764
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375318763}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2010411287}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 24}
+  m_SizeDelta: {x: 782, y: 56}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &1375318765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375318763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b2c710e42e2d3642a07ea41c8420c58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.SkillBarHUD
+  inventory: {fileID: 2147000011}
+  font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  slotSize: {x: 150, y: 56}
+  slotGap: 8
 --- !u!1 &1387716294
 GameObject:
   m_ObjectHideFlags: 0
@@ -3371,6 +3424,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1387716297
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3649,6 +3704,8 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  targetPoint: {fileID: 0}
+  ikWeight: 0
 --- !u!54 &1473859660
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4898,6 +4955,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 747568467}
+  - {fileID: 1375318764}
   m_Father: {fileID: 11127901}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5296,6 +5354,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
+--- !u!114 &2147000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013557263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc008deb0f4501a4493bb1dca1e730d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.SkillCaster
 --- !u!114 &2147000020
 MonoBehaviour:
   m_ObjectHideFlags: 0

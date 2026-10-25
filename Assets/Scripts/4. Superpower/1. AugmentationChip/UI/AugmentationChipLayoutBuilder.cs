@@ -7,10 +7,11 @@ using UnityEditor;
 namespace TeamOdd.Superpower
 {
     /// <summary>
-    /// 증강칩 패널 전체 배치. 그리드 크기에 맞춰 그리드 칸을 만들고, 그리드/트레이/텍스트 위치와 패널 크기를 정한다.
+    /// 증강칩 패널 전체 배치. 그리드 크기에 맞춰 그리드 칸을 만들고, 그리드/트레이/스킬 슬롯 줄/텍스트 위치와 패널 크기를 정한다.
     /// 에디터에서만 동작한다. 값을 바꾼 뒤 컴포넌트 우클릭(⋮) → "Build Layout"을 누르면 프리팹에 결과가 저장되고,
     /// 런타임에는 저장된 칸과 위치를 그대로 쓴다.
     /// 패널은 앵커·피벗이 중앙이라 전체 크기가 바뀌어도 중심은 화면 중앙에 남는다.
+    /// 스킬 슬롯 줄(SkillBar)이 없으면 만들어서 연결한다. 슬롯 칸은 SkillSlotBarView가 런타임에 줄 크기에 맞춰 만든다.
     ///
     ///   ┌ padding ─────────────────────────────────────┐
     ///   │ Title                                         │
@@ -18,6 +19,8 @@ namespace TeamOdd.Superpower
     ///   │ │              │         │ 정렬 버튼        │ │
     ///   │ └──────────────┘         │ 보유 칩          │ │
     ///   │                          └─────────────────┘ │
+    ///   │ ┌ SkillBar (스킬 슬롯 1~5) ─────────────────┐ │ ← skillBarGap
+    ///   │ └───────────────────────────────────────────┘ │
     ///   │ Info                                          │
     ///   └───────────────────────────────────────────────┘
     /// </summary>
@@ -41,6 +44,10 @@ namespace TeamOdd.Superpower
         [SerializeField] private float scrollbarWidth = 12f;
         [SerializeField] private float scrollbarGap = 4f;
 
+        [Header("Skill Bar")]
+        [SerializeField] private float skillBarGap = 10f;    // 그리드/트레이 아래 ~ 스킬 슬롯 줄
+        [SerializeField] private float skillBarHeight = 56f;
+
         [Header("Spacing")]
         [SerializeField] private float padding = 24f;
         [SerializeField] private float spacing = 20f;      // 그리드와 트레이 사이
@@ -55,6 +62,7 @@ namespace TeamOdd.Superpower
         [SerializeField] private ChipTrayView tray;
         [SerializeField] private RectTransform title;
         [SerializeField] private RectTransform info;
+        [SerializeField] private SkillSlotBarView skillBar; // 비워두면 Build Layout이 만든다
 
 #if UNITY_EDITOR
         // 씬에 놓인 프리팹 인스턴스에서 만들면 칸이 전부 "추가된 오브젝트" 오버라이드로 쌓이므로 프리팹 안에서만 허용한다
@@ -71,13 +79,14 @@ namespace TeamOdd.Superpower
             Undo.RegisterFullObjectHierarchyUndo(gameObject, "Build Augmentation Chip Layout");
 
             BuildGrid();
+            EnsureSkillBar();
 
             float gridLength = ChipGridMetrics.Length(gridSize);
             Vector2 traySize = new Vector2(GetTrayMinWidth() + trayPadding, Mathf.Max(gridLength, trayMinHeight));
             LayoutTray(traySize);
 
             float width = padding + gridLength + spacing + traySize.x + padding;
-            float height = headerHeight + traySize.y + infoGap + infoHeight + padding;
+            float height = headerHeight + traySize.y + skillBarGap + skillBarHeight + infoGap + infoHeight + padding;
 
             RectTransform root = (RectTransform)transform;
             root.anchorMin = root.anchorMax = root.pivot = new Vector2(0.5f, 0.5f);
@@ -85,10 +94,38 @@ namespace TeamOdd.Superpower
             root.sizeDelta = new Vector2(width, height);
 
             float innerWidth = width - padding * 2f;
+            float skillBarTop = headerHeight + traySize.y + skillBarGap;
             SetTopLeft(title, new Vector2(padding, -titleTop), new Vector2(innerWidth, titleHeight));
             SetTopLeft((RectTransform)grid.transform, new Vector2(padding, -headerHeight), new Vector2(gridLength, gridLength));
             SetTopLeft((RectTransform)tray.transform, new Vector2(padding + gridLength + spacing, -headerHeight), traySize);
-            SetTopLeft(info, new Vector2(padding, -(headerHeight + traySize.y + infoGap)), new Vector2(innerWidth, infoHeight));
+            SetTopLeft((RectTransform)skillBar.transform, new Vector2(padding, -skillBarTop), new Vector2(innerWidth, skillBarHeight));
+            SetTopLeft(info, new Vector2(padding, -(skillBarTop + skillBarHeight + infoGap)), new Vector2(innerWidth, infoHeight));
+        }
+
+        // 스킬 슬롯 줄이 없으면 패널 아래에 만들고 빌더와 패널(같은 오브젝트)에 연결한다
+        private void EnsureSkillBar()
+        {
+            if (skillBar != null)
+                return;
+
+            GameObject go = new GameObject("SkillBar", typeof(RectTransform));
+            Undo.RegisterCreatedObjectUndo(go, "Build Augmentation Chip Layout");
+            go.layer = gameObject.layer;
+            go.transform.SetParent(transform, false);
+            SkillSlotBarView bar = go.AddComponent<SkillSlotBarView>();
+
+            // 둘 다 private 직렬화 필드라 SerializedObject로 쓴다 (BuildGrid와 같은 방식)
+            SetReference(this, "skillBar", bar);
+            AugmentationChipPanel panel = GetComponent<AugmentationChipPanel>();
+            if (panel != null)
+                SetReference(panel, "skillBar", bar);
+        }
+
+        private static void SetReference(Object target, string fieldName, Object value)
+        {
+            SerializedObject so = new SerializedObject(target);
+            so.FindProperty(fieldName).objectReferenceValue = value;
+            so.ApplyModifiedProperties();
         }
 
         #region Grid

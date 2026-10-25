@@ -14,14 +14,18 @@ namespace TeamOdd.Superpower
         // 얻을 때 정해진 모양 (회전 전, 좌상단 (0,0), x는 오른쪽, y는 아래로 증가)
         public Vector2Int[] Cells { get; }
 
+        // 스킬 칩이면 이 칩의 스킬, 능력치 칩이면 null. 칩마다 따로 만들어서 쿨타임이 칩을 따라다닌다
+        public SuperpowerSkill Skill { get; }
+
         public bool IsEquipped;
         public Vector2Int Origin; // 장착 위치. 칩 좌상단이 놓인 그리드 칸
         public int Rotation;      // 장착 방향. 시계 방향 90도 회전 횟수 (0~3)
 
-        public OwnedChip(AugmentationChipDef def, Vector2Int[] cells)
+        public OwnedChip(AugmentationChipDef def, Vector2Int[] cells, SuperpowerSkill skill)
         {
             Def = def;
             Cells = cells;
+            Skill = skill;
         }
     }
 }
