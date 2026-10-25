@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using FantasyGarden.FSM;
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
+using TeamOdd.Combat;
+using TeamOdd.Psychokinesis;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,11 +12,13 @@ namespace TeamOdd.Boss
 {
     // 플레이어 위치를 중심으로 한 원형 범위 안에 염동력 오브젝트를 무작위로 투하하는 패턴
     // 투하가 시작되면 큰/중간 오브젝트마다 착지 지점을 낙하 시간 동안 바닥에 예고
-    public sealed class BossPsychokinesisDropPattern : BossCooldownPatternBase
+    // 예고가 다 차오르는 착지 시점에 같은 원으로 피격 판정, 그 전에 플레이어가 붙잡거나 파괴된 오브젝트는 판정하지 않음
+    public sealed class BossPsychokinesisDropPattern : BossMeleePattern
     {
         private const int MaxPositionAttempts = 12;
 
         [Title("References")]
+        [Tooltip("비어 있으면 씬에서 찾는다.")]
         [SerializeField] private WallFragmentSpawner fragmentSpawner;
 
         [Tooltip("바닥, 벽, 천장 판정에 사용할 레이어. Rigidbody가 붙은 오브젝트와 대상은 판정에서 제외한다.")]
@@ -56,8 +61,14 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float initialFallSpeed = 0f;
         [SerializeField, Min(0f)] private float spinSpeed = 4f;
 
+        [Title("Hit")]
+        [SerializeField, Min(0)] private int largeDamage = 20;
+        [SerializeField, Min(0)] private int mediumDamage = 10;
+        [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
+        [SerializeField] private HitReaction reaction = HitReaction.Stagger;
+
         [Title("Telegraph")]
-        [Tooltip("착지 지점 표시 반경에 곱할 배율, 1이면 오브젝트의 수평 크기와 같다.")]
+        [Tooltip("착지 지점 표시 반경에 곱할 배율, 1이면 오브젝트의 수평 크기와 같다. 피격 판정도 이 범위를 사용한다.")]
         [SerializeField, Min(0f)] private float markerRadiusScale = 1f;
         [Tooltip("착지 지점 표시가 사라지는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f)] private float telegraphFadeDuration = 0.3f;
@@ -68,24 +79,25 @@ namespace TeamOdd.Boss
         private readonly Collider[] spawnOverlaps = new Collider[32];
         private Vector3 dropCenter;
 
-        protected override void OnEnter()
+        public override void Initialize(MonoBehaviourFSM stateMachine)
         {
-            StartCooldown();
+            base.Initialize(stateMachine);
+
+            // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 비어 있으면 씬에서 찾음
+            if (fragmentSpawner == null) fragmentSpawner = FindAnyObjectByType<WallFragmentSpawner>();
+        }
+
+        protected override bool UsesMeleeHits => false;
+
+        protected override void OnPatternEnter()
+        {
             dropCenter = Target.position;
-            root.AnimEventListener.OnOccursAnimStateEvent += OnAnimEvent;
-            root.Animator.SetTrigger(BossAnimParams.ROAR);
         }
 
         // 비활성화되면 투하 코루틴은 자동으로 멈춤, 이미 떨어지는 오브젝트의 착지 표시는 끝까지 둠
-        protected override void OnExit()
+        protected override void OnPatternAnimEventOccurs(string name, string param)
         {
-            root.AnimEventListener.OnOccursAnimStateEvent -= OnAnimEvent;
-            root.Animator.ResetTrigger(BossAnimParams.ROAR);
-        }
-
-        private void OnAnimEvent(string eventName, string eventParam)
-        {
-            if (eventName == "OnRoarDrop") StartCoroutine(Run());
+            if (name == "OnRoarDrop") StartCoroutine(Run());
         }
 
         private IEnumerator Run()
@@ -131,20 +143,38 @@ namespace TeamOdd.Boss
             body.linearVelocity = Vector3.down * initialFallSpeed;
             body.angularVelocity = Random.onUnitSphere * spinSpeed;
 
-            // 작은 파편은 연출용이라 착지 지점을 예고하지 않음
-            if (size != FragmentSize.Small) ShowLandingMarker(fragment, position, ground);
+            // 작은 파편은 연출용이라 착지 지점을 예고하지 않고 피해도 주지 않음
+            if (size == FragmentSize.Small) return;
+
+            int damage = size == FragmentSize.Large ? largeDamage : mediumDamage;
+            ShowLandingMarker(fragment, position, ground, damage);
         }
 
         // 착지 시점은 낙하 시간으로 추정, 표시는 다 차오르면 스스로 사라지므로 참조를 들고 있지 않음
         // 콜라이더 bounds는 물리 동기화 전이라 이전 위치/크기일 수 있어 Renderer bounds로 크기를 잼
-        private void ShowLandingMarker(WallFragment fragment, Vector3 position, Vector3 ground)
+        private void ShowLandingMarker(WallFragment fragment, Vector3 position, Vector3 ground, int damage)
         {
             Bounds bounds = fragment.GetComponent<Renderer>().bounds;
             float markerRadius = Mathf.Max(bounds.extents.x, bounds.extents.z) * markerRadiusScale;
             float fallTime = GetFallTime(position.y - ground.y);
+            TelegraphShape shape = TelegraphShape.Circle(markerRadius);
+            Pose pose = new Pose(ground, Quaternion.identity);
 
-            AttackTelegraph marker = root.ShowTelegraph(TelegraphShape.Circle(markerRadius), new Pose(ground, Quaternion.identity), fallTime);
+            AttackTelegraph marker = root.ShowTelegraph(shape, pose, fallTime);
             if (marker != null) marker.ResolveWhenFilled(fallTime, telegraphFadeDuration);
+
+            // 패턴이 끝나 이 오브젝트가 비활성화돼도 착지 판정은 이어지도록 보스에서 실행
+            root.StartCoroutine(HitOnLanding(fragment, shape, pose, fallTime, damage));
+        }
+
+        private IEnumerator HitOnLanding(WallFragment fragment, TelegraphShape shape, Pose pose, float fallTime, int damage)
+        {
+            yield return new WaitForSeconds(fallTime);
+
+            if (fragment.isActiveAndEnabled == false) yield break;
+            if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) yield break;
+
+            TryHit(shape, pose, damage, reaction);
         }
 
         // 초기 낙하 속도와 중력만으로 height만큼 떨어지는 시간(공기 저항 무시)

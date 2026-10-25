@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7827787461146548316}
-  m_Layer: 0
+  - component: {fileID: 7170481060008468760}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +42,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7320172707596474816}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5198216346903350641}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5471695479009158482}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Toe1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8535586910388637671}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: States
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +158,8 @@ Transform:
   m_Children:
   - {fileID: 7063096422266506262}
   - {fileID: 4813529423562907885}
-  - {fileID: 6212406521362471335}
+  - {fileID: 353169173551604087}
+  - {fileID: 4718157356823597850}
   m_Father: {fileID: 6366305689365515654}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &628497947562117113
@@ -169,7 +171,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6992329396614798868}
-  m_Layer: 0
+  - component: {fileID: 802184404045844048}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +204,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8381763376148429670}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_MandibuleLeft_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +236,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9140451444377378625}
-  m_Layer: 0
+  - component: {fileID: 4566744993845097362}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Forearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +269,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5166298896056812281}
-  m_Layer: 0
+  - component: {fileID: 6506067185469964305}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R UpperArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +302,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8238401532119491521}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -329,7 +334,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4481003792623097386}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_Tongue_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -361,7 +366,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4059012339184732263}
-  m_Layer: 0
+  - component: {fileID: 5586112747009406790}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Calf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -393,7 +399,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2383699370520157915}
-  m_Layer: 0
+  - component: {fileID: 3596799573489577125}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Spine1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -427,7 +434,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1315939509478951420}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_MandibuleRight_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -458,7 +465,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 139675039292868437}
-  m_Layer: 0
+  - component: {fileID: 3872523951829890165}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -491,13 +499,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4813529423562907885}
   - component: {fileID: 5426821876405360342}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Chase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4813529423562907885
 Transform:
   m_ObjectHideFlags: 0
@@ -524,10 +532,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6aaa66fa0d9247d0b3ee9acea73a2069, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseStateBase
-  chaseSpeed: 5
-  chaseEndDistance: 10
-  rotateSpeed: 2.5
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseState
+  walkSpeed: 5
+  runSpeed: 10
+  rotateSpeed: 5
+  rethinkInterval: 1
 --- !u!1 &1747056200578454141
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +546,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1633509194278741931}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_MandibuleRight_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -569,7 +578,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7114013392499207822}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Toe21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -600,7 +609,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3685160245073769171}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -632,7 +641,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4613534212967812257}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Neck1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -664,7 +673,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4085053570260832905}
-  m_Layer: 0
+  - component: {fileID: 4170070165453795975}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Forearm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -696,7 +706,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4853698967900689596}
-  m_Layer: 0
+  - component: {fileID: 7631087710597073396}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -730,7 +741,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5399463026676753739}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Clavicle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -766,7 +777,11 @@ GameObject:
   - component: {fileID: 5363785815632091185}
   - component: {fileID: 8005779171590074953}
   - component: {fileID: 5617293112904674764}
-  m_Layer: 0
+  - component: {fileID: 689814531121425060}
+  - component: {fileID: 4391235115479835729}
+  - component: {fileID: 7477955140076880982}
+  - component: {fileID: 560260013335335844}
+  m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -821,20 +836,20 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2243586315636391990}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 500
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_CenterOfMass: {x: 0, y: 1, z: 0.4}
+  m_InertiaTensor: {x: 1625, y: 1625, z: 250}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
+    m_Bits: 256
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -851,13 +866,16 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a787f25a2c5040479f8efdf1b4674e1f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossController
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossMonster
   defaultState: {fileID: 592612764365491377}
   <Animator>k__BackingField: {fileID: 6020067126372009872}
   <Body>k__BackingField: {fileID: 5363785815632091185}
-  <Root>k__BackingField: {fileID: 0}
-  <Target>k__BackingField: {fileID: 0}
   <AnimEventListener>k__BackingField: {fileID: 5617293112904674764}
+  <Target>k__BackingField: {fileID: 0}
+  sightHalfAngle: 20
+  sightRange: 30
+  moveHalfAngle: 45
+  telegraphPoolKey: AttackTelegraph
 --- !u!114 &5617293112904674764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,7 +897,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1863451980394766361}
-  m_Layer: 0
+  - component: {fileID: 5453239034276973224}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -913,7 +932,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1736488877813798375}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: "\uBE0C\uB808\uC2A4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -933,7 +952,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6212406521362471335}
+  m_Father: {fileID: 353169173551604087}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2990994583457717620
 GameObject:
@@ -944,7 +963,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 991793078434501161}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Clavicle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -976,7 +995,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6726392053306663493}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1008,7 +1027,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2264317684419332889}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_Tongue_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1040,7 +1059,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9043803123047079791}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1072,8 +1091,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8672937814003737655}
-  - component: {fileID: 1143977512422078150}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1096,27 +1114,6 @@ Transform:
   - {fileID: 8238401532119491521}
   m_Father: {fileID: 6366305689365515654}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1143977512422078150
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3397769765829392526}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10, y: 12.5, z: 1}
-  m_Center: {x: 0, y: 0, z: 0.5}
 --- !u!1 &3401772546427095476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,7 +1123,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8623503101186264549}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1158,7 +1155,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 291345612022114438}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1189,7 +1186,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6150592679294530219}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1221,7 +1218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8681823057943556425}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Toe11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1252,7 +1249,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5968504161687724766}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1284,7 +1281,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5198635934728777245}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_Tongue_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1316,7 +1313,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 247698752670661972}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Toe21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1347,7 +1344,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7542199927227272253}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Toe0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1379,7 +1376,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8002674725407339505}
-  m_Layer: 0
+  - component: {fileID: 5864669513969259159}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1413,7 +1411,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3479887247437156242}
-  m_Layer: 0
+  - component: {fileID: 5369526070388541847}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Neck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1445,7 +1444,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2414002132752261598}
-  m_Layer: 0
+  - component: {fileID: 4192300476115817309}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Queue de cheval 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1477,7 +1477,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1892568374693869687}
-  m_Layer: 0
+  - component: {fileID: 8588819296361937357}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1511,7 +1512,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4752734160497402653}
-  m_Layer: 0
+  - component: {fileID: 3402576520175079463}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Calf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1543,7 +1545,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3585944699187141800}
-  m_Layer: 0
+  - component: {fileID: 8631103880992522354}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1574,7 +1577,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 718347930006269789}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1606,7 +1609,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6554062562375567361}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1638,8 +1641,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6212406521362471335}
   - component: {fileID: 2851421100980067503}
-  m_Layer: 0
-  m_Name: Breath Pattern
+  m_Layer: 6
+  m_Name: Left Claw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1657,9 +1660,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1736488877813798375}
-  m_Father: {fileID: 8535586910388637671}
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2851421100980067503
 MonoBehaviour:
@@ -1672,9 +1674,33 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawPattern
-  attackDistance: 10
-  forwardAttackDistance: 20
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClaw
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
+  minAngle: -20
+  maxAngle: 20
+  cooldown: 1.5
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1812146055
+  useRootMotion: 0
+  trackDuration: 0.5
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
 --- !u!1 &5844296647884378143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1684,7 +1710,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2443986877570224111}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1715,7 +1741,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1460009111455073769}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Toe2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1747,7 +1773,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2236397086083227532}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1779,7 +1805,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9003171050941178838}
-  m_Layer: 0
+  - component: {fileID: 5842944857251999694}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1813,7 +1840,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1160204736264805384}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Toe1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1845,7 +1872,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3674338779887774953}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_MandibuleLeft_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1877,7 +1904,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5065940860299222108}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1909,7 +1936,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 38103378033659095}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Toe01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1941,7 +1968,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6547780937883220029}
   - component: {fileID: 2556058899025400808}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2098,7 +2125,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2880829592202058387}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_Tongue_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2129,7 +2156,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2510121621449341954}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2162,7 +2189,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7063096422266506262}
   - component: {fileID: 592612764365491377}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Idle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2196,7 +2223,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1657b5e6ce18487d8e128193228a1aa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossIdleState
-  tempPattern: {fileID: 2851421100980067503}
+  intentTimeout: 5
+  retryDelay: 0.3
+  faceHalfAngle: 45
+  melees:
+  - {fileID: 2851421100980067503}
+  - {fileID: 404701223987581413}
+  - {fileID: 3055570928604525442}
+  - {fileID: 3113309671431656573}
+  - {fileID: 3960214206276824407}
+  - {fileID: 3603808996938800509}
+  - {fileID: 3940009499819076386}
+  - {fileID: 7144967502863657079}
+  - {fileID: 3265945443776442675}
+  - {fileID: 5853785563169541488}
+  - {fileID: 4806054930190537673}
+  - {fileID: 3996771544257051573}
+  - {fileID: 8868022279130048305}
 --- !u!1 &7646533345748698016
 GameObject:
   m_ObjectHideFlags: 0
@@ -2206,7 +2249,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5435851678239440585}
-  m_Layer: 0
+  - component: {fileID: 6337819461406226561}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Pelvis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2241,7 +2285,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1829196573030613832}
-  m_Layer: 0
+  - component: {fileID: 573847966932945372}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L UpperArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2273,7 +2318,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 646352992751924199}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Toe11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2304,7 +2349,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7598304068637624112}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_MandibuleRight_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2336,7 +2381,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3257961909005714615}
-  m_Layer: 0
+  - component: {fileID: 2173924343473726646}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2368,7 +2414,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2331406377448327770}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2399,7 +2445,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5095752218139195592}
-  m_Layer: 0
+  - component: {fileID: 8784229681422085893}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2431,7 +2478,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1260938095120914346}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Finger1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2463,7 +2510,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 904518244973345670}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Finger21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2495,7 +2542,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2034583382917349177}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Toe2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2527,7 +2574,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4724047738958236863}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_MandibuleLeft_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2558,7 +2605,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5869316238951397819}
-  m_Layer: 0
+  - component: {fileID: 7737687952165532062}
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2590,7 +2638,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8741064158397951674}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Toe01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2621,7 +2669,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5853280226134470136}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Toe0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2653,7 +2701,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5720140332535686106}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Neck2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2676,3 +2724,1613 @@ Transform:
   - {fileID: 4853698967900689596}
   m_Father: {fileID: 4613534212967812257}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7452769289597429649
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 353169173551604087}
+  m_Layer: 6
+  m_Name: Attacks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &353169173551604087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7452769289597429649}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6212406521362471335}
+  - {fileID: 1736488877813798375}
+  - {fileID: 1414346471832405977}
+  - {fileID: 7712219189764028835}
+  - {fileID: 8419820634027940213}
+  - {fileID: 8928689692190416780}
+  - {fileID: 6385001384639069423}
+  - {fileID: 7673346322123924986}
+  - {fileID: 5245692037069891221}
+  - {fileID: 4281904681426617257}
+  - {fileID: 1553819832935517882}
+  - {fileID: 3735418416536190114}
+  - {fileID: 8608923294922890249}
+  - {fileID: 8482658457311449938}
+  m_Father: {fileID: 8535586910388637671}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &404701223987581413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6440733829458887594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7518184b81e14eb184ab02b80b4bc514, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawForward
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
+  cooldown: 2.25
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1920930122
+  useRootMotion: 1
+  trackDuration: 0.5
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &6440733829458887594
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1414346471832405977}
+  - component: {fileID: 404701223987581413}
+  m_Layer: 6
+  m_Name: Left Claw Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1414346471832405977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6440733829458887594}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3055570928604525442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2149664734680885421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6e03913ee043f6971b16a4b88db045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClaw
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
+  minAngle: -20
+  maxAngle: 20
+  cooldown: 1.5
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 737642192
+  useRootMotion: 0
+  trackDuration: 0.5
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &2149664734680885421
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7712219189764028835}
+  - component: {fileID: 3055570928604525442}
+  m_Layer: 6
+  m_Name: Right Claw
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7712219189764028835
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2149664734680885421}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3113309671431656573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6193906981827366311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb41d3df9fa46f19b2d08e7d6750d0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClawForward
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
+  cooldown: 2.25
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -970897688
+  useRootMotion: 1
+  trackDuration: 0.5
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &6193906981827366311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8419820634027940213}
+  - component: {fileID: 3113309671431656573}
+  m_Layer: 6
+  m_Name: Right Claw Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8419820634027940213
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6193906981827366311}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3960214206276824407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252071134404114645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27e8482fc0eb4d29962671b93dc08071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmash
+  <MinDistance>k__BackingField: 6
+  <MaxDistance>k__BackingField: 9
+  minAngle: -20
+  maxAngle: 20
+  cooldown: 2
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1083039596
+  useRootMotion: 0
+  trackDuration: 0.5
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.4
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.48
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &1252071134404114645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8928689692190416780}
+  - component: {fileID: 3960214206276824407}
+  m_Layer: 6
+  m_Name: Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8928689692190416780
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252071134404114645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3603808996938800509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290839044995697151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 296dde739c644b6ebe433dffda3d9c20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmashForward
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 11.5
+  minAngle: -8
+  maxAngle: 8
+  cooldown: 3
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -234574752
+  useRootMotion: 1
+  trackDuration: 0.5
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.48
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 1.2}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &5290839044995697151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6385001384639069423}
+  - component: {fileID: 3603808996938800509}
+  m_Layer: 6
+  m_Name: Smash Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6385001384639069423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290839044995697151}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3940009499819076386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2743604352633935117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33524a8e0b1e40aa8618cd30c7049ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2Combo
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
+  minAngle: -20
+  maxAngle: 20
+  cooldown: 2.5
+  <Weight>k__BackingField: 0.75
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1320152918
+  useRootMotion: 0
+  trackDuration: 0.5
+  trackSpeed: 120
+  <Recovery>k__BackingField: 1
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.58
+    damage: 10
+    reaction: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 1.0
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &2743604352633935117
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7673346322123924986}
+  - component: {fileID: 3940009499819076386}
+  m_Layer: 6
+  m_Name: 2Combo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7673346322123924986
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2743604352633935117}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7144967502863657079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2572639766621970829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ace5c71683049adb6057c82ccc7fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2ComboForward
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
+  cooldown: 3.75
+  <Weight>k__BackingField: 0.75
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 109528201
+  useRootMotion: 1
+  trackDuration: 0.5
+  trackSpeed: 90
+  <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.63
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 4.87}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &2572639766621970829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5245692037069891221}
+  - component: {fileID: 7144967502863657079}
+  m_Layer: 6
+  m_Name: 2Combo Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5245692037069891221
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2572639766621970829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3265945443776442675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3386899951334730820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce8262d4a9c48a48f0443aaa5c66cdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3Combo
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
+  minAngle: -20
+  maxAngle: 20
+  cooldown: 3
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -2047656717
+  useRootMotion: 0
+  trackDuration: 0.5
+  trackSpeed: 120
+  <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.58
+    damage: 10
+    reaction: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.96
+    damage: 10
+    reaction: 1
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.73
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &3386899951334730820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4281904681426617257}
+  - component: {fileID: 3265945443776442675}
+  m_Layer: 6
+  m_Name: 3Combo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4281904681426617257
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3386899951334730820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5853785563169541488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8976489482103912562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9335ea5cbdf64daf8fe59d17a7a46150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3ComboForward
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
+  cooldown: 4.5
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -619602676
+  useRootMotion: 1
+  trackDuration: 0.5
+  trackSpeed: 90
+  <Recovery>k__BackingField: 2.25
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.6
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.57
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 4.87}
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.7
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 8.58}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &8976489482103912562
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1553819832935517882}
+  - component: {fileID: 5853785563169541488}
+  m_Layer: 6
+  m_Name: 3Combo Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1553819832935517882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8976489482103912562}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2499106991876492857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4771443777203176558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ac2c6175b6454db6c1108efa020fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossTurnState
+  turnSpeed: 45
+  angleMargin: 5
+  doneAngle: 1
+  timeout: 2
+  directionDampTime: 0.15
+--- !u!1 &4771443777203176558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4718157356823597850}
+  - component: {fileID: 2499106991876492857}
+  m_Layer: 6
+  m_Name: Turn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4718157356823597850
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4771443777203176558}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8535586910388637671}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4806054930190537673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5410665898571246304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2484913e8c7ed41938bc40e1760aeac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossPsychokinesisThrowPattern
+  <MinDistance>k__BackingField: 15
+  <MaxDistance>k__BackingField: 30
+  minAngle: -30
+  maxAngle: 30
+  cooldown: 5
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1335050551
+  useRootMotion: 0
+  trackDuration: 0.5
+  trackSpeed: 90
+  <Recovery>k__BackingField: 1
+  showRangeWhenInactive: 1
+  fragmentSpawner: {fileID: 0}
+  throwOrigin: {fileID: 3675332527822831297}
+  ownerIgnoreDuration: 0.3
+  holdSpinSpeed: 90
+  throwSpeed: 40
+  aimHeight: 1
+  compensateGravity: 1
+  throwSpinSpeed: 3
+  pathWidth: 1.5
+  pathOvershoot: 2
+  aimWarnDuration: 0.5
+  telegraphFadeDuration: 0.3
+--- !u!1 &5410665898571246304
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3735418416536190114}
+  - component: {fileID: 4806054930190537673}
+  m_Layer: 6
+  m_Name: Throw
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &3735418416536190114
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5410665898571246304}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3675332527822831297}
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5845843534692288145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3675332527822831297}
+  m_Layer: 6
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3675332527822831297
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5845843534692288145}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.3, y: 4.3, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3735418416536190114}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3996771544257051573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223344782219856695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 485168680cf8549be8d371be8b65f113, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossPsychokinesisDropPattern
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 30
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 10
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1628729824
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 1
+  showRangeWhenInactive: 1
+  fragmentSpawner: {fileID: 0}
+  environmentLayers:
+    serializedVersion: 2
+    m_Bits: 1019
+  largeCount: 3
+  mediumCount: 7
+  smallCount: 10
+  radius: 8
+  minSpacing: 1.2
+  dropHeight: 8
+  heightJitter: 2
+  probeHeight: 1.5
+  groundProbeDistance: 10
+  ceilingClearance: 0.5
+  minDropHeight: 2
+  spawnCheckRadius: 0.6
+  dropDuration: 1
+  trackTargetUntilDrop: 1
+  initialFallSpeed: 0
+  spinSpeed: 4
+  markerRadiusScale: 1
+  telegraphFadeDuration: 0.3
+--- !u!1 &6223344782219856695
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8608923294922890249}
+  - component: {fileID: 3996771544257051573}
+  m_Layer: 6
+  m_Name: Drop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8608923294922890249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6223344782219856695}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8868022279130048305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6811453850045765048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8415584c19c904d779532ca166637794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShockwavePattern
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 9
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 8
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 1
+  trigger: -904583807
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 1
+  showRangeWhenInactive: 1
+  waves:
+  - origin: {fileID: 6366305689365515654}
+    damage: 10
+    radius: 20
+  jumpAvoidHeight: 0.5
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 2043
+  <Reaction>k__BackingField: 1
+  fragmentSpawner: {fileID: 0}
+  liftHeight: {x: 0.3, y: 1}
+  liftDuration: {x: 0.15, y: 0.3}
+  warnDuration: 0.8
+  rangeFadeDuration: 0.4
+--- !u!1 &6811453850045765048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8482658457311449938}
+  - component: {fileID: 8868022279130048305}
+  m_Layer: 6
+  m_Name: Shockwave
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8482658457311449938
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6811453850045765048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &689814531121425060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8f0fc115c1047bdb939d384a08f485, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossPsychokinesisPatternTester
+  boss: {fileID: 8005779171590074953}
+--- !u!114 &4391235115479835729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b8b7f4df4a4d009bd1651998beceb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.SampleCombatMonster
+  <Collider>k__BackingField: {fileID: 7477955140076880982}
+  <Stats>k__BackingField: {fileID: 11400000, guid: d8025811fade4e0c9ec1c3ec0a378901, type: 2}
+--- !u!136 &3596799573489577125
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464052615122992045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.458
+  m_Height: 4.679
+  m_Direction: 1
+  m_Center: {x: -1.008, y: -0.18, z: -0.01}
+--- !u!136 &2173924343473726646
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8179770262602927060}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.586
+  m_Height: 4.194
+  m_Direction: 1
+  m_Center: {x: -0.604, y: -0.051, z: -0.002}
+--- !u!136 &6337819461406226561
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7646533345748698016}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.095
+  m_Height: 3.735
+  m_Direction: 1
+  m_Center: {x: 0.275, y: -0.102, z: -0}
+--- !u!136 &5369526070388541847
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4629216340964442316}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 2.652
+  m_Direction: 1
+  m_Center: {x: -0.707, y: -0.477, z: -0.009}
+--- !u!136 &4192300476115817309
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4630973663157246192}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.719
+  m_Height: 1.664
+  m_Direction: 1
+  m_Center: {x: -0.826, y: 0.472, z: 0.001}
+--- !u!65 &7631087710597073396
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036222518524382009}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.966, y: 2.363, z: 2.677}
+  m_Center: {x: -0.297, y: 1.172, z: -0.001}
+--- !u!136 &3872523951829890165
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541790654066979339}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.869
+  m_Height: 2.486
+  m_Direction: 1
+  m_Center: {x: -0.549, y: 0.019, z: -0.002}
+--- !u!136 &8784229681422085893
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8396260432461564753}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.588
+  m_Height: 1.378
+  m_Direction: 1
+  m_Center: {x: -0.638, y: -0.005, z: -0.004}
+--- !u!136 &7170481060008468760
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132424190854702321}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.386
+  m_Height: 1.074
+  m_Direction: 1
+  m_Center: {x: -0.406, y: -0.068, z: -0.006}
+--- !u!65 &8631103880992522354
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4916056290357691644}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7, y: 1.516, z: 2.969}
+  m_Center: {x: -0.809, y: 0.212, z: -0}
+--- !u!136 &573847966932945372
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7696882929200583917}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.777
+  m_Height: 2.891
+  m_Direction: 0
+  m_Center: {x: -1.579, y: 0.08, z: 0.13}
+--- !u!136 &4170070165453795975
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979172260052378256}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.712
+  m_Height: 2.566
+  m_Direction: 0
+  m_Center: {x: -0.77, y: 0.061, z: -0.013}
+--- !u!65 &5864669513969259159
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608455425090260614}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.81, y: 0.753, z: 2.597}
+  m_Center: {x: -1.241, y: -0.156, z: -0.021}
+--- !u!136 &802184404045844048
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628497947562117113}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.807
+  m_Height: 1.968
+  m_Direction: 0
+  m_Center: {x: -1.235, y: 0.01, z: -0.045}
+--- !u!136 &3402576520175079463
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4843037118012064841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.552
+  m_Height: 1.783
+  m_Direction: 0
+  m_Center: {x: -0.961, y: -0.051, z: -0.024}
+--- !u!65 &5842944857251999694
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373297338768281890}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.669, y: 1.834, z: 1.843}
+  m_Center: {x: -0.365, y: 0.633, z: -0.092}
+--- !u!136 &6506067185469964305
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948284813391683550}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.777
+  m_Height: 2.891
+  m_Direction: 0
+  m_Center: {x: -1.579, y: 0.08, z: -0.13}
+--- !u!136 &4566744993845097362
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898369997103197631}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.712
+  m_Height: 2.566
+  m_Direction: 0
+  m_Center: {x: -0.77, y: 0.061, z: 0.009}
+--- !u!65 &5453239034276973224
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2675484239951159859}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.81, y: 0.753, z: 2.595}
+  m_Center: {x: -1.241, y: -0.156, z: 0.019}
+--- !u!136 &7737687952165532062
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8865946374128478447}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.806
+  m_Height: 1.968
+  m_Direction: 0
+  m_Center: {x: -1.235, y: 0.01, z: 0.04}
+--- !u!136 &5586112747009406790
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430831814310745904}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.552
+  m_Height: 1.783
+  m_Direction: 0
+  m_Center: {x: -0.961, y: -0.051, z: 0.019}
+--- !u!65 &8588819296361937357
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4734717416168927030}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.669, y: 1.834, z: 1.842}
+  m_Center: {x: -0.365, y: 0.633, z: 0.091}
+--- !u!136 &7477955140076880982
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 6
+  m_Direction: 2
+  m_Center: {x: 0, y: 1, z: 0.4}
+--- !u!114 &560260013335335844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9672f209e38a4141bd3c978221ad4790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitboxRegistrar

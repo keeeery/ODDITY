@@ -26,8 +26,9 @@ namespace TeamOdd.UI
 
         private void Start()
         {
-            hpBar.FillAmount = GetHpRatio();
-            staminaBar.FillAmount = GetStaminaRatio();
+            // 보스 정보 UI처럼 바를 하나만 쓰는 경우가 있어 비어 있는 바는 건너뜀
+            if (hpBar != null) hpBar.FillAmount = GetHpRatio();
+            if (staminaBar != null) staminaBar.FillAmount = GetStaminaRatio();
         }
 
         private void Update()
