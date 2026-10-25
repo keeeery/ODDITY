@@ -1675,8 +1675,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClaw
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
   minAngle: -20
   maxAngle: 20
   cooldown: 1.5
@@ -2781,10 +2781,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7518184b81e14eb184ab02b80b4bc514, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
   cooldown: 2.25
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
@@ -2853,8 +2853,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e6e03913ee043f6971b16a4b88db045, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClaw
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
   minAngle: -20
   maxAngle: 20
   cooldown: 1.5
@@ -2923,10 +2923,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fb41d3df9fa46f19b2d08e7d6750d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClawForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
   cooldown: 2.25
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
@@ -2995,8 +2995,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e8482fc0eb4d29962671b93dc08071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmash
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
+  <MinDistance>k__BackingField: 6
+  <MaxDistance>k__BackingField: 9
   minAngle: -20
   maxAngle: 20
   cooldown: 2
@@ -3065,10 +3065,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 296dde739c644b6ebe433dffda3d9c20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmashForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 11.5
+  minAngle: -8
+  maxAngle: 8
   cooldown: 3
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
@@ -3137,8 +3137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33524a8e0b1e40aa8618cd30c7049ded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2Combo
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
   minAngle: -20
   maxAngle: 20
   cooldown: 2.5
@@ -3217,10 +3217,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ace5c71683049adb6057c82ccc7fa80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2ComboForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
   cooldown: 3.75
   <Weight>k__BackingField: 0.75
   <IsUrgent>k__BackingField: 0
@@ -3301,8 +3301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fce8262d4a9c48a48f0443aaa5c66cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3Combo
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
+  <MinDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 9
   minAngle: -20
   maxAngle: 20
   cooldown: 3
@@ -3336,12 +3336,12 @@ MonoBehaviour:
     damage: 10
     reaction: 1
   - shape:
-      kind: 1
-      radius: 8
-      angle: 120
+      kind: 0
+      radius: 2.5
+      angle: 0
       width: 0
       length: 0
-    offset: {x: 0, y: 0}
+    offset: {x: 0, y: 8.2}
     warnDuration: 0.73
     damage: 10
     reaction: 1
@@ -3391,10 +3391,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9335ea5cbdf64daf8fe59d17a7a46150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3ComboForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  <MinDistance>k__BackingField: 9
+  <MaxDistance>k__BackingField: 13
+  minAngle: -8
+  maxAngle: 8
   cooldown: 4.5
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
@@ -3430,12 +3430,12 @@ MonoBehaviour:
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.87}
   - shape:
-      kind: 1
-      radius: 8
-      angle: 120
+      kind: 0
+      radius: 2.5
+      angle: 0
       width: 0
       length: 0
-    offset: {x: 0, y: 0}
+    offset: {x: 0, y: 8.2}
     warnDuration: 0.7
     damage: 10
     reaction: 1

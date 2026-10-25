@@ -2492,7 +2492,7 @@ MonoBehaviour:
   maxYaw: 70
   collisionMask:
     serializedVersion: 2
-    m_Bits: 255
+    m_Bits: 183
   collisionRadius: 0.2
   shakeOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &2009241620
