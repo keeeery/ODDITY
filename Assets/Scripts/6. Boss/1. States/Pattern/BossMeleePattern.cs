@@ -80,7 +80,7 @@ namespace TeamOdd.Boss
         private Pose[] lockedPoses;
         private bool[] isLocked;
 
-        public virtual bool CanUse => Time.time >= readyTime;
+        public virtual bool CanUse => Clock.LocalTime >= readyTime;
 
         // 근접 타격 신호를 쓰지 않는 패턴(투척, 투하, 충격파)은 false로 두어 인스펙터에서 타격 목록을 숨김
         protected virtual bool UsesMeleeHits => true;
@@ -103,8 +103,8 @@ namespace TeamOdd.Boss
 
         protected override void OnEnter()
         {
-            readyTime = Time.time + cooldown;
-            trackEndTime = Time.time + trackDuration;
+            readyTime = Clock.LocalTime + cooldown;
+            trackEndTime = Clock.LocalTime + trackDuration;
             targetRadius = GetTargetRadius();
 
             root.AnimEventListener.OnOccursAnimStateEvent += OnOccursAnimEvent;
@@ -115,15 +115,15 @@ namespace TeamOdd.Boss
             OnPatternEnter();
         }
 
-        protected virtual void Update()
+        protected override void OnUpdate()
         {
             // 고정하지 않은 예고는 타격 시점까지 보스를 따라감
             for (int index = 0; index < hits.Length; index++)
                 if (hitTelegraphs[index] != null && isLocked[index] == false)
                     hitTelegraphs[index].SetPlacement(hits[index].shape, GetHitPose(hits[index], Vector2.zero));
 
-            if (Time.time >= trackEndTime) return;
-            root.RotateYaw(root.SignedAngleToTarget, trackSpeed * Time.deltaTime);
+            if (Clock.LocalTime >= trackEndTime) return;
+            root.RotateYaw(root.SignedAngleToTarget, trackSpeed * Clock.LocalDeltaTime);
         }
 
         protected override void OnExit()

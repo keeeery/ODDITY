@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TeamOdd.Boss;
 using TeamOdd.Combat;
+using TeamOdd.TimeControl;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -33,6 +34,7 @@ namespace TeamOdd.Psychokinesis
         private LayerMask originalExcludeLayer;
 
         private Rigidbody body;
+        private TimeFreezable clock;
         private BoxCollider hitBox;
         private BoxCollider hitTrigger;
         private Vector3 throwVelocity;
@@ -82,12 +84,14 @@ namespace TeamOdd.Psychokinesis
 
         public Rigidbody Body => body;
         public bool IsHeld { get; private set; }
-        public bool IsAvailable(float maxMass) => isActiveAndEnabled && Body.isKinematic == false && Body.mass <= maxMass;
+        // 시간 정지로 kinematic이 된 오브젝트도 원래 잡을 수 있었으면 잡을 수 있음
+        public bool IsAvailable(float maxMass) => isActiveAndEnabled && clock.IsKinematicIgnoringFreeze(Body) == false && Body.mass <= maxMass;
         private bool IsSwingActive => IsHeld && readyToSwing && swingActivated && swingSpeed >= swingMinSpeed;
 
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
+            clock = TimeFreezable.GetOrAdd(gameObject);
             hitBox = GetComponent<BoxCollider>();
             CreateHitTrigger();
             objectColliders = GetComponentsInChildren<Collider>();
@@ -127,7 +131,8 @@ namespace TeamOdd.Psychokinesis
         // 트리거 판정은 물리 스텝 이후에 오므로 스텝 직전 속도로 투척 피해를 계산
         private void FixedUpdate()
         {
-            if (canDealThrowDamage) throwVelocity = body.linearVelocity;
+            // 시간 정지로 멈춘 동안은 속도가 0이므로 멈추기 전 속도를 유지
+            if (canDealThrowDamage && clock.IsFrozen == false) throwVelocity = body.linearVelocity;
         }
 
         private void OnDisable()
@@ -351,8 +356,10 @@ namespace TeamOdd.Psychokinesis
             OutlinedObject = this;
         }
 
+        // 시간 정지 중에도 플레이어가 든 오브젝트는 움직여야 하므로 먼저 정지에서 빼냄
         public void BeginHold(Collider[] ownerColliders, ICombatable sender)
         {
+            clock.SetWorldExempt(true);
             canDealThrowDamage = false;
             damageSender = sender;
             readyToSwing = false;
@@ -391,6 +398,9 @@ namespace TeamOdd.Psychokinesis
             throwVelocity = velocity;
             body.angularVelocity = Vector3.zero;
             SetFocused(false, true);
+
+            // 시간 정지 중에 던졌으면 정지가 끝날 때까지 날아가게 둠
+            clock.ClearWorldExemptOnResume();
         }
 
 #if UNITY_EDITOR

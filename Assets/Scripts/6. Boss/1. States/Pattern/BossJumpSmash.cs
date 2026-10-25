@@ -26,19 +26,19 @@ namespace TeamOdd.Boss
         protected override bool UsesMeleeHits => false;
 
         // 클립이 제자리 모션이라 높이는 애니메이션에 맡기고 수평 이동만 직접 처리
-        protected override void Update()
+        protected override void OnUpdate()
         {
-            base.Update();
+            base.OnUpdate();
             if (isJumping == false) return;
 
             if (isHoming)
             {
                 Vector3 targetPoint = new Vector3(Target.position.x, jumpStart.y, Target.position.z);
-                aimPoint = ClampAim(Vector3.MoveTowards(aimPoint, targetPoint, homingSpeed * Time.deltaTime));
+                aimPoint = ClampAim(Vector3.MoveTowards(aimPoint, targetPoint, homingSpeed * Clock.LocalDeltaTime));
             }
 
             // 남은 체공 시간 안에 착지 지점에 닿도록 수평 속도를 맞춤
-            float remainTime = Mathf.Max(airDuration - (Time.time - jumpStartTime), Time.deltaTime);
+            float remainTime = Mathf.Max(airDuration - (Clock.LocalTime - jumpStartTime), Clock.LocalDeltaTime);
             Vector3 velocity = (GetLandingPosition() - Body.position) / remainTime;
             Body.linearVelocity = new Vector3(velocity.x, Body.linearVelocity.y, velocity.z);
         }
@@ -72,7 +72,7 @@ namespace TeamOdd.Boss
         {
             jumpStart = Body.position;
             aimPoint = ClampAim(new Vector3(Target.position.x, jumpStart.y, Target.position.z));
-            jumpStartTime = Time.time;
+            jumpStartTime = Clock.LocalTime;
 
             isJumping = true;
             isHoming = true;

@@ -14,21 +14,21 @@ namespace TeamOdd.Boss
 
         protected override void OnPatternEnter()
         {
-            turnEndTime = Time.time + turnDuration;
+            turnEndTime = Clock.LocalTime + turnDuration;
         }
 
         // 클립이 제자리 모션이라 회전은 직접 처리, 남은 시간 안에 대상 방향까지 다 돌도록 회전 속도를 맞춤
-        protected override void Update()
+        protected override void OnUpdate()
         {
-            base.Update();
+            base.OnUpdate();
 
-            float remainTime = turnEndTime - Time.time;
+            float remainTime = turnEndTime - Clock.LocalTime;
             if (remainTime <= 0f) return;
 
             float angle = root.SignedAngleToTarget;
             float turnSpeed = Mathf.Min(Mathf.Abs(angle) / remainTime, maxTurnSpeed);
 
-            root.RotateYaw(angle, turnSpeed * Time.deltaTime);
+            root.RotateYaw(angle, turnSpeed * Clock.LocalDeltaTime);
         }
     }
 }

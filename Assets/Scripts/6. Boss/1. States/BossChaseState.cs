@@ -25,11 +25,11 @@ namespace TeamOdd.Boss
 
         protected override void OnEnter()
         {
-            enterTime = Time.time;
+            enterTime = Clock.LocalTime;
             Animator.SetBool(BossAnimParams.IS_CHASING, true);
         }
 
-        private void Update()
+        protected override void OnUpdate()
         {
             if (ShouldStopChase())
             {
@@ -41,7 +41,7 @@ namespace TeamOdd.Boss
             float angle = root.SignedAngleToTarget;
             float turnRatio = Mathf.InverseLerp(slowStartAngle, slowEndAngle, Mathf.Abs(angle));
 
-            root.RotateYaw(angle, Mathf.Lerp(rotateSpeed, maxRotateSpeed, turnRatio) * Time.deltaTime);
+            root.RotateYaw(angle, Mathf.Lerp(rotateSpeed, maxRotateSpeed, turnRatio) * Clock.LocalDeltaTime);
 
             AnimatorStateInfo currentState = Animator.GetCurrentAnimatorStateInfo(0);
             float chaseSpeed = currentState.shortNameHash == RUN_HASH ? runSpeed : walkSpeed;
@@ -62,7 +62,7 @@ namespace TeamOdd.Boss
 
             if (intent == null) return true;
             if (root.CanKeepMovingToTarget == false) return true;
-            if (Time.time - enterTime >= rethinkInterval) return true;
+            if (Clock.LocalTime - enterTime >= rethinkInterval) return true;
 
             return intent.IsDistanceInRange;
         }

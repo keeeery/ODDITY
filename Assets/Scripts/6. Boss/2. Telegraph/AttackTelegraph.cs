@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TeamOdd.TimeControl;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -10,6 +11,7 @@ namespace TeamOdd.Boss
     // - Cancel: 패턴이 끊겼을 때 바로 귀환
     // - SetPlacement: 차오르는 진행도는 유지한 채 위치와 모양만 갱신(대상을 따라가는 예고 등)
     // - ResolveWhenFilled: 다 차오르면 스스로 Resolve, 공격 신호 없이 시간으로 끝나는 예고(낙하, 투척 비행)에 사용
+    // - Show에 시계(TimeFreezable)를 넘기면 그 시계가 멈춘 동안 차오름과 사라짐도 멈춤
     // 바닥에 눕힌 Quad 하나에 BossTelegraph 셰이더로 모양을 그리고, 모양과 진행도는 MaterialPropertyBlock으로 넘김
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class AttackTelegraph : MonoBehaviour, IObjectPoolItem
@@ -42,6 +44,9 @@ namespace TeamOdd.Boss
         private bool isFilling;
         private bool resolvesWhenFilled;
         private bool isInPool;
+        private TimeFreezable clock;
+
+        private float Now => clock != null ? clock.LocalTime : Time.time;
 
         public string Key { get => poolKey; set => poolKey = value; }
         public GameObject GameObject => gameObject;
@@ -65,13 +70,20 @@ namespace TeamOdd.Boss
             fadeTween?.Kill();
             isFilling = false;
             resolvesWhenFilled = false;
+            clock = null;
         }
 
         private void Update()
         {
+            if (fadeTween != null && fadeTween.IsActive())
+            {
+                if (clock != null && clock.IsFrozen) fadeTween.Pause();
+                else fadeTween.Play();
+            }
+
             if (isFilling == false) return;
 
-            float elapsed = fillDuration > 0f ? Mathf.Clamp01((Time.time - fillStartTime) / fillDuration) : 1f;
+            float elapsed = fillDuration > 0f ? Mathf.Clamp01((Now - fillStartTime) / fillDuration) : 1f;
             properties.SetFloat(ProgressId, Mathf.Lerp(fillFrom, 1f, elapsed));
             meshRenderer.SetPropertyBlock(properties);
 
@@ -81,9 +93,10 @@ namespace TeamOdd.Boss
         #region PUBLIC_METHODS
 
         // origin은 높이까지 포함한 바닥 위치, 부채꼴과 사각형은 origin의 수평 forward 방향으로 펼쳐짐
-        public void Show(TelegraphShape shape, Pose origin, float warnDuration)
+        public void Show(TelegraphShape shape, Pose origin, float warnDuration, TimeFreezable clock = null)
         {
             fadeTween?.Kill();
+            this.clock = clock;
             SetPlacement(shape, origin);
 
             properties.SetColor(BaseColorId, color);
@@ -91,7 +104,7 @@ namespace TeamOdd.Boss
             properties.SetFloat(FadeId, 1f);
             meshRenderer.SetPropertyBlock(properties);
 
-            fillStartTime = Time.time;
+            fillStartTime = Now;
             fillDuration = warnDuration;
             fillFrom = 0f;
             isFilling = true;
@@ -133,7 +146,7 @@ namespace TeamOdd.Boss
         public void ResolveWhenFilled(float remainingDuration, float fadeDuration)
         {
             fillFrom = properties.GetFloat(ProgressId);
-            fillStartTime = Time.time;
+            fillStartTime = Now;
             fillDuration = remainingDuration;
             resolveFadeDuration = fadeDuration;
             resolvesWhenFilled = true;

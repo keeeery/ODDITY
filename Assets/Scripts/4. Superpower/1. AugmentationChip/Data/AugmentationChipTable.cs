@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using TeamOdd.Combat;
 using UnityEngine;
@@ -32,15 +33,27 @@ namespace TeamOdd.Superpower
                     AugmentationChipDTO chipDto = new();
                     string line = reader.ReadLine();
 
+                    // 파일 끝 빈 줄은 건너뛴다
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
                     string[] cells = line.Split('\t');
 
                     chipDto.ID = int.Parse(cells[0]);
                     chipDto.Name = cells[1];
                     chipDto.Description = cells[2];
                     chipDto.StatType = cells[3];
-                    chipDto.Value = int.Parse(cells[4]);
+                    chipDto.Value = cells[4] == "" ? 0 : int.Parse(cells[4]); // 스킬 칩은 비워 둔다
                     chipDto.UnitSpriteKey = cells[5];
-                    chipDto.GridData = cells[6];
+                    chipDto.CellCount = int.Parse(cells[6]);
+
+                    // 스킬 칩용으로 뒤에 붙인 칸. 능력치 칩은 줄이 여기서 끝나도 된다
+                    chipDto.ChipType = GetCell(cells, 7);
+                    chipDto.SkillType = GetCell(cells, 8);
+                    string cooldown = GetCell(cells, 9);
+                    // 소수점은 '.'만 받는다. 기본 옵션은 ','를 천 단위 구분자로 읽어 "1,5"가 15가 된다
+                    chipDto.Cooldown = cooldown == "" ? 0f : float.Parse(cooldown, NumberStyles.Float, CultureInfo.InvariantCulture);
+                    chipDto.SkillParams = GetCell(cells, 10);
 
                     rows.Add(chipDto);
                 }
@@ -49,48 +62,48 @@ namespace TeamOdd.Superpower
             // List<AugmentationChipDTO> rows 를 이용해서 def 객체를 생성한다
             foreach (AugmentationChipDTO chipDto in rows)
             {
-                StatType statType = Enum.Parse<StatType>(chipDto.StatType);
+                // ChipType 칸이 비어 있으면 원래부터 있던 능력치 칩
+                ChipType chipType = chipDto.ChipType == "" ? ChipType.Stat : Enum.Parse<ChipType>(chipDto.ChipType);
                 Sprite unitSprite = Resources.Load<Sprite>(chipDto.UnitSpriteKey);
-                Vector2Int[] gridCells = ParseGrid(chipDto.GridData, out int width, out int height);
 
-                defs[chipDto.ID] = new AugmentationChipDef
+                AugmentationChipDef def = new AugmentationChipDef
                 {
                     ID = chipDto.ID,
                     Name = chipDto.Name,
                     Description = chipDto.Description,
-                    StatType = statType,
-                    Value = chipDto.Value,
+                    ChipType = chipType,
                     UnitSprite = unitSprite,
-                    Cells = gridCells,
-                    Width = width,
-                    Height = height,
+                    CellCount = chipDto.CellCount,
                 };
+
+                // 칩 종류에 맞는 칸만 읽는다. 비워 둔 칸을 Enum.Parse하면 예외가 나므로 나눠서 읽는다
+                if (chipType == ChipType.Stat)
+                {
+                    def.StatType = Enum.Parse<StatType>(chipDto.StatType);
+                    def.Value = chipDto.Value;
+                }
+                else
+                {
+                    def.SkillType = Enum.Parse<SkillType>(chipDto.SkillType);
+                    def.Cooldown = chipDto.Cooldown;
+                    def.SkillParams = new SkillParams(chipDto.ID, chipDto.SkillParams);
+
+                    // 매개변수가 틀린 칩을 줍는 순간이 아니라 테이블을 읽을 때 알 수 있도록 한 번 만들어 본다
+                    // 만들 수 없는 칩은 지급되지 않게 빼 둔다
+                    if (SkillFactory.Create(def) == null || def.SkillParams.HasError)
+                    {
+                        Debug.LogError($"[AugmentationChipTable] {chipDto.ID}번 스킬 칩의 값이 잘못되어 테이블에서 뺍니다.");
+                        continue;
+                    }
+                }
+
+                defs[chipDto.ID] = def;
             }
 
             Debug.Log(defs.Count);
         }
 
-        // GridData 문자열을 칸 좌표 배열로 바꾼다
-        // "10/11" -> '/'로 자른 덩어리가 한 행(위에서부터 y), 각 글자가 열(x), '1'인 칸만 사용
-        //   ■□
-        //   ■■   => (1,0) (1,1)
-        private Vector2Int[] ParseGrid(string gridData, out int width, out int height)
-        {
-            string[] gridRows = gridData.Split('/');
-            width = gridRows[0].Length;
-            height = gridRows.Length;
-
-            List<Vector2Int> gridCells = new List<Vector2Int>();
-            for (int y = 0; y < gridRows.Length; y++)
-            {
-                for (int x = 0; x < gridRows[y].Length; x++)
-                {
-                    if (gridRows[y][x] == '1')
-                        gridCells.Add(new Vector2Int(x, y));
-                }
-            }
-
-            return gridCells.ToArray();
-        }
+        // 줄이 짧아 없는 칸은 빈 칸으로 본다
+        private static string GetCell(string[] cells, int index) => index < cells.Length ? cells[index] : "";
     }
 }

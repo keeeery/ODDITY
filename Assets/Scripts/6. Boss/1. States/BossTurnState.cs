@@ -18,25 +18,25 @@ namespace TeamOdd.Boss
 
         protected override void OnEnter()
         {
-            enterTime = Time.time;
+            enterTime = Clock.LocalTime;
             Animator.SetBool(BossAnimParams.IS_TURNING, true);
 
             // 진입 첫 프레임에 이전 회전 방향이 섞이지 않도록 댐핑 없이 바로 세팅
             Animator.SetFloat(BossAnimParams.TURN_DIRECTION, Mathf.Sign(GetDeltaAngle()));
         }
 
-        private void Update()
+        protected override void OnUpdate()
         {
             float delta = GetDeltaAngle();
 
-            if (Mathf.Abs(delta) <= doneAngle || IsChaseReady() || Time.time - enterTime >= timeout)
+            if (Mathf.Abs(delta) <= doneAngle || IsChaseReady() || Clock.LocalTime - enterTime >= timeout)
             {
                 StateMachine.ChangeState(typeof(BossIdleState));
                 return;
             }
 
-            root.RotateYaw(delta, turnSpeed * Time.deltaTime);
-            Animator.SetFloat(BossAnimParams.TURN_DIRECTION, Mathf.Sign(delta), directionDampTime, Time.deltaTime);
+            root.RotateYaw(delta, turnSpeed * Clock.LocalDeltaTime);
+            Animator.SetFloat(BossAnimParams.TURN_DIRECTION, Mathf.Sign(delta), directionDampTime, Clock.LocalDeltaTime);
         }
 
         protected override void OnExit()

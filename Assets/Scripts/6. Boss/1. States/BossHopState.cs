@@ -38,8 +38,8 @@ namespace TeamOdd.Boss
 
         protected override void OnEnter()
         {
-            enterTime = Time.time;
-            readyTime = Time.time + cooldown;
+            enterTime = Clock.LocalTime;
+            readyTime = Clock.LocalTime + cooldown;
 
             root.AnimEventListener.OnOccursAnimStateEvent += OnOccursAnimEvent;
 
@@ -48,20 +48,20 @@ namespace TeamOdd.Boss
         }
 
         // 클립이 제자리 모션이라 수평 이동은 직접 처리, 공중에서도 대상 쪽으로 계속 회전
-        private void Update()
+        protected override void OnUpdate()
         {
-            if (Time.time - enterTime >= timeout)
+            if (Clock.LocalTime - enterTime >= timeout)
             {
                 StateMachine.ChangeState(typeof(BossIdleState));
                 return;
             }
 
-            root.RotateYaw(root.SignedAngleToTarget, turnSpeed * Time.deltaTime);
+            root.RotateYaw(root.SignedAngleToTarget, turnSpeed * Clock.LocalDeltaTime);
 
             if (isJumping == false) return;
 
             // 남은 체공 시간 안에 착지 지점에 닿도록 수평 속도를 맞춤
-            float remainTime = Mathf.Max(airDuration - (Time.time - jumpStartTime), Time.deltaTime);
+            float remainTime = Mathf.Max(airDuration - (Clock.LocalTime - jumpStartTime), Clock.LocalDeltaTime);
             Vector3 velocity = (landing - Body.position) / remainTime;
             Body.linearVelocity = new Vector3(velocity.x, Body.linearVelocity.y, velocity.z);
         }
@@ -79,7 +79,7 @@ namespace TeamOdd.Boss
         // Idle에서 호출, 점프할 상황이면 이어질 공격까지 미리 골라 둠
         public bool ShouldHop()
         {
-            if (Time.time < readyTime) return false;
+            if (Clock.LocalTime < readyTime) return false;
 
             bool isTooClose = root.DistanceToTarget < tooCloseDistance;
             bool isWideAngle = Mathf.Abs(root.SignedAngleToTarget) > wideAngle;
@@ -135,7 +135,7 @@ namespace TeamOdd.Boss
             Vector3 goal = new Vector3(Target.position.x, jumpStart.y, Target.position.z) + direction * distance;
             landing = jumpStart + Vector3.ClampMagnitude(goal - jumpStart, maxHopDistance);
 
-            jumpStartTime = Time.time;
+            jumpStartTime = Clock.LocalTime;
             isJumping = true;
         }
 

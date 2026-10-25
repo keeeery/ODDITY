@@ -19,7 +19,7 @@ namespace TeamOdd.Boss
         // 처음에는 바로 사용 가능하도록 무한히 과거로 둠
         private float cooldownStartTime = float.NegativeInfinity;
 
-        public float RemainingCooldown => Mathf.Max(0f, cooldownStartTime + cooldown - Time.time);
+        public float RemainingCooldown => Mathf.Max(0f, cooldownStartTime + cooldown - Clock.LocalTime);
 
         // 쿨 조건만 판단, 패턴 선택에는 IsReady 대신 CanUse 사용
         public bool IsReady => RemainingCooldown <= 0f;
@@ -28,6 +28,6 @@ namespace TeamOdd.Boss
         public virtual bool CanUse => IsReady;
 
         // 패턴이 실제로 사용된 시점에 각 패턴에서 호출
-        protected void StartCooldown() => cooldownStartTime = Time.time;
+        protected void StartCooldown() => cooldownStartTime = Clock.LocalTime;
     }
 }

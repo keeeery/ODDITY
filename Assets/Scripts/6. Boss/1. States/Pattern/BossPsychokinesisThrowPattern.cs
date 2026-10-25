@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.TimeControl;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -91,9 +92,9 @@ namespace TeamOdd.Boss
         }
 
         // 던지기 전까지 경로 예고가 대상을 따라 조준
-        protected override void Update()
+        protected override void OnUpdate()
         {
-            base.Update();
+            base.OnUpdate();
             if (pathTelegraph != null) pathTelegraph.SetPlacement(GetPathShape(), GetPathPose());
         }
 
@@ -171,8 +172,9 @@ namespace TeamOdd.Boss
 
                 // 기다리는 사이 OnThrow 신호로 이미 던졌다면 종료
                 if (heldBody == null) yield break;
+                if (Clock.IsFrozen) continue;
 
-                spin =Quaternion.AngleAxis(holdSpinSpeed * Time.fixedDeltaTime, Vector3.up) * spin;
+                spin =Quaternion.AngleAxis(holdSpinSpeed * Clock.LocalFixedDeltaTime, Vector3.up) * spin;
                 heldBody.MovePosition(Origin.position);
                 heldBody.MoveRotation(spin);
             }
@@ -185,12 +187,18 @@ namespace TeamOdd.Boss
         {
             BoxCollider box = body.GetComponent<BoxCollider>();
             body.TryGetComponent(out PsychokinesisObject psychokinesisObject);
-            float endTime = Time.time + maxHitDuration;
+            TimeFreezable bodyClock = TimeFreezable.GetOrAdd(body.gameObject);
+            float elapsed = 0f;
 
-            while (Time.time < endTime)
+            while (elapsed < maxHitDuration)
             {
+                bool wasFrozen = bodyClock.IsFrozen;
                 float speed = body.linearVelocity.magnitude;
                 yield return new WaitForFixedUpdate();
+
+                // 시간 정지로 멈춘 스텝은 판정하지 않고 남은 판정 시간도 줄이지 않음(멈춘 몸체는 kinematic이라 아래 조건에 걸림)
+                if (wasFrozen || bodyClock.IsFrozen) continue;
+                elapsed += Time.fixedDeltaTime;
 
                 if (body.gameObject.activeInHierarchy == false || body.isKinematic) yield break;
                 if (psychokinesisObject != null && psychokinesisObject.IsHeld) yield break;
@@ -230,7 +238,7 @@ namespace TeamOdd.Boss
 
         private IEnumerator RestoreOwnerCollisionsAfterDelay()
         {
-            yield return new WaitForSeconds(ownerIgnoreDuration);
+            yield return Clock.Wait(ownerIgnoreDuration);
             RestoreOwnerCollisions();
         }
 

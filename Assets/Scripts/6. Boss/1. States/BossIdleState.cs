@@ -30,13 +30,13 @@ namespace TeamOdd.Boss
         protected override void OnEnter()
         {
             // 공격을 끝내고 Idle로 진입 시에만 후딜 적용
-            thinkTime = Time.time + (executed != null ? executed.Recovery : 0f);
+            thinkTime = Clock.LocalTime + (executed != null ? executed.Recovery : 0f);
             executed = null;
         }
 
-        private void Update()
+        protected override void OnUpdate()
         {
-            if (Time.time < thinkTime) return;
+            if (Clock.LocalTime < thinkTime) return;
             Think();
         }
 
@@ -66,7 +66,7 @@ namespace TeamOdd.Boss
                     return;
                 }
 
-                thinkTime = Time.time + retryDelay;
+                thinkTime = Clock.LocalTime + retryDelay;
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace TeamOdd.Boss
             BossMeleePattern intent = root.Intent;
 
             if (intent == null) return false;
-            if (Time.time - root.IntentStartTime > intentTimeout) return false;
+            if (Clock.LocalTime - root.IntentStartTime > intentTimeout) return false;
             if (intent.CanUse == false) return false;
             if (intent.IsTooClose) return false;
             if (intent.CanApproach == false && intent.IsDistanceInRange == false) return false;

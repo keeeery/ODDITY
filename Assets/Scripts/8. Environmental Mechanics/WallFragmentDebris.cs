@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TeamOdd.TimeControl;
 using UnityEngine;
 
 namespace TeamOdd.Arena
@@ -15,6 +16,7 @@ namespace TeamOdd.Arena
         [SerializeField, Min(0.01f)] private float shrinkDuration = 0.4f;
 
         private Rigidbody body;
+        private TimeFreezable clock;
         private WallFragment fragment;
         private readonly HashSet<Collider> supports = new HashSet<Collider>();
         private float stableTime;
@@ -29,6 +31,7 @@ namespace TeamOdd.Arena
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
+            clock = TimeFreezable.GetOrAdd(gameObject);
             fragment = GetComponent<WallFragment>();
             meshRenderer = GetComponent<Renderer>();
 
@@ -57,6 +60,9 @@ namespace TeamOdd.Arena
 
         private void FixedUpdate()
         {
+            // 시간 정지 중에는 멈춰 있는 시간을 정착 시간으로 세지 않음
+            if (clock.IsFrozen) return;
+
             if (isDespawning)
             {
                 UpdateShrink();
