@@ -14,6 +14,7 @@ namespace TeamOdd.TimeControl
     /// - 풀리면 기억해 둔 값으로 되돌림
     /// - LocalTime은 멈춰 있는 동안 흐르지 않는 시계, 쿨타임·타이머를 Time.time 대신 이 값으로 재면 정지 시간만큼 자연스럽게 밀림
     /// 정지는 개별 정지(Freeze/Unfreeze)와 전체 정지(FreezeWorld/UnfreezeWorld) 두 갈래이고, 둘 다 횟수로 세므로 겹쳐 걸어도 안전
+    /// 멈춰 있는 동안 메시 위에 파란 반투명 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TimeFreezable : MonoBehaviour
@@ -23,6 +24,14 @@ namespace TeamOdd.TimeControl
         [SerializeField] private Animator[] animators;
         [Tooltip("비워 두면 자식까지 모두 찾아 쓴다.")]
         [SerializeField] private Rigidbody[] bodies;
+        [Tooltip("시간 정지 막을 씌울 렌더러, 비워 두면 자식의 MeshRenderer와 SkinnedMeshRenderer를 모두 찾아 쓴다.")]
+        [SerializeField] private Renderer[] overlayRenderers;
+
+        [Title("Overlay")]
+        [Tooltip("멈출 때 막이 발밑에서 머리끝까지 덮이는 데 걸리는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float overlayCoverDuration = 0.3f;
+        [Tooltip("풀릴 때 막이 머리끝에서 발밑까지 걷히는 데 걸리는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float overlayUncoverDuration = 0.4f;
 
         private struct BodyState
         {
@@ -32,10 +41,14 @@ namespace TeamOdd.TimeControl
         }
 
         private static readonly List<TimeFreezable> enabledFreezables = new();
+        private static readonly List<TimeFreezable> overlayTargets = new();
         private static int worldFreezeCount;
 
         private float[] animatorSpeeds;
         private BodyState[] bodyStates;
+        private MeshFilter[] overlayMeshFilters; // MeshRenderer의 메시, 풀에서 꺼낼 때 메시가 바뀔 수 있어 그릴 때마다 읽음
+        private float overlayProgress;   // 시간에 따라 일정하게 진행하는 값, 보이는 높이는 여기에 이징을 걸어서 씀
+        private bool isOverlayCovering;  // 덮이는 중(true)인지 걷히는 중(false)인지
 
         private int freezeCount;
         private bool isWorldExempt;
@@ -46,6 +59,9 @@ namespace TeamOdd.TimeControl
         private float pauseStartTime;
 
         public static bool IsWorldFrozen => worldFreezeCount > 0;
+
+        // 시간 정지 막이 조금이라도 덮여 있는 오브젝트, TimeFreezeOverlayFeature가 매 프레임 읽어 그림
+        public static IReadOnlyList<TimeFreezable> OverlayTargets => overlayTargets;
 
         // 전체 정지가 시작되거나(true) 끝날 때(false). 화면 효과 등을 붙일 때 사용
         public static event Action<bool> WorldFrozenChanged;
@@ -60,6 +76,12 @@ namespace TeamOdd.TimeControl
         public float LocalDeltaTime => isApplied ? 0f : Time.deltaTime;
         public float LocalFixedDeltaTime => isApplied ? 0f : Time.fixedDeltaTime;
 
+        // 시간 정지 막이 덮인 정도(0~1), 0이면 없음, 1이면 오브젝트 전체를 덮음
+        // 멈추면 아래에서 위로 덮이며 늘고, 풀리면 위에서 아래로 걷히며 줄어듦
+        // 덮일 때는 빠르게 올라오다 머리끝에서, 걷힐 때는 빠르게 내려가다 발밑에서 감속(cubic ease-out)
+        public float OverlayProgress => isOverlayCovering ? 1f - Cube(1f - overlayProgress) : Cube(overlayProgress);
+        public IReadOnlyList<Renderer> OverlayRenderers => overlayRenderers;
+
         private bool ShouldFreeze => freezeCount > 0 || (worldFreezeCount > 0 && isWorldExempt == false);
 
         private void Awake()
@@ -67,8 +89,30 @@ namespace TeamOdd.TimeControl
             if (animators == null || animators.Length == 0) animators = GetComponentsInChildren<Animator>(true);
             if (bodies == null || bodies.Length == 0) bodies = GetComponentsInChildren<Rigidbody>(true);
 
+            if (overlayRenderers == null || overlayRenderers.Length == 0)
+                overlayRenderers = Array.FindAll(GetComponentsInChildren<Renderer>(true), item => item is MeshRenderer or SkinnedMeshRenderer);
+
             animatorSpeeds = new float[animators.Length];
             bodyStates = new BodyState[bodies.Length];
+            overlayMeshFilters = Array.ConvertAll(overlayRenderers, item => item != null ? item.GetComponent<MeshFilter>() : null);
+        }
+
+        // 정지 중에도 막이 덮이고 걷혀야 하므로 LocalDeltaTime이 아닌 Time.deltaTime으로 진행
+        private void Update()
+        {
+            // 덮이다 말고 걷히는 등 방향이 바뀌면, 보이는 높이가 튀지 않도록 새 곡선에서 같은 높이가 나오는 지점부터 이어감
+            if (isOverlayCovering != isApplied)
+            {
+                float shown = OverlayProgress;
+                isOverlayCovering = isApplied;
+                overlayProgress = isApplied ? 1f - CubeRoot(1f - shown) : CubeRoot(shown);
+            }
+
+            float target = isApplied ? 1f : 0f;
+            if (Mathf.Approximately(overlayProgress, target)) return;
+
+            float duration = isApplied ? overlayCoverDuration : overlayUncoverDuration;
+            SetOverlayProgress(Mathf.MoveTowards(overlayProgress, target, Time.deltaTime / duration));
         }
 
         // 전체 정지 중에 새로 켜지는 오브젝트(플레이어 투척에 부서진 파편 등)는 생성 직후 속도를 받아야 하므로 정지가 끝날 때까지 멈추지 않음
@@ -96,6 +140,7 @@ namespace TeamOdd.TimeControl
         {
             enabledFreezables.Remove(this);
             if (isApplied) Apply(false);
+            SetOverlayProgress(0f);
         }
 
         #region PUBLIC_METHODS
@@ -133,6 +178,15 @@ namespace TeamOdd.TimeControl
         {
             if (IsWorldFrozen) clearsExemptOnWorldResume = true;
             else SetWorldExempt(false);
+        }
+
+        // index번째 막 렌더러의 서브메시 수, 메시가 없으면 0
+        public int GetOverlaySubMeshCount(int index)
+        {
+            Renderer target = overlayRenderers[index];
+            Mesh mesh = target is SkinnedMeshRenderer skinned ? skinned.sharedMesh
+                : overlayMeshFilters[index] != null ? overlayMeshFilters[index].sharedMesh : null;
+            return mesh != null ? mesh.subMeshCount : 0;
         }
 
         // 멈춰서 kinematic이 된 몸체라도 원래 kinematic이었는지를 돌려줌
@@ -197,8 +251,22 @@ namespace TeamOdd.TimeControl
         private static void ResetStatics()
         {
             enabledFreezables.Clear();
+            overlayTargets.Clear();
             worldFreezeCount = 0;
             WorldFrozenChanged = null;
+        }
+
+        private static float Cube(float value) => value * value * value;
+        private static float CubeRoot(float value) => Mathf.Pow(Mathf.Max(0f, value), 1f / 3f);
+
+        // 막이 덮이기 시작하면 그릴 목록에 넣고, 다 걷히면 뺌
+        private void SetOverlayProgress(float progress)
+        {
+            bool wasVisible = overlayProgress > 0f;
+            overlayProgress = progress;
+
+            if (wasVisible == false && progress > 0f) overlayTargets.Add(this);
+            else if (wasVisible && progress <= 0f) overlayTargets.Remove(this);
         }
 
         private static void RefreshAll()
