@@ -41,10 +41,10 @@ namespace TeamOdd.Superpower
             Cooldown = cooldown;
         }
 
-        // 쿨타임이 남았으면 쓰지 않고 false
+        // 쿨타임이 남았거나 지금 쓸 수 없으면(대상이 없는 등) 쓰지 않고 false
         public bool TryUse(SkillContext context)
         {
-            if (IsReady == false)
+            if (IsReady == false || CanExecute(context) == false)
                 return false;
 
             readyTime = Time.time + Cooldown;
@@ -54,6 +54,9 @@ namespace TeamOdd.Superpower
 
         // 이 스킬이 받은 매개변수를 사람이 읽을 수 있게. 패널 정보 텍스트에 쓴다
         public abstract string Describe();
+
+        // 대상이 있어야 하는 스킬처럼 쓰기 전에 확인할 것이 있으면 오버라이드. false면 쿨타임도 돌지 않는다
+        protected virtual bool CanExecute(SkillContext context) => true;
 
         protected abstract void Execute(SkillContext context);
     }

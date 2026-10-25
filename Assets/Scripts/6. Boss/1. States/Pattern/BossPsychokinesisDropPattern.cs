@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.TimeControl;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -113,7 +114,7 @@ namespace TeamOdd.Boss
                 Drop(dropOrder[index]);
 
                 if (index < dropOrder.Count - 1 && interval > 0f)
-                    yield return new WaitForSeconds(interval);
+                    yield return Clock.Wait(interval);
             }
         }
 
@@ -152,6 +153,7 @@ namespace TeamOdd.Boss
 
         // 착지 시점은 낙하 시간으로 추정, 표시는 다 차오르면 스스로 사라지므로 참조를 들고 있지 않음
         // 콜라이더 bounds는 물리 동기화 전이라 이전 위치/크기일 수 있어 Renderer bounds로 크기를 잼
+        // 낙하물은 보스와 따로 멈출 수 있으므로(보스만 멈추는 스킬) 예고와 착지 판정은 낙하물의 시계를 따름
         private void ShowLandingMarker(WallFragment fragment, Vector3 position, Vector3 ground, int damage)
         {
             Bounds bounds = fragment.GetComponent<Renderer>().bounds;
@@ -160,16 +162,18 @@ namespace TeamOdd.Boss
             TelegraphShape shape = TelegraphShape.Circle(markerRadius);
             Pose pose = new Pose(ground, Quaternion.identity);
 
-            AttackTelegraph marker = root.ShowTelegraph(shape, pose, fallTime);
+            TimeFreezable fragmentClock = TimeFreezable.GetOrAdd(fragment.gameObject);
+
+            AttackTelegraph marker = root.ShowTelegraph(shape, pose, fallTime, fragmentClock);
             if (marker != null) marker.ResolveWhenFilled(fallTime, telegraphFadeDuration);
 
             // 패턴이 끝나 이 오브젝트가 비활성화돼도 착지 판정은 이어지도록 보스에서 실행
-            root.StartCoroutine(HitOnLanding(fragment, shape, pose, fallTime, damage));
+            root.StartCoroutine(HitOnLanding(fragment, fragmentClock, shape, pose, fallTime, damage));
         }
 
-        private IEnumerator HitOnLanding(WallFragment fragment, TelegraphShape shape, Pose pose, float fallTime, int damage)
+        private IEnumerator HitOnLanding(WallFragment fragment, TimeFreezable fragmentClock, TelegraphShape shape, Pose pose, float fallTime, int damage)
         {
-            yield return new WaitForSeconds(fallTime);
+            yield return fragmentClock.Wait(fallTime);
 
             if (fragment.isActiveAndEnabled == false) yield break;
             if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) yield break;

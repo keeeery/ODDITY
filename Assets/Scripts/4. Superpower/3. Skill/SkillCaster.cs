@@ -61,7 +61,7 @@ namespace TeamOdd.Superpower
                 return;
             }
 
-            if (chip.Skill.TryUse(new SkillContext(transform, owner, GetAimDirection())) == false)
+            if (chip.Skill.TryUse(new SkillContext(transform, owner, GetAimDirection())) == false && chip.Skill.IsReady == false)
                 Debug.Log($"[SkillCaster] {chip.Skill.Name} 쿨타임 {chip.Skill.RemainingCooldown:0.0}초 남음");
         }
 

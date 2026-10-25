@@ -68,11 +68,17 @@ namespace TeamOdd.Player
         private float throwPrepareBlend; // 0: 팔을 뻗은 홀딩 자세, 1: 던지기 준비 자세
         private Vector3 lastHandTarget;
         private Quaternion lastHandRotation;
+        private Transform externalHoldTarget; // 염동 내려찍기처럼 물체가 아닌 대상을 붙잡는 스킬이 지정
+
+        // 팔을 뻗을 대상, 스킬이 지정한 대상이 들고 있는 물체보다 우선
+        private Transform HoldTarget => externalHoldTarget != null ? externalHoldTarget : heldObject != null ? heldObject.transform : null;
 
         private Transform[] leftFingers;
         private Quaternion[] leftFingerRestRotations;
 
         public PsychokinesisObject heldObject;
+        // 물체를 들고 있거나 스킬이 붙잡을 대상을 지정해 홀딩 자세인지 (카메라 줌인 등에 사용)
+        public bool HasHoldTarget => HoldTarget != null;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
@@ -109,7 +115,7 @@ namespace TeamOdd.Player
             CheckRollInput();
             
             heldObject = psychokinesisController.HeldObject;
-            animator.SetLayerWeight(1, heldObject == null ? 0.0f : 1.0f);
+            animator.SetLayerWeight(1, HoldTarget == null ? 0.0f : 1.0f);
         }
 
         private void UpdateMovement()
@@ -254,6 +260,15 @@ namespace TeamOdd.Player
 
         #region 홀딩
 
+        // 들고 있는 물체 없이도 target 쪽으로 홀딩 자세와 팔 IK를 취함, 던지기 준비 자세는 쓰지 않음
+        public void BeginExternalHold(Transform target) => externalHoldTarget = target;
+
+        // 다른 스킬이 그사이 대상을 바꿨으면 그쪽을 유지
+        public void EndExternalHold(Transform target)
+        {
+            if (externalHoldTarget == target) externalHoldTarget = null;
+        }
+
         // 잡으면 조준이 몸 기준 왼쪽 끝에 오도록 몸을 holdBodyLeadAngle만큼 오른쪽으로 회전,
         // 조준이 거기서 오른쪽 armYawRange 안이면 팔만, 벗어나면 몸 회전, 놓으면 조준 방향으로 복원
         private void UpdateHoldFacing()
@@ -262,13 +277,13 @@ namespace TeamOdd.Player
             heldObject = psychokinesisController.HeldObject;
 
             // 잡기 입력(우클릭) 중이거나 홀딩 중에는 이동 방향 회전 대신 여기서 몸 방향을 정함
-            bool aiming = heldObject != null || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool aiming = HoldTarget != null || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
             rotateTowardMove = defaultRotateTowardMove && aiming == false;
 
             float aimYaw = Camera.main.transform.eulerAngles.y;
             float t = 1f - Mathf.Exp(-holdTurnSpeed * Time.deltaTime);
 
-            if (heldObject == null || IsRolling)
+            if (HoldTarget == null || IsRolling)
             {
                 if (isHolding)
                 {
@@ -298,7 +313,7 @@ namespace TeamOdd.Player
             SetBodyYaw(Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t));
             ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
 
-            bool preparingThrow = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
+            bool preparingThrow = externalHoldTarget == null && SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
             throwPrepareBlend = Mathf.Lerp(throwPrepareBlend, preparingThrow ? 1f : 0f, t);
         }
 
@@ -324,7 +339,8 @@ namespace TeamOdd.Player
         // 홀딩 중 왼팔을 물체 쪽으로 뻗고, 던지기 준비 중에는 굽혀 당김. 놓으면 마지막 자세에서 서서히 해제
         private void UpdateHoldArmIK()
         {
-            if (isHolding == false)
+            // 같은 프레임 안에 대상이 사라졌으면(보스 제거 등) 놓은 것처럼 서서히 해제
+            if (isHolding == false || HoldTarget == null)
             {
                 // IK 가중치는 다시 설정할 때까지 유지되므로 다 풀린 뒤에는 0으로 정리
                 SetLeftHandIK(lastHandTarget, lastHandRotation, ikBlend > 0.01f ? ikBlend : 0f);
@@ -333,7 +349,7 @@ namespace TeamOdd.Player
             }
 
             Vector3 shoulder = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            Vector3 direction = (heldObject.transform.position - shoulder).normalized;
+            Vector3 direction = (HoldTarget.position - shoulder).normalized;
 
             // IK 적용 전 애니메이션의 팔 방향에서 새 팔 방향으로 돌린 만큼 손도 돌려 손목 각도 유지
             Vector3 animatedArm = animator.GetIKPosition(AvatarIKGoal.LeftHand) - shoulder;

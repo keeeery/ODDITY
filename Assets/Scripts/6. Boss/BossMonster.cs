@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using FantasyGarden.FSM;
 using Study.Utilities;
 using Study3D.FpsGame;
+using TeamOdd.TimeControl;
 
 namespace TeamOdd.Boss
 {
@@ -33,6 +34,9 @@ namespace TeamOdd.Boss
 
         private bool isTelegraphPoolMissing;
 
+        // 시간 정지 스킬이 보스를 멈출 때 쓰는 시계, 프리팹에 없으면 Awake에서 붙임
+        public TimeFreezable Clock { get; private set; }
+
         public float DistanceToTarget => transform.FlatDistanceTo(Target);
         public float SignedAngleToTarget => Mathf.DeltaAngle(transform.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
         
@@ -40,6 +44,12 @@ namespace TeamOdd.Boss
         public bool CanMoveToTarget => Mathf.Abs(SignedAngleToTarget) <= moveHalfAngle;
         public bool CanKeepMovingToTarget => Mathf.Abs(SignedAngleToTarget) <= keepMoveHalfAngle;
         
+        protected override void Awake()
+        {
+            Clock = TimeFreezable.GetOrAdd(gameObject);
+            base.Awake();
+        }
+
         private void Update()
         {
             Animator.SetFloat(BossAnimParams.DISTANCE_TO_TARGET, DistanceToTarget);
@@ -53,7 +63,7 @@ namespace TeamOdd.Boss
         public void SetIntent(BossMeleePattern intent)
         {
             Intent = intent;
-            IntentStartTime = Time.time;
+            IntentStartTime = Clock.LocalTime;
         }
         
         public void ClearIntent() => Intent = null;
@@ -66,7 +76,8 @@ namespace TeamOdd.Boss
         
         // 풀을 쓸 수 없으면 null을 반환하므로 호출하는 쪽은 null을 허용해야 함
         // 풀이 없으면 한 번만 알리고 이후에는 표시 없이 진행
-        public AttackTelegraph ShowTelegraph(TelegraphShape shape, Pose origin, float warnDuration)
+        // clock을 넘기지 않으면 보스의 시계를 따라 차오름, 낙하물처럼 보스와 따로 멈추는 대상의 예고는 그 대상의 시계를 넘김
+        public AttackTelegraph ShowTelegraph(TelegraphShape shape, Pose origin, float warnDuration, TimeFreezable clock = null)
         {
             if (isTelegraphPoolMissing) return null;
 
@@ -81,7 +92,7 @@ namespace TeamOdd.Boss
                 return null;
             }
 
-            telegraph.Show(shape, origin, warnDuration);
+            telegraph.Show(shape, origin, warnDuration, clock != null ? clock : Clock);
             return telegraph;
         }
 

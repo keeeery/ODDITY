@@ -8,5 +8,7 @@ namespace TeamOdd.Superpower
         Blink,
         Barrage,
         Barrier,
+        TimeStop,
+        PsychoSlam,
     }
 }

@@ -57,7 +57,7 @@ namespace TeamOdd.CameraMove
 
         private void Update()
         {
-            isHeld = target.PlayerController.heldObject;
+            isHeld = target.PlayerController.HasHoldTarget;
 
             if (SimpleInput.GetKeyDown(Key.Digit7))
             {
