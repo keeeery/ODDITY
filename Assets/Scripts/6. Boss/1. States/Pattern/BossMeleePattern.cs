@@ -233,7 +233,7 @@ namespace TeamOdd.Boss
         }
 
         // 피해를 받을 수 있는 대상일 때만 전달, 보낸 쪽은 보스 전용 피격 처리(ICombatable)를 정리할 때까지 비워 둠
-        // 반응은 아직 피격 대상에게 전달할 경로가 없어 로그로만 남김
+        // 반응은 피해 정보에 담아 보내고, 경직/다운 처리는 피격 대상이 담당
         protected void SendDamage(int damage, HitReaction reaction, Vector3 hitPoint)
         {
             Debug.Log($"[{GetType().Name}] 피격, 피해 {damage}, 반응 {reaction}", this);
@@ -241,7 +241,7 @@ namespace TeamOdd.Boss
             ICombatable receiver = Target.GetComponentInParent<ICombatable>();
             if (receiver == null) return;
 
-            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider);
+            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, reaction);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(null, receiver, info));
         }
 

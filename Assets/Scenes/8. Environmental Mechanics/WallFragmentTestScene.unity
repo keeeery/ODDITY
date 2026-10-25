@@ -339,7 +339,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 5}
-  m_LocalScale: {x: 150, y: 2, z: 50}
+  m_LocalScale: {x: 300, y: 2, z: 300}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 313939640}
@@ -561,7 +561,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -60}
-  m_SizeDelta: {x: 800, y: 18}
+  m_SizeDelta: {x: 800, y: 12}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &420760886
 MonoBehaviour:
@@ -584,15 +584,25 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   fillAmount: 1
-  cornerRadius: -1
-  fillPadding: 2
-  fillColor: {r: 0.8509804, g: 0.3254902, b: 0.30980393, a: 1}
-  trackColor: {r: 0, g: 0, b: 0, a: 0.6}
-  borderColor: {r: 0.13333334, g: 0.14901961, b: 0.17254902, a: 0.9}
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
+  cornerRadius: 0
+  fillPadding: 1
+  fillColor: {r: 0.6588235, g: 0.1568627, b: 0.1686275, a: 1}
+  trackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.75}
+  borderColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.35}
   borderWidth: 1
-  shadowSize: 3
+  shadowSize: 2
   antiAliasPixels: 1
+  useTrail: 1
+  trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
+  trailDelay: 0.6
+  trailSpeed: 0.6
+  flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
+  flashDuration: 0.2
+  shakeDistance: 4
+  shakeDuration: 0.3
+  shakeVibrato: 20
+  shakeElasticity: 1
 --- !u!222 &420760887
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -642,6 +652,7 @@ GameObject:
   m_Component:
   - component: {fileID: 539987087}
   - component: {fileID: 539987088}
+  - component: {fileID: 905123405}
   m_Layer: 0
   m_Name: PlayerInfo
   m_TagString: Untagged
@@ -686,7 +697,7 @@ MonoBehaviour:
   combatEntity: {fileID: 2205336347470601075}
   hpBar: {fileID: 1144892260}
   staminaBar: {fileID: 1218552551}
-  fillLerpSpeed: 12
+  damageVignette: {fileID: 905123404}
 --- !u!1 &560866508
 GameObject:
   m_ObjectHideFlags: 0
@@ -788,7 +799,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 800, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &637777231
 MonoBehaviour:
@@ -819,8 +830,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4291089112
+  m_fontColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -837,7 +848,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 22
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
@@ -1140,6 +1151,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 747568467}
+  - component: {fileID: 747568468}
+  - component: {fileID: 747568469}
   m_Layer: 0
   m_Name: Crosshair
   m_TagString: Untagged
@@ -1158,9 +1171,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1722840283}
-  - {fileID: 803721248}
+  m_Children: []
   m_Father: {fileID: 2010411287}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1168,81 +1179,55 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &803721247
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 803721248}
-  - component: {fileID: 803721250}
-  - component: {fileID: 803721249}
-  m_Layer: 0
-  m_Name: Crosshair - Horizontal
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &803721248
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 803721247}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 747568467}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 50, y: 5}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &803721249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 803721247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -1131202390, guid: acb227809f82ff04c92f590ee5125327, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &803721250
+--- !u!222 &747568468
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 803721247}
+  m_GameObject: {fileID: 747568466}
   m_CullTransparentMesh: 1
+--- !u!114 &747568469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747568466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c8edca76f046c3b3eff7e44297960c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.Crosshair
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  psychokinesis: {fileID: 0}
+  dotRadius: 2.5
+  dotColor: {r: 0.93, g: 0.9, b: 0.84, a: 1}
+  dotBorderColor: {r: 0.118, g: 0.106, b: 0.09, a: 1}
+  dotBorderWidth: 1.2
+  attackTickColor: {r: 0.93, g: 0.9, b: 0.84, a: 1}
+  attackTickHiddenRadius: 10
+  attackTickRadius: 5.5
+  attackTickLength: 6
+  attackTickWidth: 1.8
+  ringWidth: 1.5
+  hiddenRadius: 28
+  ringRadius: 18
+  hitColor: {r: 0.93, g: 0.9, b: 0.84, a: 1}
+  hitDuration: 0.25
+  hitStartRadius: 6
+  hitEndRadius: 10
+  hitLength: 7
+  hitWidth: 1.8
+  transitionSpeed: 14
+  antiAliasPixels: 1
 --- !u!1 &848144004
 GameObject:
   m_ObjectHideFlags: 0
@@ -1324,16 +1309,16 @@ MonoBehaviour:
   playerTipLength: 1.7
   bossDotSize: 14
   objectDotSize: 6
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.5}
-  groundColor: {r: 1, g: 1, b: 1, a: 1}
-  playerColor: {r: 1, g: 1, b: 1, a: 1}
-  bossColor: {r: 1, g: 0, b: 0, a: 1}
-  objectColor: {r: 0, g: 1, b: 1, a: 1}
-  outlineColor: {r: 0.13333334, g: 0.14901961, b: 0.17254902, a: 0.9}
+  backgroundColor: {r: 0.1019608, g: 0.09411765, b: 0.07843137, a: 0.6}
+  groundColor: {r: 0.9019608, g: 0.8705882, b: 0.8156863, a: 1}
+  playerColor: {r: 0.9294118, g: 0.9019608, b: 0.8392157, a: 1}
+  bossColor: {r: 0.7607843, g: 0.2313725, b: 0.2117647, a: 1}
+  objectColor: {r: 0.5607843, g: 0.7019608, b: 0.7294118, a: 1}
+  outlineColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
   outlineWidth: 4
-  markerBorderColor: {r: 0.13333334, g: 0.14901961, b: 0.17254902, a: 0.9}
+  markerBorderColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
   markerBorderWidth: 2
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.35}
   shadowSize: 3
   antiAliasPixels: 1
 --- !u!222 &848144007
@@ -1344,6 +1329,104 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 848144004}
   m_CullTransparentMesh: 1
+--- !u!1 &905123401
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 905123402}
+  - component: {fileID: 905123403}
+  - component: {fileID: 905123404}
+  m_Layer: 5
+  m_Name: DamageVignette
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &905123402
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905123401}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2010411287}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &905123403
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905123401}
+  m_CullTransparentMesh: 1
+--- !u!114 &905123404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905123401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5987ec5d1e2a3445ca66c044436aed07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.DamageVignette
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  vignetteColor: {r: 0.55, g: 0.04, b: 0.04, a: 1}
+  edgeWidth: 0.8
+  falloffPower: 2
+  cornerRoundness: 2
+  normalHit:
+    alpha: 0.3
+    holdDuration: 0.05
+    fadeDuration: 0.4
+  heavyHit:
+    alpha: 0.7
+    holdDuration: 0.4
+    fadeDuration: 1.4
+  lowHealthRatio: 0.3
+  lowHealthMinAlpha: 0.2
+  lowHealthMaxAlpha: 0.5
+  lowHealthPulseRate: 0.8
+--- !u!114 &905123405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539987086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e59ee660f60b4a29a428a8569ef20eb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.Development.PlayerHeavyHitTester
+  heavyHitKey: 25
+  normalHitKey: 26
+  heavyDamage: 25
+  normalDamage: 8
+  target: {fileID: 0}
 --- !u!1 &916268414
 GameObject:
   m_ObjectHideFlags: 0
@@ -1396,9 +1479,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.BossHUD
   boss: {fileID: 0}
+  nameText: {fileID: 637777231}
+  bossName: 
   hpBar: {fileID: 420760886}
   groggyBar: {fileID: 1544739492}
-  fillLerpSpeed: 12
 --- !u!1 &1073963101
 GameObject:
   m_ObjectHideFlags: 0
@@ -1512,8 +1596,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 40, y: 52.5}
-  m_SizeDelta: {x: 250, y: 14}
+  m_AnchoredPosition: {x: 40, y: 50}
+  m_SizeDelta: {x: 250, y: 10}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1144892259
 CanvasRenderer:
@@ -1544,15 +1628,25 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   fillAmount: 1
-  cornerRadius: -1
-  fillPadding: 2
-  fillColor: {r: 0.8509804, g: 0.3254902, b: 0.30980393, a: 1}
-  trackColor: {r: 0, g: 0, b: 0, a: 0.6}
-  borderColor: {r: 0.13333334, g: 0.14901961, b: 0.17254902, a: 0.9}
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
+  cornerRadius: 0
+  fillPadding: 1
+  fillColor: {r: 0.6588235, g: 0.1568627, b: 0.1686275, a: 1}
+  trackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.75}
+  borderColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.35}
   borderWidth: 1
-  shadowSize: 3
+  shadowSize: 2
   antiAliasPixels: 1
+  useTrail: 1
+  trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
+  trailDelay: 0.6
+  trailSpeed: 0.6
+  flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
+  flashDuration: 0.2
+  shakeDistance: 4
+  shakeDuration: 0.3
+  shakeVibrato: 20
+  shakeElasticity: 1
 --- !u!1 &1186519018
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,6 +1715,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -1683,7 +1779,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 40, y: 40}
-  m_SizeDelta: {x: 250, y: 10}
+  m_SizeDelta: {x: 250, y: 6}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1218552550
 CanvasRenderer:
@@ -1714,15 +1810,25 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   fillAmount: 1
-  cornerRadius: -1
-  fillPadding: 2
-  fillColor: {r: 0.9098039, g: 0.72156864, b: 0.2901961, a: 1}
-  trackColor: {r: 0, g: 0, b: 0, a: 0.6}
-  borderColor: {r: 0.13333334, g: 0.14901961, b: 0.17254902, a: 0.9}
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
+  cornerRadius: 0
+  fillPadding: 1
+  fillColor: {r: 0.3607843, g: 0.5411765, b: 0.3137255, a: 1}
+  trackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.75}
+  borderColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.35}
   borderWidth: 1
-  shadowSize: 3
+  shadowSize: 2
   antiAliasPixels: 1
+  useTrail: 0
+  trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
+  trailDelay: 0.6
+  trailSpeed: 0.6
+  flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
+  flashDuration: 0.2
+  shakeDistance: 4
+  shakeDuration: 0.3
+  shakeVibrato: 20
+  shakeElasticity: 1
 --- !u!1 &1433546533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,8 +1971,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -82}
-  m_SizeDelta: {x: 800, y: 10}
+  m_AnchoredPosition: {x: 0, y: -78}
+  m_SizeDelta: {x: 800, y: 5}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1544739492
 MonoBehaviour:
@@ -1889,15 +1995,25 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   fillAmount: 1
-  cornerRadius: -1
-  fillPadding: 2
-  fillColor: {r: 0.9098039, g: 0.72156864, b: 0.2901961, a: 1}
-  trackColor: {r: 0, g: 0, b: 0, a: 0.6}
-  borderColor: {r: 0.13333334, g: 0.14901961, b: 0.17254902, a: 0.9}
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
+  cornerRadius: 0
+  fillPadding: 1
+  fillColor: {r: 0.7686275, g: 0.5764706, b: 0.2901961, a: 1}
+  trackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.75}
+  borderColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.35}
   borderWidth: 1
-  shadowSize: 3
+  shadowSize: 2
   antiAliasPixels: 1
+  useTrail: 0
+  trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
+  trailDelay: 0.6
+  trailSpeed: 0.6
+  flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
+  flashDuration: 0.2
+  shakeDistance: 4
+  shakeDuration: 0.3
+  shakeVibrato: 20
+  shakeElasticity: 1
 --- !u!222 &1544739493
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1938,81 +2054,6 @@ Transform:
   - {fileID: 131166675}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1722840282
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1722840283}
-  - component: {fileID: 1722840285}
-  - component: {fileID: 1722840284}
-  m_Layer: 0
-  m_Name: Crosshair - Vertical
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1722840283
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1722840282}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 747568467}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 5, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1722840284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1722840282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 292211899, guid: acb227809f82ff04c92f590ee5125327, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1722840285
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1722840282}
-  m_CullTransparentMesh: 1
 --- !u!1001 &1738154721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2023,7 +2064,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3996771544257051573, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: fragmentSpawner
@@ -2155,6 +2196,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -2556,6 +2599,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 905123402}
   - {fileID: 747568467}
   - {fileID: 539987087}
   - {fileID: 916268415}
@@ -2926,6 +2970,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &339865817819279221
@@ -3067,6 +3113,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2028751608990286214
@@ -3137,6 +3185,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &2205336347470601070 stripped
@@ -3253,6 +3303,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &2926503066094882205
@@ -3291,6 +3343,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &2996881335281157723 stripped
@@ -3334,6 +3388,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &3379946826075930331
@@ -3453,6 +3509,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &4213788957085969123
@@ -3508,6 +3566,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &4274170381933308106
@@ -3779,6 +3839,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -3872,6 +3934,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &5868952878083930517
@@ -3910,6 +3974,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -4041,6 +4107,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &6463533450950228275
@@ -4111,6 +4179,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &6583875636076764361
@@ -4149,6 +4219,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &6627677997511795725
@@ -5297,6 +5369,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &8055706478535909953
@@ -5488,6 +5562,8 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   waves:

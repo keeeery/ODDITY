@@ -29,12 +29,15 @@ namespace TeamOdd.Combat
         public int Damage { get; }
         public Vector3 HitPoint { get; }
         public Collider Collider { get; }
+        // 피격 반응, Knockdown은 강공격으로 취급한다.
+        public HitReaction Reaction { get; }
         
-        public DamageInfo(int damage, Vector3 hitPoint, Collider collider)
+        public DamageInfo(int damage, Vector3 hitPoint, Collider collider, HitReaction reaction = HitReaction.None)
         {
             Damage = damage;
             HitPoint = hitPoint;
             Collider = collider;
+            Reaction = reaction;
         }
     }
 
