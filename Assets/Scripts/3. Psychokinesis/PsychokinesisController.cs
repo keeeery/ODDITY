@@ -1,3 +1,4 @@
+using System;
 using TeamOdd.Combat;
 using Study.Utilities;
 using UnityEngine;
@@ -84,6 +85,9 @@ namespace TeamOdd.Psychokinesis
         private bool throwRequested;
         private bool attackRequested;
         private float nextAttackTime;
+        private CombatManager attackEventManager;
+        private int attackTargetFrame = -1;
+        private bool hasAttackTarget;
         private float swingActiveUntil = float.NegativeInfinity;
         
         public PsychokinesisObject HeldObject => heldObject;
@@ -93,6 +97,22 @@ namespace TeamOdd.Psychokinesis
         public Vector3 Viewport => aimCamera.WorldToViewportPoint(new Vector3(0.5f, 0.5f));
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
+
+        // 플레이어의 공격(기본 공격, 투척, 휘두르기)이 실제로 피해를 줬을 때 (조준점 적중 표시용)
+        public event Action AttackHit;
+
+        // 지금 기본 공격을 하면 적에게 맞는지, 여러 곳에서 읽어도 프레임마다 한 번만 검사
+        public bool HasAttackTarget
+        {
+            get
+            {
+                if (attackTargetFrame == Time.frameCount) return hasAttackTarget;
+
+                attackTargetFrame = Time.frameCount;
+                hasAttackTarget = heldObject == null && TryFindAttackTarget(out _, out _, out _, out _);
+                return hasAttackTarget;
+            }
+        }
 
         private void Awake()
         {
@@ -261,6 +281,18 @@ namespace TeamOdd.Psychokinesis
             attackRequested = false;
         }
 
+        // 투척과 휘두르기 피해도 보낸 사람이 플레이어로 기록되므로, 실행된 피해 중 플레이어가 보낸 것을 모두 적중으로 판정
+        private void Start()
+        {
+            attackEventManager = CombatManager.Instance;
+            attackEventManager.OnDamageEventExecuted += HandleDamageExecuted;
+        }
+
+        private void OnDestroy()
+        {
+            if (attackEventManager != null) attackEventManager.OnDamageEventExecuted -= HandleDamageExecuted;
+        }
+
         private PsychokinesisObject FindFocus()
         {
             int count = CollectTargetingCandidates(out Ray ray);
@@ -358,10 +390,25 @@ namespace TeamOdd.Psychokinesis
 
             nextAttackTime = Time.time + attackInterval;
 
-            Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+            if (TryFindAttackTarget(out Ray ray, out ICombatable target, out Collider hitCollider, out Vector3 end))
+            {
+                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Atk = {combatEntity.CurrentStats.Atk}", this);
+                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, end, hitCollider);
+                DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
+                CombatManager.Instance.AddCombatEvent(damageEvent);
+            }
+
+            Debug.DrawLine(ray.origin, end, Color.cyan, 0.15f);
+        }
+
+        // 화면 중앙으로 쏜 기본 공격이 가장 먼저 닿는 대상이 살아 있는 적인지 확인
+        private bool TryFindAttackTarget(out Ray ray, out ICombatable target, out Collider hitCollider, out Vector3 end)
+        {
+            ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
             float distance = GetTargetingDistance(ray);
             int count = Physics.RaycastNonAlloc(ray, obstructionHits, distance, queryLayers, QueryTriggerInteraction.Ignore);
-            Collider hitCollider = null;
+            hitCollider = null;
+            target = null;
 
             for (int index = 0; index < count; index++)
             {
@@ -373,17 +420,15 @@ namespace TeamOdd.Psychokinesis
                 hitCollider = hit.collider;
             }
 
-            Vector3 end = ray.GetPoint(distance);
+            end = ray.GetPoint(distance);
 
-            if (hitCollider != null && MonsterRegistry.TryGetMonster(hitCollider, out ICombatable target))
-            {
-                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Atk = {combatEntity.CurrentStats.Atk}", this);
-                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, end, hitCollider);
-                DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
-                CombatManager.Instance.AddCombatEvent(damageEvent);
-            }
+            if (hitCollider == null || MonsterRegistry.TryGetMonster(hitCollider, out target) == false) return false;
+            return target is not CombatEntity entity || entity.IsDead == false;
+        }
 
-            Debug.DrawLine(ray.origin, end, Color.cyan, 0.15f);
+        private void HandleDamageExecuted(DamageEvent damageEvent, int receivedDamage)
+        {
+            if (receivedDamage > 0 && ReferenceEquals(damageEvent.Sender, combatEntity)) AttackHit?.Invoke();
         }
 
         private bool HasLineOfSight(Vector3 position, Transform target)
