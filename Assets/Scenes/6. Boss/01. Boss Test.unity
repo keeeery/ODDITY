@@ -119,6 +119,164 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &43016838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 43016840}
+  - component: {fileID: 43016839}
+  m_Layer: 0
+  m_Name: Idle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &43016839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43016838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1657b5e6ce18487d8e128193228a1aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossIdleState
+  intentTimeout: 5
+  retryDelay: 0.3
+  faceHalfAngle: 45
+  melees:
+  - {fileID: 560642563}
+  - {fileID: 1495019133}
+  - {fileID: 1904500104}
+  - {fileID: 2124530200}
+  - {fileID: 2046837210}
+  - {fileID: 1784175890}
+  - {fileID: 1644026608}
+  - {fileID: 1621922089}
+  - {fileID: 67279180}
+  - {fileID: 424595540}
+  - {fileID: 117544438}
+  - {fileID: 2007949277}
+  - {fileID: 1033579073}
+  hop: {fileID: 1548063602}
+--- !u!4 &43016840
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43016838}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 862330067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &67279178
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 67279179}
+  - component: {fileID: 67279180}
+  m_Layer: 0
+  m_Name: 3Combo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &67279179
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 67279178}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1361800521}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &67279180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 67279178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce8262d4a9c48a48f0443aaa5c66cdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3Combo
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 3
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -2047656717
+  useRootMotion: 0
+  trackDuration: 3
+  trackSpeed: 180
+  <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
 --- !u!1 &113165350
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,7 +309,7 @@ Transform:
   - {fileID: 1516192319}
   m_Father: {fileID: 1079831923}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &155658091
+--- !u!1 &117544436
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,57 +317,78 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 155658092}
-  - component: {fileID: 155658093}
+  - component: {fileID: 117544437}
+  - component: {fileID: 117544438}
   m_Layer: 0
-  m_Name: Smash
+  m_Name: Jump Smash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &155658092
+--- !u!4 &117544437
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 155658091}
+  m_GameObject: {fileID: 117544436}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &155658093
+--- !u!114 &117544438
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 155658091}
+  m_GameObject: {fileID: 117544436}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27e8482fc0eb4d29962671b93dc08071, type: 3}
+  m_Script: {fileID: 11500000, guid: 331a3cf6c9a14aec9435d2cad0aea952, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmash
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 2
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossJumpSmash
+  <MinDistance>k__BackingField: 20
+  <MaxDistance>k__BackingField: 100
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 12
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
-  trigger: -1083039596
+  trigger: -1842980855
   useRootMotion: 0
-  trackDuration: 0.5
+  trackDuration: 1
   trackSpeed: 120
-  <Recovery>k__BackingField: 0.4
+  <Recovery>k__BackingField: 1.2
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
---- !u!1 &175482708
+  airDuration: 0.63
+  maxJumpDistance: 100
+  homingSpeed: 6
+  impactOffset: 2.5
+  radius: 5
+  damage: 25
+  reaction: 2
+--- !u!1 &424595539
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,203 +396,95 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 175482709}
-  - component: {fileID: 175482710}
+  - component: {fileID: 424595541}
+  - component: {fileID: 424595540}
   m_Layer: 0
-  m_Name: Left Turn Smash
+  m_Name: 3Combo Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &175482709
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175482708}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1525314123}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &175482710
+--- !u!114 &424595540
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175482708}
+  m_GameObject: {fileID: 424595539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3a5e3b8e90d423cb138eac5593253d9, type: 3}
+  m_Script: {fileID: 11500000, guid: 9335ea5cbdf64daf8fe59d17a7a46150, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftTurnSmash
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 0
-  minAngle: 0
-  maxAngle: 0
-  cooldown: 0
-  <Weight>k__BackingField: 0
-  <IsUrgent>k__BackingField: 0
-  <CanApproach>k__BackingField: 0
-  trigger: 0
-  useRootMotion: 0
-  trackDuration: 0
-  trackSpeed: 90
-  <Recovery>k__BackingField: 0
-  showRangeWhenInactive: 1
---- !u!1 &204221195
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 204221196}
-  - component: {fileID: 204221197}
-  m_Layer: 0
-  m_Name: 2Combo Forward
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &204221196
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 204221195}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1525314123}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &204221197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 204221195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ace5c71683049adb6057c82ccc7fa80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2ComboForward
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3ComboForward
   <MinDistance>k__BackingField: 5
   <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 3.75
-  <Weight>k__BackingField: 0.75
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 4.5
+  <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
-  trigger: 109528201
+  trigger: -619602676
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
-  <Recovery>k__BackingField: 1.5
+  trackDuration: 3.17
+  trackSpeed: 120
+  <Recovery>k__BackingField: 2.25
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
---- !u!4 &284058083 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1447412156832229670, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
-  m_PrefabInstance: {fileID: 1129788753}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &349105222
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 349105223}
-  m_Layer: 0
-  m_Name: States
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &349105223
+--- !u!4 &424595541
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 349105222}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1638308577}
-  - {fileID: 1680527141}
-  - {fileID: 443536672}
-  - {fileID: 1525314123}
-  m_Father: {fileID: 284058083}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &443536671
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 443536672}
-  - component: {fileID: 443536673}
-  m_Layer: 0
-  m_Name: Chase
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &443536672
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443536671}
+  m_GameObject: {fileID: 424595539}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 349105223}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &443536673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443536671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aaa66fa0d9247d0b3ee9acea73a2069, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseStateBase
-  walkSpeed: 5
-  runSpeed: 10
-  rotateSpeed: 5
-  rethinkInterval: 1
---- !u!1 &487584996
+--- !u!1 &560642561
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -421,55 +492,69 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 487584997}
-  - component: {fileID: 487584998}
+  - component: {fileID: 560642562}
+  - component: {fileID: 560642563}
   m_Layer: 0
-  m_Name: Right Claw
+  m_Name: Left Claw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &487584997
+--- !u!4 &560642562
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487584996}
+  m_GameObject: {fileID: 560642561}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &487584998
+--- !u!114 &560642563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487584996}
+  m_GameObject: {fileID: 560642561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e6e03913ee043f6971b16a4b88db045, type: 3}
+  m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClaw
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawPattern
   <MinDistance>k__BackingField: 0
   <MaxDistance>k__BackingField: 5
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 1.5
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
-  trigger: 737642192
+  trigger: -1812146055
   useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
+  trackDuration: 1.17
+  trackSpeed: 180
   <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &600725308
 GameObject:
@@ -598,64 +683,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &722893196
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 722893197}
-  - component: {fileID: 722893198}
-  m_Layer: 0
-  m_Name: 2Combo
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &722893197
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 722893196}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1525314123}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &722893198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 722893196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33524a8e0b1e40aa8618cd30c7049ded, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2Combo
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 2.5
-  <Weight>k__BackingField: 0.75
-  <IsUrgent>k__BackingField: 0
-  <CanApproach>k__BackingField: 0
-  trigger: 1320152918
-  useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
-  <Recovery>k__BackingField: 1
-  showRangeWhenInactive: 1
 --- !u!1 &817418213
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,6 +714,42 @@ Transform:
   m_Children:
   - {fileID: 1637217037}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &862330066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 862330067}
+  m_Layer: 0
+  m_Name: States
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &862330067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862330066}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 43016840}
+  - {fileID: 1548063554}
+  - {fileID: 1620397387}
+  - {fileID: 1548063601}
+  - {fileID: 1361800521}
+  m_Father: {fileID: 1423771177}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &863179904
 GameObject:
@@ -752,7 +815,7 @@ Transform:
   - {fileID: 600725310}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &977051208
+--- !u!1 &1033579071
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -760,8 +823,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 977051209}
-  - component: {fileID: 977051210}
+  - component: {fileID: 1033579072}
+  - component: {fileID: 1033579073}
   m_Layer: 0
   m_Name: Right Turn Smash
   m_TagString: Untagged
@@ -769,47 +832,63 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &977051209
+--- !u!4 &1033579072
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 977051208}
+  m_GameObject: {fileID: 1033579071}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &977051210
+--- !u!114 &1033579073
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 977051208}
+  m_GameObject: {fileID: 1033579071}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 569e0f174ede477990a5516087795288, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightTurnSmash
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 0
-  minAngle: 0
-  maxAngle: 0
-  cooldown: 0
-  <Weight>k__BackingField: 0
+  <MaxDistance>k__BackingField: 7
+  minAngle: 45
+  maxAngle: 135
+  cooldown: 4
+  <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
-  trigger: 0
+  trigger: 540397994
   useRootMotion: 0
   trackDuration: 0
   trackSpeed: 90
-  <Recovery>k__BackingField: 0
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
+  turnDuration: 0.75
+  maxTurnSpeed: 240
 --- !u!1 &1044474251
 GameObject:
   m_ObjectHideFlags: 0
@@ -841,7 +920,7 @@ Transform:
   m_GameObject: {fileID: 1044474251}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: -13}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1027,7 +1106,7 @@ Transform:
   m_GameObject: {fileID: 1079831922}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -10}
+  m_LocalPosition: {x: 6, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1087,7 +1166,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1101752766
+--- !u!1 &1156137810
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1095,57 +1174,53 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1101752767}
-  - component: {fileID: 1101752768}
+  - component: {fileID: 1156137811}
+  - component: {fileID: 1156137812}
   m_Layer: 0
-  m_Name: Left Claw
+  m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1101752767
+  m_IsActive: 1
+--- !u!4 &1156137811
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1101752766}
+  m_GameObject: {fileID: 1156137810}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.7071067, y: 0.00000004741519, z: 0.000000047415206, w: 0.70710695}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 10, y: 0.5, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1101752768
-MonoBehaviour:
+  m_Father: {fileID: 1423771177}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!64 &1156137812
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1101752766}
+  m_GameObject: {fileID: 1156137810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawPattern
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 1.5
-  <Weight>k__BackingField: 1
-  <IsUrgent>k__BackingField: 0
-  <CanApproach>k__BackingField: 0
-  trigger: -1812146055
-  useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
-  <Recovery>k__BackingField: 0.3
-  showRangeWhenInactive: 1
---- !u!1 &1116816043
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1361800520
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1153,57 +1228,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1116816044}
-  - component: {fileID: 1116816045}
+  - component: {fileID: 1361800521}
   m_Layer: 0
-  m_Name: 3Combo Forward
+  m_Name: Attacks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1116816044
+  m_IsActive: 1
+--- !u!4 &1361800521
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1116816043}
+  m_GameObject: {fileID: 1361800520}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Children:
+  - {fileID: 560642562}
+  - {fileID: 1495019132}
+  - {fileID: 1904500103}
+  - {fileID: 2124530199}
+  - {fileID: 2046837209}
+  - {fileID: 1784175889}
+  - {fileID: 1644026607}
+  - {fileID: 1621922088}
+  - {fileID: 67279179}
+  - {fileID: 424595541}
+  - {fileID: 117544437}
+  - {fileID: 2007949276}
+  - {fileID: 1033579072}
+  m_Father: {fileID: 862330067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1116816045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1116816043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9335ea5cbdf64daf8fe59d17a7a46150, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3ComboForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 4.5
-  <Weight>k__BackingField: 0.5
-  <IsUrgent>k__BackingField: 0
-  <CanApproach>k__BackingField: 0
-  trigger: -619602676
-  useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
-  <Recovery>k__BackingField: 2.25
-  showRangeWhenInactive: 1
---- !u!1001 &1129788753
+--- !u!1001 &1423771175
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1932,70 +1993,131 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1447412156832229670, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1208558071}
+      addedObject: {fileID: 1156137811}
     - targetCorrespondingSourceObject: {fileID: 1447412156832229670, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 349105223}
+      addedObject: {fileID: 862330067}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1447412156832593092, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1129788760}
+      addedObject: {fileID: 1423771181}
     - targetCorrespondingSourceObject: {fileID: 1447412156832593092, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1129788759}
+      addedObject: {fileID: 1423771180}
     - targetCorrespondingSourceObject: {fileID: 1447412156832593092, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1129788758}
+      addedObject: {fileID: 1423771179}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593168, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771301}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593260, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771319}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593266, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771321}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593250, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771323}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593160, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771331}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593182, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771333}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593166, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771335}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593214, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771303}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593212, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771305}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593172, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771313}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593248, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771315}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593262, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771317}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593170, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771307}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593268, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771309}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593200, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771325}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593164, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771327}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593162, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771329}
+    - targetCorrespondingSourceObject: {fileID: 1447412156832593210, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423771311}
   m_SourcePrefab: {fileID: 100100000, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
---- !u!1 &1129788754 stripped
+--- !u!1 &1423771176 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1447412156832593092, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
-  m_PrefabInstance: {fileID: 1129788753}
+  m_PrefabInstance: {fileID: 1423771175}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1129788755 stripped
+--- !u!4 &1423771177 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1447412156832229670, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1423771178 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1447412156823226038, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
-  m_PrefabInstance: {fileID: 1129788753}
+  m_PrefabInstance: {fileID: 1423771175}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1129788758
+--- !u!114 &1423771179
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129788754}
+  m_GameObject: {fileID: 1423771176}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43d5013f84bc96846ab2b7997218a7f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.AnimStateEventListener
---- !u!114 &1129788759
+--- !u!114 &1423771180
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129788754}
+  m_GameObject: {fileID: 1423771176}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a787f25a2c5040479f8efdf1b4674e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossMonster
-  defaultState: {fileID: 1638308578}
-  <Animator>k__BackingField: {fileID: 1129788755}
-  <Body>k__BackingField: {fileID: 1129788760}
-  <AnimEventListener>k__BackingField: {fileID: 1129788758}
+  defaultState: {fileID: 43016839}
+  <Animator>k__BackingField: {fileID: 1423771178}
+  <Body>k__BackingField: {fileID: 1423771181}
+  <AnimEventListener>k__BackingField: {fileID: 1423771179}
   <Target>k__BackingField: {fileID: 1044474252}
   sightHalfAngle: 20
   sightRange: 30
   moveHalfAngle: 45
---- !u!54 &1129788760
+  keepMoveHalfAngle: 90
+  telegraphPoolKey: AttackTelegraph
+--- !u!54 &1423771181
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129788754}
+  m_GameObject: {fileID: 1423771176}
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
@@ -2016,103 +2138,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!1 &1169634195
+--- !u!1 &1423771300 stripped
 GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593168, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771301
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1169634196}
-  - component: {fileID: 1169634197}
-  m_Layer: 0
-  m_Name: Left Claw Forward
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1169634196
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1169634195}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1525314123}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1169634197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1169634195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7518184b81e14eb184ab02b80b4bc514, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawForward
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 2.25
-  <Weight>k__BackingField: 1
-  <IsUrgent>k__BackingField: 0
-  <CanApproach>k__BackingField: 0
-  trigger: -1920930122
-  useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
-  <Recovery>k__BackingField: 0.45
-  showRangeWhenInactive: 1
---- !u!1 &1208558070
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1208558071}
-  - component: {fileID: 1208558072}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1208558071
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1208558070}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.7071067, y: 0.00000004741519, z: 0.000000047415206, w: 0.70710695}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5}
-  m_LocalScale: {x: 10, y: 0.5, z: 10}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 284058083}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!64 &1208558072
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1208558070}
+  m_GameObject: {fileID: 1423771300}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -2121,14 +2158,481 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1329903217
+  serializedVersion: 2
+  m_Radius: 0.95
+  m_Height: 2.3
+  m_Direction: 2
+  m_Center: {x: -0.02, y: 0.13, z: 0}
+--- !u!1 &1423771302 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593214, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771303
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771302}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.1
+  m_Height: 2.7
+  m_Direction: 2
+  m_Center: {x: -0.53, y: 0.04, z: 0}
+--- !u!1 &1423771304 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593212, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771305
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771304}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Height: 4.4
+  m_Direction: 1
+  m_Center: {x: -0.8, y: 0.15, z: 0}
+--- !u!1 &1423771306 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593170, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771307
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771306}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 2.2
+  m_Direction: 2
+  m_Center: {x: -0.6, y: -0.6, z: 0}
+--- !u!1 &1423771308 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593268, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1423771309
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771308}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.9, y: 2.5, z: 2.9}
+  m_Center: {x: -0.33, y: 0.88, z: 0}
+--- !u!1 &1423771310 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593210, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771311
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771310}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 1.07
+  m_Direction: 0
+  m_Center: {x: -0.53, y: 0, z: 0}
+--- !u!1 &1423771312 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593172, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771313
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771312}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.85
+  m_Height: 2.6
+  m_Direction: 0
+  m_Center: {x: -1.5, y: 0.05, z: -0.05}
+--- !u!1 &1423771314 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593248, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771315
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771314}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.7
+  m_Height: 2.9
+  m_Direction: 0
+  m_Center: {x: -0.9, y: 0.16, z: 0}
+--- !u!1 &1423771316 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593262, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1423771317
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771316}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7, y: 1.16, z: 1.75}
+  m_Center: {x: -0.95, y: 0.22, z: -0.27}
+--- !u!1 &1423771318 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593260, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771319
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771318}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 2.4
+  m_Direction: 0
+  m_Center: {x: -1.03, y: -0.1, z: 0}
+--- !u!1 &1423771320 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593266, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771321
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771320}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 1.6
+  m_Direction: 0
+  m_Center: {x: -0.81, y: -0.06, z: -0.1}
+--- !u!1 &1423771322 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593250, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1423771323
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771322}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.62, y: 1.56, z: 1.2}
+  m_Center: {x: -0.38, y: 0.35, z: -0.09}
+--- !u!1 &1423771324 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593200, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771325
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771324}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.85
+  m_Height: 2.6
+  m_Direction: 0
+  m_Center: {x: -1.5, y: 0.05, z: 0.05}
+--- !u!1 &1423771326 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593164, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771327
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771326}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.7
+  m_Height: 2.9
+  m_Direction: 0
+  m_Center: {x: -0.9, y: 0.16, z: 0}
+--- !u!1 &1423771328 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593162, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1423771329
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771328}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7, y: 1.16, z: 1.75}
+  m_Center: {x: -0.95, y: 0.22, z: 0.27}
+--- !u!1 &1423771330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593160, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771331
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771330}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 2.4
+  m_Direction: 0
+  m_Center: {x: -1.03, y: -0.1, z: 0}
+--- !u!1 &1423771332 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593182, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1423771333
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771332}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 1.6
+  m_Direction: 0
+  m_Center: {x: -0.81, y: -0.06, z: 0.1}
+--- !u!1 &1423771334 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447412156832593166, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
+  m_PrefabInstance: {fileID: 1423771175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1423771335
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423771334}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.62, y: 1.56, z: 1.2}
+  m_Center: {x: -0.38, y: 0.35, z: 0.09}
+--- !u!1 &1495019131
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2136,113 +2640,69 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1329903218}
-  - component: {fileID: 1329903219}
+  - component: {fileID: 1495019132}
+  - component: {fileID: 1495019133}
   m_Layer: 0
-  m_Name: 3Combo
+  m_Name: Left Claw Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1329903218
+--- !u!4 &1495019132
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1329903217}
+  m_GameObject: {fileID: 1495019131}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1329903219
+--- !u!114 &1495019133
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1329903217}
+  m_GameObject: {fileID: 1495019131}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fce8262d4a9c48a48f0443aaa5c66cdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 7518184b81e14eb184ab02b80b4bc514, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3Combo
-  <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 5
-  minAngle: -20
-  maxAngle: 20
-  cooldown: 3
-  <Weight>k__BackingField: 0.5
-  <IsUrgent>k__BackingField: 0
-  <CanApproach>k__BackingField: 0
-  trigger: -2047656717
-  useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
-  <Recovery>k__BackingField: 1.5
-  showRangeWhenInactive: 1
---- !u!1 &1475563215
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1475563216}
-  - component: {fileID: 1475563217}
-  m_Layer: 0
-  m_Name: Right Claw Forward
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1475563216
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1475563215}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1525314123}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1475563217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1475563215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fb41d3df9fa46f19b2d08e7d6750d0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClawForward
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawForward
   <MinDistance>k__BackingField: 5
   <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 2.25
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
-  trigger: -970897688
+  trigger: -1920930122
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 1.17
+  trackSpeed: 120
   <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &1516192318
 GameObject:
@@ -2381,7 +2841,7 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!1 &1525314122
+--- !u!1 &1548063553
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2389,42 +2849,243 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1525314123}
+  - component: {fileID: 1548063554}
+  - component: {fileID: 1548063555}
   m_Layer: 0
-  m_Name: Attacks
+  m_Name: Turn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1525314123
+  m_IsActive: 0
+--- !u!4 &1548063554
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1525314122}
+  m_GameObject: {fileID: 1548063553}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1101752767}
-  - {fileID: 1169634196}
-  - {fileID: 487584997}
-  - {fileID: 1475563216}
-  - {fileID: 155658092}
-  - {fileID: 1675289184}
-  - {fileID: 722893197}
-  - {fileID: 204221196}
-  - {fileID: 1329903218}
-  - {fileID: 1116816044}
-  - {fileID: 2120957661}
-  - {fileID: 175482709}
-  - {fileID: 977051209}
-  m_Father: {fileID: 349105223}
+  m_Children: []
+  m_Father: {fileID: 862330067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1548063555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548063553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ac2c6175b6454db6c1108efa020fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossTurnState
+  turnSpeed: 90
+  angleMargin: 5
+  doneAngle: 2
+  chaseReadyAngle: 30
+  timeout: 2.5
+  directionDampTime: 0.15
+--- !u!1 &1548063600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1548063601}
+  - component: {fileID: 1548063602}
+  m_Layer: 0
+  m_Name: Hop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1548063601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548063600}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 862330067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1548063602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548063600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ca84b5891b44709b4e838ec681e7f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHopState
+  tooCloseDistance: 3
+  wideAngle: 60
+  chance: 0.4
+  cooldown: 8
+  airDuration: 0.6
+  maxHopDistance: 20
+  sideAngle: 45
+  turnSpeed: 180
+  timeout: 2
+  followPatterns:
+  - {fileID: 1495019133}
+  - {fileID: 2124530200}
+  - {fileID: 1784175890}
+  - {fileID: 1621922089}
+  - {fileID: 424595540}
+--- !u!1 &1620397386
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1620397387}
+  - component: {fileID: 1620397388}
+  m_Layer: 0
+  m_Name: Chase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1620397387
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620397386}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 862330067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1620397388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620397386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aaa66fa0d9247d0b3ee9acea73a2069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseStateBase
+  walkSpeed: 5
+  runSpeed: 10
+  rotateSpeed: 60
+  rethinkInterval: 1
+  maxRotateSpeed: 90
+  slowStartAngle: 20
+  slowEndAngle: 90
+  minSpeedRatio: 0.4
+--- !u!1 &1621922087
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1621922088}
+  - component: {fileID: 1621922089}
+  m_Layer: 0
+  m_Name: 2Combo Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1621922088
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621922087}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1361800521}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1621922089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621922087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ace5c71683049adb6057c82ccc7fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2ComboForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 3.75
+  <Weight>k__BackingField: 0.75
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 109528201
+  useRootMotion: 1
+  trackDuration: 2
+  trackSpeed: 120
+  <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
 --- !u!1 &1637217033
 GameObject:
   m_ObjectHideFlags: 0
@@ -2537,7 +3198,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 817418214}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1638308576
+--- !u!1 &1644026606
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2545,57 +3206,83 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1638308577}
-  - component: {fileID: 1638308578}
+  - component: {fileID: 1644026607}
+  - component: {fileID: 1644026608}
   m_Layer: 0
-  m_Name: Idle
+  m_Name: 2Combo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1638308577
+--- !u!4 &1644026607
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1638308576}
+  m_GameObject: {fileID: 1644026606}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 349105223}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1638308578
+--- !u!114 &1644026608
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1638308576}
+  m_GameObject: {fileID: 1644026606}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1657b5e6ce18487d8e128193228a1aa7, type: 3}
+  m_Script: {fileID: 11500000, guid: 33524a8e0b1e40aa8618cd30c7049ded, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossIdleState
-  intentTimeout: 5
-  retryDelay: 0.3
-  faceHalfAngle: 45
-  melees:
-  - {fileID: 1101752768}
-  - {fileID: 1169634197}
-  - {fileID: 487584998}
-  - {fileID: 1475563217}
-  - {fileID: 155658093}
-  - {fileID: 1675289185}
-  - {fileID: 722893198}
-  - {fileID: 204221197}
-  - {fileID: 1329903219}
-  - {fileID: 1116816045}
---- !u!1 &1675289183
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2Combo
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2.5
+  <Weight>k__BackingField: 0.75
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1320152918
+  useRootMotion: 0
+  trackDuration: 1.83
+  trackSpeed: 180
+  <Recovery>k__BackingField: 1
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &1784175888
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2603,8 +3290,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1675289184}
-  - component: {fileID: 1675289185}
+  - component: {fileID: 1784175889}
+  - component: {fileID: 1784175890}
   m_Layer: 0
   m_Name: Smash Forward
   m_TagString: Untagged
@@ -2612,28 +3299,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1675289184
+--- !u!4 &1784175889
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1675289183}
+  m_GameObject: {fileID: 1784175888}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1675289185
+--- !u!114 &1784175890
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1675289183}
+  m_GameObject: {fileID: 1784175888}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 296dde739c644b6ebe433dffda3d9c20, type: 3}
@@ -2641,67 +3328,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmashForward
   <MinDistance>k__BackingField: 5
   <MaxDistance>k__BackingField: 10
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 3
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -234574752
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 1.5
+  trackSpeed: 120
   <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
---- !u!1 &1680527140
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1680527141}
-  - component: {fileID: 1680527142}
-  m_Layer: 0
-  m_Name: Turn
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1680527141
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1680527140}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 349105223}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1680527142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1680527140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38ac2c6175b6454db6c1108efa020fd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossTurnState
-  turnSpeed: 45
-  angleMargin: 5
-  doneAngle: 1
-  timeout: 2
-  directionDampTime: 0.15
 --- !u!1 &1825386952
 GameObject:
   m_ObjectHideFlags: 0
@@ -2733,7 +3385,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2120957660
+--- !u!1 &1904500102
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2741,55 +3393,287 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2120957661}
-  - component: {fileID: 2120957662}
+  - component: {fileID: 1904500103}
+  - component: {fileID: 1904500104}
   m_Layer: 0
-  m_Name: Jump Smash
+  m_Name: Right Claw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &2120957661
+--- !u!4 &1904500103
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120957660}
+  m_GameObject: {fileID: 1904500102}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1525314123}
+  m_Father: {fileID: 1361800521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2120957662
+--- !u!114 &1904500104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120957660}
+  m_GameObject: {fileID: 1904500102}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 331a3cf6c9a14aec9435d2cad0aea952, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e6e03913ee043f6971b16a4b88db045, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossJumpSmash
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClaw
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 0
-  minAngle: 0
-  maxAngle: 0
-  cooldown: 0
-  <Weight>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 1.5
+  <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
-  trigger: 0
+  trigger: 737642192
+  useRootMotion: 0
+  trackDuration: 1.17
+  trackSpeed: 180
+  <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &2007949275
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2007949276}
+  - component: {fileID: 2007949277}
+  m_Layer: 0
+  m_Name: Left Turn Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2007949276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007949275}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1361800521}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2007949277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007949275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3a5e3b8e90d423cb138eac5593253d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftTurnSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 7
+  minAngle: -135
+  maxAngle: -45
+  cooldown: 4
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1452908429
   useRootMotion: 0
   trackDuration: 0
   trackSpeed: 90
-  <Recovery>k__BackingField: 0
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  turnDuration: 0.75
+  maxTurnSpeed: 240
+--- !u!1 &2046837208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046837209}
+  - component: {fileID: 2046837210}
+  m_Layer: 0
+  m_Name: Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2046837209
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046837208}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1361800521}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2046837210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046837208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27e8482fc0eb4d29962671b93dc08071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1083039596
+  useRootMotion: 0
+  trackDuration: 1.5
+  trackSpeed: 180
+  <Recovery>k__BackingField: 0.4
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &2124530198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2124530199}
+  - component: {fileID: 2124530200}
+  m_Layer: 0
+  m_Name: Right Claw Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2124530199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124530198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1361800521}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2124530200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124530198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb41d3df9fa46f19b2d08e7d6750d0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClawForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2.25
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -970897688
+  useRootMotion: 1
+  trackDuration: 1.17
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -2800,4 +3684,4 @@ SceneRoots:
   - {fileID: 817418214}
   - {fileID: 1083032291}
   - {fileID: 1825386953}
-  - {fileID: 1129788753}
+  - {fileID: 1423771175}

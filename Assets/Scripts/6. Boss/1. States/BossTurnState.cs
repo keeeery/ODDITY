@@ -10,6 +10,7 @@ namespace TeamOdd.Boss
         [SerializeField] private float turnSpeed = 180f;
         [SerializeField] private float angleMargin = 5f;
         [SerializeField] private float doneAngle = 1f;
+        [SerializeField] private float chaseReadyAngle = 30f; // 추적으로 이어질 땐 이 각도까지만 돌고 나머지는 걸으면서 보정, moveHalfAngle 이하로 설정
         [SerializeField] private float timeout = 2f;
         [SerializeField] private float directionDampTime = 0.15f;
 
@@ -28,7 +29,7 @@ namespace TeamOdd.Boss
         {
             float delta = GetDeltaAngle();
 
-            if (Mathf.Abs(delta) <= doneAngle || Time.time - enterTime >= timeout)
+            if (Mathf.Abs(delta) <= doneAngle || IsChaseReady() || Time.time - enterTime >= timeout)
             {
                 StateMachine.ChangeState(typeof(BossIdleState));
                 return;
@@ -41,6 +42,16 @@ namespace TeamOdd.Boss
         protected override void OnExit()
         {
             Animator.SetBool(BossAnimParams.IS_TURNING, false);
+        }
+
+        private bool IsChaseReady()
+        {
+            BossMeleePattern intent = root.Intent;
+
+            if (intent == null) return false;
+            if (intent.IsDistanceInRange) return false;
+
+            return Mathf.Abs(root.SignedAngleToTarget) <= chaseReadyAngle;
         }
 
         private float GetDeltaAngle()

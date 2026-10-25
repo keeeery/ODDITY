@@ -23,9 +23,14 @@ namespace TeamOdd.Boss
         public static readonly int TWO_COMBO_FORWARD = Animator.StringToHash("2ComboForward");
         public static readonly int THREE_COMBO = Animator.StringToHash("3Combo");
         public static readonly int THREE_COMBO_FORWARD = Animator.StringToHash("3ComboForward");
+        public static readonly int LEFT_TURN_SMASH = Animator.StringToHash("leftTurnSmash");
+        public static readonly int RIGHT_TURN_SMASH = Animator.StringToHash("rightTurnSmash");
         
+        public static readonly int HOP_BACK = Animator.StringToHash("hopBack");
+
         public static readonly int ROAR = Animator.StringToHash("roar");
         public static readonly int THROW = Animator.StringToHash("throw");
         public static readonly int SHOCKWAVE = Animator.StringToHash("shockwave");
+        public static readonly int JUMP_SMASH = Animator.StringToHash("jumpSmash");
     }
 }

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace TeamOdd.Boss
+﻿namespace TeamOdd.Boss
 {
-    public class BossRightTurnSmash : BossMeleePattern { }
+    public class BossRightTurnSmash : BossTurnSmash { }
 }

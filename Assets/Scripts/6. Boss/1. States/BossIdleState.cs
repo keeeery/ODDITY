@@ -17,6 +17,7 @@ namespace TeamOdd.Boss
 
         [Title("Patterns")]
         [SerializeField] private BossMeleePattern[] melees;
+        [SerializeField] private BossHopState hop; // 비어 있으면 점프로 자리 잡지 않음
 
         private readonly List<BossMeleePattern> candidates = new();
         private readonly List<float> weights = new();
@@ -24,6 +25,8 @@ namespace TeamOdd.Boss
         private float thinkTime;
         private BossMeleePattern executed;
         
+        private bool isChasing; // 추적 중 재판단으로 Idle에 들어온 경우 true
+
         protected override void OnEnter()
         {
             // 공격을 끝내고 Idle로 진입 시에만 후딜 적용
@@ -41,7 +44,11 @@ namespace TeamOdd.Boss
 
         private void Think()
         {
+            if (TryFollowHop()) return;
+
             if (IsIntentValid() == false) root.ClearIntent();
+
+            if (TryHop()) return;
 
             if (TrySetInterrupt() == false)
             {
@@ -72,13 +79,37 @@ namespace TeamOdd.Boss
                 return;
             }
 
-            if (intent.IsDistanceInRange || root.CanMoveToTarget == false)
+            // 이미 추적 중이었다면 더 넓은 각도까지 멈추지 않고 계속 추적
+            bool canMove = isChasing ? root.CanKeepMovingToTarget : root.CanMoveToTarget;
+
+            if (intent.IsDistanceInRange || canMove == false)
             {
                 ChangeState(typeof(BossTurnState));
                 return;
             }
             
             ChangeState(typeof(BossChaseState));
+        }
+
+        // 점프로 자리를 잡고 돌아왔으면 골라 둔 공격을 바로 실행, 사거리를 벗어났으면 평소처럼 다시 판단
+        private bool TryFollowHop()
+        {
+            if (hop == null) return false;
+
+            BossMeleePattern follow = hop.TakeFollow();
+            if (follow == null || follow.IsInRange == false) return false;
+
+            executed = follow;
+            ChangeState(follow.GetType());
+            return true;
+        }
+
+        private bool TryHop()
+        {
+            if (hop == null || hop.ShouldHop() == false) return false;
+
+            ChangeState(typeof(BossHopState));
+            return true;
         }
 
         private bool IsIntentValid()
@@ -162,7 +193,9 @@ namespace TeamOdd.Boss
 
         private void ChangeState(Type nextState)
         {
-            if (nextState != typeof(BossChaseState))
+            isChasing = nextState == typeof(BossChaseState);
+
+            if (isChasing == false)
                 Animator.SetBool(BossAnimParams.IS_CHASING, false);
             
             StateMachine.ChangeState(nextState);
