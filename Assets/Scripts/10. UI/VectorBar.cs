@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,9 +42,21 @@ namespace TeamOdd.UI
         // 잔상이 줄어드는 속도(초당 전체 대비 비율)
         [SerializeField, Min(0.01f)] private float trailSpeed = 0.6f;
 
+        [Header("Hit Flash")]
+        // Flash() 호출 시 채움이 번쩍이고 바가 좌우로 흔들린다.
+        [SerializeField] private Color flashColor = new(1f, 0.95f, 0.88f, 0.8f);
+        [SerializeField, Min(0.01f)] private float flashDuration = 0.2f;
+        [SerializeField, Min(0f)] private float shakeDistance = 4f;
+        [SerializeField, Min(0.01f)] private float shakeDuration = 0.3f;
+        // DOTween.Punch의 진동 횟수와 탄성
+        [SerializeField, Min(1)] private int shakeVibrato = 20;
+        [SerializeField, Range(0f, 1f)] private float shakeElasticity = 1f;
+
         private readonly VectorShape shape = new();
         private float trailAmount = 1f;
         private float trailHoldUntil;
+        private float flashAlpha;
+        private Vector3 shakeOffset;
 
         public float FillAmount
         {
@@ -67,6 +80,29 @@ namespace TeamOdd.UI
             fillAmount = Mathf.Clamp01(amount);
             trailAmount = fillAmount;
             SetVerticesDirty();
+        }
+
+        public void Flash()
+        {
+            // 진행 중인 연출은 끝내고 새로 시작한다.
+            DOTween.Kill(this, true);
+
+            flashAlpha = 1f;
+            DOTween.To(() => flashAlpha, value => flashAlpha = value, 0f, flashDuration)
+                .SetEase(Ease.OutQuad).SetTarget(this).OnUpdate(SetVerticesDirty).OnComplete(SetVerticesDirty);
+
+            shakeOffset = Vector3.zero;
+            DOTween.Punch(() => shakeOffset, value => shakeOffset = value, Vector3.right * shakeDistance, shakeDuration,
+                    shakeVibrato, shakeElasticity)
+                .SetTarget(this).OnUpdate(SetVerticesDirty).OnComplete(SetVerticesDirty);
+        }
+
+        protected override void OnDisable()
+        {
+            DOTween.Kill(this);
+            flashAlpha = 0f;
+            shakeOffset = Vector3.zero;
+            base.OnDisable();
         }
 
         protected override void OnEnable()
@@ -104,6 +140,9 @@ namespace TeamOdd.UI
             Rect rect = rectTransform.rect;
             if (rect.width <= 0f || rect.height <= 0f) return;
 
+            // RectTransform 대신 그리는 위치만 옮긴다.
+            rect.x += shakeOffset.x;
+
             float antiAlias = VectorShape.PixelsToUnits(canvas, antiAliasPixels);
             float radius = cornerRadius < 0f ? rect.height * 0.5f : cornerRadius;
 
@@ -120,6 +159,14 @@ namespace TeamOdd.UI
             float innerRadius = Mathf.Max(0f, Mathf.Min(radius, rect.height * 0.5f) - fillPadding);
             if (useTrail) AddInnerFill(vh, inner, innerRadius, trailAmount, trailColor, antiAlias);
             AddInnerFill(vh, inner, innerRadius, fillAmount, fillColor, antiAlias);
+
+            // 잔상 구간까지 함께 밝힌다.
+            if (flashAlpha > 0.001f)
+            {
+                Color overlay = flashColor;
+                overlay.a *= flashAlpha;
+                AddInnerFill(vh, inner, innerRadius, useTrail ? trailAmount : fillAmount, overlay, antiAlias);
+            }
         }
 
         // 트랙 안쪽에서 왼쪽부터 amount만큼 채우며, 짧아져도 둥근 끝이 유지되도록 반지름을 줄여서 그린다.
