@@ -2064,12 +2064,20 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3996771544257051573, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: cooldown
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3996771544257051573, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: fragmentSpawner
       value: 
       objectReference: {fileID: 1433546535}
+    - target: {fileID: 4806054930190537673, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: cooldown
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4806054930190537673, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: fragmentSpawner
       value: 
@@ -3117,6 +3125,8 @@ MonoBehaviour:
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
+  turnDuration: 0.75
+  maxTurnSpeed: 240
 --- !u!1 &2028751608990286214
 GameObject:
   m_ObjectHideFlags: 0
@@ -3307,6 +3317,13 @@ MonoBehaviour:
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
+  airDuration: 0.63
+  maxJumpDistance: 20
+  homingSpeed: 6
+  impactOffset: 2.5
+  radius: 5
+  damage: 25
+  reaction: 2
 --- !u!114 &2926503066094882205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3528,6 +3545,7 @@ MonoBehaviour:
   turnSpeed: 45
   angleMargin: 5
   doneAngle: 1
+  chaseReadyAngle: 30
   timeout: 2
   directionDampTime: 0.15
 --- !u!114 &4263314253857673895
@@ -4054,6 +4072,7 @@ MonoBehaviour:
   - {fileID: 5868952878083930517}
   - {fileID: 5668941168773678151}
   - {fileID: 8736710718429487455}
+  hop: {fileID: 0}
 --- !u!1 &6008353211433559273
 GameObject:
   m_ObjectHideFlags: 0
@@ -4223,6 +4242,8 @@ MonoBehaviour:
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
+  turnDuration: 0.75
+  maxTurnSpeed: 240
 --- !u!1 &6627677997511795725
 GameObject:
   m_ObjectHideFlags: 0
@@ -4271,6 +4292,10 @@ MonoBehaviour:
   runSpeed: 10
   rotateSpeed: 5
   rethinkInterval: 1
+  maxRotateSpeed: 240
+  slowStartAngle: 30
+  slowEndAngle: 90
+  minSpeedRatio: 0.3
 --- !u!4 &7200812702424808697
 Transform:
   m_ObjectHideFlags: 0
@@ -5447,6 +5472,7 @@ MonoBehaviour:
   sightHalfAngle: 20
   sightRange: 30
   moveHalfAngle: 45
+  keepMoveHalfAngle: 90
   telegraphPoolKey: AttackTelegraph
 --- !u!114 &8473236024697373161
 MonoBehaviour:

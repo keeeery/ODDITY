@@ -535,8 +535,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseState
   walkSpeed: 5
   runSpeed: 10
-  rotateSpeed: 5
+  rotateSpeed: 60
   rethinkInterval: 1
+  maxRotateSpeed: 90
+  slowStartAngle: 20
+  slowEndAngle: 90
+  minSpeedRatio: 0.4
 --- !u!1 &1747056200578454141
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,6 +879,7 @@ MonoBehaviour:
   sightHalfAngle: 20
   sightRange: 30
   moveHalfAngle: 45
+  keepMoveHalfAngle: 90
   telegraphPoolKey: AttackTelegraph
 --- !u!114 &5617293112904674764
 MonoBehaviour:
@@ -1677,16 +1682,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClaw
   <MinDistance>k__BackingField: 6.5
   <MaxDistance>k__BackingField: 9
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 1.5
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -1812146055
   useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
+  trackDuration: 1.5
+  trackSpeed: 180
   <Recovery>k__BackingField: 0.3
   hits:
   - shape:
@@ -2240,6 +2245,8 @@ MonoBehaviour:
   - {fileID: 4806054930190537673}
   - {fileID: 3996771544257051573}
   - {fileID: 8868022279130048305}
+  - {fileID: 5502451583672451264}
+  - {fileID: 1526546028186094052}
 --- !u!1 &7646533345748698016
 GameObject:
   m_ObjectHideFlags: 0
@@ -2767,6 +2774,8 @@ Transform:
   - {fileID: 3735418416536190114}
   - {fileID: 8608923294922890249}
   - {fileID: 8482658457311449938}
+  - {fileID: 433801578694169552}
+  - {fileID: 6936841839475107555}
   m_Father: {fileID: 8535586910388637671}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &404701223987581413
@@ -2783,16 +2792,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawForward
   <MinDistance>k__BackingField: 9
   <MaxDistance>k__BackingField: 13
-  minAngle: -8
-  maxAngle: 8
+  minAngle: -35
+  maxAngle: 35
   cooldown: 2.25
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -1920930122
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 1.5
+  trackSpeed: 120
   <Recovery>k__BackingField: 0.45
   hits:
   - shape:
@@ -2855,16 +2864,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClaw
   <MinDistance>k__BackingField: 6.5
   <MaxDistance>k__BackingField: 9
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 1.5
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: 737642192
   useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
+  trackDuration: 1.5
+  trackSpeed: 180
   <Recovery>k__BackingField: 0.3
   hits:
   - shape:
@@ -2925,16 +2934,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClawForward
   <MinDistance>k__BackingField: 9
   <MaxDistance>k__BackingField: 13
-  minAngle: -8
-  maxAngle: 8
+  minAngle: -35
+  maxAngle: 35
   cooldown: 2.25
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -970897688
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 1.5
+  trackSpeed: 120
   <Recovery>k__BackingField: 0.45
   hits:
   - shape:
@@ -2997,16 +3006,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmash
   <MinDistance>k__BackingField: 6
   <MaxDistance>k__BackingField: 9
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 2
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -1083039596
   useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
+  trackDuration: 1.67
+  trackSpeed: 180
   <Recovery>k__BackingField: 0.4
   hits:
   - shape:
@@ -3067,16 +3076,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmashForward
   <MinDistance>k__BackingField: 9
   <MaxDistance>k__BackingField: 11.5
-  minAngle: -8
-  maxAngle: 8
+  minAngle: -35
+  maxAngle: 35
   cooldown: 3
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -234574752
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 1.67
+  trackSpeed: 120
   <Recovery>k__BackingField: 0.6
   hits:
   - shape:
@@ -3139,16 +3148,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2Combo
   <MinDistance>k__BackingField: 6.5
   <MaxDistance>k__BackingField: 9
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 2.5
   <Weight>k__BackingField: 0.75
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: 1320152918
   useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
+  trackDuration: 2.5
+  trackSpeed: 180
   <Recovery>k__BackingField: 1
   hits:
   - shape:
@@ -3219,16 +3228,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2ComboForward
   <MinDistance>k__BackingField: 9
   <MaxDistance>k__BackingField: 13
-  minAngle: -8
-  maxAngle: 8
+  minAngle: -35
+  maxAngle: 35
   cooldown: 3.75
   <Weight>k__BackingField: 0.75
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: 109528201
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 2.33
+  trackSpeed: 120
   <Recovery>k__BackingField: 1.5
   hits:
   - shape:
@@ -3303,16 +3312,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3Combo
   <MinDistance>k__BackingField: 6.5
   <MaxDistance>k__BackingField: 9
-  minAngle: -20
-  maxAngle: 20
+  minAngle: -35
+  maxAngle: 35
   cooldown: 3
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -2047656717
   useRootMotion: 0
-  trackDuration: 0.5
-  trackSpeed: 120
+  trackDuration: 3.83
+  trackSpeed: 180
   <Recovery>k__BackingField: 1.5
   hits:
   - shape:
@@ -3393,16 +3402,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3ComboForward
   <MinDistance>k__BackingField: 9
   <MaxDistance>k__BackingField: 13
-  minAngle: -8
-  maxAngle: 8
+  minAngle: -35
+  maxAngle: 35
   cooldown: 4.5
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   trigger: -619602676
   useRootMotion: 1
-  trackDuration: 0.5
-  trackSpeed: 90
+  trackDuration: 3.33
+  trackSpeed: 120
   <Recovery>k__BackingField: 2.25
   hits:
   - shape:
@@ -3487,10 +3496,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38ac2c6175b6454db6c1108efa020fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossTurnState
-  turnSpeed: 45
+  turnSpeed: 90
   angleMargin: 5
-  doneAngle: 1
-  timeout: 2
+  doneAngle: 2
+  chaseReadyAngle: 30
+  timeout: 2.5
   directionDampTime: 0.15
 --- !u!1 &4771443777203176558
 GameObject:
@@ -4334,3 +4344,151 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9672f209e38a4141bd3c978221ad4790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitboxRegistrar
+--- !u!1 &300211025476587656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 433801578694169552}
+  - component: {fileID: 5502451583672451264}
+  m_Layer: 6
+  m_Name: Left Turn Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &433801578694169552
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300211025476587656}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5502451583672451264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300211025476587656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3a5e3b8e90d423cb138eac5593253d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftTurnSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 9
+  minAngle: -135
+  maxAngle: -45
+  cooldown: 4
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1452908429
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.75
+    damage: 15
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  turnDuration: 0.83
+  maxTurnSpeed: 240
+--- !u!1 &6444760231519264988
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6936841839475107555}
+  - component: {fileID: 1526546028186094052}
+  m_Layer: 6
+  m_Name: Right Turn Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6936841839475107555
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6444760231519264988}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1526546028186094052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6444760231519264988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569e0f174ede477990a5516087795288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightTurnSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 9
+  minAngle: 45
+  maxAngle: 135
+  cooldown: 4
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 540397994
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.75
+    damage: 15
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  turnDuration: 0.83
+  maxTurnSpeed: 240
