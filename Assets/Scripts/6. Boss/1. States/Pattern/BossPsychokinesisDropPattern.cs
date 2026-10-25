@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FantasyGarden.FSM;
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace TeamOdd.Boss
         private const int MaxPositionAttempts = 12;
 
         [Title("References")]
+        [Tooltip("비어 있으면 씬에서 찾는다.")]
         [SerializeField] private WallFragmentSpawner fragmentSpawner;
 
         [Tooltip("바닥, 벽, 천장 판정에 사용할 레이어. Rigidbody가 붙은 오브젝트와 대상은 판정에서 제외한다.")]
@@ -67,6 +69,14 @@ namespace TeamOdd.Boss
         private readonly RaycastHit[] probeHits = new RaycastHit[32];
         private readonly Collider[] spawnOverlaps = new Collider[32];
         private Vector3 dropCenter;
+
+        public override void Initialize(MonoBehaviourFSM stateMachine)
+        {
+            base.Initialize(stateMachine);
+
+            // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 비어 있으면 씬에서 찾음
+            if (fragmentSpawner == null) fragmentSpawner = FindAnyObjectByType<WallFragmentSpawner>();
+        }
 
         protected override void OnPatternEnter()
         {

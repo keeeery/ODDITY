@@ -2,6 +2,7 @@ using System;
 using DG.Tweening;
 using FantasyGarden.FSM;
 using Sirenix.OdinInspector;
+using TeamOdd.Arena;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
@@ -43,8 +44,8 @@ namespace TeamOdd.Boss
         [field: SerializeField] public HitReaction Reaction { get; private set; } = HitReaction.Stagger;
 
         [Title("Lift")]
-        [Tooltip("염동력 오브젝트 풀의 부모(WallFragmentObjectsRoot), 활성화된 자식 중 범위 안의 오브젝트를 띄운다.")]
-        [SerializeField] private Transform fragmentRoot;
+        [Tooltip("파편 풀을 가진 스포너, 풀에서 활성화된 파편 중 범위 안의 오브젝트를 띄운다. 비어 있으면 씬에서 찾는다.")]
+        [SerializeField] private WallFragmentSpawner fragmentSpawner;
         [Tooltip("띄울 높이의 무작위 범위(m)")]
         [SerializeField, MinMaxSlider(0f, 3f, true)] private Vector2 liftHeight = new Vector2(0.3f, 1f);
         [Tooltip("떠오르는 데 걸리는 시간의 무작위 범위(초), 다 떠오르면 중력으로 떨어진다.")]
@@ -71,6 +72,9 @@ namespace TeamOdd.Boss
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
             base.Initialize(stateMachine);
+
+            // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 비어 있으면 씬에서 찾음
+            if (fragmentSpawner == null) fragmentSpawner = FindAnyObjectByType<WallFragmentSpawner>();
             warnedCenters = new Vector3[waves.Length];
             isWarned = new bool[waves.Length];
             telegraphs = new AttackTelegraph[waves.Length];
@@ -180,21 +184,30 @@ namespace TeamOdd.Boss
         }
 
         // 떠오르는 동안 물리와 부딪히지 않도록 kinematic으로 띄우고, 다 떠오르면 되돌려 중력으로 떨어뜨림
-        // 풀 오브젝트는 크기별 그룹(Large/Medium/Small) 아래에 있어 하위 전체에서 활성화된 오브젝트를 찾음
+        // 크기별 풀(Large/Medium/Small)의 부모 아래에서 활성화된 오브젝트를 찾음
         // 플레이어가 들고 있거나 보스가 띄워 둔(kinematic) 오브젝트는 건드리지 않음
         private void LiftFragments(Pose pose, TelegraphShape shape)
         {
-            foreach (Rigidbody body in fragmentRoot.GetComponentsInChildren<Rigidbody>())
-            {
-                if (body.isKinematic || shape.Contains(pose, body.position) == false) continue;
-                if (body.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) continue;
+            if (fragmentSpawner == null) return;
 
-                body.isKinematic = true;
-                body.DOMoveY(body.position.y + Random.Range(liftHeight.x, liftHeight.y), Random.Range(liftDuration.x, liftDuration.y))
-                    .SetEase(Ease.OutQuad)
-                    .SetLink(body.gameObject)
-                    .OnKill(() => body.isKinematic = false);
+            foreach (Transform poolParent in fragmentSpawner.FragmentPoolParents)
+            {
+                if (poolParent == null) continue;
+                foreach (Rigidbody body in poolParent.GetComponentsInChildren<Rigidbody>())
+                    Lift(body, pose, shape);
             }
+        }
+
+        private void Lift(Rigidbody body, Pose pose, TelegraphShape shape)
+        {
+            if (body.isKinematic || shape.Contains(pose, body.position) == false) return;
+            if (body.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) return;
+
+            body.isKinematic = true;
+            body.DOMoveY(body.position.y + Random.Range(liftHeight.x, liftHeight.y), Random.Range(liftDuration.x, liftDuration.y))
+                .SetEase(Ease.OutQuad)
+                .SetLink(body.gameObject)
+                .OnKill(() => body.isKinematic = false);
         }
 
 #if UNITY_EDITOR

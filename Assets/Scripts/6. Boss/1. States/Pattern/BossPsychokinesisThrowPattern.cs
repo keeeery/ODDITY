@@ -13,6 +13,7 @@ namespace TeamOdd.Boss
     public sealed class BossPsychokinesisThrowPattern : BossMeleePattern
     {
         [Title("References")]
+        [Tooltip("비어 있으면 씬에서 찾는다.")]
         [SerializeField] private WallFragmentSpawner fragmentSpawner;
         [Tooltip("오브젝트를 띄우고 던질 위치, 비어 있으면 이 오브젝트의 Transform을 사용한다.")]
         [SerializeField] private Transform throwOrigin;
@@ -56,6 +57,9 @@ namespace TeamOdd.Boss
         {
             base.Initialize(stateMachine);
             ownerColliders = root.GetComponentsInChildren<Collider>();
+
+            // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 비어 있으면 씬에서 찾음
+            if (fragmentSpawner == null) fragmentSpawner = FindAnyObjectByType<WallFragmentSpawner>();
         }
 
         protected override void OnPatternExit()

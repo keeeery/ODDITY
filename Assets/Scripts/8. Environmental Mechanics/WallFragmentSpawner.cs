@@ -38,6 +38,9 @@ namespace TeamOdd.Arena
         [SerializeField, Min(0.01f)] private float impactFragmentsPerKilogram = 1f;
         [SerializeField, Min(MinimumImpactFragmentCount)] private int maxImpactFragmentCount = 30;
 
+        // 보스 충격파처럼 활성화된 파편을 찾아야 하는 쪽에서 사용, 크기별 풀의 부모(비어 있을 수 있음)
+        public Transform[] FragmentPoolParents => new[] { largeFragmentPool.Parent, mediumFragmentPool.Parent, smallFragmentPool.Parent };
+
         private void Start()
         {
             CreatePool(largeFragmentPool, nameof(largeFragmentPool));
