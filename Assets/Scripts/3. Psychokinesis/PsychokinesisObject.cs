@@ -226,6 +226,15 @@ namespace TeamOdd.Psychokinesis
             impactNormal = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.up;
         }
 
+        // 보스 투척처럼 다른 쪽에서 맞힌 경우, 맞은 지점 기준으로 피격된 것처럼 파편화함
+        public void ShatterAt(Vector3 hitPoint)
+        {
+            if (isActiveAndEnabled == false) return;
+
+            SetImpact(hitPoint);
+            Shatter();
+        }
+
         private void Shatter()
         {
             Release(Vector3.zero);

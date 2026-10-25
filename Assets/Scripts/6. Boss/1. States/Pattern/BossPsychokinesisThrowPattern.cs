@@ -178,7 +178,7 @@ namespace TeamOdd.Boss
             }
         }
 
-        // 물리 스텝마다 오브젝트 박스와 대상이 겹치는지 검사해 처음 겹칠 때 한 번만 피해
+        // 물리 스텝마다 오브젝트 박스와 대상이 겹치는지 검사해 처음 겹칠 때 한 번만 피해를 주고 파편화
         // 대상에 부딪히면 속도가 줄어드므로 스텝 직전 속도로 판정 유지 여부를 정함
         // 파괴되거나, 플레이어가 붙잡거나, 충격파로 떠올라(kinematic) 다른 상태가 되면 판정을 끝냄
         private IEnumerator HitWhileFlying(Rigidbody body)
@@ -198,7 +198,11 @@ namespace TeamOdd.Boss
 
                 if (TryFindTargetOverlap(box, out Collider targetCollider) == false) continue;
 
-                SendDamage(damage, reaction, targetCollider.ClosestPoint(body.worldCenterOfMass));
+                Vector3 hitPoint = targetCollider.ClosestPoint(body.worldCenterOfMass);
+                SendDamage(damage, reaction, hitPoint);
+
+                // 플레이어 투척이 보스에 맞았을 때처럼 맞은 자리에서 파편화
+                if (psychokinesisObject != null) psychokinesisObject.ShatterAt(hitPoint);
                 yield break;
             }
         }
@@ -261,11 +265,16 @@ namespace TeamOdd.Boss
             return offset / flightTime - 0.5f * flightTime * Physics.gravity;
         }
 
+        // 파편화로 이미 꺼진 Collider는 무시 상태가 풀렸으므로 건너뜀
         private void SetOwnerCollisionsIgnored(bool ignored)
         {
             for (int index = 0; index < ignoredColliders.Length; index++)
+            {
+                if (ignoredColliders[index].gameObject.activeInHierarchy == false) continue;
+
                 for (int ownerIndex = 0; ownerIndex < ownerColliders.Length; ownerIndex++)
                     Physics.IgnoreCollision(ignoredColliders[index], ownerColliders[ownerIndex], ignored);
+            }
         }
 
         private void RestoreOwnerCollisions()
