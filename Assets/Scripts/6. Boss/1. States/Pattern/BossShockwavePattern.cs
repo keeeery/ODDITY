@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 namespace TeamOdd.Boss
 {
     // 점프 착지나 양손 내려찍기 같은 충격 시점에 원형 범위로 펑 터지는 충격파를 일으키는 패턴
-    // 터지는 순간 범위 안의 대상이 바닥 근처에 있으면 피격, 점프해서 떠 있으면 회피
+    // 터지는 순간 범위 안의 대상은 피격
     // 범위 안의 염동력 오브젝트는 위로 살짝 떠올랐다가 중력으로 떨어짐
     // 사거리 밖이면 근접 패턴처럼 예약 후 추격
     // OnShockwaveWarn 신호에서 터질 위치를 고정하고 바닥에 범위를 예고, OnShockwave 신호에서 고정한 위치로 판정
@@ -23,6 +23,8 @@ namespace TeamOdd.Boss
             [Tooltip("충격파가 터질 중심, 높이는 무시하고 이 지점 아래 바닥에서 터진다.")]
             public Transform origin;
             [Min(0)] public int damage = 10;
+            [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
+            public HitReaction reaction = HitReaction.Stagger;
             [Min(0f)] public float radius = 10f;
         }
 
@@ -32,16 +34,9 @@ namespace TeamOdd.Boss
         // 예고 신호가 없으면 터지는 순간의 위치로 판정하고 범위는 터질 때만 잠깐 표시
         [SerializeField] private Wave[] waves;
 
-        [Title("Hit")]
-        [Tooltip("대상 발밑에서 바닥까지 이만큼 이상 떠 있으면 회피(m)")]
-        [SerializeField, Min(0f)] private float jumpAvoidHeight = 0.5f;
-        [Tooltip("바닥 판정에 사용할 레이어")]
+        [Title("Ground")]
+        [Tooltip("충격 지점 아래 바닥을 찾을 때 사용할 레이어")]
         [SerializeField] private LayerMask groundLayers = Physics.DefaultRaycastLayers;
-
-        // 임시용: 나중에 플레이어 피격 판정을 담당하는 공용 인터페이스로 빼던가
-        // 보스 공격 State 최상위 클래스에 프로퍼티 이동하던가 할 듯
-        [field: Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-        [field: SerializeField] public HitReaction Reaction { get; private set; } = HitReaction.Stagger;
 
         [Title("Lift")]
         [Tooltip("파편 풀을 가진 스포너, 풀에서 활성화된 파편 중 범위 안의 오브젝트를 띄운다. 비어 있으면 씬에서 찾는다.")]
@@ -57,12 +52,9 @@ namespace TeamOdd.Boss
         [Tooltip("터진 뒤 범위 표시가 사라지는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f)] private float rangeFadeDuration = 0.4f;
 
-        // 발밑 레이캐스트가 대상 콜라이더 안쪽에서 시작하도록 띄우는 높이
-        private const float GroundProbeOffset = 0.1f;
         // 충격 지점 아래 바닥을 찾을 때 시작 높이와 탐색 거리(m)
         private const float GroundSearchHeight = 2f;
         private const float GroundSearchDistance = 10f;
-        private Collider targetCollider;
 
         // 예고 신호에서 고정한 터질 위치와 표시, waves와 같은 인덱스
         private Vector3[] warnedCenters;
@@ -80,10 +72,7 @@ namespace TeamOdd.Boss
             telegraphs = new AttackTelegraph[waves.Length];
         }
 
-        protected override void OnPatternEnter()
-        {
-            targetCollider = Target.GetComponent<Collider>();
-        }
+        protected override bool UsesMeleeHits => false;
 
         protected override void OnPatternExit()
         {
@@ -101,8 +90,6 @@ namespace TeamOdd.Boss
             if (name == "OnShockwaveWarn") Warn(ParseIndex(param));
             else if (name == "OnShockwave") Explode(ParseIndex(param));
         }
-
-        private static int ParseIndex(string param) => string.IsNullOrEmpty(param) ? 0 : int.Parse(param);
 
         // 피격 판정과 예고 표시가 같은 모양을 쓰도록 한곳에서 만듦
         private static TelegraphShape GetShape(Wave wave) => TelegraphShape.Circle(wave.radius);
@@ -133,7 +120,7 @@ namespace TeamOdd.Boss
             TelegraphShape shape = GetShape(wave);
             isWarned[index] = false;
 
-            if (shape.Contains(pose, Target.position) && IsTargetGrounded()) Hit(wave);
+            TryHit(shape, pose, wave.damage, wave.reaction);
 
             LiftFragments(pose, shape);
 
@@ -141,15 +128,6 @@ namespace TeamOdd.Boss
             AttackTelegraph telegraph = telegraphs[index] != null ? telegraphs[index] : root.ShowTelegraph(shape, pose, 0f);
             telegraphs[index] = null;
             if (telegraph != null) telegraph.Resolve(rangeFadeDuration);
-        }
-
-        // 대상 피벗이 발이 아닐 수 있어(CharacterController 중앙 등) 콜라이더 바닥에서 아래로 바닥을 찾음
-        private bool IsTargetGrounded()
-        {
-            Bounds bounds = targetCollider.bounds;
-            Vector3 feet = new Vector3(bounds.center.x, bounds.min.y + GroundProbeOffset, bounds.center.z);
-
-            return Physics.Raycast(feet, Vector3.down, jumpAvoidHeight + GroundProbeOffset, groundLayers, QueryTriggerInteraction.Ignore);
         }
 
         // 보스 몸에 걸리지 않도록 보스 콜라이더는 제외하고 가장 가까운 바닥을 찾음, 없으면 보스 높이 사용
@@ -169,18 +147,6 @@ namespace TeamOdd.Boss
             }
 
             return height;
-        }
-
-        private void Hit(Wave wave)
-        {
-            Debug.Log($"[Shockwave] 피격, 피해 {wave.damage}, 반응 {Reaction}", this);
-
-            // 피해를 받을 수 있는 대상일 때만 전달, 보스는 ICombatable이 아니라 보낸 쪽은 비워 둠
-            ICombatable receiver = Target.GetComponentInParent<ICombatable>();
-            if (receiver == null) return;
-
-            DamageInfo info = new DamageInfo(wave.damage, Target.position, receiver.Collider);
-            CombatManager.Instance.AddCombatEvent(new DamageEvent(null, receiver, info));
         }
 
         // 떠오르는 동안 물리와 부딪히지 않도록 kinematic으로 띄우고, 다 떠오르면 되돌려 중력으로 떨어뜨림

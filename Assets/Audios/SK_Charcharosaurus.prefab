@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7827787461146548316}
+  - component: {fileID: 7170481060008468760}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail2
   m_TagString: Untagged
@@ -170,6 +171,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6992329396614798868}
+  - component: {fileID: 802184404045844048}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Thigh
   m_TagString: Untagged
@@ -234,6 +236,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9140451444377378625}
+  - component: {fileID: 4566744993845097362}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Forearm
   m_TagString: Untagged
@@ -266,6 +269,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5166298896056812281}
+  - component: {fileID: 6506067185469964305}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R UpperArm
   m_TagString: Untagged
@@ -362,6 +366,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4059012339184732263}
+  - component: {fileID: 5586112747009406790}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Calf
   m_TagString: Untagged
@@ -394,6 +399,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2383699370520157915}
+  - component: {fileID: 3596799573489577125}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Spine1
   m_TagString: Untagged
@@ -459,6 +465,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 139675039292868437}
+  - component: {fileID: 3872523951829890165}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail
   m_TagString: Untagged
@@ -666,6 +673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4085053570260832905}
+  - component: {fileID: 4170070165453795975}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Forearm
   m_TagString: Untagged
@@ -698,6 +706,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4853698967900689596}
+  - component: {fileID: 7631087710597073396}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Head
   m_TagString: Untagged
@@ -770,6 +779,8 @@ GameObject:
   - component: {fileID: 5617293112904674764}
   - component: {fileID: 689814531121425060}
   - component: {fileID: 4391235115479835729}
+  - component: {fileID: 7477955140076880982}
+  - component: {fileID: 560260013335335844}
   m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
@@ -828,8 +839,8 @@ Rigidbody:
   m_Mass: 500
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_CenterOfMass: {x: 0, y: 1, z: 0.4}
+  m_InertiaTensor: {x: 1625, y: 1625, z: 250}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
@@ -837,8 +848,8 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 256
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -886,6 +897,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1863451980394766361}
+  - component: {fileID: 5453239034276973224}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Hand
   m_TagString: Untagged
@@ -1079,7 +1091,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8672937814003737655}
-  - component: {fileID: 1143977512422078150}
   m_Layer: 6
   m_Name: root
   m_TagString: Untagged
@@ -1103,27 +1114,6 @@ Transform:
   - {fileID: 8238401532119491521}
   m_Father: {fileID: 6366305689365515654}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1143977512422078150
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3397769765829392526}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10, y: 12.5, z: 1}
-  m_Center: {x: 0, y: 0, z: 0.5}
 --- !u!1 &3401772546427095476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1386,6 +1376,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8002674725407339505}
+  - component: {fileID: 5864669513969259159}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Hand
   m_TagString: Untagged
@@ -1420,6 +1411,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3479887247437156242}
+  - component: {fileID: 5369526070388541847}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Neck
   m_TagString: Untagged
@@ -1452,6 +1444,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2414002132752261598}
+  - component: {fileID: 4192300476115817309}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Queue de cheval 1
   m_TagString: Untagged
@@ -1484,6 +1477,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1892568374693869687}
+  - component: {fileID: 8588819296361937357}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Foot
   m_TagString: Untagged
@@ -1518,6 +1512,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4752734160497402653}
+  - component: {fileID: 3402576520175079463}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Calf
   m_TagString: Untagged
@@ -1550,6 +1545,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3585944699187141800}
+  - component: {fileID: 8631103880992522354}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail3
   m_TagString: Untagged
@@ -1692,6 +1688,18 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &5844296647884378143
 GameObject:
@@ -1797,6 +1805,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9003171050941178838}
+  - component: {fileID: 5842944857251999694}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Foot
   m_TagString: Untagged
@@ -2240,6 +2249,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5435851678239440585}
+  - component: {fileID: 6337819461406226561}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Pelvis
   m_TagString: Untagged
@@ -2275,6 +2285,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1829196573030613832}
+  - component: {fileID: 573847966932945372}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L UpperArm
   m_TagString: Untagged
@@ -2370,6 +2381,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3257961909005714615}
+  - component: {fileID: 2173924343473726646}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Spine
   m_TagString: Untagged
@@ -2433,6 +2445,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5095752218139195592}
+  - component: {fileID: 8784229681422085893}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ Tail1
   m_TagString: Untagged
@@ -2592,6 +2605,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5869316238951397819}
+  - component: {fileID: 7737687952165532062}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Thigh
   m_TagString: Untagged
@@ -2780,6 +2794,20 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &6440733829458887594
 GameObject:
@@ -2838,6 +2866,18 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2149664734680885421
 GameObject:
@@ -2896,6 +2936,20 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &6193906981827366311
 GameObject:
@@ -2954,6 +3008,18 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 0.4
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.48
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &1252071134404114645
 GameObject:
@@ -3012,6 +3078,20 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.48
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 1.2}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &5290839044995697151
 GameObject:
@@ -3070,6 +3150,28 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 1
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.58
+    damage: 10
+    reaction: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 1.0
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2743604352633935117
 GameObject:
@@ -3128,6 +3230,32 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.63
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.56
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 4.87}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2572639766621970829
 GameObject:
@@ -3186,6 +3314,38 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.58
+    damage: 10
+    reaction: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.96
+    damage: 10
+    reaction: 1
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.73
+    damage: 10
+    reaction: 1
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &3386899951334730820
 GameObject:
@@ -3244,6 +3404,44 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 2.25
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: 0.7, y: 6.1}
+    warnDuration: 0.6
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 2.38}
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.8
+      length: 5
+    offset: {x: -0.85, y: 6}
+    warnDuration: 0.57
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 4.87}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.7
+    damage: 10
+    reaction: 1
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 8.58}
+  hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &8976489482103912562
 GameObject:
@@ -3605,5 +3803,534 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b8b7f4df4a4d009bd1651998beceb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.SampleCombatMonster
-  <Collider>k__BackingField: {fileID: 1143977512422078150}
+  <Collider>k__BackingField: {fileID: 7477955140076880982}
   <Stats>k__BackingField: {fileID: 11400000, guid: d8025811fade4e0c9ec1c3ec0a378901, type: 2}
+--- !u!136 &3596799573489577125
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464052615122992045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.458
+  m_Height: 4.679
+  m_Direction: 1
+  m_Center: {x: -1.008, y: -0.18, z: -0.01}
+--- !u!136 &2173924343473726646
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8179770262602927060}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.586
+  m_Height: 4.194
+  m_Direction: 1
+  m_Center: {x: -0.604, y: -0.051, z: -0.002}
+--- !u!136 &6337819461406226561
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7646533345748698016}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.095
+  m_Height: 3.735
+  m_Direction: 1
+  m_Center: {x: 0.275, y: -0.102, z: -0}
+--- !u!136 &5369526070388541847
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4629216340964442316}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 2.652
+  m_Direction: 1
+  m_Center: {x: -0.707, y: -0.477, z: -0.009}
+--- !u!136 &4192300476115817309
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4630973663157246192}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.719
+  m_Height: 1.664
+  m_Direction: 1
+  m_Center: {x: -0.826, y: 0.472, z: 0.001}
+--- !u!65 &7631087710597073396
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036222518524382009}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.966, y: 2.363, z: 2.677}
+  m_Center: {x: -0.297, y: 1.172, z: -0.001}
+--- !u!136 &3872523951829890165
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541790654066979339}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.869
+  m_Height: 2.486
+  m_Direction: 1
+  m_Center: {x: -0.549, y: 0.019, z: -0.002}
+--- !u!136 &8784229681422085893
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8396260432461564753}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.588
+  m_Height: 1.378
+  m_Direction: 1
+  m_Center: {x: -0.638, y: -0.005, z: -0.004}
+--- !u!136 &7170481060008468760
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132424190854702321}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.386
+  m_Height: 1.074
+  m_Direction: 1
+  m_Center: {x: -0.406, y: -0.068, z: -0.006}
+--- !u!65 &8631103880992522354
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4916056290357691644}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7, y: 1.516, z: 2.969}
+  m_Center: {x: -0.809, y: 0.212, z: -0}
+--- !u!136 &573847966932945372
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7696882929200583917}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.777
+  m_Height: 2.891
+  m_Direction: 0
+  m_Center: {x: -1.579, y: 0.08, z: 0.13}
+--- !u!136 &4170070165453795975
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979172260052378256}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.712
+  m_Height: 2.566
+  m_Direction: 0
+  m_Center: {x: -0.77, y: 0.061, z: -0.013}
+--- !u!65 &5864669513969259159
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4608455425090260614}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.81, y: 0.753, z: 2.597}
+  m_Center: {x: -1.241, y: -0.156, z: -0.021}
+--- !u!136 &802184404045844048
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628497947562117113}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.807
+  m_Height: 1.968
+  m_Direction: 0
+  m_Center: {x: -1.235, y: 0.01, z: -0.045}
+--- !u!136 &3402576520175079463
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4843037118012064841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.552
+  m_Height: 1.783
+  m_Direction: 0
+  m_Center: {x: -0.961, y: -0.051, z: -0.024}
+--- !u!65 &5842944857251999694
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373297338768281890}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.669, y: 1.834, z: 1.843}
+  m_Center: {x: -0.365, y: 0.633, z: -0.092}
+--- !u!136 &6506067185469964305
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948284813391683550}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.777
+  m_Height: 2.891
+  m_Direction: 0
+  m_Center: {x: -1.579, y: 0.08, z: -0.13}
+--- !u!136 &4566744993845097362
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898369997103197631}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.712
+  m_Height: 2.566
+  m_Direction: 0
+  m_Center: {x: -0.77, y: 0.061, z: 0.009}
+--- !u!65 &5453239034276973224
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2675484239951159859}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 649
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.81, y: 0.753, z: 2.595}
+  m_Center: {x: -1.241, y: -0.156, z: 0.019}
+--- !u!136 &7737687952165532062
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8865946374128478447}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.806
+  m_Height: 1.968
+  m_Direction: 0
+  m_Center: {x: -1.235, y: 0.01, z: 0.04}
+--- !u!136 &5586112747009406790
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430831814310745904}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.552
+  m_Height: 1.783
+  m_Direction: 0
+  m_Center: {x: -0.961, y: -0.051, z: 0.019}
+--- !u!65 &8588819296361937357
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4734717416168927030}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 641
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.669, y: 1.834, z: 1.842}
+  m_Center: {x: -0.365, y: 0.633, z: 0.091}
+--- !u!136 &7477955140076880982
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 6
+  m_Direction: 2
+  m_Center: {x: 0, y: 1, z: 0.4}
+--- !u!114 &560260013335335844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9672f209e38a4141bd3c978221ad4790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitboxRegistrar

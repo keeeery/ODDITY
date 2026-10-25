@@ -1611,13 +1611,17 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -1640,6 +1644,9 @@ MonoBehaviour:
   trackTargetUntilDrop: 1
   initialFallSpeed: 0
   spinSpeed: 4
+  largeDamage: 20
+  mediumDamage: 10
+  reaction: 1
   markerRadiusScale: 1
   telegraphFadeDuration: 0.3
 --- !u!1 &1218552547
@@ -2017,8 +2024,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3996771544257051573, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: fragmentSpawner
+      value: 
+      objectReference: {fileID: 1433546535}
+    - target: {fileID: 4806054930190537673, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: fragmentSpawner
+      value: 
+      objectReference: {fileID: 1433546535}
     - target: {fileID: 6366305689365515654, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.42930126
@@ -2130,13 +2145,17 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -2147,6 +2166,11 @@ MonoBehaviour:
   aimHeight: 1
   compensateGravity: 1
   throwSpinSpeed: 3
+  damage: 20
+  reaction: 1
+  hitPadding: 0.3
+  minHitSpeed: 5
+  maxHitDuration: 2
   pathWidth: 1.5
   pathOvershoot: 2
   aimWarnDuration: 0.5
@@ -2892,13 +2916,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 0.3
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &339865817819279221
@@ -3029,13 +3057,17 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2028751608990286214
@@ -3095,13 +3127,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 0.6
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &2205336347470601070 stripped
@@ -3207,13 +3243,17 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &2926503066094882205
@@ -3241,13 +3281,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 2.25
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &2996881335281157723 stripped
@@ -3280,13 +3324,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 0.45
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &3379946826075930331
@@ -3395,13 +3443,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 0.3
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &4213788957085969123
@@ -3446,13 +3498,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 1.5
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &4274170381933308106
@@ -3713,13 +3769,17 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 1
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -3742,6 +3802,9 @@ MonoBehaviour:
   trackTargetUntilDrop: 1
   initialFallSpeed: 0
   spinSpeed: 4
+  largeDamage: 20
+  mediumDamage: 10
+  reaction: 1
   markerRadiusScale: 1
   telegraphFadeDuration: 0.3
 --- !u!4 &5679016486157703775
@@ -3799,13 +3862,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 0.4
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &5868952878083930517
@@ -3833,13 +3900,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 1
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   fragmentSpawner: {fileID: 1433546535}
@@ -3850,6 +3921,11 @@ MonoBehaviour:
   aimHeight: 1
   compensateGravity: 1
   throwSpinSpeed: 3
+  damage: 20
+  reaction: 1
+  hitPadding: 0.3
+  minHitSpeed: 5
+  maxHitDuration: 2
   pathWidth: 1.5
   pathOvershoot: 2
   aimWarnDuration: 0.5
@@ -3955,13 +4031,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 90
   <Recovery>k__BackingField: 0.45
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &6463533450950228275
@@ -4021,13 +4101,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 1.5
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!114 &6583875636076764361
@@ -4055,13 +4139,17 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &6627677997511795725
@@ -4877,7 +4965,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1447412156832593092, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1447412156832593094, guid: c9f28724f4d533d4f9678f29abfb975d, type: 3}
       propertyPath: m_Layer
@@ -5199,13 +5287,17 @@ MonoBehaviour:
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 1
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!4 &8055706478535909953
@@ -5386,24 +5478,27 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 1
-  hitShape:
-    kind: 1
-    radius: 8
-    angle: 120
-    width: 0
-    length: 0
-  hitWarnDuration: 0.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   waves:
   - origin: {fileID: 2996881335281157723}
     damage: 10
+    reaction: 1
     radius: 20
-  jumpAvoidHeight: 0.5
   groundLayers:
     serializedVersion: 2
     m_Bits: 2043
-  <Reaction>k__BackingField: 1
   fragmentSpawner: {fileID: 1433546535}
   liftHeight: {x: 0.3, y: 1}
   liftDuration: {x: 0.15, y: 0.3}

@@ -2,6 +2,8 @@ using System.Collections;
 using FantasyGarden.FSM;
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
+using TeamOdd.Combat;
+using TeamOdd.Psychokinesis;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,6 +12,7 @@ namespace TeamOdd.Boss
     // 투척 시작 시점(추후 보스 손 같은 지점)에 큰 염동력 오브젝트를 띄웠다가 플레이어 방향으로 던지는 패턴
     // 내부쿨이 돌아오고 플레이어가 minUseDistance보다 멀리 있을 때만 사용
     // 조준하는 동안 보스에서 대상 방향으로 날아갈 경로를 바닥에 예고하고, 던지는 순간 방향을 고정해 비행 시간 동안 채움
+    // 경로 예고는 길어서 지나가는 시점이 위치마다 다르므로, 피격 판정은 날아가는 오브젝트가 대상과 겹치는지로 처리
     public sealed class BossPsychokinesisThrowPattern : BossMeleePattern
     {
         [Title("References")]
@@ -36,6 +39,17 @@ namespace TeamOdd.Boss
         [SerializeField] private bool compensateGravity = true;
         [SerializeField, Min(0f)] private float throwSpinSpeed = 3f;
 
+        [Title("Hit")]
+        [SerializeField, Min(0)] private int damage = 20;
+        [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
+        [SerializeField] private HitReaction reaction = HitReaction.Stagger;
+        [Tooltip("오브젝트 박스 바깥으로 더할 판정 여유(m), 대상 몸에 부딪혀 튕겨도 겹침이 잡히도록 한다.")]
+        [SerializeField, Min(0f)] private float hitPadding = 0.3f;
+        [Tooltip("이 속도(m/s)보다 느려지면 판정을 끝낸다. 떨어져 구르는 오브젝트에는 맞지 않는다.")]
+        [SerializeField, Min(0f)] private float minHitSpeed = 5f;
+        [Tooltip("던진 뒤 판정을 유지하는 최대 시간(초)")]
+        [SerializeField, Min(0f)] private float maxHitDuration = 2f;
+
         [Title("Telegraph")]
         [Tooltip("경로 예고의 폭(m), 던지는 오브젝트 크기에 맞춘다.")]
         [SerializeField, Min(0f)] private float pathWidth = 1.5f;
@@ -50,8 +64,11 @@ namespace TeamOdd.Boss
         private Collider[] ownerColliders;
         private Collider[] ignoredColliders;
         private AttackTelegraph pathTelegraph;
+        private readonly Collider[] hitOverlaps = new Collider[16];
 
         private Transform Origin => throwOrigin != null ? throwOrigin : transform;
+
+        protected override bool UsesMeleeHits => false;
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
@@ -100,6 +117,8 @@ namespace TeamOdd.Boss
             if (name != "OnThrow") return;
 
             float flightTime = Throw();
+            // 패턴이 끝나 이 오브젝트가 비활성화돼도 비행 중 판정은 이어지도록 보스에서 실행
+            root.StartCoroutine(HitWhileFlying(heldBody));
             heldBody = null;
             StartCoroutine(RestoreOwnerCollisionsAfterDelay());
             LockPathTelegraph(flightTime);
@@ -157,6 +176,52 @@ namespace TeamOdd.Boss
                 heldBody.MovePosition(Origin.position);
                 heldBody.MoveRotation(spin);
             }
+        }
+
+        // 물리 스텝마다 오브젝트 박스와 대상이 겹치는지 검사해 처음 겹칠 때 한 번만 피해
+        // 대상에 부딪히면 속도가 줄어드므로 스텝 직전 속도로 판정 유지 여부를 정함
+        // 파괴되거나, 플레이어가 붙잡거나, 충격파로 떠올라(kinematic) 다른 상태가 되면 판정을 끝냄
+        private IEnumerator HitWhileFlying(Rigidbody body)
+        {
+            BoxCollider box = body.GetComponent<BoxCollider>();
+            body.TryGetComponent(out PsychokinesisObject psychokinesisObject);
+            float endTime = Time.time + maxHitDuration;
+
+            while (Time.time < endTime)
+            {
+                float speed = body.linearVelocity.magnitude;
+                yield return new WaitForFixedUpdate();
+
+                if (body.gameObject.activeInHierarchy == false || body.isKinematic) yield break;
+                if (psychokinesisObject != null && psychokinesisObject.IsHeld) yield break;
+                if (speed < minHitSpeed) yield break;
+
+                if (TryFindTargetOverlap(box, out Collider targetCollider) == false) continue;
+
+                SendDamage(damage, reaction, targetCollider.ClosestPoint(body.worldCenterOfMass));
+                yield break;
+            }
+        }
+
+        private bool TryFindTargetOverlap(BoxCollider box, out Collider targetCollider)
+        {
+            Transform boxTransform = box.transform;
+            Vector3 scale = boxTransform.lossyScale;
+            Vector3 halfExtents = Vector3.Scale(box.size * 0.5f, new Vector3(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z)))
+                                  + Vector3.one * hitPadding;
+            int count = Physics.OverlapBoxNonAlloc(boxTransform.TransformPoint(box.center), halfExtents, hitOverlaps,
+                boxTransform.rotation, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+
+            for (int index = 0; index < count; index++)
+            {
+                if (hitOverlaps[index].transform.IsChildOf(Target) == false) continue;
+
+                targetCollider = hitOverlaps[index];
+                return true;
+            }
+
+            targetCollider = null;
+            return false;
         }
 
         private IEnumerator RestoreOwnerCollisionsAfterDelay()
