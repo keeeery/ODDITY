@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TeamOdd.Superpower
 {
     /// <summary>
-    /// 플레이어가 닿으면 테이블에서 무작위 칩 하나를 플레이어 인벤토리에 지급하고 사라지는 오브젝트. (데모)
+    /// 플레이어가 닿으면 테이블에서 무작위 칩 하나를 무작위 모양으로 플레이어 인벤토리에 지급하고 사라지는 오브젝트. (데모)
     /// 트리거 콜라이더가 필요하다. 플레이어는 CharacterController라서 이쪽에 Rigidbody가 없어도 트리거가 발생한다.
     /// 패널은 열 때마다 인벤토리를 다시 읽으므로 이쪽은 UI를 모른다.
     /// </summary>
@@ -28,7 +28,9 @@ namespace TeamOdd.Superpower
             if (inventory == null)
                 return;
 
-            inventory.Add(PickRandomDef());
+            // 같은 칩이라도 얻을 때마다 칸 수 안에서 모양을 새로 뽑는다
+            AugmentationChipDef def = PickRandomDef();
+            inventory.Add(def, ChipShapeLibrary.Roll(def.CellCount, ChipGridMetrics.GridSize));
             Destroy(gameObject);
         }
 

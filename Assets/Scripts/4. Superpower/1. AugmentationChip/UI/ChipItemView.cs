@@ -58,8 +58,8 @@ namespace TeamOdd.Superpower
         {
             AugmentationChipDef def = Owned.Def;
 
-            // 회전하면 좌표가 바뀌므로 Def의 배열을 공유하지 않고 복사해서 쓴다
-            Cells = (Vector2Int[])def.Cells.Clone();
+            // 회전하면 좌표가 바뀌므로 보유 칩의 배열을 공유하지 않고 복사해서 쓴다
+            Cells = (Vector2Int[])Owned.Cells.Clone();
             RefreshSize();
 
             // Cells 좌표마다 단위 칩 스프라이트를 한 칸씩 깔아서 모양을 만든다

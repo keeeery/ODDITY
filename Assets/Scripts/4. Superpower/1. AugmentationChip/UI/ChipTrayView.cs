@@ -119,7 +119,7 @@ namespace TeamOdd.Superpower
                 ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
                 ChipSortKey.StatType => x.StatType.CompareTo(y.StatType),
                 ChipSortKey.Value => x.Value.CompareTo(y.Value),
-                ChipSortKey.Size => x.Cells.Length.CompareTo(y.Cells.Length),
+                ChipSortKey.Size => x.CellCount.CompareTo(y.CellCount),
                 _ => 0,
             };
 

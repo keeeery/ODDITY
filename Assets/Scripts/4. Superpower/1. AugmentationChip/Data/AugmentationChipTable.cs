@@ -40,7 +40,7 @@ namespace TeamOdd.Superpower
                     chipDto.StatType = cells[3];
                     chipDto.Value = int.Parse(cells[4]);
                     chipDto.UnitSpriteKey = cells[5];
-                    chipDto.GridData = cells[6];
+                    chipDto.CellCount = int.Parse(cells[6]);
 
                     rows.Add(chipDto);
                 }
@@ -51,7 +51,6 @@ namespace TeamOdd.Superpower
             {
                 StatType statType = Enum.Parse<StatType>(chipDto.StatType);
                 Sprite unitSprite = Resources.Load<Sprite>(chipDto.UnitSpriteKey);
-                Vector2Int[] gridCells = ParseGrid(chipDto.GridData, out int width, out int height);
 
                 defs[chipDto.ID] = new AugmentationChipDef
                 {
@@ -61,36 +60,11 @@ namespace TeamOdd.Superpower
                     StatType = statType,
                     Value = chipDto.Value,
                     UnitSprite = unitSprite,
-                    Cells = gridCells,
-                    Width = width,
-                    Height = height,
+                    CellCount = chipDto.CellCount,
                 };
             }
 
             Debug.Log(defs.Count);
-        }
-
-        // GridData 문자열을 칸 좌표 배열로 바꾼다
-        // "10/11" -> '/'로 자른 덩어리가 한 행(위에서부터 y), 각 글자가 열(x), '1'인 칸만 사용
-        //   ■□
-        //   ■■   => (1,0) (1,1)
-        private Vector2Int[] ParseGrid(string gridData, out int width, out int height)
-        {
-            string[] gridRows = gridData.Split('/');
-            width = gridRows[0].Length;
-            height = gridRows.Length;
-
-            List<Vector2Int> gridCells = new List<Vector2Int>();
-            for (int y = 0; y < gridRows.Length; y++)
-            {
-                for (int x = 0; x < gridRows[y].Length; x++)
-                {
-                    if (gridRows[y][x] == '1')
-                        gridCells.Add(new Vector2Int(x, y));
-                }
-            }
-
-            return gridCells.ToArray();
         }
     }
 }

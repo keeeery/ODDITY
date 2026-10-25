@@ -11,7 +11,7 @@ namespace TeamOdd.Superpower
         public string StatType;
         public int Value;
         public string UnitSpriteKey;
-        public string GridData;
+        public int CellCount;
     }
 
     public class AugmentationChipDef
@@ -23,9 +23,7 @@ namespace TeamOdd.Superpower
         public int Value;
         public Sprite UnitSprite;
 
-        // 칩이 차지하는 칸 좌표 (좌상단 (0,0), x는 오른쪽, y는 아래로 증가)
-        public Vector2Int[] Cells;
-        public int Width;
-        public int Height;
+        // 칩이 차지하는 칸 수. 모양은 칩을 얻을 때마다 ChipShapeLibrary가 정해서 OwnedChip에 넣는다
+        public int CellCount;
     }
 }

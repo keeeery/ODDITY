@@ -25,9 +25,10 @@ namespace TeamOdd.Superpower
             owner = GetComponent<CombatEntity>();
         }
 
-        public void Add(AugmentationChipDef def)
+        // cells는 칩을 주는 쪽이 ChipShapeLibrary.Roll로 정한 모양
+        public void Add(AugmentationChipDef def, Vector2Int[] cells)
         {
-            chips.Add(new OwnedChip(def));
+            chips.Add(new OwnedChip(def, cells));
         }
 
         // 장착 기록을 남기고 스탯 보너스를 더한다
