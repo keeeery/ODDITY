@@ -43,6 +43,8 @@ namespace TeamOdd.Psychokinesis
         internal MeshRenderer OutlineRenderer => meshRenderer;
         internal int SubMeshCount => subMeshCount;
         internal Color OutlineColor { get; private set; }
+        // 조준 중인 대상을 지금 잡을 수 있는지 (조준점 링 표시용)
+        internal bool IsFocusAvailable { get; private set; }
         internal float OutlineWidthPixels => outlineWidthPixels;
         private Collider[] objectColliders;
         private Collider[] playerColliders;
@@ -334,6 +336,7 @@ namespace TeamOdd.Psychokinesis
                 if (OutlinedObject == this) OutlinedObject = null;
                 return;
             }
+            IsFocusAvailable = available;
             Material colorMaterial = available ? availableOutline : unavailableOutline;
             OutlineColor = colorMaterial.GetColor(outlineColorId);
             OutlinedObject = this;

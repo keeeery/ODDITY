@@ -10,6 +10,9 @@ namespace TeamOdd.UI
     {
         private const float DuplicateDistance = 0.001f;
 
+        private static readonly float[] arcRadii = new float[4];
+        private static readonly Color32[] arcColors = new Color32[4];
+
         private readonly List<Vector2> points = new();
 
         public void Clear() => points.Clear();
@@ -113,6 +116,54 @@ namespace TeamOdd.UI
                 vh.AddTriangle(startIndex, current, next);
                 vh.AddTriangle(current, current + 1, next + 1);
                 vh.AddTriangle(current, next + 1, next);
+            }
+        }
+
+        // 반지름 radius를 중심으로 width 두께의 호(고리 일부), 안팎 가장자리를 feather 폭만큼 투명하게 풀어 그린다.
+        // 각도는 위쪽(0도)에서 시계 방향, 0~360이면 닫힌 고리가 된다.
+        public static void FillArc(VertexHelper vh, Vector2 center, float radius, float width, float startAngle,
+            float endAngle, int segmentsPerCircle, float feather, Color32 fillColor)
+        {
+            if (width <= 0f || Mathf.Approximately(startAngle, endAngle)) return;
+
+            float half = width * 0.5f;
+            float solidHalf = Mathf.Max(0f, half - feather * 0.5f);
+            // 두께가 feather보다 얇으면 가운데 선 하나로 모으고 그만큼 흐리게 한다.
+            if (half < feather * 0.5f) fillColor.a = (byte)(fillColor.a * (width / feather));
+
+            Color32 clear = fillColor;
+            clear.a = 0;
+            // 매 프레임 그려지므로 배열을 새로 만들지 않고 재사용한다.
+            float[] radii = arcRadii;
+            Color32[] colors = arcColors;
+            radii[0] = Mathf.Max(0f, radius - half - feather * 0.5f);
+            radii[1] = radius - solidHalf;
+            radii[2] = radius + solidHalf;
+            radii[3] = radius + half + feather * 0.5f;
+            colors[0] = clear;
+            colors[1] = fillColor;
+            colors[2] = fillColor;
+            colors[3] = clear;
+
+            int segments = Mathf.Max(2, Mathf.CeilToInt(segmentsPerCircle * Mathf.Abs(endAngle - startAngle) / 360f));
+            int startIndex = vh.currentVertCount;
+
+            for (int index = 0; index <= segments; index++)
+            {
+                Vector2 direction = AngleToDirection(Mathf.Lerp(startAngle, endAngle, (float)index / segments));
+                for (int row = 0; row < radii.Length; row++)
+                    vh.AddVert(center + direction * radii[row], colors[row], Vector2.zero);
+            }
+
+            for (int index = 0; index < segments; index++)
+            {
+                int current = startIndex + index * radii.Length;
+                int next = current + radii.Length;
+                for (int row = 0; row < radii.Length - 1; row++)
+                {
+                    vh.AddTriangle(current + row, next + row, current + row + 1);
+                    vh.AddTriangle(current + row + 1, next + row, next + row + 1);
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 using TeamOdd.Boss;
 using TeamOdd.Combat;
+using TMPro;
 using UnityEngine;
 
 namespace TeamOdd.UI
@@ -13,14 +14,15 @@ namespace TeamOdd.UI
         [Tooltip("비어 있으면 씬에서 활성화된 보스(BossMonster)의 CombatEntity를 찾는다.")]
         [SerializeField] private CombatEntity boss;
 
+        [Header("Name")]
+        [SerializeField] private TMP_Text nameText;
+        [Tooltip("비어 있으면 보스 오브젝트 이름을 쓴다.")]
+        [SerializeField] private string bossName;
+
         [Header("Bars")]
         [SerializeField] private VectorBar hpBar;
         // TODO: 보스 무력화 수치가 생기면 연결
         [SerializeField] private VectorBar groggyBar;
-
-        [Header("Display")]
-        // 값이 바뀔 때 Fill이 따라가는 속도, 0이면 즉시 반영
-        [SerializeField, Min(0f)] private float fillLerpSpeed = 12f;
 
         private bool findsBoss;
 
@@ -32,7 +34,8 @@ namespace TeamOdd.UI
         private void Start()
         {
             if (findsBoss) boss = FindActiveBoss();
-            if (hpBar != null) hpBar.FillAmount = GetHpRatio();
+            if (hpBar != null) hpBar.SetFillImmediate(GetHpRatio());
+            UpdateName();
         }
 
         private void Update()
@@ -44,7 +47,8 @@ namespace TeamOdd.UI
                 if (found != boss)
                 {
                     boss = found;
-                    if (hpBar != null) hpBar.FillAmount = GetHpRatio();
+                    if (hpBar != null) hpBar.SetFillImmediate(GetHpRatio());
+                    UpdateName();
                 }
             }
 
@@ -55,9 +59,16 @@ namespace TeamOdd.UI
         {
             if (bar == null) return;
 
-            bar.FillAmount = fillLerpSpeed > 0f
-                ? Mathf.Lerp(bar.FillAmount, ratio, 1f - Mathf.Exp(-fillLerpSpeed * Time.deltaTime))
-                : ratio;
+            bar.FillAmount = ratio;
+        }
+
+        private void UpdateName()
+        {
+            if (nameText == null) return;
+
+            nameText.text = string.IsNullOrEmpty(bossName) == false ? bossName
+                : boss != null ? boss.gameObject.name
+                : string.Empty;
         }
 
         private float GetHpRatio()
