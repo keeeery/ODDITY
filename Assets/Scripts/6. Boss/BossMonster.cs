@@ -21,6 +21,7 @@ namespace TeamOdd.Boss
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightHalfAngle = 60f;
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightRange = 10f;
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float moveHalfAngle = 45f;
+        [SerializeField, TabGroup("Settings/Type", "Movement")] private float keepMoveHalfAngle = 90f; // 이미 이동 중일 때 계속 이동할 수 있는 각도
 
         [Title("States")]
         [ShowInInspector, ReadOnly] public float IntentStartTime { get; private set; }
@@ -37,6 +38,7 @@ namespace TeamOdd.Boss
         
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
         public bool CanMoveToTarget => Mathf.Abs(SignedAngleToTarget) <= moveHalfAngle;
+        public bool CanKeepMovingToTarget => Mathf.Abs(SignedAngleToTarget) <= keepMoveHalfAngle;
         
         private void Update()
         {
