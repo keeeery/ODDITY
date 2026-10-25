@@ -11,6 +11,9 @@ namespace TeamOdd.Superpower
         public const float CellGap = 4f;
         public const float Step = CellSize + CellGap;
 
+        // 칩 모양을 뽑을 때 이 크기 그리드에 들어가는 모양만 고른다. 프리팹 그리드 크기(AugmentationChipLayoutBuilder.gridSize)와 맞춘다
+        public const int GridSize = 6;
+
         // 칸 좌표 -> 좌상단 기준 위치 (y는 아래로 증가하므로 음수)
         public static Vector2 CellPosition(Vector2Int cell) => new(cell.x * Step, -cell.y * Step);
 

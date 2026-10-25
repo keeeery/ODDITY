@@ -9,6 +9,7 @@ namespace TeamOdd.Superpower
 
     /// <summary>
     /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
+    /// 트레이 크기와 정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
     /// </summary>
     public class ChipTrayView : MonoBehaviour
     {
@@ -23,13 +24,20 @@ namespace TeamOdd.Superpower
 
         [SerializeField] private RectTransform content;
         [SerializeField] private SortButton[] sortButtons;
-        [SerializeField] private float padding = 12f;
+        // content 안쪽 여백이자 칩 사이 간격
+        [SerializeField] private float chipSpacing = 12f;
 
         private readonly List<ChipItemView> chips = new();
         private ChipSortKey sortKey = ChipSortKey.ID;
         private bool sortAscending = true;
 
-        public Transform Content => content;
+        public RectTransform Content => content;
+
+        // 아래는 AugmentationChipLayoutBuilder가 트레이 크기와 정렬 버튼을 배치할 때 읽는다
+        public float ChipSpacing => chipSpacing;
+        public int SortButtonCount => sortButtons.Length;
+        public RectTransform GetSortButtonRect(int index) => (RectTransform)sortButtons[index].button.transform;
+        public RectTransform GetSortLabelRect(int index) => sortButtons[index].text.rectTransform;
 
         private void Awake()
         {
@@ -50,33 +58,36 @@ namespace TeamOdd.Superpower
 
         public void Remove(ChipItemView chip) => chips.Remove(chip);
 
+        // 패널을 열 때 칩 뷰를 새로 만들기 전에 비운다
+        public void Clear() => chips.Clear();
+
         // 트레이에 남아있는 칩을 정렬해서 왼쪽부터 채우고, 폭을 넘으면 다음 줄로 내린다
         public void Layout()
         {
             chips.Sort(Compare);
 
             float contentWidth = content.sizeDelta.x;
-            Vector2 cursor = new Vector2(padding, -padding);
+            Vector2 cursor = new Vector2(chipSpacing, -chipSpacing);
             float rowHeight = 0f;
             foreach (ChipItemView chip in chips)
             {
-                float chipWidth = ChipGridMetrics.Length(chip.Chip.Width);
-                float chipHeight = ChipGridMetrics.Length(chip.Chip.Height);
+                float chipWidth = ChipGridMetrics.Length(chip.Width);
+                float chipHeight = ChipGridMetrics.Length(chip.Height);
 
-                if (cursor.x > padding && cursor.x + chipWidth > contentWidth - padding)
+                if (cursor.x > chipSpacing && cursor.x + chipWidth > contentWidth - chipSpacing)
                 {
-                    cursor = new Vector2(padding, cursor.y - rowHeight - padding);
+                    cursor = new Vector2(chipSpacing, cursor.y - rowHeight - chipSpacing);
                     rowHeight = 0f;
                 }
 
                 chip.Rect.SetParent(content, false);
                 chip.Rect.anchoredPosition = cursor;
-                cursor.x += chipWidth + padding;
+                cursor.x += chipWidth + chipSpacing;
                 rowHeight = Mathf.Max(rowHeight, chipHeight);
             }
 
             // 마지막 줄까지 포함한 높이로 content 크기를 맞춰야 스크롤 범위가 정해진다
-            float contentHeight = -cursor.y + rowHeight + padding;
+            float contentHeight = -cursor.y + rowHeight + chipSpacing;
             content.sizeDelta = new Vector2(contentWidth, contentHeight);
         }
 
@@ -101,14 +112,14 @@ namespace TeamOdd.Superpower
 
         private int Compare(ChipItemView a, ChipItemView b)
         {
-            AugmentationChip x = a.Chip;
-            AugmentationChip y = b.Chip;
+            AugmentationChipDef x = a.Owned.Def;
+            AugmentationChipDef y = b.Owned.Def;
             int result = sortKey switch
             {
                 ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
-                ChipSortKey.StatType => x.StatType.CompareTo(y.StatType),
-                ChipSortKey.Value => x.Value.CompareTo(y.Value),
-                ChipSortKey.Size => x.Cells.Length.CompareTo(y.Cells.Length),
+                ChipSortKey.StatType => CompareType(x, y),
+                ChipSortKey.Value => CompareValue(x, y),
+                ChipSortKey.Size => x.CellCount.CompareTo(y.CellCount),
                 _ => 0,
             };
 
@@ -117,6 +128,27 @@ namespace TeamOdd.Superpower
                 result = x.ID.CompareTo(y.ID);
 
             return sortAscending ? result : -result;
+        }
+
+        // 스탯/수치 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
+        // 스킬 칩의 StatType/Value는 쓰지 않는 기본값이라 그대로 비교하면 능력치 칩 사이에 섞인다
+        private static int CompareType(AugmentationChipDef x, AugmentationChipDef y)
+        {
+            int result = x.ChipType.CompareTo(y.ChipType);
+            if (result != 0)
+                return result;
+
+            return x.ChipType == ChipType.Stat ? x.StatType.CompareTo(y.StatType) : x.SkillType.CompareTo(y.SkillType);
+        }
+
+        // 스킬 칩은 수치 대신 쿨타임으로 비교한다
+        private static int CompareValue(AugmentationChipDef x, AugmentationChipDef y)
+        {
+            int result = x.ChipType.CompareTo(y.ChipType);
+            if (result != 0)
+                return result;
+
+            return x.ChipType == ChipType.Stat ? x.Value.CompareTo(y.Value) : x.Cooldown.CompareTo(y.Cooldown);
         }
     }
 }
