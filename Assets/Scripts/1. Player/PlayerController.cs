@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Study.Utilities;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
@@ -13,40 +14,46 @@ namespace TeamOdd.Player
         private static readonly int Rolling = Animator.StringToHash("Rolling");
         private static readonly int Walk = Animator.StringToHash("IsWalk");
         private static readonly int Run = Animator.StringToHash("IsRun");
-        
-        [Header("이동")]
-        [SerializeField] private float walkSpeed = 4f;
+
+        [Header("이동")] [SerializeField] private float walkSpeed = 4f;
         [SerializeField] private float runSpeed = 7f;
         [SerializeField] private float jumpHeight = 1.2f;
         [SerializeField] private float gravity = -9.81f;
 
-        [Header("방향")]
-        [SerializeField] private Transform moveReference;
+        [Header("방향")] [SerializeField] private Transform moveReference;
         [SerializeField] private bool rotateTowardMove = true;
         [SerializeField] private float turnSpeed = 720f;
-        
-        [Header("구르기")]
-        [SerializeField] private float rollDistance = 4f;
+
+        [Header("구르기")] [SerializeField] private float rollDistance = 4f;
         [SerializeField] private float rollDuration = 0.6f;
-        
+
         [SerializeField] private Animator animator;
 
-        [Header("밀기")]
-        [SerializeField, Min(0f)] private float pushForce = 150f;
+        [Header("밀기")] [SerializeField, Min(0f)]
+        private float pushForce = 150f;
+
         [SerializeField, Min(0.01f)] private float maxPushMass = 50f;
         [SerializeField, Range(0f, 1f)] private float minPushSpeedRatio = 0.3f;
 
-        [Header("홀딩")]
-        [SerializeField, Range(0f, 90f)] private float holdBodyLeadAngle = 50f;
+        [Header("홀딩")] [SerializeField, Range(0f, 90f)]
+        private float holdBodyLeadAngle = 50f;
+
+        [Header("넉백")]
+        [SerializeField] private float wakeUpTime;
+        private bool isKnockback;
+        
+
         [SerializeField, Range(0f, 90f)] private float armYawRange = 30f;
         [SerializeField, Min(0.1f)] private float holdTurnSpeed = 15f;
         [SerializeField, Min(0.1f)] private float armReach = 0.6f;
         [SerializeField, Range(0f, 1f)] private float armIkWeight = 0.55f;
         [SerializeField, Range(0f, 1f)] private float holdFingerBendScale = 0.5f;
 
-        [Header("던지기 준비")]
-        [SerializeField, Min(0.05f)] private float throwPrepareReach = 0.3f;
+        [Header("던지기 준비")] [SerializeField, Min(0.05f)]
+        private float throwPrepareReach = 0.3f;
+
         [SerializeField, Range(-90f, 90f)] private float throwPrepareWristBend = -40f;
+
         // 팔꿈치가 굽는 방향, 플레이어 로컬 좌표, 기존 hint 객체를 추가하는 대신 오프셋 값으로 대체
         [SerializeField] private Vector3 elbowHintOffset = new(-0.786f, 1.283f, -0.111f);
 
@@ -56,7 +63,7 @@ namespace TeamOdd.Player
         private Vector3 rollDir;
         private float moveX, moveZ;
 
-        private float pushSpeedRatio = 1f;        // 이번 프레임 Move 중 밀고 있는 물체로 계산
+        private float pushSpeedRatio = 1f; // 이번 프레임 Move 중 밀고 있는 물체로 계산
         private float appliedPushSpeedRatio = 1f; // 이번 프레임 이동에 적용 (직전 프레임 계산값)
 
         private bool defaultRotateTowardMove;
@@ -94,9 +101,11 @@ namespace TeamOdd.Player
 
         private void Update()
         {
+            if(isKnockback) return;
+            
             UpdatePushSpeedRatio();
             UpdateHoldFacing();
-
+            
             // 구르는 동안에는 일반 이동 및 입력 처리를 막습니다.
             if (IsRolling)
             {
@@ -107,7 +116,7 @@ namespace TeamOdd.Player
             UpdateMovement();
             WalkAnimation();
             CheckRollInput();
-            
+
             heldObject = psychokinesisController.HeldObject;
             animator.SetLayerWeight(1, heldObject == null ? 0.0f : 1.0f);
         }
@@ -118,14 +127,14 @@ namespace TeamOdd.Player
 
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
             IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed);
-            
+
             moveX = SmoothAxis(moveX, inputRaw.x);
             moveZ = SmoothAxis(moveZ, inputRaw.y);
 
             if (moveReference == null) moveReference = Camera.main.transform;
 
             Transform reference = moveReference;
-            
+
             Vector3 forward = Vector3.ProjectOnPlane(reference.forward, Vector3.up).normalized;
             Vector3 right = Vector3.ProjectOnPlane(reference.right, Vector3.up).normalized;
 
@@ -142,15 +151,17 @@ namespace TeamOdd.Player
             }
 
             Vector3 totalMove = (moveVector * (speed * appliedPushSpeedRatio)) + new Vector3(0, velocity.y, 0);
-            
+
             controller.Move(totalMove * Time.deltaTime);
 
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
             {
-                Quaternion targetRotation = 
-                    SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)?
-                        Quaternion.LookRotation(Vector3.forward) : Quaternion.LookRotation(moveVector);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+                Quaternion targetRotation =
+                    SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)
+                        ? Quaternion.LookRotation(Vector3.forward)
+                        : Quaternion.LookRotation(moveVector);
+                transform.rotation =
+                    Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             }
         }
 
@@ -162,11 +173,11 @@ namespace TeamOdd.Player
 
             bool isMove = inputRaw != Vector2.zero;
             bool isRun = SimpleInput.GetKey(Key.LeftShift);
-            
+
             animator.SetBool(Walk, isMove);
             animator.SetBool(Run, isRun);
         }
-        
+
         private void OnAnimatorIK(int layerIndex)
         {
             UpdateHoldArmIK();
@@ -184,10 +195,10 @@ namespace TeamOdd.Player
         private void CheckRollInput()
         {
             if (SimpleInput.GetKeyDown(Key.G) == false) return;
-            
+
             OnRollRequested?.Invoke();
         }
-        
+
         public void InputRolling()
         {
             if (IsRolling) return;
@@ -204,12 +215,12 @@ namespace TeamOdd.Player
 
             animator.SetTrigger(Rolling);
         }
-        
+
         public void EndRoll()
         {
             IsRolling = false;
         }
-        
+
         private void ExecuteRollMovement()
         {
             float rollSpeed = rollDistance / rollDuration;
@@ -218,7 +229,7 @@ namespace TeamOdd.Player
         }
 
         #endregion
-        
+
         #region 밀기
 
         private void UpdatePushSpeedRatio()
@@ -337,7 +348,8 @@ namespace TeamOdd.Player
 
             // IK 적용 전 애니메이션의 팔 방향에서 새 팔 방향으로 돌린 만큼 손도 돌려 손목 각도 유지
             Vector3 animatedArm = animator.GetIKPosition(AvatarIKGoal.LeftHand) - shoulder;
-            Quaternion handRotation = Quaternion.FromToRotation(animatedArm, direction) * animator.GetIKRotation(AvatarIKGoal.LeftHand);
+            Quaternion handRotation = Quaternion.FromToRotation(animatedArm, direction) *
+                                      animator.GetIKRotation(AvatarIKGoal.LeftHand);
 
             lastHandTarget = shoulder + direction * Mathf.Lerp(armReach, throwPrepareReach, throwPrepareBlend);
             lastHandRotation = BendWrist(handRotation, direction, throwPrepareWristBend * throwPrepareBlend);
@@ -387,7 +399,48 @@ namespace TeamOdd.Player
             float keep = Mathf.Lerp(1f, holdFingerBendScale, ikBlend / armIkWeight);
 
             for (int i = 0; i < leftFingers.Length; i++)
-                leftFingers[i].localRotation = Quaternion.Slerp(leftFingerRestRotations[i], leftFingers[i].localRotation, keep);
+                leftFingers[i].localRotation =
+                    Quaternion.Slerp(leftFingerRestRotations[i], leftFingers[i].localRotation, keep);
+        }
+
+        #endregion
+
+        private Coroutine knockbackRoutine;
+
+        #region 넉백 
+        
+        public void ApplyKnockback(Vector3 attackerPos, float dist = 6f, float height = 2f, float dur = 0.6f)
+        {
+            // 넉백 중 다시 맞으면 이전 넉백을 끊고 새로 시작
+            if (knockbackRoutine != null) StopCoroutine(knockbackRoutine);
+            knockbackRoutine = StartCoroutine(Knockback(attackerPos, dist, height, dur));
+        }
+
+        public IEnumerator Knockback(Vector3 bossPos, float dist = 6f, float height = 2f, float dur = 0.6f)
+        {
+            // 입력 차단, 무적 처리
+            isKnockback = true;
+            Vector3 dir = transform.position - bossPos;
+            dir.y = 0;
+            dir.Normalize();
+            Vector3 start = transform.position;
+            float t = 0, prevY = 0;
+            animator.SetTrigger("Knockdown");
+            while (t < 1f)
+            {
+                t += Time.deltaTime / dur;
+                float y = 4f * height * t * (1f - t); // 포물선 높이
+                Vector3 move = dir * (dist * (Time.deltaTime / dur));
+                move.y = y - prevY;
+                prevY = y;
+                controller.Move(move); // 벽 충돌은 Move가 처리
+                yield return null;
+            }
+            yield return new WaitForSeconds(wakeUpTime);
+            Debug.Log("wakeup");
+            animator.SetTrigger("Wakeup");
+            isKnockback = false;
+            // 착지 → 기상 애니메이션
         }
 
         #endregion

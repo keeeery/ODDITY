@@ -1,4 +1,4 @@
-﻿using System;
+﻿using TeamOdd.Player;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using FantasyGarden.FSM;
@@ -16,6 +16,7 @@ namespace TeamOdd.Boss
 
         [field: Title("References")]
         [field: SerializeField] public Transform Target { get; private set; } // 임시용, 어차피 우리 게임은 플레이어 한 명이니 플레이어 싱글톤 박아서 참조하면 될거같기도 하고?
+        [field: SerializeField] public Player.Player Player { get; private set; }
         [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [TitleGroup("Settings")]

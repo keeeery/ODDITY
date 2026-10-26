@@ -16,16 +16,16 @@ namespace TeamOdd.Boss
         protected override void OnEnter()
         {
             // 내부쿨 패턴은 발동 조건(쿨 포함)을 만족하면 우선 사용
-            if (roarDropPattern.CanUse)
+            if (roarDropPattern != null && roarDropPattern.CanUse)
             {
                 StateMachine.ChangeState(roarDropPattern.GetType());
                 return;
             }
 
             // TODO: 거리 조건 원인 확인용 임시 로그, 확인 후 제거
-            Debug.Log($"[Idle] 투척 판정 거리 {root.DistanceToTarget:F2}m, 투척 CanUse {throwPattern.CanUse}, 남은 쿨 {throwPattern.RemainingCooldown:F1}s", this);
+     //       Debug.Log($"[Idle] 투척 판정 거리 {root.DistanceToTarget:F2}m, 투척 CanUse {throwPattern.CanUse}, 남은 쿨 {throwPattern.RemainingCooldown:F1}s", this);
 
-            if (throwPattern.CanUse)
+            if (throwPattern != null && throwPattern.CanUse)
             {
                 StateMachine.ChangeState(throwPattern.GetType());
                 return;

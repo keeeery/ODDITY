@@ -78,6 +78,8 @@ namespace TeamOdd.Boss
 
         private void OnAnimEvent(string eventName, string eventParam)
         {
+            Debug.Log("animation start");
+            
             if (eventName == "OnClawWarn")
             {
                 if (telegraph != null) telegraph.Cancel();
@@ -87,7 +89,13 @@ namespace TeamOdd.Boss
 
             if (eventName != "OnClawHit") return;
 
-            // TODO: 피격 판정은 표시와 같은 hitShape.Contains(HitPose, Target.position)로 처리
+            // 표시와 같은 범위로 피격 판정, 넉백 코루틴은 이 상태가 꺼져도 끝까지 돌도록 플레이어 쪽에서 실행
+            if (hitShape.Contains(HitPose, Target.position))
+            {
+                Debug.Log("claw hit");
+                Player.Player.Instance.PlayerController.ApplyKnockback(root.transform.position, attackRange);
+            }
+
             AttackTelegraph resolved = telegraph != null ? telegraph : root.ShowTelegraph(hitShape, HitPose, 0f);
             telegraph = null;
             if (resolved != null) resolved.Resolve(telegraphFadeDuration);

@@ -325,6 +325,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.AnimStateEventSender
   events:
+  - name: StartRolling
+    time: 0
+    parameter: 
   - name: EndRolling
     time: 0.95
     parameter: 
@@ -674,7 +677,7 @@ AnimatorStateMachine:
     m_Position: {x: 40, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4968282656047845173}
-    m_Position: {x: 251, y: 254, z: 0}
+    m_Position: {x: 340, y: 260, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -5661055427096928627}
