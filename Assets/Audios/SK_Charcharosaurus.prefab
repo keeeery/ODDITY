@@ -172,6 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6992329396614798868}
   - component: {fileID: 802184404045844048}
+  - component: {fileID: 2760868453514168307}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Thigh
   m_TagString: Untagged
@@ -367,6 +368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4059012339184732263}
   - component: {fileID: 5586112747009406790}
+  - component: {fileID: 2101317067896533116}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Calf
   m_TagString: Untagged
@@ -1483,6 +1485,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1892568374693869687}
   - component: {fileID: 8588819296361937357}
+  - component: {fileID: 4376371248761774960}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Foot
   m_TagString: Untagged
@@ -1518,6 +1521,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4752734160497402653}
   - component: {fileID: 3402576520175079463}
+  - component: {fileID: 8445678869301324283}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Calf
   m_TagString: Untagged
@@ -1811,6 +1815,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9003171050941178838}
   - component: {fileID: 5842944857251999694}
+  - component: {fileID: 3802012911582288101}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ L Foot
   m_TagString: Untagged
@@ -2613,6 +2618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5869316238951397819}
   - component: {fileID: 7737687952165532062}
+  - component: {fileID: 357652334758552239}
   m_Layer: 6
   m_Name: CHARCHAROSAURSUS_ R Thigh
   m_TagString: Untagged
@@ -4492,3 +4498,75 @@ MonoBehaviour:
   showRangeWhenInactive: 1
   turnDuration: 0.83
   maxTurnSpeed: 240
+--- !u!114 &2760868453514168307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628497947562117113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!114 &8445678869301324283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4843037118012064841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!114 &3802012911582288101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373297338768281890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!114 &357652334758552239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8865946374128478447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!114 &2101317067896533116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430831814310745904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!114 &4376371248761774960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4734717416168927030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider

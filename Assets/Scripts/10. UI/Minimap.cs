@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TeamOdd.Boss;
 using TeamOdd.Psychokinesis;
+using TeamOdd.TimeControl;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -140,7 +141,11 @@ namespace TeamOdd.UI
             base.OnDestroy();
             RenderPipelineManager.beginCameraRendering -= EnqueueWallPass;
             if (wallMaterial != null) Destroy(wallMaterial);
-            if (mapCamera != null) Destroy(mapCamera.gameObject);
+            if (mapCamera != null)
+            {
+                TimeFreezeOverlayFeature.IncludeCamera(mapCamera);
+                Destroy(mapCamera.gameObject);
+            }
             if (mapTexture != null)
             {
                 mapTexture.Release();
@@ -185,6 +190,9 @@ namespace TeamOdd.UI
             mapCameraData = mapCamera.GetUniversalAdditionalCameraData();
             mapCameraData.renderPostProcessing = false;
             mapCameraData.renderShadows = false;
+
+            // 시간 정지 막은 메인 화면용 연출이라 미니맵에는 그리지 않는다.
+            TimeFreezeOverlayFeature.ExcludeCamera(mapCamera);
         }
 
         private void CreateWallPass()

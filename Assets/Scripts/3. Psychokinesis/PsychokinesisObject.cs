@@ -172,15 +172,14 @@ namespace TeamOdd.Psychokinesis
             return true;
         }
 
-        // 보스에 밟히거나 피해를 줄 수 없는 보스에 맞으면 피격된 것처럼 파편화함
+        // 보스의 다리·발(BossShatterCollider)에 닿으면 밟힌 것처럼 파편화함, 다른 부위는 부딪히기만 함
         // 들고만 있을 때는 통과시키고, 피해 처리를 기다리는 중이면 그쪽 결과를 따름
         private bool TryShatterByBoss(Collider other)
         {
             if ((IsHeld && IsSwingActive == false) ||
                 pendingDamage != null)
                 return false;
-            if (other.attachedRigidbody == null ||
-                other.attachedRigidbody.TryGetComponent(out BossMonster _) == false)
+            if (other.TryGetComponent(out BossShatterCollider _) == false)
                 return false;
 
             SetImpact(other.ClosestPoint(body.worldCenterOfMass));

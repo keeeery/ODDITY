@@ -22,8 +22,15 @@ namespace TeamOdd.TimeControl
         [Tooltip("경계선 띠의 두께(m)")]
         [SerializeField, Min(0.001f)] private float edgeWidth = 0.15f;
 
+        // 막을 그리지 않을 카메라(미니맵 등), DrawRenderer는 컬링 마스크를 무시하므로 따로 걸러야 한다.
+        private static readonly HashSet<Camera> excludedCameras = new();
+
         private Material material;
         private OverlayPass pass;
+
+        public static void ExcludeCamera(Camera camera) => excludedCameras.Add(camera);
+
+        public static void IncludeCamera(Camera camera) => excludedCameras.Remove(camera);
 
         public override void Create()
         {
@@ -43,8 +50,9 @@ namespace TeamOdd.TimeControl
         {
             if (material == null || TimeFreezable.OverlayTargets.Count == 0) return;
 
-            CameraType cameraType = renderingData.cameraData.camera.cameraType;
-            if (cameraType != CameraType.Game && cameraType != CameraType.SceneView) return;
+            Camera camera = renderingData.cameraData.camera;
+            if (camera.cameraType != CameraType.Game && camera.cameraType != CameraType.SceneView) return;
+            if (excludedCameras.Contains(camera)) return;
 
             renderer.EnqueuePass(pass);
         }
