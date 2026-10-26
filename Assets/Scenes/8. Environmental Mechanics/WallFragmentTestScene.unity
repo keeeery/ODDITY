@@ -700,6 +700,10 @@ MonoBehaviour:
   hpBar: {fileID: 1144892260}
   staminaBar: {fileID: 1218552551}
   damageVignette: {fileID: 905123404}
+  cameraShakeTrauma: 0.6
+  cameraShakeDuration: 0.35
+  hitStopNormal: 0.04
+  hitStopHeavy: 0.1
 --- !u!1 &560866508
 GameObject:
   m_ObjectHideFlags: 0
@@ -2748,7 +2752,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 183
   collisionRadius: 0.2
-  shakeOffset: {x: 0, y: 0, z: 0}
+  maxShakePosition: {x: 0.3, y: 0.3, z: 0}
+  maxShakeRotation: {x: 3, y: 1.5, z: 5}
+  shakeFrequency: 25
+  traumaDecay: 1.7
 --- !u!1 &2009241620
 GameObject:
   m_ObjectHideFlags: 0

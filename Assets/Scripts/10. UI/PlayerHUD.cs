@@ -18,6 +18,16 @@ namespace TeamOdd.UI
         [Header("Hit Feedback")]
         [SerializeField] private DamageVignette damageVignette;
 
+        [Header("Camera Shake")]
+        // 강공격 시 카메라 trauma(0~1)와 감쇠 시간(초). 세기는 trauma²로 적용된다.
+        [SerializeField, Range(0f, 1f)] private float cameraShakeTrauma = 0.6f;
+        [SerializeField, Min(0.01f)] private float cameraShakeDuration = 0.35f;
+
+        [Header("Hit Stop")]
+        // 피격 시 월드 전체가 멈추는 시간(초). 일반 피격은 거의 느껴지지 않을 정도로 짧게.
+        [SerializeField, Min(0f)] private float hitStopNormal = 0.04f;
+        [SerializeField, Min(0f)] private float hitStopHeavy = 0.1f;
+
         private CombatManager combatManager;
 
         private void Awake()
@@ -55,6 +65,11 @@ namespace TeamOdd.UI
             // 강공격(Knockdown)만 체력바가 반응하고 비네팅도 더 진해진다.
             bool isHeavy = damageEvent.Info.Reaction == HitReaction.Knockdown;
             if (isHeavy && hpBar != null) hpBar.Flash();
+            if (isHeavy && player != null && player.CameraController != null)
+            {
+                player.CameraController.AddTrauma(cameraShakeTrauma, cameraShakeDuration);
+            }
+            HitStop.Request(isHeavy ? hitStopHeavy : hitStopNormal);
             if (damageVignette != null) damageVignette.Pulse(isHeavy);
         }
 
