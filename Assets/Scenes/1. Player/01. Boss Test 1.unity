@@ -439,8 +439,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 267122893}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: WakeUpTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: wakeUpTime
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -612,7 +616,7 @@ MonoBehaviour:
   maxYaw: 70
   collisionMask:
     serializedVersion: 2
-    m_Bits: 2047
+    m_Bits: 656
   collisionRadius: 0.2
   maxShakePosition: {x: 0.3, y: 0.3, z: 0}
   maxShakeRotation: {x: 3, y: 1.5, z: 5}
@@ -741,6 +745,10 @@ PrefabInstance:
     - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Name
       value: SK_Charcharosaurus
+      objectReference: {fileID: 0}
+    - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6366305689365515654, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalPosition.x

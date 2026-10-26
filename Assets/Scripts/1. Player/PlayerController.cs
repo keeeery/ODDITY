@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using Study.Utilities;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace TeamOdd.Player
 {
@@ -14,38 +17,38 @@ namespace TeamOdd.Player
         private static readonly int Walk = Animator.StringToHash("IsWalk");
         private static readonly int Run = Animator.StringToHash("IsRun");
         private static readonly int Rolling = Animator.StringToHash("Rolling");
-        private static readonly int KnockBack = Animator.StringToHash("Knockback");
-        private static readonly int KnockDown = Animator.StringToHash("Knockdown");
+        private static readonly int Hit = Animator.StringToHash("Hit");
+        private static readonly int HitMotion = Animator.StringToHash("HitMotion");
+        private static readonly int WakeUp = Animator.StringToHash("WakeUp");
         private static readonly int Dead = Animator.StringToHash("Dead");
 
-        [Header("이동")] [SerializeField] private float walkSpeed = 4f;
+        [Header("이동")]
+        [SerializeField] private float walkSpeed = 4f;
         [SerializeField] private float runSpeed = 7f;
         [SerializeField] private float jumpHeight = 1.2f;
         [SerializeField] private float gravity = -9.81f;
+        public float NeedRunStamina;
 
-        [Header("방향")] [SerializeField] private Transform moveReference;
+        [Header("방향")]
+        [SerializeField] private Transform moveReference;
         [SerializeField] private bool rotateTowardMove = true;
         [SerializeField] private float turnSpeed = 720f;
 
-        [Header("구르기")] [SerializeField] private float rollDistance = 4f;
+        [Header("구르기")]
+        [SerializeField] private float rollDistance = 4f;
         [SerializeField] private float rollDuration = 0.6f;
 
         [SerializeField] private Animator animator;
+        private readonly Dictionary<string, AnimationClip> clipDic = new();
 
-        [Header("밀기")] [SerializeField, Min(0f)]
-        private float pushForce = 150f;
-
+        [Header("밀기")]
+        [SerializeField, Min(0f)] private float pushForce = 150f;
         [SerializeField, Min(0.01f)] private float maxPushMass = 50f;
         [SerializeField, Range(0f, 1f)] private float minPushSpeedRatio = 0.3f;
 
-        [Header("홀딩")] [SerializeField, Range(0f, 90f)]
+        [Header("홀딩")]
+        [SerializeField, Range(0f, 90f)]
         private float holdBodyLeadAngle = 50f;
-
-        [Header("피격")]
-        [SerializeField] private float wakeUpTime;
-        private bool isHit;
-        private Coroutine knockbackRoutine;
-        
 
         [SerializeField, Range(0f, 90f)] private float armYawRange = 30f;
         [SerializeField, Min(0.1f)] private float holdTurnSpeed = 15f;
@@ -53,13 +56,21 @@ namespace TeamOdd.Player
         [SerializeField, Range(0f, 1f)] private float armIkWeight = 0.55f;
         [SerializeField, Range(0f, 1f)] private float holdFingerBendScale = 0.5f;
 
-        [Header("던지기 준비")] [SerializeField, Min(0.05f)]
+        [Header("던지기 준비")]
+        [SerializeField, Min(0.05f)]
         private float throwPrepareReach = 0.3f;
-
         [SerializeField, Range(-90f, 90f)] private float throwPrepareWristBend = -40f;
-
         // 팔꿈치가 굽는 방향, 플레이어 로컬 좌표, 기존 hint 객체를 추가하는 대신 오프셋 값으로 대체
         [SerializeField] private Vector3 elbowHintOffset = new(-0.786f, 1.283f, -0.111f);
+
+        [Header("피격")] 
+        public float InvincibleTime; 
+        private float earlyWakeUpCooldown;
+        public float MaxEarlyWakeUpCooldown;
+        public float WakeUpTime;
+        public bool isHit;
+        public bool CanWakeUp;
+        private Coroutine knockbackRoutine;
 
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
@@ -82,18 +93,21 @@ namespace TeamOdd.Player
         private Transform externalHoldTarget; // 염동 내려찍기처럼 물체가 아닌 대상을 붙잡는 스킬이 지정
 
         // 팔을 뻗을 대상, 스킬이 지정한 대상이 들고 있는 물체보다 우선
-        private Transform HoldTarget => externalHoldTarget != null ? externalHoldTarget : heldObject != null ? heldObject.transform : null;
+        private Transform HoldTarget => externalHoldTarget != null ? externalHoldTarget :
+            heldObject != null ? heldObject.transform : null;
 
         private Transform[] leftFingers;
         private Quaternion[] leftFingerRestRotations;
 
         public PsychokinesisObject heldObject;
+
         // 물체를 들고 있거나 스킬이 붙잡을 대상을 지정해 홀딩 자세인지 (카메라 줌인 등에 사용)
         public bool HasHoldTarget => HoldTarget != null;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
-        
+        public bool IsInvincible { get; private set; }
+
         public event Action OnRollRequested;
 
         private void Awake()
@@ -101,6 +115,13 @@ namespace TeamOdd.Player
             controller = GetComponent<CharacterController>();
             psychokinesisController = GetComponent<PsychokinesisController>();
             animator = GetComponent<Animator>();
+
+            earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
+            
+            AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+
+            foreach (AnimationClip clip in clips)
+                clipDic.Add(clip.name, clip);
         }
 
         private void Start()
@@ -111,15 +132,18 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            if(isHit) return;
+            earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - Time.deltaTime);
             
+            if (isHit) return;
+
             UpdatePushSpeedRatio();
             UpdateHoldFacing();
-            
+
             // 구르는 동안에는 일반 이동 및 입력 처리를 막습니다.
             if (IsRolling)
             {
                 ExecuteRollMovement();
+                IsInvincible = true;
                 return;
             }
 
@@ -133,9 +157,15 @@ namespace TeamOdd.Player
 
         private void UpdateMovement()
         {
-            float speed = SimpleInput.GetKey(Key.LeftShift) ? runSpeed : walkSpeed;
+            bool canRun = SimpleInput.GetKey(Key.LeftShift) && Player.Instance.Stamina >= NeedRunStamina;
+            
+            float speed = canRun ? runSpeed : walkSpeed;
+
+            if (IsSprinting)
+                Player.Instance.ConsumeStamina(NeedRunStamina);
 
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
+            
             IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed);
 
             moveX = SmoothAxis(moveX, inputRaw.x);
@@ -165,11 +195,10 @@ namespace TeamOdd.Player
             controller.Move(totalMove * Time.deltaTime);
 
             bool isMove = inputRaw != Vector2.zero;
-            bool isRun = Mathf.Approximately(speed, runSpeed);
 
             animator.SetBool(Walk, isMove);
-            animator.SetBool(Run, isRun);
-            
+            animator.SetBool(Run, IsSprinting);
+
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
             {
                 Quaternion targetRotation =
@@ -235,6 +264,7 @@ namespace TeamOdd.Player
         public void EndRoll()
         {
             IsRolling = false;
+            IsInvincible = false;
         }
 
         private void ExecuteRollMovement()
@@ -334,7 +364,8 @@ namespace TeamOdd.Player
             SetBodyYaw(Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t));
             ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
 
-            bool preparingThrow = externalHoldTarget == null && SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
+            bool preparingThrow =
+                externalHoldTarget == null && SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
             throwPrepareBlend = Mathf.Lerp(throwPrepareBlend, preparingThrow ? 1f : 0f, t);
         }
 
@@ -432,49 +463,62 @@ namespace TeamOdd.Player
         #endregion
 
         #region 피격모션
-        
-        public void ApplyKnockback(Vector3 attackerPos, HitReaction reaction, float dist = 6f, float height = 2f, float dur = 0.6f )
+
+        public void ApplyKnockback(Vector3 attackerPos, HitReaction reaction, float dist = 6f, float height = 2f,
+            float dur = 0.6f)
         {
             // 넉백 중 다시 맞으면 이전 넉백을 끊고 새로 시작
             if (knockbackRoutine != null) StopCoroutine(knockbackRoutine);
-            
-            switch (reaction)
-            {
-                case HitReaction.None:
-                    return;
-                case HitReaction.Stagger:
-                    knockbackRoutine = StartCoroutine(Knockback(attackerPos, KnockBack, dist, height, dur));
-                    break;
-                case HitReaction.Knockdown:
-                    knockbackRoutine = StartCoroutine(Knockback(attackerPos, KnockDown, dist, height, dur));
-                    break;
-            }
+
+            if (reaction == HitReaction.Stagger)
+                knockbackRoutine = StartCoroutine(Knockback(attackerPos, 0, dist, height, dur));
+            if (reaction == HitReaction.Knockdown)
+                knockbackRoutine = StartCoroutine(Knockback(attackerPos, 1, dist, 0, dur));
         }
 
-        private IEnumerator Knockback(Vector3 bossPos, int animID, float dist = 6f, float height = 2f, float dur = 0.6f)
+        private IEnumerator Knockback(Vector3 bossPos, int motionIndex,float dist = 6f, float height = 2f, float dur = 0.6f)
         {
             isHit = true;
+            
             Vector3 dir = transform.position - bossPos;
+            
             dir.y = 0;
             dir.Normalize();
-            Vector3 start = transform.position;
+            
             float t = 0, prevY = 0;
-            animator.SetTrigger(animID);
+            
+            animator.SetInteger(HitMotion, motionIndex);
+            animator.SetTrigger(Hit);
+            
             while (t < 1f)
             {
                 t += Time.deltaTime / dur;
-                float y = 4f * height * t * (1f - t); // 포물선 높이
+                float y = height * t * (1f - t);
                 Vector3 move = dir * (dist * (Time.deltaTime / dur));
                 move.y = y - prevY;
                 prevY = y;
                 controller.Move(move); // 벽 충돌은 Move가 처리
                 yield return null;
             }
-            yield return new WaitForSeconds(wakeUpTime);
-            Debug.Log("wakeup");
-            animator.SetTrigger("Wakeup");
-            isHit = false;
-            // 착지 → 기상 애니메이션
+            
+            float elapsed = 0f;
+            while (elapsed < WakeUpTime)
+            {
+                if (CanWakeUp && earlyWakeUpCooldown <= 0f && SimpleInput.GetKeyDown(Key.Space))
+                {
+                    earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
+                    CanWakeUp = false;
+                    break;
+                }
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            
+            animator.SetTrigger(WakeUp);
+            
+            IsInvincible = true;
+            yield return new WaitForSeconds(InvincibleTime);
+            IsInvincible = false;
         }
 
         #endregion
