@@ -228,8 +228,8 @@ namespace TeamOdd.Boss
             Pose pose = isLocked[index] ? lockedPoses[index] : GetHitPose(hit, Vector2.zero);
             isLocked[index] = false;
             
-            Player.Player.Instance.PlayerController.ApplyKnockback(root.transform.position, hit.reaction, hit.shape.radius);
-            Debug.Log("resolve");
+            if(Player.Player.Instance.PlayerController.IsInvincible == false)
+                Player.Player.Instance.PlayerController.ApplyKnockback(root.transform.position, hit.reaction, hit.shape.radius);
 
             TryHit(hit.shape, pose, hit.damage, hit.reaction);
 
