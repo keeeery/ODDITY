@@ -227,6 +227,9 @@ namespace TeamOdd.Boss
             MeleeHit hit = hits[index];
             Pose pose = isLocked[index] ? lockedPoses[index] : GetHitPose(hit, Vector2.zero);
             isLocked[index] = false;
+            
+            Player.Player.Instance.PlayerController.ApplyKnockback(root.transform.position, hit.reaction, hit.shape.radius);
+            Debug.Log("resolve");
 
             TryHit(hit.shape, pose, hit.damage, hit.reaction);
 
@@ -241,6 +244,7 @@ namespace TeamOdd.Boss
         {
             if (shape.Contains(pose, Target.position, targetRadius) == false) return false;
 
+            Debug.Log("try");
             SendDamage(damage, reaction, Target.position);
             return true;
         }

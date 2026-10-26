@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Study.Utilities;
+using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,10 +11,12 @@ namespace TeamOdd.Player
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
-        private static readonly int Dead = Animator.StringToHash("Dead");
-        private static readonly int Rolling = Animator.StringToHash("Rolling");
         private static readonly int Walk = Animator.StringToHash("IsWalk");
         private static readonly int Run = Animator.StringToHash("IsRun");
+        private static readonly int Rolling = Animator.StringToHash("Rolling");
+        private static readonly int KnockBack = Animator.StringToHash("Knockback");
+        private static readonly int KnockDown = Animator.StringToHash("Knockdown");
+        private static readonly int Dead = Animator.StringToHash("Dead");
 
         [Header("이동")] [SerializeField] private float walkSpeed = 4f;
         [SerializeField] private float runSpeed = 7f;
@@ -38,9 +41,10 @@ namespace TeamOdd.Player
         [Header("홀딩")] [SerializeField, Range(0f, 90f)]
         private float holdBodyLeadAngle = 50f;
 
-        [Header("넉백")]
+        [Header("피격")]
         [SerializeField] private float wakeUpTime;
-        private bool isKnockback;
+        private bool isHit;
+        private Coroutine knockbackRoutine;
         
 
         [SerializeField, Range(0f, 90f)] private float armYawRange = 30f;
@@ -107,7 +111,7 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            if(isKnockback) return;
+            if(isHit) return;
             
             UpdatePushSpeedRatio();
             UpdateHoldFacing();
@@ -160,6 +164,12 @@ namespace TeamOdd.Player
 
             controller.Move(totalMove * Time.deltaTime);
 
+            bool isMove = inputRaw != Vector2.zero;
+            bool isRun = Mathf.Approximately(speed, runSpeed);
+
+            animator.SetBool(Walk, isMove);
+            animator.SetBool(Run, isRun);
+            
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
             {
                 Quaternion targetRotation =
@@ -421,27 +431,35 @@ namespace TeamOdd.Player
 
         #endregion
 
-        private Coroutine knockbackRoutine;
-
-        #region 넉백 
+        #region 피격모션
         
-        public void ApplyKnockback(Vector3 attackerPos, float dist = 6f, float height = 2f, float dur = 0.6f)
+        public void ApplyKnockback(Vector3 attackerPos, HitReaction reaction, float dist = 6f, float height = 2f, float dur = 0.6f )
         {
             // 넉백 중 다시 맞으면 이전 넉백을 끊고 새로 시작
             if (knockbackRoutine != null) StopCoroutine(knockbackRoutine);
-            knockbackRoutine = StartCoroutine(Knockback(attackerPos, dist, height, dur));
+            
+            switch (reaction)
+            {
+                case HitReaction.None:
+                    return;
+                case HitReaction.Stagger:
+                    knockbackRoutine = StartCoroutine(Knockback(attackerPos, KnockBack, dist, height, dur));
+                    break;
+                case HitReaction.Knockdown:
+                    knockbackRoutine = StartCoroutine(Knockback(attackerPos, KnockDown, dist, height, dur));
+                    break;
+            }
         }
 
-        public IEnumerator Knockback(Vector3 bossPos, float dist = 6f, float height = 2f, float dur = 0.6f)
+        private IEnumerator Knockback(Vector3 bossPos, int animID, float dist = 6f, float height = 2f, float dur = 0.6f)
         {
-            // 입력 차단, 무적 처리
-            isKnockback = true;
+            isHit = true;
             Vector3 dir = transform.position - bossPos;
             dir.y = 0;
             dir.Normalize();
             Vector3 start = transform.position;
             float t = 0, prevY = 0;
-            animator.SetTrigger("Knockdown");
+            animator.SetTrigger(animID);
             while (t < 1f)
             {
                 t += Time.deltaTime / dur;
@@ -455,7 +473,7 @@ namespace TeamOdd.Player
             yield return new WaitForSeconds(wakeUpTime);
             Debug.Log("wakeup");
             animator.SetTrigger("Wakeup");
-            isKnockback = false;
+            isHit = false;
             // 착지 → 기상 애니메이션
         }
 

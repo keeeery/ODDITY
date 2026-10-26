@@ -48,6 +48,7 @@ namespace TeamOdd.Boss
         protected override void Awake()
         {
             Clock = TimeFreezable.GetOrAdd(gameObject);
+            Target = Player.Player.Instance.transform;
             base.Awake();
         }
 
