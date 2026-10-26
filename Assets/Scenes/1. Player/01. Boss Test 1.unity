@@ -386,6 +386,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: maxStamina
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Name
       value: Player
@@ -445,6 +449,14 @@ PrefabInstance:
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: wakeUpTime
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: NeedRunStamina
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: MaxEarlyWakeUpCooldown
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -742,12 +754,56 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 404701223987581413, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526546028186094052, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_Name
       value: SK_Charcharosaurus
       objectReference: {fileID: 0}
+    - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3055570928604525442, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3113309671431656573, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3265945443776442675, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[2].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3603808996938800509, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3940009499819076386, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[1].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3960214206276824407, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5502451583672451264, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5853785563169541488, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[2].reaction
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6366305689365515654, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
@@ -789,6 +845,10 @@ PrefabInstance:
     - target: {fileID: 6366305689365515654, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7144967502863657079, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[1].reaction
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
