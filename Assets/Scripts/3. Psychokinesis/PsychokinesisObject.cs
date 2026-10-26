@@ -27,6 +27,10 @@ namespace TeamOdd.Psychokinesis
         [Header("Throw Damage")]
         [SerializeField, Min(0f)] private float throwDamageScale = 1f;
 
+        [Header("Shatter")]
+        [Tooltip("비어 있으면 콘크리트 파편으로, 지정하면 이 머티리얼을 입힌 금속 조각으로 부서진다.")]
+        [SerializeField] private Material debrisMaterial;
+
         private const float HitGizmoDuration = 0.3f;
         private static readonly int outlineColorId = Shader.PropertyToID("_BaseColor");
         private readonly RaycastHit[] swingObstructions = new RaycastHit[64];
@@ -69,7 +73,8 @@ namespace TeamOdd.Psychokinesis
         private Vector3 impactPosition;
         private Vector3 impactNormal;
 
-        public static event Action<Vector3, Vector3, float> Shattered;
+        // 파편화 위치, 바깥쪽 방향, 질량, 파편 머티리얼(없으면 null)
+        public static event Action<Vector3, Vector3, float, Material> Shattered;
 
         // 미니맵 등에서 순회하기 위한 활성 오브젝트 목록
         private static readonly List<PsychokinesisObject> activeObjects = new();
@@ -244,7 +249,7 @@ namespace TeamOdd.Psychokinesis
             Release(Vector3.zero);
             // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
             gameObject.SetActive(false);
-            Shattered?.Invoke(impactPosition, impactNormal, body.mass);
+            Shattered?.Invoke(impactPosition, impactNormal, body.mass, debrisMaterial);
 
             if (TryGetComponent(out IObjectPoolItem poolItem)) poolItem.ReturnToPool();
             else Destroy(gameObject);

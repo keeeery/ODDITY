@@ -1917,6 +1917,13 @@ MonoBehaviour:
   - {fileID: 5958717546450965173, guid: 29c861232ff7f4089acbceb6219d0b6a, type: 3}
   - {fileID: 9105829553262659977, guid: 9bac800aeef2b4bfdb55afd7a5815fc1, type: 3}
   - {fileID: 2992500339128823242, guid: 879a514d18f1c49e0a646095b2093829, type: 3}
+  metalShardPrefabs:
+  - {fileID: 3236477246616575714, guid: 4a1a56fd8653d46f18e2412bb7499f07, type: 3}
+  - {fileID: 2943323925901786957, guid: 2c4cd03b000c340dca0c596c93659c12, type: 3}
+  - {fileID: 3499122352732337124, guid: bdd52e9c1496247dc8e508268b2ebbe6, type: 3}
+  - {fileID: 3481224767239049935, guid: f7c9edf7fd8cf40a48c63674f368d92c, type: 3}
+  - {fileID: 3198381604904624901, guid: 3e37cc4f78d72404697294c0caf3d334, type: 3}
+  - {fileID: 1560669643426364235, guid: 4f32e787ee8e34431879483a55442cd0, type: 3}
   largeFragmentPool:
     key: WallFragment.Large
     prefab: {fileID: 4686032179533201624, guid: b687e6c56360540f8b609c95d4aabe62, type: 3}
@@ -1932,17 +1939,26 @@ MonoBehaviour:
     prefab: {fileID: 482713679938954292, guid: 9dbc250e8e5fe40cd9ff7f14cde60838, type: 3}
     expandSize: 24
     parent: {fileID: 514935507}
+  metalShardPool:
+    key: MetalShardFragment
+    prefab: {fileID: 1844719635934787086, guid: 4a1a56fd8653d46f18e2412bb7499f07, type: 3}
+    expandSize: 24
+    parent: {fileID: 514935507}
   spawnRadius: 1.8
   launchSpeed: {x: 4, y: 8}
   spinSpeed: 8
   impactSpawnRadius: 0.15
   impactFragmentsPerKilogram: 1
   maxImpactFragmentCount: 30
+  metalShardsPerKilogram: 0.4
+  maxMetalShardCount: 8
+  metalShardSpawnRadius: 0.5
   fragmentTemplate: {fileID: 447538155, guid: c518e01e9a4141d5ad1d599376b683e4, type: 3}
   mediumFragmentDiameter: {x: 1, y: 1.25}
   smallFragmentDiameter: {x: 0.15, y: 0.2}
   largeFragmentDiameter: {x: 1.8, y: 2}
   fragmentDensity: 5
+  metalShardDiameter: {x: 0.25, y: 0.45}
 --- !u!1 &1544739490
 GameObject:
   m_ObjectHideFlags: 0
