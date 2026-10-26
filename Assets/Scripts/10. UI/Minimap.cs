@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TeamOdd.Boss;
+using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using TeamOdd.TimeControl;
 using UnityEngine;
@@ -144,6 +145,7 @@ namespace TeamOdd.UI
             if (mapCamera != null)
             {
                 TimeFreezeOverlayFeature.IncludeCamera(mapCamera);
+                HitFlashFeature.IncludeCamera(mapCamera);
                 Destroy(mapCamera.gameObject);
             }
             if (mapTexture != null)
@@ -191,8 +193,9 @@ namespace TeamOdd.UI
             mapCameraData.renderPostProcessing = false;
             mapCameraData.renderShadows = false;
 
-            // 시간 정지 막은 메인 화면용 연출이라 미니맵에는 그리지 않는다.
+            // 시간 정지 막과 피격 번쩍임은 미니맵에 그리지 않는다.
             TimeFreezeOverlayFeature.ExcludeCamera(mapCamera);
+            HitFlashFeature.ExcludeCamera(mapCamera);
         }
 
         private void CreateWallPass()
