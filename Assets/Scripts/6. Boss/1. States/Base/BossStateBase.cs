@@ -10,6 +10,7 @@ namespace TeamOdd.Boss
         protected BossMonster root;
         
         protected Rigidbody Body => root.Body;
+        protected BossMovement Movement => root.Movement;
         protected Animator Animator => root.Animator;
         
         protected Transform Target => root.Target;

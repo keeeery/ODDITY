@@ -52,7 +52,7 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float spawnCheckRadius = 0.6f;
 
         [Title("Timing")]
-        // 투하 시작: Roar 애니메이션의 OnRoarDrop 신호, 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 투하 시작: Roar 애니메이션의 OnRoarDrop 신호, 종료: OnAttackEnded 신호(BossMeleePattern이 Idle로 전환)
         [Tooltip("모든 오브젝트를 나누어 투하하는 데 걸리는 시간(초)")]
         [SerializeField, Min(0f)] private float dropDuration = 1f;
         [Tooltip("켜면 OnRoarDrop 신호를 받는 순간까지 대상 위치를 따라갈지 여부")]

@@ -23,7 +23,7 @@ namespace TeamOdd.Boss
         [SerializeField] private Transform throwOrigin;
 
         [Title("Timing")]
-        // 오브젝트 등장: OnThrowPrepare 신호, 투척: OnThrow 신호(둘 다 GetHitHeavy 애니메이션), 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 오브젝트 등장: OnThrowPrepare 신호, 투척: OnThrow 신호(둘 다 GetHitHeavy 애니메이션), 종료: OnAttackEnded 신호(BossMeleePattern이 Idle로 전환)
         // 경로 예고: OnThrowWarn 신호, 없으면 OnThrowPrepare 신호에서 시작
         [Tooltip("투척 후 보스와의 충돌을 계속 무시하는 시간(초)")]
         [SerializeField, Min(0f)] private float ownerIgnoreDuration = 0.3f;

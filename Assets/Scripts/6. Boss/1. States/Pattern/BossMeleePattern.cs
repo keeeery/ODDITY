@@ -15,7 +15,8 @@ namespace TeamOdd.Boss
     // - 하위 클래스는 OnPatternEnter/OnPatternExit/OnPatternAnimEventOccurs로 패턴별 동작을 구현
 
     // 회전 추적: trackDuration 동안 대상 쪽으로 회전, OnTrackEnd 신호나 고정 예고가 뜨면 멈춤
-    // 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+    // 종료: OnAttackEnded 신호를 받으면 Idle로 전환
+    // - 여러 애니메이션을 이어 쓰는 패턴은 CanEndByAnimation으로 중간 신호를 무시하고, 무시한 신호는 OnPatternAnimEventOccurs로 받음
 
     // 근접 타격(hits): 범위 예고는 OnHitWarn 신호, 타격 시점은 OnHit 신호(둘 다 매개변수는 hits 인덱스, 비어 있으면 0)
     // - OnClawWarn/OnClawHit 신호는 인덱스 0의 OnHitWarn/OnHit으로 취급
@@ -82,8 +83,14 @@ namespace TeamOdd.Boss
 
         public virtual bool CanUse => Clock.LocalTime >= readyTime;
 
+        // 패턴이 끝난 뒤 Idle이 실제로 적용할 후딜, 끝난 방식에 따라 후딜을 바꾸는 패턴이 재정의
+        public virtual float AppliedRecovery => Recovery;
+
         // 근접 타격 신호를 쓰지 않는 패턴(투척, 투하, 충격파)은 false로 두어 인스펙터에서 타격 목록을 숨김
         protected virtual bool UsesMeleeHits => true;
+
+        // false면 OnAttackEnded 신호로 끝내지 않음, 중간 애니메이션의 종료 신호를 패턴이 직접 처리할 때 사용
+        protected virtual bool CanEndByAnimation => true;
         
         public bool IsTooClose => root.DistanceToTarget < MinDistance;
         public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance;
@@ -150,6 +157,12 @@ namespace TeamOdd.Boss
 
         private void OnOccursAnimEvent(string name, string param)
         {
+            if (string.Equals(name, "OnAttackEnded") && CanEndByAnimation)
+            {
+                StateMachine.ChangeState(typeof(BossIdleState));
+                return;
+            }
+
             if (string.Equals(name, "OnTrackEnd"))
             {
                 trackEndTime = 0f;
