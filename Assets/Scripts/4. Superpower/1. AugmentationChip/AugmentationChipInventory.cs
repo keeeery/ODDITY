@@ -35,6 +35,14 @@ namespace TeamOdd.Superpower
             owner = GetComponent<CombatEntity>();
         }
 
+        // 장착된 스킬 칩만 쿨타임이 돈다. 해제해 둔 칩은 해제한 순간의 쿨타임에서 멈춰 있다
+        // 패널이 열려 있어도 흐르도록 커서 상태와 상관없이 여기서 돌린다
+        private void Update()
+        {
+            foreach (OwnedChip chip in skillSlots)
+                chip?.Skill.Tick(Time.deltaTime);
+        }
+
         // cells는 칩을 주는 쪽이 ChipShapeLibrary.Roll로 정한 모양
         // 스킬 칩이면 칩마다 스킬을 새로 만들어 넣는다
         public void Add(AugmentationChipDef def, Vector2Int[] cells)
