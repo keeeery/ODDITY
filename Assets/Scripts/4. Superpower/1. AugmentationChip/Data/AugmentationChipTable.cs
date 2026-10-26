@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using TeamOdd.Combat;
 using UnityEngine;
@@ -51,8 +50,8 @@ namespace TeamOdd.Superpower
                     chipDto.ChipType = GetCell(cells, 7);
                     chipDto.SkillType = GetCell(cells, 8);
                     string cooldown = GetCell(cells, 9);
-                    // 소수점은 '.'만 받는다. 기본 옵션은 ','를 천 단위 구분자로 읽어 "1,5"가 15가 된다
-                    chipDto.Cooldown = cooldown == "" ? 0f : float.Parse(cooldown, NumberStyles.Float, CultureInfo.InvariantCulture);
+                    // 소수점은 '.'으로 적는다. ','는 천 단위 구분자로 읽혀 "1,5"가 15가 된다
+                    chipDto.Cooldown = cooldown == "" ? 0f : float.Parse(cooldown);
                     chipDto.SkillParams = GetCell(cells, 10);
 
                     rows.Add(chipDto);
@@ -86,11 +85,11 @@ namespace TeamOdd.Superpower
                 {
                     def.SkillType = Enum.Parse<SkillType>(chipDto.SkillType);
                     def.Cooldown = chipDto.Cooldown;
-                    def.SkillParams = new SkillParams(chipDto.ID, chipDto.SkillParams);
+                    def.SkillParams = new SkillParams(chipDto.SkillParams);
 
                     // 매개변수가 틀린 칩을 줍는 순간이 아니라 테이블을 읽을 때 알 수 있도록 한 번 만들어 본다
-                    // 만들 수 없는 칩은 지급되지 않게 빼 둔다
-                    if (SkillFactory.Create(def) == null || def.SkillParams.HasError)
+                    // 매개변수가 틀리면 여기서 예외가 나고, 만드는 코드가 없는 스킬은 지급되지 않게 빼 둔다
+                    if (SkillFactory.Create(def) == null)
                     {
                         Debug.LogError($"[AugmentationChipTable] {chipDto.ID}번 스킬 칩의 값이 잘못되어 테이블에서 뺍니다.");
                         continue;
