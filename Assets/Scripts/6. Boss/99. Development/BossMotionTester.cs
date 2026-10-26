@@ -5,6 +5,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Study.Utilities;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.iOS;
 
 namespace TeamOdd.Boss.Development
 {
@@ -12,6 +13,7 @@ namespace TeamOdd.Boss.Development
     {
         [Title("Components")]
         [SerializeField] private Animator animator;
+        [SerializeField] private BossMonster bossMonster;
 
         [Title("Motion")]
         [SerializeField] private int currentMotionIndex;
