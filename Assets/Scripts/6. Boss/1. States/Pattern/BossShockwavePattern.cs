@@ -1,12 +1,9 @@
 using System;
-using DG.Tweening;
 using FantasyGarden.FSM;
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using TeamOdd.Combat;
-using TeamOdd.Psychokinesis;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace TeamOdd.Boss
 {
@@ -122,7 +119,7 @@ namespace TeamOdd.Boss
 
             TryHit(shape, pose, wave.damage, wave.reaction);
 
-            LiftFragments(pose, shape);
+            BossFragmentLift.LiftInRange(fragmentSpawner, shape, pose, liftHeight, liftDuration);
 
             // 예고 없이 터졌으면 터지는 순간에만 범위를 보여 줌
             AttackTelegraph telegraph = telegraphs[index] != null ? telegraphs[index] : root.ShowTelegraph(shape, pose, 0f);
@@ -147,33 +144,6 @@ namespace TeamOdd.Boss
             }
 
             return height;
-        }
-
-        // 떠오르는 동안 물리와 부딪히지 않도록 kinematic으로 띄우고, 다 떠오르면 되돌려 중력으로 떨어뜨림
-        // 크기별 풀(Large/Medium/Small)의 부모 아래에서 활성화된 오브젝트를 찾음
-        // 플레이어가 들고 있거나 보스가 띄워 둔(kinematic) 오브젝트는 건드리지 않음
-        private void LiftFragments(Pose pose, TelegraphShape shape)
-        {
-            if (fragmentSpawner == null) return;
-
-            foreach (Transform poolParent in fragmentSpawner.FragmentPoolParents)
-            {
-                if (poolParent == null) continue;
-                foreach (Rigidbody body in poolParent.GetComponentsInChildren<Rigidbody>())
-                    Lift(body, pose, shape);
-            }
-        }
-
-        private void Lift(Rigidbody body, Pose pose, TelegraphShape shape)
-        {
-            if (body.isKinematic || shape.Contains(pose, body.position) == false) return;
-            if (body.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) return;
-
-            body.isKinematic = true;
-            body.DOMoveY(body.position.y + Random.Range(liftHeight.x, liftHeight.y), Random.Range(liftDuration.x, liftDuration.y))
-                .SetEase(Ease.OutQuad)
-                .SetLink(body.gameObject)
-                .OnKill(() => body.isKinematic = false);
         }
 
 #if UNITY_EDITOR

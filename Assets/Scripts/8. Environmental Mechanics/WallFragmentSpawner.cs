@@ -187,6 +187,31 @@ namespace TeamOdd.Arena
             SpawnFragments(smallVisualFragmentPrefabs, smallFragmentPool, 9, point, normal, spawnRadius);
         }
 
+        // 벽 앞에 무언가(돌진한 보스)가 막고 있을 때 사용, 정면 대신 벽을 따라 좌우·위로 튀게 함
+        // sideGap: 충돌 지점에서 좌우로 비워 둘 거리(m), shatterGrace: 보스에 닿아도 파편화하지 않는 시간(초)
+        // 보스 패턴으로 생긴 오브젝트로 표시되어, 던졌다가 벽에 맞으면 파편화된다.
+        public void SpawnAlongWall(Vector3 point, Vector3 normal, float sideGap, float shatterGrace)
+        {
+            normal.y = 0f;
+            normal.Normalize();
+            WallSpread spread = new WallSpread(sideGap, shatterGrace);
+            SpawnFragments(largeFragmentPrefabs, largeFragmentPool, 1, point, normal, spawnRadius, spread: spread);
+            SpawnFragments(mediumFragmentPrefabs, mediumFragmentPool, 5, point, normal, spawnRadius, spread: spread);
+            SpawnFragments(smallVisualFragmentPrefabs, smallFragmentPool, 9, point, normal, spawnRadius, spread: spread);
+        }
+
+        private readonly struct WallSpread
+        {
+            public readonly float SideGap;
+            public readonly float ShatterGrace;
+
+            public WallSpread(float sideGap, float shatterGrace)
+            {
+                SideGap = sideGap;
+                ShatterGrace = shatterGrace;
+            }
+        }
+
         // 크기별 풀에서 무작위 형태의 파편을 꺼내 배치
         public WallFragment SpawnFragment(FragmentSize size, Vector3 position, Quaternion rotation)
         {
@@ -242,9 +267,11 @@ namespace TeamOdd.Arena
         }
 
         // materialOverride가 있으면 꺼낸 파편에 원래 형태의 머티리얼 대신 입힌다 (다음에 꺼낼 때 ApplyVariant가 되돌림).
-        private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f, Material materialOverride = null)
+        // spread가 있으면 충돌 지점 정면을 비우고 벽을 따라 좌우·위로 생성·발사한다.
+        private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f, Material materialOverride = null, WallSpread? spread = null)
         {
             Quaternion surfaceRotation = Quaternion.LookRotation(normal);
+            Vector3 wallTangent = surfaceRotation * Vector3.right;
             Vector2 speedRange = launchSpeed * speedMultiplier;
             // 연출용 작은 파편끼리는 겹쳐 생성되어도 무방하다.
             bool ignoreDebris = pool == smallFragmentPool || pool == metalShardPool;
@@ -260,10 +287,13 @@ namespace TeamOdd.Arena
                 float clearance = halfExtents.magnitude + center.magnitude + SpawnClearance;
                 Vector3 position = Vector3.zero;
                 bool foundSpace = false;
+                float side = Random.value < 0.5f ? -1f : 1f;
 
                 for (int attempt = 0; attempt < MaxSpawnAttempts; attempt++)
                 {
-                    Vector2 offset = Random.insideUnitCircle * radius;
+                    Vector2 offset = spread.HasValue
+                        ? new Vector2(side * (spread.Value.SideGap + Random.value * radius), Random.value * radius)
+                        : Random.insideUnitCircle * radius;
                     position = point + normal * clearance + surfaceRotation * new Vector3(offset.x, offset.y, 0f);
 
                     if (IsSpawnBlocked(position + rotation * center, halfExtents, rotation, ignoreDebris)) continue;
@@ -278,9 +308,16 @@ namespace TeamOdd.Arena
 
                 if (fragment == null) continue;
                 if (materialOverride != null) fragment.GetComponent<MeshRenderer>().sharedMaterial = materialOverride;
+                if (spread.HasValue && fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject))
+                {
+                    psychokinesisObject.GrantBossShatterGrace(spread.Value.ShatterGrace);
+                    psychokinesisObject.MarkSpawnedByBoss();
+                }
 
                 Rigidbody body = fragment.GetComponent<Rigidbody>();
-                Vector3 direction = (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
+                Vector3 direction = spread.HasValue
+                    ? (wallTangent * side + Vector3.up * 0.7f + normal * 0.2f + Random.insideUnitSphere * 0.3f).normalized
+                    : (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
                 body.linearVelocity = direction * Random.Range(speedRange.x, speedRange.y);
                 body.angularVelocity = Random.onUnitSphere * spinSpeed;
             }

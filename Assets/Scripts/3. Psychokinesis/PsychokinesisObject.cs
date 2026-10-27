@@ -73,6 +73,16 @@ namespace TeamOdd.Psychokinesis
         private Vector3 impactPosition;
         private Vector3 impactNormal;
 
+        // 보스 돌진 파편처럼 보스 발밑에서 생긴 오브젝트가 바로 밟혀 부서지지 않도록 하는 유예
+        // 유예 중에 닿은 보스 부위는 한 번 떨어질 때까지 계속 무시해, 유예가 끝나는 순간 발밑에서 부서지지 않게 함
+        private float bossShatterGraceEndTime = float.NegativeInfinity;
+        private readonly HashSet<Collider> graceContacts = new();
+
+        // 보스 패턴(돌진, 투하)으로 생긴 오브젝트는 던졌을 때 처음 부딪힌 곳이 벽이면 파편화함
+        private int wallLayer;
+        private bool shatterOnWallHit;
+        public bool IsSpawnedByBoss { get; private set; }
+
         // 파편화 위치, 바깥쪽 방향, 질량, 파편 머티리얼(없으면 null)
         public static event Action<Vector3, Vector3, float, Material> Shattered;
 
@@ -103,6 +113,7 @@ namespace TeamOdd.Psychokinesis
             meshRenderer = GetComponent<MeshRenderer>();
             subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
             heldExcludeLayer = LayerMask.GetMask("Psychokinesis");
+            wallLayer = LayerMask.NameToLayer("Wall");
         }
 
         // 피격 판정용 Trigger, 보스 Rigidbody가 Psychokinesis 레이어를 제외하므로 별도 레이어에 두고 몬스터하고만 반응
@@ -120,6 +131,9 @@ namespace TeamOdd.Psychokinesis
         {
             ResizeHitTrigger(false);
             activeObjects.Add(this);
+            ClearBossShatterGrace();
+            IsSpawnedByBoss = false;
+            shatterOnWallHit = false;
         }
 
         // 들고 있는 동안에만 휘두르기 여유 범위를 더함
@@ -162,6 +176,54 @@ namespace TeamOdd.Psychokinesis
             TryShatterByBoss(other);
         }
 
+        private void OnTriggerExit(Collider other)
+        {
+            graceContacts.Remove(other);
+        }
+
+        // 던진 뒤 처음 부딪힌 대상만 보고, 바닥 등 다른 곳에 먼저 닿았으면 그 뒤로는 벽에 닿아도 그대로 둠
+        // 보스는 Psychokinesis 레이어와 물리 충돌하지 않으므로 보스를 맞힌 경우는 피격 트리거 쪽에서 처리됨
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (shatterOnWallHit == false) return;
+
+            shatterOnWallHit = false;
+            if (collision.collider.gameObject.layer != wallLayer || pendingDamage != null) return;
+
+            SetImpact(collision.GetContact(0).point);
+            Shatter();
+        }
+
+        // 보스 패턴이 풀에서 꺼낸 직후 호출, 풀로 돌아갔다 다시 꺼내지면 OnEnable에서 해제됨
+        public void MarkSpawnedByBoss()
+        {
+            IsSpawnedByBoss = true;
+        }
+
+        // duration(초) 동안 보스 다리·발에 닿아도 파편화하지 않음
+        public void GrantBossShatterGrace(float duration)
+        {
+            bossShatterGraceEndTime = clock.LocalTime + duration;
+            graceContacts.Clear();
+        }
+
+        private void ClearBossShatterGrace()
+        {
+            bossShatterGraceEndTime = float.NegativeInfinity;
+            graceContacts.Clear();
+        }
+
+        private bool IsInBossShatterGrace(Collider other)
+        {
+            if (clock.LocalTime < bossShatterGraceEndTime)
+            {
+                graceContacts.Add(other);
+                return true;
+            }
+
+            return graceContacts.Contains(other);
+        }
+
         private bool TryThrowHit(Collider other)
         {
             if (canDealThrowDamage == false || TryGetDamageTarget(other, out ICombatable target) == false) return false;
@@ -185,6 +247,8 @@ namespace TeamOdd.Psychokinesis
                 pendingDamage != null)
                 return false;
             if (other.TryGetComponent(out BossShatterCollider _) == false)
+                return false;
+            if (IsInBossShatterGrace(other))
                 return false;
 
             SetImpact(other.ClosestPoint(body.worldCenterOfMass));
@@ -364,7 +428,9 @@ namespace TeamOdd.Psychokinesis
         public void BeginHold(Collider[] ownerColliders, ICombatable sender)
         {
             clock.SetWorldExempt(true);
+            ClearBossShatterGrace(); // 플레이어가 잡은 뒤로는 원래 규칙대로 보스에 닿으면 파편화
             canDealThrowDamage = false;
+            shatterOnWallHit = false;
             damageSender = sender;
             readyToSwing = false;
             swingActivated = false;
@@ -390,6 +456,7 @@ namespace TeamOdd.Psychokinesis
 
             IsHeld = false;
             canDealThrowDamage = isThrowing;
+            shatterOnWallHit = isThrowing && IsSpawnedByBoss;
             damageSender = isThrowing ? sender : null;
             body.useGravity = originalGravity;
             body.excludeLayers = originalExcludeLayer;

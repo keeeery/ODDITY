@@ -898,6 +898,9 @@ MonoBehaviour:
     m_Bits: 128
   headOnAngle: 60
   stunDuration: 3
+  fragmentSpawner: {fileID: 0}
+  fragmentSideGapRatio: 0.4
+  fragmentShatterGrace: 0.5
   pathFadeDuration: 0.3
   useJumpSmash: 1
   jump:
@@ -3381,7 +3384,7 @@ MonoBehaviour:
   - {fileID: 6774984454045783904}
   groundMask:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 2043
   groundCheckDistance: 1.5
   landingCountPerFoot: 10
   landingCenterCount: 4
@@ -3391,11 +3394,24 @@ MonoBehaviour:
   landingSize: {x: 1.4, y: 2.2}
   landingLifetime: {x: 0.9, y: 1.4}
   landingOpacity: 0.85
+  shockwaveDiameter: 9
+  shockwaveLifetime: 0.9
+  shockwaveOpacity: 0.8
+  debrisCount: 16
+  debrisSpeed: {x: 3.5, y: 7.5}
+  debrisSize: {x: 0.08, y: 0.24}
+  debrisLifetime: {x: 1.2, y: 2}
+  hazeCount: 3
+  hazeSize: {x: 2.2, y: 3}
+  hazeLifetime: {x: 2.6, y: 3.6}
+  hazeOpacity: 0.35
   chargeStepDistance: 2.2
   chargeCountPerStep: 4
   chargeSize: {x: 1, y: 1.6}
   chargeLifetime: {x: 0.8, y: 1.2}
   chargeOpacity: 0.7
+  chargeShockwaveDiameter: 2.6
+  chargeDebrisCount: 3
 --- !u!1 &6514804415617949282
 GameObject:
   m_ObjectHideFlags: 0
