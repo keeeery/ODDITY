@@ -32,6 +32,8 @@ namespace TeamOdd
                 return;
             }
 
+            canvas.enabled = true;
+            
             OnFadeOutStarted?.Invoke(sceneName);
             
             await fadeScreen.DOFade(1f, fadeOutDuration).ToUniTask();
@@ -42,11 +44,14 @@ namespace TeamOdd
 
             await fadeScreen.DOFade(0f, fadeInDuration).ToUniTask();
             OnFadeInCompleted?.Invoke(sceneName);
+
+            canvas.enabled = false;
         }
 
-        public async UniTaskVoid LoadScene(string sceneName)
+        [Button]
+        public void LoadScene(string sceneName)
         {
-            await LoadSceneAsync(sceneName);
+            _ = LoadSceneAsync(sceneName);
         }
     }
 }

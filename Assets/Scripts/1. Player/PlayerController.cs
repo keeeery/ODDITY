@@ -161,7 +161,7 @@ namespace TeamOdd.Player
             bool canRun = SimpleInput.GetKey(Key.LeftShift) && Player.Instance.Stamina >= NeedRunStamina;
             
             float speed = canRun ? runSpeed : walkSpeed;
-            Debug.Log(speed);
+            //Debug.Log(speed);
 
             if (IsSprinting)
                 Player.Instance.ConsumeStamina(NeedRunStamina * Time.deltaTime);

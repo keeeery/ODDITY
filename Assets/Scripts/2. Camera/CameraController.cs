@@ -7,7 +7,6 @@ namespace TeamOdd.CameraMove
 {
     public class CameraController : MonoBehaviour
     {
-        
         [SerializeField] private Player.Player target;
         
         [Header("위치")]

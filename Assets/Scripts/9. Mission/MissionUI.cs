@@ -57,8 +57,15 @@ namespace TeamOdd.Mission
             Player.Player.Instance.transform.position = Vector3.zero;
             Player.Player.Instance.CharacterController.enabled = true;
 
-            SceneLoadManager.Instance.LoadScene(stageSceneName).Forget();
+            SceneLoadManager.Instance.LoadScene(stageSceneName);
+            CloseUI();
             // SceneManager.LoadScene(stageSceneName);
+        }
+
+        public void CloseUI()
+        {
+            Player.Player.Instance.LockCursor(true);
+            gameObject.SetActive(false);
         }
     }
 }

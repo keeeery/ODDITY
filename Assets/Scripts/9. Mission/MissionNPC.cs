@@ -23,8 +23,7 @@ namespace TeamOdd.Mission
                 if (SimpleInput.GetKeyDown(Key.F))
                 {
                     missionUI.SetActive(true);
-                    player.LockCursor(false);
-                    player.ControllerActive();
+                    player.LockCursor(false, true);
                 }
             }
         }

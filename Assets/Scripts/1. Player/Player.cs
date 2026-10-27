@@ -24,6 +24,8 @@ namespace TeamOdd.Player
         public PlayerController PlayerController;
         
         private AnimStateEventListener eventListener;
+
+        private bool isManuallyLocked = false;
         
         private void Awake()
         {
@@ -40,14 +42,16 @@ namespace TeamOdd.Player
         {
             if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)
                 stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
-            
-            if (SimpleInput.GetKeyDown(Key.Escape))
-                LockCursor(false);
-            else if (Cursor.lockState != CursorLockMode.Locked &&
-                     (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) ||
-                      SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
-                LockCursor(true);
 
+            if (isManuallyLocked == false)
+            {
+                if (SimpleInput.GetKeyDown(Key.Escape))
+                    LockCursor(false);
+                else if (Cursor.lockState != CursorLockMode.Locked &&
+                         (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
+                    LockCursor(true);
+            }
+            
             ControllerActive();
         }
 
@@ -101,10 +105,12 @@ namespace TeamOdd.Player
             CameraController.enabled = cursorLocked;
         }
         
-        public void LockCursor(bool locked)
+        public void LockCursor(bool locked, bool isManuallyLock = false)
         {
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = locked == false;
+
+            isManuallyLocked = isManuallyLock;
         }
     }
 }
