@@ -16,8 +16,11 @@ namespace TeamOdd.Combat
 
         private int hp;
         private int prevMaxHp; // 최대 체력이 얼마나 바뀌었는지 알기 위해 보관
+        private int shield;          // 보호막이 남은 피해량 (보호막 스킬)
+        private float shieldEndTime; // 보호막이 사라지는 시각
 
         public int Hp => hp;
+        public int Shield => Time.time < shieldEndTime ? shield : 0;
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
 
@@ -44,9 +47,19 @@ namespace TeamOdd.Combat
         public virtual int TakeDamage(DamageEvent @event)
         {
             if (IsDead) return 0;
-            
+
             int dmg = Mathf.Max(1, @event.Info.Damage - CurrentStats.Def);
-            
+
+            // 보호막이 있으면 먼저 깎고 남은 만큼만 체력에서 뺀다
+            int absorbed = Mathf.Min(Shield, dmg);
+            shield -= absorbed;
+            dmg -= absorbed;
+            if (dmg == 0)
+            {
+                Debug.Log($"{gameObject.name}'s shield blocks {absorbed} damage!");
+                return 0;
+            }
+
             hp = Mathf.Max(0, hp - dmg);
             Debug.Log($"{gameObject.name} takes {dmg} damage!");
             
@@ -63,6 +76,13 @@ namespace TeamOdd.Combat
             Debug.Log($"{gameObject.name} heals {@event.HealAmount} hp!");
 
             return @event.HealAmount;
+        }
+
+        // duration초 동안 피해를 amount까지 막는다. 이미 보호막이 있으면 새 보호막으로 바꾼다 (쌓이지 않음)
+        public void SetShield(int amount, float duration)
+        {
+            shield = amount;
+            shieldEndTime = Time.time + duration;
         }
 
         protected void OnDeath()
