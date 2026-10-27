@@ -98,7 +98,7 @@ namespace TeamOdd.Psychokinesis
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
 
         // 들 수 있는 최대 질량. 기본값(PlayerStats 에셋) + 증강칩 보너스라 칩을 끼우고 빼면 바로 바뀌므로 쓸 때마다 읽는다
-        private int MaxMass => ((Player.PlayerRuntimeStats)combatEntity.CurrentStats).PsychoMaxMass;
+        private int MaxMass => combatEntity.CurrentStats.Get(StatType.PsychoMaxMass);
 
         // 플레이어의 공격(기본 공격, 투척, 휘두르기)이 실제로 피해를 줬을 때 (조준점 적중 표시용)
         public event Action AttackHit;

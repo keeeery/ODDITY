@@ -23,7 +23,7 @@ namespace TeamOdd.Combat
 
         protected virtual void Awake()
         {
-            CurrentStats = Stats.CreateRuntime();
+            CurrentStats = new RuntimeStats(Stats);
             CurrentStats.Changed += OnStatsChanged;
             hp = CurrentStats.MaxHp;
             prevMaxHp = CurrentStats.MaxHp;
