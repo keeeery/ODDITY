@@ -60,6 +60,13 @@ namespace TeamOdd.Boss
 
             if (intent == null)
             {
+                // 시야가 필요한 패턴이 모두 빠져 고를 게 없으면 제자리에 서 있지 않고 장애물을 돌아가 대상을 찾음
+                if (root.HasLineOfSight == false)
+                {
+                    ChangeState(CanMove() ? typeof(BossChaseState) : typeof(BossTurnState));
+                    return;
+                }
+
                 if (Mathf.Abs(root.SignedAngleToTarget) > faceHalfAngle)
                 {
                     ChangeState(typeof(BossTurnState));
@@ -79,10 +86,7 @@ namespace TeamOdd.Boss
                 return;
             }
 
-            // 이미 추적 중이었다면 더 넓은 각도까지 멈추지 않고 계속 추적
-            bool canMove = isChasing ? root.CanKeepMovingToTarget : root.CanMoveToTarget;
-
-            if (intent.IsDistanceInRange || canMove == false)
+            if (intent.IsDistanceInRange || CanMove() == false)
             {
                 ChangeState(typeof(BossTurnState));
                 return;
@@ -91,13 +95,18 @@ namespace TeamOdd.Boss
             ChangeState(typeof(BossChaseState));
         }
 
+        // 이미 추적 중이었다면 더 넓은 각도까지 멈추지 않고 계속 추적
+        private bool CanMove() => isChasing ? root.CanKeepMovingToTarget : root.CanMoveToTarget;
+
         // 점프로 자리를 잡고 돌아왔으면 골라 둔 공격을 바로 실행, 사거리를 벗어났으면 평소처럼 다시 판단
+        // 착지한 자리에서 장애물에 가려졌으면 시야가 필요한 공격은 쓰지 않음
         private bool TryFollowHop()
         {
             if (hop == null) return false;
 
             BossMeleePattern follow = hop.TakeFollow();
             if (follow == null || follow.IsInRange == false) return false;
+            if (follow.IsSightClear == false) return false;
 
             executed = follow;
             ChangeState(follow.GetType());

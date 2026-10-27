@@ -26,9 +26,12 @@ namespace TeamOdd.UI
 
         private bool findsBoss;
 
+        private CanvasGroup canvasGroup;
+
         private void Awake()
         {
             findsBoss = boss == null;
+            canvasGroup = GetComponent<CanvasGroup>();
         }
 
         private void Start()
@@ -40,6 +43,8 @@ namespace TeamOdd.UI
 
         private void Update()
         {
+            canvasGroup.alpha = boss == null ? 0f : 1f;
+            
             // 연결된 보스가 꺼지거나 사라지면 활성화된 다른 보스로 바꾸고, 바는 새 보스의 체력으로 바로 맞춤
             if (findsBoss && (boss == null || boss.isActiveAndEnabled == false))
             {

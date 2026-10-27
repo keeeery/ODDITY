@@ -55,6 +55,7 @@ namespace TeamOdd.Boss
         [field: SerializeField] public float Weight { get; private set; }
         [field: SerializeField] public bool IsUrgent { get; private set; } // 우선 처리 여부
         [field: SerializeField] public bool CanApproach { get; private set; } // 범위 밖일 경우 근접하여 사용할지 여부
+        [SerializeField] private bool requiresLineOfSight = true; // 장애물에 가려 대상이 안 보이면 고르지 않음, 장애물을 무시하고 쓰는 패턴은 끔
 
         [Title("Animation")]
         [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
@@ -81,7 +82,10 @@ namespace TeamOdd.Boss
         private Pose[] lockedPoses;
         private bool[] isLocked;
 
-        public virtual bool CanUse => Clock.LocalTime >= readyTime;
+        // 시야는 고르는 시점에만 봄, 공격이 시작된 뒤 대상이 숨어도 범위 안이면 맞음
+        public virtual bool CanUse => Clock.LocalTime >= readyTime && IsSightClear;
+
+        public bool IsSightClear => requiresLineOfSight == false || root.HasLineOfSight;
 
         // 패턴이 끝난 뒤 Idle이 실제로 적용할 후딜, 끝난 방식에 따라 후딜을 바꾸는 패턴이 재정의
         public virtual float AppliedRecovery => Recovery;

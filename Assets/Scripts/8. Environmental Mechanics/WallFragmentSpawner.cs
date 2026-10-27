@@ -61,7 +61,7 @@ namespace TeamOdd.Arena
             // ObjectPoolManager는 Key나 Prefab이 비어 있으면 예외가 발생하므로 미리 걸러낸다.
             if (data == null || string.IsNullOrEmpty(data.Key) || data.Prefab == null)
             {
-                Debug.LogError($"{name}: {poolField}의 Key 또는 Prefab이 비어 있어 풀을 만들지 않았습니다.", this);
+                Debug.LogWarning($"{name}: {poolField}의 Key 또는 Prefab이 비어 있어 풀을 만들지 않았습니다.", this);
                 return;
             }
 

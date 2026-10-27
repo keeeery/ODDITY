@@ -14,6 +14,7 @@ namespace TeamOdd.Boss
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public Rigidbody Body { get; private set; }
         [field: SerializeField] public BossMovement Movement { get; private set; }
+        [field: SerializeField] public BossPathfinder Pathfinder { get; private set; } // 비어 있으면 장애물을 돌아가지 않고 대상을 바로 향함
         [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [field: Title("References")]
@@ -22,6 +23,8 @@ namespace TeamOdd.Boss
         [TitleGroup("Settings")]
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightHalfAngle = 60f;
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float sightRange = 10f;
+        [SerializeField, TabGroup("Settings/Type", "Sight")] private LayerMask sightBlockMask; // 대상을 가리는 레이어 (벽, 장애물)
+        [SerializeField, TabGroup("Settings/Type", "Sight")] private float eyeHeight = 3f; // 보스 위치에서 시야 판정 시작점까지의 높이
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float moveHalfAngle = 45f;
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float keepMoveHalfAngle = 90f; // 이미 이동 중일 때 계속 이동할 수 있는 각도
 
@@ -35,20 +38,46 @@ namespace TeamOdd.Boss
 
         private bool isTelegraphPoolMissing;
 
+        private Collider targetCollider;
+        private bool hasLineOfSight = false;
+        private int sightFrame = -1;
+
         // 시간 정지 스킬이 보스를 멈출 때 쓰는 시계, 프리팹에 없으면 Awake에서 붙임
         public TimeFreezable Clock { get; private set; }
 
         public float DistanceToTarget => transform.FlatDistanceTo(Target);
         public float SignedAngleToTarget => Mathf.DeltaAngle(Movement.Rotation.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
-        
+
+        // 걸어서 대상에게 갈 때 지금 향해야 할 지점, 장애물이 가로막으면 대상 대신 경로의 다음 꺾임점
+        public Vector3 SteerPoint => Pathfinder != null ? Pathfinder.GetSteerPoint(Movement.Position, Target.position) : Target.position;
+        public float SignedAngleToSteer => SignedAngleTo(SteerPoint);
+
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
-        public bool CanMoveToTarget => Mathf.Abs(SignedAngleToTarget) <= moveHalfAngle;
-        public bool CanKeepMovingToTarget => Mathf.Abs(SignedAngleToTarget) <= keepMoveHalfAngle;
-        
+
+        // 장애물을 돌아가는 중엔 대상이 아닌 경로 방향으로 걸으므로 이동 가능 각도도 경로 기준
+        public bool CanMoveToTarget => Mathf.Abs(SignedAngleToSteer) <= moveHalfAngle;
+        public bool CanKeepMovingToTarget => Mathf.Abs(SignedAngleToSteer) <= keepMoveHalfAngle;
+
+        // 장애물에 가려지지 않고 대상이 보이는지, 패턴마다 여러 번 물어도 판정은 프레임당 한 번만 함
+        public bool HasLineOfSight
+        {
+            get
+            {
+                if (sightFrame != Time.frameCount)
+                {
+                    sightFrame = Time.frameCount;
+                    hasLineOfSight = CheckLineOfSight();
+                }
+
+                return hasLineOfSight;
+            }
+        }
+
         protected override void Awake()
         {
             Clock = TimeFreezable.GetOrAdd(gameObject);
             Target = Player.Player.Instance.transform;
+            Target.TryGetComponent(out targetCollider);
             base.Awake();
         }
 
@@ -109,6 +138,23 @@ namespace TeamOdd.Boss
 
         #endregion
 
+        private float SignedAngleTo(Vector3 point)
+        {
+            Vector3 dir = transform.FlatDirectionTo(point);
+            if (dir == Vector3.zero) return 0f;
+
+            return Mathf.DeltaAngle(Movement.Rotation.eulerAngles.y, Quaternion.LookRotation(dir).eulerAngles.y);
+        }
+
+        // 발끝은 낮은 턱에도 가려지므로 몸통 중심을 봄
+        private bool CheckLineOfSight()
+        {
+            Vector3 eye = transform.position + Vector3.up * eyeHeight;
+            Vector3 targetPoint = targetCollider != null ? targetCollider.bounds.center : Target.position;
+
+            return Physics.Linecast(eye, targetPoint, sightBlockMask, QueryTriggerInteraction.Ignore) == false;
+        }
+
         #region SIGHT_VISUALIZATION
 
 #if UNITY_EDITOR
@@ -128,6 +174,15 @@ namespace TeamOdd.Boss
             UnityEditor.Handles.color = Color.cyan;
             UnityEditor.Handles.DrawWireArc(position, Vector3.up, from, sightHalfAngle * 2f, sightRange);
             UnityEditor.Handles.Label(position + forward * sightRange, $"Sight (±{sightHalfAngle}°, {sightRange})");
+
+            // 실행 중엔 시야 판정선을 보이면 초록, 가려지면 빨강으로 표시
+            if (Application.isPlaying && Target != null)
+            {
+                Vector3 targetPoint = targetCollider != null ? targetCollider.bounds.center : Target.position;
+
+                UnityEditor.Handles.color = HasLineOfSight ? Color.green : Color.red;
+                UnityEditor.Handles.DrawLine(position + Vector3.up * eyeHeight, targetPoint);
+            }
 
             UnityEditor.Handles.color = originalColor;
         }

@@ -46,16 +46,16 @@ namespace TeamOdd.Boss
 
         private bool IsChaseReady()
         {
-            BossMeleePattern intent = root.Intent;
+            if (IsApproaching() == false) return false;
 
-            if (intent == null) return false;
-            if (intent.IsDistanceInRange) return false;
-
-            return Mathf.Abs(root.SignedAngleToTarget) <= chaseReadyAngle;
+            return Mathf.Abs(root.SignedAngleToSteer) <= chaseReadyAngle;
         }
 
+        // 추적으로 이어질 땐 장애물을 돌아갈 방향으로, 그 외엔 대상(사거리 안이면 공격 각도) 쪽으로 돎
         private float GetDeltaAngle()
         {
+            if (IsApproaching()) return root.SignedAngleToSteer;
+
             float angle = root.SignedAngleToTarget;
             return Mathf.DeltaAngle(GetGoalAngle(angle), angle);
         }
@@ -64,8 +64,17 @@ namespace TeamOdd.Boss
         {
             BossMeleePattern intent = root.Intent;
 
-            return intent == null || intent.IsDistanceInRange == false ? 
-                0f : intent.ClampAngle(angle, angleMargin);
+            return intent == null ? 0f : intent.ClampAngle(angle, angleMargin);
+        }
+
+        // 사거리 밖인 공격을 하러 가거나, 고를 패턴이 없어 가려진 대상을 찾으러 가는 중
+        private bool IsApproaching()
+        {
+            BossMeleePattern intent = root.Intent;
+
+            if (intent == null) return root.HasLineOfSight == false;
+
+            return intent.IsDistanceInRange == false;
         }
     }
 }
