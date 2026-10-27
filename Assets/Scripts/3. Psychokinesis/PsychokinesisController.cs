@@ -90,6 +90,8 @@ namespace TeamOdd.Psychokinesis
         private float swingActiveUntil = float.NegativeInfinity;
         
         public PsychokinesisObject HeldObject => heldObject;
+        // 조준 중인(외곽선이 그려진) 오브젝트. 없으면 null
+        public PsychokinesisObject FocusedObject => focusedObject;
         public bool GrabRequested => grabRequested;
         public bool ReleaseRequested => releaseRequested;
 
