@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using TeamOdd.Combat;
+using TeamOdd.Arena;
 
 namespace TeamOdd.Boss
 {
@@ -22,7 +23,16 @@ namespace TeamOdd.Boss
         [SerializeField] private int damage = 25;
         [SerializeField] private HitReaction reaction = HitReaction.Knockdown;
 
+        [Title("Lift")]
+        [Tooltip("착지 지점 기준으로 염동력 오브젝트를 띄울 반경(m), 피해 범위(radius)와 따로 정한다.")]
+        [SerializeField, Min(0f)] private float liftRadius = 10f;
+        [Tooltip("착지 충격 범위 안의 염동력 오브젝트를 띄울 높이의 무작위 범위(m)")]
+        [SerializeField, MinMaxSlider(0f, 3f, true)] private Vector2 liftHeight = new Vector2(0.3f, 1f);
+        [Tooltip("떠오르는 데 걸리는 시간의 무작위 범위(초), 다 떠오르면 중력으로 떨어진다.")]
+        [SerializeField, MinMaxSlider(0f, 1f, true)] private Vector2 liftDuration = new Vector2(0.15f, 0.3f);
+
         private BossMonster root;
+        private WallFragmentSpawner fragmentSpawner;
 
         private bool isJumping;
         private bool isHoming;
@@ -34,7 +44,12 @@ namespace TeamOdd.Boss
         public int Damage => damage;
         public HitReaction Reaction => reaction;
 
-        public void Initialize(BossMonster root) => this.root = root;
+        // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 씬에서 찾음
+        public void Initialize(BossMonster root)
+        {
+            this.root = root;
+            fragmentSpawner = UnityEngine.Object.FindAnyObjectByType<WallFragmentSpawner>();
+        }
 
         public void Begin()
         {
@@ -64,14 +79,16 @@ namespace TeamOdd.Boss
             root.Movement.Move(velocity * root.Clock.LocalDeltaTime);
         }
 
-        // 착지하며 멈추고 충격 범위의 위치를 돌려줌, 피해 판정은 사용하는 쪽이 이 위치로 처리
+        // 착지하며 멈추고 충격 범위 안의 염동력 오브젝트를 띄운 뒤 충격 범위의 위치를 돌려줌, 피해 판정은 사용하는 쪽이 이 위치로 처리
         // 벽에 막혀 덜 갔어도 실제 착지한 위치 기준
         public Pose Land()
         {
             Stop();
 
             Vector3 center = root.Movement.Position + GetJumpDirection() * impactOffset;
-            return new Pose(center, Quaternion.identity);
+            Pose pose = new Pose(center, Quaternion.identity);
+            BossFragmentLift.LiftInRange(fragmentSpawner, TelegraphShape.Circle(liftRadius), pose, liftHeight, liftDuration);
+            return pose;
         }
 
         public void Stop()

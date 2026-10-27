@@ -140,6 +140,9 @@ namespace TeamOdd.Boss
             if (TryPickDropPosition(out Vector3 position, out Vector3 ground) == false) return;
 
             WallFragment fragment = fragmentSpawner.SpawnFragment(size, position, Random.rotation);
+            if (fragment == null) return;
+            if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject)) psychokinesisObject.MarkSpawnedByBoss();
+
             Rigidbody body = fragment.GetComponent<Rigidbody>();
             body.linearVelocity = Vector3.down * initialFallSpeed;
             body.angularVelocity = Random.onUnitSphere * spinSpeed;

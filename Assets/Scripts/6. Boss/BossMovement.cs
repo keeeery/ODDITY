@@ -30,6 +30,9 @@ namespace TeamOdd.Boss
         // 막힌 물리 스텝마다 발생, 벽 충돌 그로기 같은 반응은 구독하는 상태가 판단
         public event Action<BossBlockInfo> OnBlocked;
 
+        // 몸통의 수평 반경
+        public float BodyRadius => castRadius;
+
         // 돌진처럼 잠깐 특정 대상을 통과해야 할 때 blockMask에서 뺄 레이어, 쓴 쪽이 끝날 때 0으로 되돌림
         public LayerMask PassThroughMask { get; set; }
 

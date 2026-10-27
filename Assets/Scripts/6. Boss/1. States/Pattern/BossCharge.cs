@@ -2,6 +2,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using FantasyGarden.FSM;
 using TeamOdd.Combat;
+using TeamOdd.Arena;
 
 namespace TeamOdd.Boss
 {
@@ -46,6 +47,9 @@ namespace TeamOdd.Boss
         [SerializeField] private LayerMask wallMask; // 부딪히면 행동불능이 되는 레이어
         [SerializeField] private float headOnAngle = 60f; // 진행 방향과 벽 사이 각이 이 이하일 때만 행동불능, 넘으면 벽을 따라 미끄러지며 계속 돌진
         [SerializeField] private float stunDuration = 3f; // 벽에 부딪힌 순간부터 잼, GetHitFront 재생 시간 포함
+        [SerializeField] private WallFragmentSpawner fragmentSpawner; // 벽에 정면으로 박으면 부딪힌 지점에서 파편 생성, 비어 있으면 씬에서 찾음
+        [SerializeField, Range(0f, 1.5f)] private float fragmentSideGapRatio = 0.4f; // 충돌 지점 좌우로 비워 둘 거리(몸통 반경 대비 비율), 파편이 보스 정면이 아닌 양옆에서 튀게 함
+        [SerializeField] private float fragmentShatterGrace = 0.5f; // 생성 직후 보스 다리·발에 닿아도 파편화하지 않는 시간(초)
 
         [Title("Path Telegraph")]
         [SerializeField, Min(0.01f)] private float pathFadeDuration = 0.3f; // 돌진이 끝난 뒤 경로 표시가 사라지는 시간(초)
@@ -98,6 +102,9 @@ namespace TeamOdd.Boss
         {
             base.Initialize(stateMachine);
             jump.Initialize(root);
+
+            // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 비어 있으면 씬에서 찾음
+            if (fragmentSpawner == null) fragmentSpawner = FindAnyObjectByType<WallFragmentSpawner>();
         }
 
         protected override void OnPatternEnter()
@@ -243,7 +250,20 @@ namespace TeamOdd.Boss
             if (wallMask.Contains(info.Collider.gameObject) == false) return;
             if (info.ImpactAngle > headOnAngle) return;
 
+            SpawnWallFragments(info);
             StartStun();
+        }
+
+        // 돌진 중 정면으로 박은 경우에만 불리므로 점프나 일반 이동으로 벽에 닿을 때는 생성되지 않음
+        private void SpawnWallFragments(BossBlockInfo info)
+        {
+            if (fragmentSpawner == null) return;
+
+            // 구의 위·아래쪽으로 닿으면 법선이 기울어 있으므로 수평 성분만 사용
+            Vector3 normal = new Vector3(info.Normal.x, 0f, info.Normal.z);
+            if (normal.sqrMagnitude < 0.0001f) normal = -chargeDir;
+
+            fragmentSpawner.SpawnAlongWall(info.Point, normal, Movement.BodyRadius * fragmentSideGapRatio, fragmentShatterGrace);
         }
 
         private void StartStun()

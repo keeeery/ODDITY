@@ -62,6 +62,22 @@ namespace TeamOdd.Player
         // 팔꿈치가 굽는 방향, 플레이어 로컬 좌표, 기존 hint 객체를 추가하는 대신 오프셋 값으로 대체
         [SerializeField] private Vector3 elbowHintOffset = new(-0.786f, 1.283f, -0.111f);
 
+        [Header("기본 공격")]
+        // 손을 당겨 모으는 시간 → 앞으로 뻗는 시간 → 돌아오는 시간(초)
+        [SerializeField, Min(0.01f)] private float attackWindup = 0.06f;
+        [SerializeField, Min(0.01f)] private float attackThrust = 0.07f;
+        [SerializeField, Min(0.01f)] private float attackRecover = 0.2f;
+        // 뻗는 구간 중 염동탄이 손을 떠나는 지점(0: 뻗기 시작, 1: 다 뻗음)
+        [SerializeField, Range(0f, 1f)] private float attackReleasePoint = 0.4f;
+        // 마지막 공격 뒤 이 시간(초) 동안 조준 자세를 유지해 연타 중 팔이 내려갔다 올라오지 않게 함
+        [SerializeField, Min(0f)] private float attackStanceDuration = 0.6f;
+        [SerializeField, Min(0.1f)] private float attackReach = 0.75f;
+        [SerializeField, Range(0f, 1f)] private float attackIkWeight = 0.85f;
+        // 뻗을 때 손바닥이 앞을 보도록 손목을 젖히는 각도, 던지기 준비와 반대 방향
+        [SerializeField, Range(-90f, 90f)] private float attackWristBend = 45f;
+        [SerializeField, Min(0.1f)] private float attackBlendSpeed = 35f;
+        [SerializeField, Min(1f)] private float attackAimDistance = 14f;
+
         [Header("피격")] 
         private float earlyWakeUpCooldown;
         public float MaxEarlyWakeUpCooldown;
@@ -90,10 +106,17 @@ namespace TeamOdd.Player
         private Vector3 lastHandTarget;
         private Quaternion lastHandRotation;
         private Transform externalHoldTarget; // 염동 내려찍기처럼 물체가 아닌 대상을 붙잡는 스킬이 지정
+        private float attackStartTime = float.NegativeInfinity;
+        private float attackPushAtStart;
+        private float attackPull; // 0: 평소, 1: 손을 당겨 모음
+        private float attackPush; // 0: 평소, 1: 앞으로 다 뻗음
 
         // 팔을 뻗을 대상, 스킬이 지정한 대상이 들고 있는 물체보다 우선
         private Transform HoldTarget => externalHoldTarget != null ? externalHoldTarget :
             heldObject != null ? heldObject.transform : null;
+
+        // 기본 공격 직후, 들고 있는 물체가 없어도 조준 방향으로 팔을 뻗는 동안
+        private bool IsAttackStance => Time.time < attackStartTime + attackStanceDuration;
 
         private Transform[] leftFingers;
         private Quaternion[] leftFingerRestRotations;
@@ -154,7 +177,7 @@ namespace TeamOdd.Player
             CheckRollInput();
 
             heldObject = psychokinesisController.HeldObject;
-            animator.SetLayerWeight(1, HoldTarget == null ? 0.0f : 1.0f);
+            animator.SetLayerWeight(1, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
         }
 
         private void UpdateMovement()
@@ -338,13 +361,17 @@ namespace TeamOdd.Player
             heldObject = psychokinesisController.HeldObject;
 
             // 잡기 입력(우클릭) 중이거나 홀딩 중에는 이동 방향 회전 대신 여기서 몸 방향을 정함
-            bool aiming = HoldTarget != null || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool aiming = HoldTarget != null || IsAttackStance || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
             rotateTowardMove = defaultRotateTowardMove && aiming == false;
 
             float aimYaw = Camera.main.transform.eulerAngles.y;
             float t = 1f - Mathf.Exp(-holdTurnSpeed * Time.deltaTime);
 
-            if (HoldTarget == null || IsRolling)
+            // 구르면 공격 자세도 끊음
+            if (IsRolling) attackStartTime = float.NegativeInfinity;
+            UpdateAttackPulse();
+
+            if ((HoldTarget == null && IsAttackStance == false) || IsRolling)
             {
                 if (isHolding)
                 {
@@ -372,9 +399,12 @@ namespace TeamOdd.Player
             else if (armYaw > armYawRange) bodyTargetYaw = aimYaw + holdBodyLeadAngle - armYawRange;
 
             SetBodyYaw(Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t));
-            ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
 
-            bool preparingThrow =
+            // 공격은 한 번 누르자마자 팔이 올라와야 하므로 더 빠르게 블렌드
+            if (HoldTarget != null) ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
+            else ikBlend = Mathf.Lerp(ikBlend, attackIkWeight, 1f - Mathf.Exp(-attackBlendSpeed * Time.deltaTime));
+
+            bool preparingThrow = heldObject != null &&
                 externalHoldTarget == null && SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
             throwPrepareBlend = Mathf.Lerp(throwPrepareBlend, preparingThrow ? 1f : 0f, t);
         }
@@ -399,10 +429,11 @@ namespace TeamOdd.Player
         private void SetBodyYaw(float yaw) => transform.rotation = Quaternion.Euler(0f, yaw, 0f);
 
         // 홀딩 중 왼팔을 물체 쪽으로 뻗고, 던지기 준비 중에는 굽혀 당김. 놓으면 마지막 자세에서 서서히 해제
+        // 기본 공격은 같은 팔 IK로 조준 방향을 향해 당겼다가 뻗음
         private void UpdateHoldArmIK()
         {
             // 같은 프레임 안에 대상이 사라졌으면(보스 제거 등) 놓은 것처럼 서서히 해제
-            if (isHolding == false || HoldTarget == null)
+            if (isHolding == false || TryGetArmTarget(out Vector3 armTarget) == false)
             {
                 // IK 가중치는 다시 설정할 때까지 유지되므로 다 풀린 뒤에는 0으로 정리
                 SetLeftHandIK(lastHandTarget, lastHandRotation, ikBlend > 0.01f ? ikBlend : 0f);
@@ -411,19 +442,44 @@ namespace TeamOdd.Player
             }
 
             Vector3 shoulder = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            Vector3 direction = (HoldTarget.position - shoulder).normalized;
+            Vector3 direction = (armTarget - shoulder).normalized;
 
             // IK 적용 전 애니메이션의 팔 방향에서 새 팔 방향으로 돌린 만큼 손도 돌려 손목 각도 유지
             Vector3 animatedArm = animator.GetIKPosition(AvatarIKGoal.LeftHand) - shoulder;
             Quaternion handRotation = Quaternion.FromToRotation(animatedArm, direction) *
                                       animator.GetIKRotation(AvatarIKGoal.LeftHand);
 
-            lastHandTarget = shoulder + direction * Mathf.Lerp(armReach, throwPrepareReach, throwPrepareBlend);
-            lastHandRotation = BendWrist(handRotation, direction, throwPrepareWristBend * throwPrepareBlend);
+            // 공격의 당기는 자세는 던지기 준비 자세를 그대로 씀
+            float pull = Mathf.Max(throwPrepareBlend, attackPull);
+            float reach = Mathf.Lerp(Mathf.Lerp(armReach, throwPrepareReach, pull), attackReach, attackPush);
+            float wristBend = throwPrepareWristBend * pull + attackWristBend * attackPush;
+
+            lastHandTarget = shoulder + direction * reach;
+            lastHandRotation = BendWrist(handRotation, direction, wristBend);
             SetLeftHandIK(lastHandTarget, lastHandRotation, ikBlend);
 
             animator.SetIKHintPosition(AvatarIKHint.LeftElbow, transform.TransformPoint(elbowHintOffset));
-            animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, throwPrepareBlend * ikBlend);
+            animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, pull * ikBlend);
+        }
+
+        // 들고 있는 대상이 우선, 없으면 공격 자세 동안 화면 중앙 조준 방향
+        private bool TryGetArmTarget(out Vector3 position)
+        {
+            if (HoldTarget != null)
+            {
+                position = HoldTarget.position;
+                return true;
+            }
+
+            if (IsAttackStance)
+            {
+                Transform aim = Camera.main.transform;
+                position = aim.position + aim.forward * attackAimDistance;
+                return true;
+            }
+
+            position = default;
+            return false;
         }
 
         // 손목을 현재 꺾인 방향(팔 → 손가락)으로 angle만큼 더 꺾음, 음수면 반대 방향
@@ -463,11 +519,48 @@ namespace TeamOdd.Player
         {
             if (ikBlend <= 0.01f) return;
 
-            float keep = Mathf.Lerp(1f, holdFingerBendScale, ikBlend / armIkWeight);
+            // 공격으로 뻗을 때는 손가락을 펴서 손바닥으로 미는 모양
+            float keep = Mathf.Lerp(1f, holdFingerBendScale, ikBlend / armIkWeight) * (1f - attackPush);
 
             for (int i = 0; i < leftFingers.Length; i++)
                 leftFingers[i].localRotation =
                     Quaternion.Slerp(leftFingerRestRotations[i], leftFingers[i].localRotation, keep);
+        }
+
+        #endregion
+
+        #region 기본 공격
+
+        // 손을 당겼다 앞으로 뻗는 동작을 시작하고, 염동탄이 손을 떠날 때까지의 시간(초)을 돌려줌
+        public float PlayAttackMotion()
+        {
+            attackPushAtStart = attackPush;
+            attackStartTime = Time.time;
+            return attackWindup + attackThrust * attackReleasePoint;
+        }
+
+        // 연타 중 다시 누르면 뻗어 있던 팔을 당기면서 이어지도록, 시작할 때 뻗은 정도에서 출발
+        private void UpdateAttackPulse()
+        {
+            float elapsed = Time.time - attackStartTime;
+
+            if (elapsed < attackWindup)
+            {
+                float k = Mathf.SmoothStep(0f, 1f, elapsed / attackWindup);
+                attackPull = k;
+                attackPush = attackPushAtStart * (1f - k);
+            }
+            else if (elapsed < attackWindup + attackThrust)
+            {
+                float k = 1f - Mathf.Pow(1f - (elapsed - attackWindup) / attackThrust, 3f);
+                attackPull = 1f - k;
+                attackPush = k;
+            }
+            else
+            {
+                attackPull = 0f;
+                attackPush = 1f - Mathf.SmoothStep(0f, 1f, (elapsed - attackWindup - attackThrust) / attackRecover);
+            }
         }
 
         #endregion
