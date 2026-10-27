@@ -38,7 +38,7 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            if (Time.time >= lastConsumeTime + staminaRegenDelay)
+            if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)
                 stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
             
             if (SimpleInput.GetKeyDown(Key.Escape))
@@ -67,15 +67,23 @@ namespace TeamOdd.Player
         {
             if (stamina < 100f) return;
 
-            ConsumeStamina(100f);
+            ConsumeStamina(PlayerController.NeedRollStamina);
             PlayerController.InputRolling();
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
         { 
-            if (eventName == "EndRolling")
+            switch (eventName)
             {
-                PlayerController.EndRoll();
+                case "EndRolling":
+                    PlayerController.EndRoll();
+                    break;
+                case "EndHit":
+                    PlayerController.isHit = false;
+                    break;    
+                case "WakeUp":
+                    PlayerController.CanWakeUp = true;
+                    break;
             }
         }
 

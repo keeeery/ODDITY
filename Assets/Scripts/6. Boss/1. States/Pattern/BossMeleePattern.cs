@@ -227,7 +227,7 @@ namespace TeamOdd.Boss
             MeleeHit hit = hits[index];
             Pose pose = isLocked[index] ? lockedPoses[index] : GetHitPose(hit, Vector2.zero);
             isLocked[index] = false;
-
+            
             TryHit(hit.shape, pose, hit.damage, hit.reaction);
 
             // 예고 없이 타격했으면 타격 순간에만 범위를 보여 줌
@@ -241,7 +241,12 @@ namespace TeamOdd.Boss
         {
             if (shape.Contains(pose, Target.position, targetRadius) == false) return false;
 
-            SendDamage(damage, reaction, Target.position);
+            if (Player.Player.Instance.PlayerController.IsInvincible == false)
+            {
+                Debug.Log("try");
+                Player.Player.Instance.PlayerController.ApplyHitReaction(root.transform.position, reaction, shape.radius);
+                SendDamage(damage, reaction, Target.position);
+            }
             return true;
         }
 

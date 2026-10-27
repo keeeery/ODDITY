@@ -1,4 +1,4 @@
-﻿using System;
+﻿using TeamOdd.Player;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using FantasyGarden.FSM;
@@ -48,6 +48,7 @@ namespace TeamOdd.Boss
         protected override void Awake()
         {
             Clock = TimeFreezable.GetOrAdd(gameObject);
+            Target = Player.Player.Instance.transform;
             base.Awake();
         }
 
