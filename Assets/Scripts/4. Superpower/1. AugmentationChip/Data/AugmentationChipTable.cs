@@ -39,6 +39,7 @@ namespace TeamOdd.Superpower
             {
                 SkillChipDef def = new SkillChipDef
                 {
+                    Category = Enum.Parse<SkillCategory>(chipDto.Category),
                     SkillType = Enum.Parse<SkillType>(chipDto.SkillType),
                     Cooldown = chipDto.Cooldown,
                     Cost = chipDto.Cost,
@@ -76,7 +77,7 @@ namespace TeamOdd.Superpower
             return rows;
         }
 
-        // SkillChip.tsv: 공통 다섯 칸 + SkillType, Cooldown, Cost, Params
+        // SkillChip.tsv: 공통 다섯 칸 + Category, SkillType, Cooldown, Cost, Params
         private static List<SkillChipDTO> ReadSkillChips()
         {
             List<SkillChipDTO> rows = new List<SkillChipDTO>();
@@ -84,12 +85,13 @@ namespace TeamOdd.Superpower
             {
                 SkillChipDTO chipDto = new();
                 ReadCommon(chipDto, cells);
-                chipDto.SkillType = cells[5];
+                chipDto.Category = cells[5];
+                chipDto.SkillType = cells[6];
                 // 소수점은 '.'으로 적는다.
-                chipDto.Cooldown = float.Parse(cells[6]);
-                chipDto.Cost = float.Parse(cells[7]);
+                chipDto.Cooldown = float.Parse(cells[7]);
+                chipDto.Cost = float.Parse(cells[8]);
                 // 매개변수가 없는 스킬은 비워 둔다. 줄 끝의 빈 칸이 잘려 있어도 빈 칸으로 본다
-                chipDto.Params = cells.Length > 8 ? cells[8] : "";
+                chipDto.Params = cells.Length > 9 ? cells[9] : "";
                 rows.Add(chipDto);
             }
 

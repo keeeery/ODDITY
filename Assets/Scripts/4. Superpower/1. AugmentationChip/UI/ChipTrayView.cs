@@ -140,8 +140,15 @@ namespace TeamOdd.Superpower
             if (x is StatChipDef statX && y is StatChipDef statY)
                 return statX.StatType.CompareTo(statY.StatType);
 
+            // 스킬 칩은 공격/방어/유틸로 먼저 묶고, 같은 분류 안에서 스킬 종류 순
             if (x is SkillChipDef skillX && y is SkillChipDef skillY)
+            {
+                result = skillX.Category.CompareTo(skillY.Category);
+                if (result != 0)
+                    return result;
+
                 return skillX.SkillType.CompareTo(skillY.SkillType);
+            }
 
             return 0;
         }

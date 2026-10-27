@@ -318,12 +318,20 @@ namespace TeamOdd.Superpower
             string effect = def switch
             {
                 StatChipDef stat => $"능력치  {stat.StatType} +{stat.Value}",
-                SkillChipDef skill => $"스킬  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · 스태미나 {skill.Cost} · {info.Skill.Describe()}",
+                SkillChipDef skill => $"스킬({GetCategoryLabel(skill.Category)})  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · 스태미나 {skill.Cost} · {info.Skill.Describe()}",
                 _ => "",
             };
 
             infoText.text = $"[{def.ID}] {def.Name} - {def.Description}  |  {state}\n{effect}\n{notice ?? GetSummary()}";
         }
+
+        private static string GetCategoryLabel(SkillCategory category) => category switch
+        {
+            SkillCategory.Attack => "공격",
+            SkillCategory.Defense => "방어",
+            SkillCategory.Utility => "유틸",
+            _ => "",
+        };
 
         private string GetSummary()
         {
