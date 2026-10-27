@@ -116,6 +116,8 @@ namespace TeamOdd.Boss
             }
 
             if (name != "OnThrow") return;
+            // 생성에 실패했거나 OnThrowPrepare 없이 신호가 오면 던질 오브젝트가 없음
+            if (heldBody == null) return;
 
             float flightTime = Throw();
             // 패턴이 끝나 이 오브젝트가 비활성화돼도 비행 중 판정은 이어지도록 보스에서 실행
@@ -245,6 +247,7 @@ namespace TeamOdd.Boss
         private void Spawn()
         {
             WallFragment fragment = fragmentSpawner.SpawnFragment(FragmentSize.Large, Origin.position, Random.rotation);
+            if (fragment == null) return;
 
             heldBody = fragment.GetComponent<Rigidbody>();
             heldBody.isKinematic = true;

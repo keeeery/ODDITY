@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -18,6 +19,9 @@ namespace TeamOdd.Arena
         private const int MinimumImpactFragmentCount = 3;
         private const float ImpactSpeedMultiplier = 0.3f;
         private readonly Collider[] spawnOverlaps = new Collider[128];
+        // 실제로 만들어진 풀과, 비어 있어 이미 경고한 풀 (경고는 풀마다 한 번만)
+        private readonly HashSet<ObjectPoolManager.ObjectPoolData> readyPools = new();
+        private readonly HashSet<ObjectPoolManager.ObjectPoolData> warnedPools = new();
 
         [SerializeField] private PsychokinesisObject[] largeFragmentPrefabs;
         [FormerlySerializedAs("smallFragmentPrefabs")]
@@ -66,6 +70,17 @@ namespace TeamOdd.Arena
             }
 
             ObjectPoolManager.Instance.CreatePool(data);
+            readyPools.Add(data);
+        }
+
+        // 파편 목록이 비었거나 풀이 만들어지지 않았으면 생성하지 않음, 씬 설정이 빠진 경우 예외 대신 경고만 남김
+        private bool CanSpawn(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool)
+        {
+            if (prefabs != null && prefabs.Length > 0 && readyPools.Contains(pool)) return true;
+
+            if (warnedPools.Add(pool))
+                Debug.LogWarning($"{name}: 파편 목록이 비어 있거나 풀이 만들어지지 않아 파편을 생성하지 않습니다. (풀 키: '{pool?.Key}')", this);
+            return false;
         }
 
         private void OnEnable()
@@ -81,7 +96,8 @@ namespace TeamOdd.Arena
         // debrisMaterial이 있으면 그 머티리얼의 금속 조각으로, 없으면(벽 파편, 보스 패턴 오브젝트) 콘크리트 파편으로 부서진다.
         public void SpawnImpactDebris(Vector3 point, Vector3 normal, float mass, Material debrisMaterial)
         {
-            if (debrisMaterial != null)
+            // 금속 조각이 준비되지 않은 씬에서는 콘크리트 파편으로 대신 부서진다.
+            if (debrisMaterial != null && CanSpawn(metalShardPrefabs, metalShardPool))
             {
                 int shardCount = Mathf.Clamp(Mathf.RoundToInt(mass * metalShardsPerKilogram),
                     MinimumImpactFragmentCount, maxMetalShardCount);
@@ -212,10 +228,12 @@ namespace TeamOdd.Arena
             }
         }
 
-        // 크기별 풀에서 무작위 형태의 파편을 꺼내 배치
+        // 크기별 풀에서 무작위 형태의 파편을 꺼내 배치, 목록이 비었거나 풀이 비면 null
         public WallFragment SpawnFragment(FragmentSize size, Vector3 position, Quaternion rotation)
         {
             Component[] prefabs = GetPrefabs(size);
+            if (CanSpawn(prefabs, GetPool(size)) == false) return null;
+
             return SpawnVariant(prefabs[Random.Range(0, prefabs.Length)], GetPool(size), position, rotation);
         }
 
@@ -270,6 +288,8 @@ namespace TeamOdd.Arena
         // spread가 있으면 충돌 지점 정면을 비우고 벽을 따라 좌우·위로 생성·발사한다.
         private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f, Material materialOverride = null, WallSpread? spread = null)
         {
+            if (CanSpawn(prefabs, pool) == false) return;
+
             Quaternion surfaceRotation = Quaternion.LookRotation(normal);
             Vector3 wallTangent = surfaceRotation * Vector3.right;
             Vector2 speedRange = launchSpeed * speedMultiplier;
