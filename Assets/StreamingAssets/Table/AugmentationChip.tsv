@@ -9,6 +9,9 @@ Id	Name	Description	StatType	Value	UnitSpriteKey	CellCount	ChipType	SkillType	Co
 1021	생체 증폭 칩(S)	최대 체력이 20 증가합니다.	MaxHp	20	AugmentationChip/ChipUnit_Green	4
 1022	생체 증폭 칩(M)	최대 체력이 40 증가합니다.	MaxHp	40	AugmentationChip/ChipUnit_Green	5
 1023	생체 증폭 칩(L)	최대 체력이 60 증가합니다.	MaxHp	60	AugmentationChip/ChipUnit_Green	6
+1031	염동력 강화 칩(S)	염동력으로 들 수 있는 최대 질량이 5kg 증가합니다.	PsychoMaxMass	5	AugmentationChip/ChipUnit_Yellow	3
+1032	염동력 강화 칩(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	PsychoMaxMass	10	AugmentationChip/ChipUnit_Yellow	4
+1033	염동력 강화 칩(L)	염동력으로 들 수 있는 최대 질량이 15kg 증가합니다.	PsychoMaxMass	15	AugmentationChip/ChipUnit_Yellow	5
 2001	회복 칩	체력을 30 회복합니다.			AugmentationChip/ChipUnit_Purple	3	Skill	Heal	8	Amount=30
 2002	염동 충격파 칩	주변 6m 안의 적에게 피해 10을 주고 밀어냅니다.			AugmentationChip/ChipUnit_Purple	4	Skill	Shockwave	12	Radius=6;Force=15;Damage=10
 2003	순간 이동 칩	바라보는 방향으로 8m 순간 이동합니다.			AugmentationChip/ChipUnit_Purple	3	Skill	Blink	5	Distance=8;PassThrough=false
