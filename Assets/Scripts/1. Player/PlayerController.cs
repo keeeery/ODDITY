@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using Study.Utilities;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace TeamOdd.Player
 {
@@ -109,6 +107,9 @@ namespace TeamOdd.Player
         public bool IsSprinting { get; private set; }
         public bool IsInvincible { get; private set; }
 
+        // 있으면 구르기 속도를 커브로 제어, 없으면 rollDistance / rollDuration 고정 속도
+        public PlayerRollCurve RollCurve { get; set; }
+
         public event Action OnRollRequested;
 
         private void Awake()
@@ -161,7 +162,6 @@ namespace TeamOdd.Player
             bool canRun = SimpleInput.GetKey(Key.LeftShift) && Player.Instance.Stamina >= NeedRunStamina;
             
             float speed = canRun ? runSpeed : walkSpeed;
-            //Debug.Log(speed);
 
             if (IsSprinting)
                 Player.Instance.ConsumeStamina(NeedRunStamina * Time.deltaTime);
@@ -260,6 +260,7 @@ namespace TeamOdd.Player
 
             rollDir = inputDir.sqrMagnitude > 0.0001f ? inputDir.normalized : transform.forward;
 
+            if (RollCurve != null) RollCurve.BeginRoll();
             animator.SetTrigger(Rolling);
         }
 
@@ -271,8 +272,15 @@ namespace TeamOdd.Player
 
         private void ExecuteRollMovement()
         {
-            float rollSpeed = rollDistance / rollDuration;
-            Vector3 rollMove = (rollDir * rollSpeed) + new Vector3(0, gravity, 0);
+            // 커브 적용 전 코드
+            // float rollSpeed = rollDistance / rollDuration;
+            // Vector3 rollMove = (rollDir * rollSpeed) + new Vector3(0, gravity, 0);
+            // controller.Move(rollMove * Time.deltaTime);
+
+            var horizontal = RollCurve != null
+                ? RollCurve.EvaluateVelocity(rollDir)
+                : rollDir * (rollDistance / rollDuration);
+            Vector3 rollMove = horizontal + new Vector3(0, gravity, 0);
             controller.Move(rollMove * Time.deltaTime);
         }
 

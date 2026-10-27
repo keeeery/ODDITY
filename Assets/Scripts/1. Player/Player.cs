@@ -69,7 +69,7 @@ namespace TeamOdd.Player
         
         private void HandleRollRequested()
         {
-            if (stamina < 100f) return;
+            if (stamina < PlayerController.NeedRollStamina) return;
 
             ConsumeStamina(PlayerController.NeedRollStamina);
             PlayerController.InputRolling();
