@@ -788,6 +788,7 @@ GameObject:
   - component: {fileID: 7477955140076880982}
   - component: {fileID: 560260013335335844}
   - component: {fileID: 4127609318475520613}
+  - component: {fileID: 4521623819942262813}
   m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
@@ -857,11 +858,11 @@ Rigidbody:
     m_Bits: 256
   m_ImplicitCom: 0
   m_ImplicitTensor: 0
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 1
   m_Constraints: 80
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!114 &8005779171590074953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -877,6 +878,7 @@ MonoBehaviour:
   defaultState: {fileID: 592612764365491377}
   <Animator>k__BackingField: {fileID: 6020067126372009872}
   <Body>k__BackingField: {fileID: 5363785815632091185}
+  <Movement>k__BackingField: {fileID: 4521623819942262813}
   <AnimEventListener>k__BackingField: {fileID: 5617293112904674764}
   <Target>k__BackingField: {fileID: 0}
   sightHalfAngle: 20
@@ -2253,6 +2255,7 @@ MonoBehaviour:
   - {fileID: 8868022279130048305}
   - {fileID: 5502451583672451264}
   - {fileID: 1526546028186094052}
+  - {fileID: 4554608892249188006}
 --- !u!1 &7646533345748698016
 GameObject:
   m_ObjectHideFlags: 0
@@ -2783,6 +2786,7 @@ Transform:
   - {fileID: 8482658457311449938}
   - {fileID: 433801578694169552}
   - {fileID: 6936841839475107555}
+  - {fileID: 1817673964857115038}
   m_Father: {fileID: 8535586910388637671}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &404701223987581413
@@ -4602,3 +4606,108 @@ MonoBehaviour:
   debrisSize: 0.08
   debrisSpawnRadius: 0.15
   debrisTipColor: {r: 0.6, g: 0.9, b: 1, a: 1}
+--- !u!114 &4521623819942262813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6635b3effc644205b1651f7cacde86ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossMovement
+  body: {fileID: 5363785815632091185}
+  blockMask:
+    serializedVersion: 2
+    m_Bits: 136
+  castRadius: 3
+  castHeight: 0.5
+--- !u!1 &3067039969720787805
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1817673964857115038}
+  - component: {fileID: 4554608892249188006}
+  m_Layer: 6
+  m_Name: Charge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1817673964857115038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3067039969720787805}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4554608892249188006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3067039969720787805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b7e9d4c1a3f4e8b8d6c5a4b3c2d1e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossCharge
+  <MinDistance>k__BackingField: 10
+  <MaxDistance>k__BackingField: 40
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 15
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1628729824
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 1.5
+  hits: []
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  useChance: 0.75
+  aimDuration: 1.5
+  aimTurnSpeed: 180
+  aimRunAnimSpeed: 0.3
+  chargeDistance: 25
+  chargeSpeed: 20
+  chargeRunAnimSpeed: 1.5
+  passThroughMask:
+    serializedVersion: 2
+    m_Bits: 8
+  hitRadius: 3
+  chargeDamage: 20
+  chargeReaction: 2
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 128
+  headOnAngle: 60
+  stunDuration: 3
+  useJumpSmash: 0
+  jump:
+    airDuration: 0.63
+    maxJumpDistance: 30
+    homingSpeed: 6
+    impactOffset: 2.5
+    radius: 5
+    damage: 25
+    reaction: 2
