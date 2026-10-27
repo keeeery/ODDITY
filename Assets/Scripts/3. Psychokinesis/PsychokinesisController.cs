@@ -14,6 +14,7 @@ namespace TeamOdd.Psychokinesis
         [SerializeField] private CombatEntity combatEntity;
         [SerializeField] private Player.Player playerStatus;
         [SerializeField] private LayerMask queryLayers = Physics.DefaultRaycastLayers;
+        [SerializeField] private PsychokinesisForceWave forceWave;
 
         [Header("Targeting")]
         [SerializeField, Min(1f)] private float pickupDistance = 14f;
@@ -91,6 +92,7 @@ namespace TeamOdd.Psychokinesis
         private float swingActiveUntil = float.NegativeInfinity;
         
         public PsychokinesisObject HeldObject => heldObject;
+        public LayerMask QueryLayers => queryLayers;
         public bool GrabRequested => grabRequested;
         public bool ReleaseRequested => releaseRequested;
 
@@ -118,6 +120,8 @@ namespace TeamOdd.Psychokinesis
         {
             playerColliders = player.GetComponentsInChildren<Collider>();
             if (playerStatus == null) playerStatus = GetComponent<Player.Player>();
+            // 프리팹에 붙여 두지 않았어도 공격은 되도록 붙임 (머티리얼이 없으면 연출만 생략)
+            if (forceWave == null && TryGetComponent(out forceWave) == false) forceWave = gameObject.AddComponent<PsychokinesisForceWave>();
         }
 
         private void Update()
@@ -390,19 +394,13 @@ namespace TeamOdd.Psychokinesis
 
             nextAttackTime = Time.time + attackInterval;
 
-            if (TryFindAttackTarget(out Ray ray, out ICombatable target, out Collider hitCollider, out Vector3 end))
-            {
-                Debug.Log($"[기본 공격 요청] {target.GameObject.name}: Atk = {combatEntity.CurrentStats.Atk}", this);
-                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, end, hitCollider);
-                DamageEvent damageEvent = new DamageEvent(combatEntity, target, info);
-                CombatManager.Instance.AddCombatEvent(damageEvent);
-            }
-
-            Debug.DrawLine(ray.origin, end, Color.cyan, 0.15f);
+            // 조준·피해는 염동탄이 손을 떠나고 닿는 순간에 PsychokinesisForceWave가 처리
+            forceWave.Fire();
         }
 
         // 화면 중앙으로 쏜 기본 공격이 가장 먼저 닿는 대상이 살아 있는 적인지 확인
-        private bool TryFindAttackTarget(out Ray ray, out ICombatable target, out Collider hitCollider, out Vector3 end)
+        // 적이 아니어도 hitCollider·end에는 가장 먼저 닿은 곳(없으면 사거리 끝)을 돌려줌
+        public bool TryFindAttackTarget(out Ray ray, out ICombatable target, out Collider hitCollider, out Vector3 end)
         {
             ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
             float distance = GetTargetingDistance(ray);

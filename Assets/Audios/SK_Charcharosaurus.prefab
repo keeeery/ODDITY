@@ -789,6 +789,7 @@ GameObject:
   - component: {fileID: 560260013335335844}
   - component: {fileID: 4127609318475520613}
   - component: {fileID: 4521623819942262813}
+  - component: {fileID: 3157543016238967022}
   m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
@@ -4711,3 +4712,36 @@ MonoBehaviour:
     radius: 5
     damage: 25
     reaction: 2
+--- !u!114 &3157543016238967022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f45435573274466089400c4d99ba7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossFootDust
+  dustMaterial: {fileID: 2100000, guid: a6194cc4fb56a4cab85d9c590d3f93c7, type: 2}
+  feet:
+  - {fileID: 9003171050941178838}
+  - {fileID: 1892568374693869687}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  groundCheckDistance: 1.5
+  landingCountPerFoot: 10
+  landingCenterCount: 4
+  landingRadius: 0.6
+  landingSpeed: {x: 5, y: 9}
+  landingRise: 1.2
+  landingSize: {x: 1.4, y: 2.2}
+  landingLifetime: {x: 0.9, y: 1.4}
+  landingOpacity: 0.85
+  chargeStepDistance: 2.2
+  chargeCountPerStep: 4
+  chargeSize: {x: 1, y: 1.6}
+  chargeLifetime: {x: 0.8, y: 1.2}
+  chargeOpacity: 0.7
