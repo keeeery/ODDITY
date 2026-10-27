@@ -37,6 +37,7 @@ namespace TeamOdd.Player
         [Header("구르기")]
         [SerializeField] private float rollDistance = 4f;
         [SerializeField] private float rollDuration = 0.6f;
+        public float NeedRollStamina;
 
         [SerializeField] private Animator animator;
         private readonly Dictionary<string, AnimationClip> clipDic = new();
@@ -64,13 +65,13 @@ namespace TeamOdd.Player
         [SerializeField] private Vector3 elbowHintOffset = new(-0.786f, 1.283f, -0.111f);
 
         [Header("피격")] 
-        public float InvincibleTime; 
         private float earlyWakeUpCooldown;
         public float MaxEarlyWakeUpCooldown;
         public float WakeUpTime;
+        public float InvincibleTime; 
         public bool isHit;
         public bool CanWakeUp;
-        private Coroutine knockbackRoutine;
+        private Coroutine hitReactionRoutine;
 
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
@@ -160,9 +161,10 @@ namespace TeamOdd.Player
             bool canRun = SimpleInput.GetKey(Key.LeftShift) && Player.Instance.Stamina >= NeedRunStamina;
             
             float speed = canRun ? runSpeed : walkSpeed;
+            Debug.Log(speed);
 
             if (IsSprinting)
-                Player.Instance.ConsumeStamina(NeedRunStamina);
+                Player.Instance.ConsumeStamina(NeedRunStamina * Time.deltaTime);
 
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
             
@@ -217,7 +219,7 @@ namespace TeamOdd.Player
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
 
             bool isMove = inputRaw != Vector2.zero;
-            bool isRun = SimpleInput.GetKey(Key.LeftShift);
+            bool isRun = IsSprinting;
 
             animator.SetBool(Walk, isMove);
             animator.SetBool(Run, isRun);
@@ -462,21 +464,23 @@ namespace TeamOdd.Player
 
         #endregion
 
-        #region 피격모션
+        #region 피격
 
-        public void ApplyKnockback(Vector3 attackerPos, HitReaction reaction, float dist = 6f, float height = 2f,
+        public void ApplyHitReaction(Vector3 attackerPos, HitReaction reaction, float dist = 6f, float height = 2f,
             float dur = 0.6f)
         {
+            if(reaction==HitReaction.None || isHit) return;
+            
             // 넉백 중 다시 맞으면 이전 넉백을 끊고 새로 시작
-            if (knockbackRoutine != null) StopCoroutine(knockbackRoutine);
+            if (hitReactionRoutine != null) StopCoroutine(hitReactionRoutine);
 
             if (reaction == HitReaction.Stagger)
-                knockbackRoutine = StartCoroutine(Knockback(attackerPos, 0, dist, height, dur));
+                hitReactionRoutine = StartCoroutine(PlayHitReaction(attackerPos, reaction, 0, dist, 0f, dur));
             if (reaction == HitReaction.Knockdown)
-                knockbackRoutine = StartCoroutine(Knockback(attackerPos, 1, dist, 0, dur));
+                hitReactionRoutine = StartCoroutine(PlayHitReaction(attackerPos, reaction, 1, dist, height, dur));
         }
 
-        private IEnumerator Knockback(Vector3 bossPos, int motionIndex,float dist = 6f, float height = 2f, float dur = 0.6f)
+        private IEnumerator PlayHitReaction(Vector3 bossPos, HitReaction reaction, int motionIndex,float dist = 6f, float height = 2f, float dur = 0.6f)
         {
             isHit = true;
             
@@ -500,25 +504,28 @@ namespace TeamOdd.Player
                 controller.Move(move); // 벽 충돌은 Move가 처리
                 yield return null;
             }
-            
-            float elapsed = 0f;
-            while (elapsed < WakeUpTime)
+
+            if (reaction == HitReaction.Knockdown)
             {
-                if (CanWakeUp && earlyWakeUpCooldown <= 0f && SimpleInput.GetKeyDown(Key.Space))
+                float elapsed = 0f;
+                while (elapsed < WakeUpTime)
                 {
-                    earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
-                    CanWakeUp = false;
-                    break;
+                    if (CanWakeUp && earlyWakeUpCooldown <= 0f && SimpleInput.GetKeyDown(Key.Space))
+                    {
+                        earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
+                        CanWakeUp = false;
+                        break;
+                    }
+                    elapsed += Time.deltaTime;
+                    yield return null;
                 }
-                elapsed += Time.deltaTime;
-                yield return null;
+            
+                animator.SetTrigger(WakeUp);
+            
+                IsInvincible = true;
+                yield return new WaitForSeconds(InvincibleTime);
+                IsInvincible = false;   
             }
-            
-            animator.SetTrigger(WakeUp);
-            
-            IsInvincible = true;
-            yield return new WaitForSeconds(InvincibleTime);
-            IsInvincible = false;
         }
 
         #endregion

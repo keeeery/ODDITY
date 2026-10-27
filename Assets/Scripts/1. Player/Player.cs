@@ -38,7 +38,7 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            if (Time.time >= lastConsumeTime + staminaRegenDelay && PlayerController.IsSprinting == false)
+            if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)
                 stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
             
             if (SimpleInput.GetKeyDown(Key.Escape))
@@ -67,7 +67,7 @@ namespace TeamOdd.Player
         {
             if (stamina < 100f) return;
 
-            ConsumeStamina(100f);
+            ConsumeStamina(PlayerController.NeedRollStamina);
             PlayerController.InputRolling();
         }
         
