@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using TeamOdd.Arena;
 using TeamOdd.Psychokinesis;
@@ -9,17 +10,27 @@ namespace TeamOdd.Boss
     // 떠오르는 동안 물리와 부딪히지 않도록 kinematic으로 띄우고, 다 떠오르면 되돌려 중력으로 떨어뜨림
     public static class BossFragmentLift
     {
-        // 크기별 풀(Large/Medium/Small)의 부모 아래에서 활성화된 오브젝트를 찾음
+        // 크기별 풀(Large/Medium/Small)의 부모 아래에서 활성화된 파편과 맵에 배치된 염동력 오브젝트를 찾음
+        // 풀 파편은 활성 목록에도 들어 있으므로 목록에서는 맵 배치 오브젝트만 골라 두 번 띄우지 않음
         // height, duration은 무작위 범위(x~y), 높이는 m, 시간은 초
         public static void LiftInRange(WallFragmentSpawner spawner, TelegraphShape shape, Pose pose, Vector2 height, Vector2 duration)
         {
-            if (spawner == null) return;
-
-            foreach (Transform poolParent in spawner.FragmentPoolParents)
+            if (spawner != null)
             {
-                if (poolParent == null) continue;
-                foreach (Rigidbody body in poolParent.GetComponentsInChildren<Rigidbody>())
-                    Lift(body, shape, pose, height, duration);
+                foreach (Transform poolParent in spawner.FragmentPoolParents)
+                {
+                    if (poolParent == null) continue;
+                    foreach (Rigidbody body in poolParent.GetComponentsInChildren<Rigidbody>())
+                        Lift(body, shape, pose, height, duration);
+                }
+            }
+
+            // 순회 중 오브젝트가 비활성화되어 목록에서 빠져도 건너뛰지 않도록 뒤에서부터 순회
+            IReadOnlyList<PsychokinesisObject> activeObjects = PsychokinesisObject.ActiveObjects;
+            for (int index = activeObjects.Count - 1; index >= 0; index--)
+            {
+                PsychokinesisObject placed = activeObjects[index];
+                if (placed.IsPlacedInMap) Lift(placed.Body, shape, pose, height, duration);
             }
         }
 
