@@ -48,13 +48,10 @@ namespace TeamOdd.Boss
             chaseSpeed *= Mathf.Lerp(1f, minSpeedRatio, turnRatio);
 
             Vector3 velocity = root.transform.forward * chaseSpeed;
-            Body.linearVelocity = velocity;
+            Movement.Move(velocity * Clock.LocalDeltaTime);
         }
 
-        protected override void OnExit()
-        {
-            Body.linearVelocity = Vector3.zero;
-        }
+        protected override void OnExit() { }
 
         private bool ShouldStopChase()
         {

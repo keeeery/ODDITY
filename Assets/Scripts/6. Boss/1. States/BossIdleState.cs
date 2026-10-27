@@ -30,7 +30,7 @@ namespace TeamOdd.Boss
         protected override void OnEnter()
         {
             // 공격을 끝내고 Idle로 진입 시에만 후딜 적용
-            thinkTime = Clock.LocalTime + (executed != null ? executed.Recovery : 0f);
+            thinkTime = Clock.LocalTime + (executed != null ? executed.AppliedRecovery : 0f);
             executed = null;
         }
 

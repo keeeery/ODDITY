@@ -30,7 +30,7 @@ namespace TeamOdd.Boss
 
         [Title("Waves")]
         // 범위 예고: OnShockwaveWarn 신호, 충격 발생: OnShockwave 신호(둘 다 매개변수는 waves 인덱스, 비어 있으면 0)
-        // 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 종료: OnAttackEnded 신호(BossMeleePattern이 Idle로 전환)
         // 예고 신호가 없으면 터지는 순간의 위치로 판정하고 범위는 터질 때만 잠깐 표시
         [SerializeField] private Wave[] waves;
 
