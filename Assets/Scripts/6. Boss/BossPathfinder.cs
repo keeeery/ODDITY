@@ -11,6 +11,7 @@ namespace TeamOdd.Boss
     public class BossPathfinder : MonoBehaviour
     {
         private const int MAX_CORNER_COUNT = 32;
+        private const float OFF_MESH_DISTANCE = 0.1f;
 
         [Title("Settings")]
         [SerializeField] private string agentTypeName = "Boss"; // 보스 반경으로 구운 NavMesh의 Agent Type 이름
@@ -18,6 +19,10 @@ namespace TeamOdd.Boss
         [SerializeField] private float repathDistance = 1f; // 대상이 이만큼 움직이면 주기를 기다리지 않고 다시 계산
         [SerializeField] private float cornerReachDistance = 1.5f; // 이 거리 안에 들어온 꺾임점은 지나간 것으로 보고 다음 꺾임점을 향함
         [SerializeField] private float sampleDistance = 6f; // 보스·대상 위치에서 가장 가까운 NavMesh를 찾을 최대 거리
+
+        [Title("Wall Avoidance")]
+        [SerializeField] private float wallClearance = 2f; // NavMesh 경계에서 이 거리 안으로 들어오면 벽 반대쪽으로 밀어냄, 0이면 끔
+        [SerializeField] private float avoidWeight = 1f; // 경계에 닿았을 때 진행 방향 대비 밀어내는 세기
 
         [Title("States")]
         [ShowInInspector, ReadOnly] public bool IsDirect { get; private set; } = true;
@@ -63,11 +68,65 @@ namespace TeamOdd.Boss
 
             if (ShouldRepath(to)) Repath(from, to);
 
-            steerPoint = IsDirect ? to : GetCorner(from, to);
+            Vector3 goal = IsDirect ? to : GetCorner(from, to);
+            steerPoint = ApplyWallAvoidance(from, goal);
             return steerPoint;
         }
 
         #endregion
+
+        // 최단 경로는 깎인 경계에 붙어 있어 회전하며 안쪽으로 파고들면 실제 벽에 닿으므로 경계에서 떨어지도록 방향을 틂
+        // 좁은 통로에선 양쪽에서 밀어내는 힘이 상쇄돼 가운데로 걸음
+        private Vector3 ApplyWallAvoidance(Vector3 from, Vector3 goal)
+        {
+            if (wallClearance <= 0f) return goal;
+            if (TryGetWallPush(from, out Vector3 away, out float push) == false) return goal;
+
+            Vector3 toGoal = goal - from;
+            toGoal.y = 0f;
+
+            float distance = toGoal.magnitude;
+            if (distance <= 0.0001f) return goal;
+
+            Vector3 dir = toGoal / distance + away * (push * avoidWeight);
+            if (dir.sqrMagnitude <= 0.0001f) return goal;
+
+            return from + dir.normalized * distance;
+        }
+
+        // 경계에 가까울수록 1에 가까운 세기로 벽 반대쪽 방향을 돌려줌
+        // 이미 깎인 경계 밖(실제 벽 쪽)으로 나가 있으면 최대 세기로 NavMesh 안쪽을 향함
+        private bool TryGetWallPush(Vector3 from, out Vector3 away, out float push)
+        {
+            away = Vector3.zero;
+            push = 0f;
+
+            if (hasAgentType == false) return false;
+            if (TrySample(from, out Vector3 onMesh) == false) return false;
+
+            Vector3 back = onMesh - from;
+            back.y = 0f;
+
+            if (back.sqrMagnitude > OFF_MESH_DISTANCE * OFF_MESH_DISTANCE)
+            {
+                away = back.normalized;
+                push = 1f;
+                return true;
+            }
+
+            if (NavMesh.FindClosestEdge(onMesh, out NavMeshHit edge, filter) == false) return false;
+            if (edge.distance >= wallClearance) return false;
+
+            // 경계 위에 딱 붙어 있어 방향을 못 구하면 경계의 법선을 씀
+            away = onMesh - edge.position;
+            away.y = 0f;
+            if (away.sqrMagnitude <= 0.0001f) away = new Vector3(edge.normal.x, 0f, edge.normal.z);
+            if (away.sqrMagnitude <= 0.0001f) return false;
+
+            away.Normalize();
+            push = 1f - edge.distance / wallClearance;
+            return true;
+        }
 
         private bool ShouldRepath(Vector3 to)
         {
@@ -152,16 +211,23 @@ namespace TeamOdd.Boss
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (Application.isPlaying == false || IsDirect) return;
+            if (Application.isPlaying == false) return;
 
             Color originalColor = UnityEditor.Handles.color;
 
-            UnityEditor.Handles.color = Color.yellow;
-            for (int i = cornerIdx; i < cornerCount; i++)
+            // 벽 반발까지 반영해 실제로 향하는 방향
+            UnityEditor.Handles.color = Color.cyan;
+            UnityEditor.Handles.DrawLine(transform.position, steerPoint);
+
+            if (IsDirect == false)
             {
-                Vector3 from = i == cornerIdx ? transform.position : corners[i - 1];
-                UnityEditor.Handles.DrawLine(from, corners[i]);
-                UnityEditor.Handles.DrawWireDisc(corners[i], Vector3.up, cornerReachDistance);
+                UnityEditor.Handles.color = Color.yellow;
+                for (int i = cornerIdx; i < cornerCount; i++)
+                {
+                    Vector3 from = i == cornerIdx ? transform.position : corners[i - 1];
+                    UnityEditor.Handles.DrawLine(from, corners[i]);
+                    UnityEditor.Handles.DrawWireDisc(corners[i], Vector3.up, cornerReachDistance);
+                }
             }
 
             UnityEditor.Handles.color = originalColor;
