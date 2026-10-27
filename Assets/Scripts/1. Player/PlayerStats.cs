@@ -13,11 +13,13 @@ namespace TeamOdd.Player
     {
         [field: Title("Player")]
         [field: SerializeField, Min(0)] public int PsychoMaxMass { get; private set; } = 20; // 염동력으로 들 수 있는 최대 질량 (kg)
+        [field: SerializeField, Min(0)] public int MaxStamina { get; private set; } = 100;   // 최대 스태미나. 염동력으로 물체를 들고 있는 동안 줄어든다
 
         // 플레이어 전용 스탯을 이름표로 꺼낼 수 있게 덧붙인다. 플레이어 전용 스탯을 추가하면 여기에도 한 줄 추가한다
         public override int Get(StatType type) => type switch
         {
             StatType.PsychoMaxMass => PsychoMaxMass,
+            StatType.MaxStamina => MaxStamina,
             _ => base.Get(type),
         };
     }

@@ -12,3 +12,6 @@ Id	Name	Description	CellCount	UnitSpriteKey	StatType	Value
 1031	염동력 강화 칩(S)	염동력으로 들 수 있는 최대 질량이 5kg 증가합니다.	3	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	5
 1032	염동력 강화 칩(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	4	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	10
 1033	염동력 강화 칩(L)	염동력으로 들 수 있는 최대 질량이 15kg 증가합니다.	5	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	15
+1041	스태미나 강화 칩(S)	최대 스태미나가 20 증가합니다.	4	AugmentationChip/ChipUnit_Orange	MaxStamina	20
+1042	스태미나 강화 칩(M)	최대 스태미나가 40 증가합니다.	5	AugmentationChip/ChipUnit_Orange	MaxStamina	40
+1043	스태미나 강화 칩(L)	최대 스태미나가 60 증가합니다.	6	AugmentationChip/ChipUnit_Orange	MaxStamina	60
