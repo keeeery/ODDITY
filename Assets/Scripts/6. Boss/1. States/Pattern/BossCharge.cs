@@ -47,6 +47,12 @@ namespace TeamOdd.Boss
         [SerializeField] private float headOnAngle = 60f; // 진행 방향과 벽 사이 각이 이 이하일 때만 행동불능, 넘으면 벽을 따라 미끄러지며 계속 돌진
         [SerializeField] private float stunDuration = 3f; // 벽에 부딪힌 순간부터 잼, GetHitFront 재생 시간 포함
 
+        [Title("Path Telegraph")]
+        [SerializeField, Min(0.01f)] private float pathFadeDuration = 0.3f; // 돌진이 끝난 뒤 경로 표시가 사라지는 시간(초)
+
+        [Title("Finish")]
+        [SerializeField] private bool useJumpSmash = true; // 끄면 끝까지 달린 뒤 점프스매시 없이 바로 마무리 포효, 점프 모션이 없는 보스(Charcharosaurus)용
+
         [SerializeField, HideLabel] private BossJumpSmashMotion jump = new();
 
         [Title("States")]
@@ -57,6 +63,7 @@ namespace TeamOdd.Boss
         private Vector3 chargeDir;
         private bool hasHitTarget;
         private bool wasStunned;
+        private AttackTelegraph pathTelegraph;
 
         private int rollFrame = -1;
         private bool isRollSuccess;
@@ -127,12 +134,13 @@ namespace TeamOdd.Boss
 
         protected override void OnPatternExit()
         {
+            CancelPathTelegraph();
             EndCharge();
             jump.Stop();
 
             Animator.SetBool(BossAnimParams.IS_CHARGING, false);
             Animator.ResetTrigger(BossAnimParams.CHARGE_STUN);
-            Animator.ResetTrigger(BossAnimParams.JUMP_SMASH);
+            if (useJumpSmash) Animator.ResetTrigger(BossAnimParams.JUMP_SMASH); // 점프스매시를 쓰지 않는 보스의 Animator엔 파라미터가 없음
             Animator.ResetTrigger(BossAnimParams.ROAR);
         }
 
@@ -174,11 +182,16 @@ namespace TeamOdd.Boss
 
             Animator.SetFloat(BossAnimParams.CHARGE_RUN_SPEED, aimRunAnimSpeed);
             Animator.SetBool(BossAnimParams.IS_CHARGING, true);
+
+            pathTelegraph = root.ShowTelegraph(PathShape, GetPathPose(), aimDuration);
         }
 
         private void UpdateAim()
         {
             root.RotateYaw(root.SignedAngleToTarget, aimTurnSpeed * Clock.LocalDeltaTime);
+
+            // 준비 중에는 보스 정면을 따라가고, 돌진이 시작되면 그 방향으로 고정됨
+            if (pathTelegraph != null) pathTelegraph.SetPlacement(PathShape, GetPathPose());
 
             if (Clock.LocalTime >= phaseEndTime) StartCharge();
         }
@@ -208,7 +221,11 @@ namespace TeamOdd.Boss
 
             TryHitTargetOnce();
 
-            if (chargedDistance >= chargeDistance) StartJumpSmash();
+            if (chargedDistance >= chargeDistance)
+            {
+                if (useJumpSmash) StartJumpSmash();
+                else FinishWithoutJumpSmash();
+            }
         }
 
         private void TryHitTargetOnce()
@@ -257,6 +274,14 @@ namespace TeamOdd.Boss
             Animator.SetTrigger(BossAnimParams.JUMP_SMASH);
         }
 
+        private void FinishWithoutJumpSmash()
+        {
+            EndCharge();
+
+            Animator.SetBool(BossAnimParams.IS_CHARGING, false);
+            StartEndRoar();
+        }
+
         private void StartEndRoar()
         {
             phase = ChargePhase.EndRoar;
@@ -267,6 +292,22 @@ namespace TeamOdd.Boss
         {
             Movement.OnBlocked -= HandleBlocked;
             Movement.PassThroughMask = 0;
+
+            // 벽에 부딪히거나 끝까지 달려 돌진이 끝나면 경로 표시를 사라지게 함
+            if (pathTelegraph != null) pathTelegraph.Resolve(pathFadeDuration);
+            pathTelegraph = null;
+        }
+
+        // 돌진 경로 예고, 보스 위치 기준 hitRadius 원이 chargeDistance만큼 쓸고 지나가는 범위
+        private TelegraphShape PathShape => TelegraphShape.Rectangle(hitRadius * 2f, chargeDistance + hitRadius);
+
+        private Pose GetPathPose() => new Pose(Movement.Position, Movement.Rotation);
+
+        // 돌진이 끝나기 전에 패턴이 끊기면 예고만 남지 않도록 바로 지움
+        private void CancelPathTelegraph()
+        {
+            if (pathTelegraph != null) pathTelegraph.Cancel();
+            pathTelegraph = null;
         }
 
         #endregion
