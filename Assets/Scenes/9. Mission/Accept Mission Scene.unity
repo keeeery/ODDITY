@@ -1106,6 +1106,7 @@ MonoBehaviour:
   holdPivotOffset: {x: -1, y: 1.6, z: 0}
   distance: 4
   holdDistance: 1
+  sprintDistance: 4
   transitionSpeed: 1
   mouseSensitivity: 2
   minPitch: -40
@@ -1116,6 +1117,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   collisionRadius: 0.2
+  maxShakePosition: {x: 0.3, y: 0.3, z: 0}
+  maxShakeRotation: {x: 3, y: 1.5, z: 5}
+  shakeFrequency: 25
+  traumaDecay: 1.7
 --- !u!1 &337808454
 GameObject:
   m_ObjectHideFlags: 0

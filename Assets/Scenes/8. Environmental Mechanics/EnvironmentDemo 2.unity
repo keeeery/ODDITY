@@ -84591,13 +84591,14 @@ MonoBehaviour:
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
-  airDuration: 0.63
-  maxJumpDistance: 20
-  homingSpeed: 6
-  impactOffset: 2.5
-  radius: 5
-  damage: 25
-  reaction: 2
+  jump:
+    airDuration: 0.63
+    maxJumpDistance: 20
+    homingSpeed: 6
+    impactOffset: 2.5
+    radius: 5
+    damage: 25
+    reaction: 2
 --- !u!114 &2926503066094882205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86741,6 +86742,7 @@ MonoBehaviour:
   defaultState: {fileID: 5972460886913718755}
   <Animator>k__BackingField: {fileID: 131658557452623323}
   <Body>k__BackingField: {fileID: 4754058306305049829}
+  <Movement>k__BackingField: {fileID: 0}
   <AnimEventListener>k__BackingField: {fileID: 7823745706589446384}
   <Target>k__BackingField: {fileID: 2205336347470601070}
   sightHalfAngle: 20
