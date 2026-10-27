@@ -18,6 +18,7 @@ namespace TeamOdd.Superpower
 
         private AugmentationChipInventory inventory;
         private CombatEntity owner;
+        private Player.Player player; // 스킬을 쓸 때 스태미나를 줄인다
 
         // 슬롯 UI에 쓸 키 이름 ("1", "Q" 등 키보드 배열에 맞는 이름). 키가 없으면 빈 문자열
         public static string GetKeyLabel(int slot)
@@ -33,6 +34,7 @@ namespace TeamOdd.Superpower
         {
             inventory = GetComponent<AugmentationChipInventory>();
             owner = GetComponent<CombatEntity>();
+            player = GetComponent<Player.Player>();
         }
 
         private void Update()
@@ -61,8 +63,23 @@ namespace TeamOdd.Superpower
                 return;
             }
 
-            if (chip.Skill.TryUse(new SkillContext(transform, owner, GetAimDirection())) == false && chip.Skill.IsReady == false)
+            if (chip.Skill.IsReady == false)
+            {
                 Debug.Log($"[SkillCaster] {chip.Skill.Name} 쿨타임 {chip.Skill.RemainingCooldown:0.0}초 남음");
+                return;
+            }
+
+            // 슬롯에는 스킬 칩만 들어가므로 Def는 항상 SkillChipDef다
+            float cost = ((SkillChipDef)chip.Def).Cost;
+            if (player != null && player.Stamina < cost)
+            {
+                Debug.Log($"[SkillCaster] {chip.Skill.Name} 스태미나 부족 (필요 {cost}, 남은 양 {player.Stamina:0.0})");
+                return;
+            }
+
+            // 대상이 없는 등으로 스킬이 나가지 않았으면 스태미나도 쓰지 않는다
+            if (chip.Skill.TryUse(new SkillContext(transform, owner, GetAimDirection())) && player != null)
+                player.ConsumeStamina(cost);
         }
 
         // 카메라가 보는 방향을 수평으로 눕힌 것. 카메라가 없으면 플레이어 정면

@@ -314,11 +314,11 @@ namespace TeamOdd.Superpower
             if (skillSlot >= 0)
                 state += $" · 스킬 {skillSlot + 1}번";
 
-            // 능력치 칩은 오르는 스탯, 스킬 칩은 쿨타임과 스킬마다 다른 매개변수를 스킬이 직접 설명한다
+            // 능력치 칩은 오르는 스탯, 스킬 칩은 쿨타임·스태미나 소모량과 스킬마다 다른 매개변수를 스킬이 직접 설명한다
             string effect = def switch
             {
                 StatChipDef stat => $"능력치  {stat.StatType} +{stat.Value}",
-                SkillChipDef skill => $"스킬  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · {info.Skill.Describe()}",
+                SkillChipDef skill => $"스킬  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · 스태미나 {skill.Cost} · {info.Skill.Describe()}",
                 _ => "",
             };
 

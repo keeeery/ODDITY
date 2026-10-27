@@ -28,6 +28,7 @@ namespace TeamOdd.Superpower
     {
         public string SkillType;
         public float Cooldown;
+        public float Cost;
         public string Params;
     }
 
@@ -51,11 +52,12 @@ namespace TeamOdd.Superpower
     }
 
     // 스킬 칩. 장착하면 스킬 슬롯(1~5번 키)에 들어간다
-    // 쿨타임은 모든 스킬에 공통이라 칸을 따로 두고, 스킬마다 다른 값은 Params에 모은다
+    // 쿨타임과 스태미나 소모량(Cost)은 모든 스킬에 공통이라 칸을 따로 두고, 스킬마다 다른 값은 Params에 모은다
     public class SkillChipDef : AugmentationChipDef
     {
         public SkillType SkillType;
         public float Cooldown;
+        public float Cost; // 스킬을 쓸 때마다 줄어드는 스태미나
         public SkillParams Params;
     }
 }

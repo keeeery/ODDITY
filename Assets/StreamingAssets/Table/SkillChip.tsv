@@ -1,8 +1,8 @@
-Id	Name	Description	CellCount	UnitSpriteKey	SkillType	Cooldown	Params
-2001	회복 칩	체력을 30 회복합니다.	3	AugmentationChip/ChipUnit_Purple	Heal	8	Amount=30
-2002	염동 충격파 칩	주변 6m 안의 적에게 피해 10을 주고 밀어냅니다.	4	AugmentationChip/ChipUnit_Purple	Shockwave	12	Radius=6;Force=15;Damage=10
-2003	순간 이동 칩	바라보는 방향으로 8m 순간 이동합니다.	3	AugmentationChip/ChipUnit_Purple	Blink	5	Distance=8;PassThrough=false
-2004	염동 연사 칩	염동 파편 5발을 부채꼴로 발사합니다.	5	AugmentationChip/ChipUnit_Purple	Barrage	10	Projectile=PsyShard;Count=5;Spread=30
-2005	보호막 칩	6초 동안 피해 40을 막는 보호막을 두릅니다.	4	AugmentationChip/ChipUnit_Purple	Barrier	20	Shield=40;Duration=6
-2006	시간 정지 칩	5초 동안 플레이어를 제외한 모든 것의 시간을 멈춥니다.	6	AugmentationChip/ChipUnit_Purple	TimeStop	45	Duration=5
-2007	염동 내려찍기 칩	조준한 보스의 시간을 2초 동안 멈추고 들어 올렸다가 내려찍어 피해 40을 줍니다.	5	AugmentationChip/ChipUnit_Purple	PsychoSlam	20	Duration=2;Height=4;Damage=40;Range=20;Angle=30
+Id	Name	Description	CellCount	UnitSpriteKey	SkillType	Cooldown	Cost	Params
+2001	회복 칩	체력을 30 회복합니다.	3	AugmentationChip/ChipUnit_Purple	Heal	8	30	Amount=30
+2002	염동 충격파 칩	주변 6m 안의 적에게 피해 10을 주고 밀어냅니다.	4	AugmentationChip/ChipUnit_Purple	Shockwave	12	30	Radius=6;Force=15;Damage=10
+2003	순간 이동 칩	바라보는 방향으로 8m 순간 이동합니다.	3	AugmentationChip/ChipUnit_Purple	Blink	5	20	Distance=8;PassThrough=false
+2004	염동 연사 칩	염동 파편 5발을 부채꼴로 발사합니다.	5	AugmentationChip/ChipUnit_Purple	Barrage	10	25	Projectile=PsyShard;Count=5;Spread=30
+2005	보호막 칩	6초 동안 피해 40을 막는 보호막을 두릅니다.	4	AugmentationChip/ChipUnit_Purple	Barrier	20	35	Shield=40;Duration=6
+2006	시간 정지 칩	5초 동안 플레이어를 제외한 모든 것의 시간을 멈춥니다.	6	AugmentationChip/ChipUnit_Purple	TimeStop	45	60	Duration=5
+2007	염동 내려찍기 칩	조준한 보스의 시간을 2초 동안 멈추고 들어 올렸다가 내려찍어 피해 40을 줍니다.	5	AugmentationChip/ChipUnit_Purple	PsychoSlam	20	40	Duration=2;Height=4;Damage=40;Range=20;Angle=30
