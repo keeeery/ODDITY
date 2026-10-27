@@ -11,11 +11,11 @@ namespace TeamOdd.Superpower
     /// </summary>
     public static class SkillFactory
     {
-        public static SuperpowerSkill Create(AugmentationChipDef def)
+        public static SuperpowerSkill Create(SkillChipDef def)
         {
             string name = def.Name;
             float cooldown = def.Cooldown;
-            SkillParams p = def.SkillParams;
+            SkillParams p = def.Params;
 
             SuperpowerSkill skill = def.SkillType switch
             {

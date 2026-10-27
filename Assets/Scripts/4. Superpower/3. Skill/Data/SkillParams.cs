@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace TeamOdd.Superpower
 {
     /// <summary>
-    /// 스킬마다 종류도 개수도 다른 매개변수. 테이블 SkillParams 칸에 "Radius=6;Force=15;Damage=10"처럼 적는다.
+    /// 스킬마다 종류도 개수도 다른 매개변수. SkillChip.tsv의 Params 칸에 "Radius=6;Force=15;Damage=10"처럼 적는다.
     /// 어떤 키를 어떤 타입으로 읽을지는 스킬마다 다르므로 여기서는 문자열 그대로 들고 있고,
     /// SkillFactory가 스킬을 만들 때 그 스킬에 맞는 키를 맞는 타입으로 꺼낸다.
     /// 키가 없거나 값 형식이 틀리면 예외가 난다. 테이블을 읽을 때 한 번 만들어 보므로 게임 시작할 때 바로 알 수 있다.

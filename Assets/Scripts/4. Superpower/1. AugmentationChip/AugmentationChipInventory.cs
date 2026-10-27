@@ -47,7 +47,7 @@ namespace TeamOdd.Superpower
         // 스킬 칩이면 칩마다 스킬을 새로 만들어 넣는다
         public void Add(AugmentationChipDef def, Vector2Int[] cells)
         {
-            SuperpowerSkill skill = def.ChipType == ChipType.Skill ? SkillFactory.Create(def) : null;
+            SuperpowerSkill skill = def is SkillChipDef skillDef ? SkillFactory.Create(skillDef) : null;
             chips.Add(new OwnedChip(def, cells, skill));
         }
 
@@ -57,7 +57,7 @@ namespace TeamOdd.Superpower
             if (chip.IsEquipped)
                 return false;
 
-            return chip.Def.ChipType != ChipType.Skill || FindEmptySkillSlot() >= 0;
+            return chip.Def is StatChipDef || FindEmptySkillSlot() >= 0;
         }
 
         // 장착 기록을 남기고 스탯 보너스를 더하거나 스킬 슬롯에 넣는다. 스킬 슬롯이 가득 차 있으면 장착하지 않고 false
@@ -72,15 +72,15 @@ namespace TeamOdd.Superpower
             chip.Origin = origin;
             chip.Rotation = rotation;
 
-            if (chip.Def.ChipType == ChipType.Skill)
+            if (chip.Def is StatChipDef stat)
+            {
+                owner.CurrentStats.Add(stat.StatType, stat.Value);
+            }
+            else
             {
                 int slot = IsEmptySkillSlot(preferredSlot) ? preferredSlot : FindEmptySkillSlot();
                 skillSlots[slot] = chip;
                 SkillSlotsChanged?.Invoke();
-            }
-            else
-            {
-                owner.CurrentStats.Add(chip.Def.StatType, chip.Def.Value);
             }
 
             return true;
@@ -93,15 +93,15 @@ namespace TeamOdd.Superpower
 
             chip.IsEquipped = false;
 
-            if (chip.Def.ChipType == ChipType.Skill)
+            if (chip.Def is StatChipDef stat)
+            {
+                owner.CurrentStats.Remove(stat.StatType, stat.Value);
+            }
+            else
             {
                 // 자리를 비워 두기만 하고 뒤의 스킬을 당기지 않는다
                 skillSlots[GetSkillSlot(chip)] = null;
                 SkillSlotsChanged?.Invoke();
-            }
-            else
-            {
-                owner.CurrentStats.Remove(chip.Def.StatType, chip.Def.Value);
             }
         }
 

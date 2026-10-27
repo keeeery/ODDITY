@@ -315,9 +315,12 @@ namespace TeamOdd.Superpower
                 state += $" · 스킬 {skillSlot + 1}번";
 
             // 능력치 칩은 오르는 스탯, 스킬 칩은 쿨타임과 스킬마다 다른 매개변수를 스킬이 직접 설명한다
-            string effect = def.ChipType == ChipType.Stat
-                ? $"능력치  {def.StatType} +{def.Value}"
-                : $"스킬  {def.SkillType} · 쿨타임 {def.Cooldown}초 · {info.Skill.Describe()}";
+            string effect = def switch
+            {
+                StatChipDef stat => $"능력치  {stat.StatType} +{stat.Value}",
+                SkillChipDef skill => $"스킬  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · {info.Skill.Describe()}",
+                _ => "",
+            };
 
             infoText.text = $"[{def.ID}] {def.Name} - {def.Description}  |  {state}\n{effect}\n{notice ?? GetSummary()}";
         }

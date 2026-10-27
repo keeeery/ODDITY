@@ -10,7 +10,7 @@ namespace TeamOdd.Superpower.Development
     // 칩 모양은 ChipDispenser처럼 얻을 때마다 칸 수 안에서 새로 뽑는다.
     public class AugmentationChipGrantTester : MonoBehaviour
     {
-        [Tooltip("넣을 칩의 Id (AugmentationChip.tsv)")]
+        [Tooltip("넣을 칩의 Id (StatChip.tsv, SkillChip.tsv)")]
         [SerializeField] private int[] chipIds = { 2006, 2007 };
         [SerializeField] private bool grantOnStart = true;
         [SerializeField] private Key grantKey = Key.F9;
