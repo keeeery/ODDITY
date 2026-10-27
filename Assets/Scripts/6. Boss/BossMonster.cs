@@ -13,6 +13,7 @@ namespace TeamOdd.Boss
         [field: Title("Components")]
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public Rigidbody Body { get; private set; }
+        [field: SerializeField] public BossMovement Movement { get; private set; }
         [field: SerializeField] public AnimStateEventListener AnimEventListener { get; private set; }
 
         [field: Title("References")]
@@ -38,7 +39,7 @@ namespace TeamOdd.Boss
         public TimeFreezable Clock { get; private set; }
 
         public float DistanceToTarget => transform.FlatDistanceTo(Target);
-        public float SignedAngleToTarget => Mathf.DeltaAngle(transform.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
+        public float SignedAngleToTarget => Mathf.DeltaAngle(Movement.Rotation.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
         
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
         public bool CanMoveToTarget => Mathf.Abs(SignedAngleToTarget) <= moveHalfAngle;
@@ -54,7 +55,16 @@ namespace TeamOdd.Boss
         {
             Animator.SetFloat(BossAnimParams.DISTANCE_TO_TARGET, DistanceToTarget);
         }
-        
+
+        // Animator가 루트 모션을 transform에 바로 적용하면 벽을 통과하므로 BossMovement를 거쳐 적용
+        private void OnAnimatorMove()
+        {
+            if (Animator.applyRootMotion == false) return;
+
+            Movement.Move(Animator.deltaPosition);
+            Movement.Rotate(Mathf.DeltaAngle(0f, Animator.deltaRotation.eulerAngles.y));
+        }
+
         #region PUBLIC_METHODS
         
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
@@ -71,7 +81,7 @@ namespace TeamOdd.Boss
         public void RotateYaw(float deltaAngle, float maxDegrees)
         {
             float step = Mathf.Clamp(deltaAngle, -maxDegrees, maxDegrees);
-            transform.rotation = Quaternion.Euler(0f, step, 0f) * transform.rotation;
+            Movement.Rotate(step);
         }
         
         // 풀을 쓸 수 없으면 null을 반환하므로 호출하는 쪽은 null을 허용해야 함
@@ -98,29 +108,6 @@ namespace TeamOdd.Boss
 
         #endregion
 
-        #region ANIMATION_EVENT
-
-        private void OnEnable()
-        {
-            AnimEventListener.OnOccursAnimStateEvent += OnAnimEventEnded;
-        }
-
-        private void OnDisable()
-        {
-            AnimEventListener.OnOccursAnimStateEvent -= OnAnimEventEnded;
-        }
-
-        private void OnAnimEventEnded(string eventName, string eventParam)
-        {
-            if (eventName == "OnAttackEnded")
-            {
-                ChangeState(typeof(BossIdleState));
-                return;
-            }
-        }
-
-        #endregion
-        
         #region SIGHT_VISUALIZATION
 
 #if UNITY_EDITOR

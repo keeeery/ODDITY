@@ -1,0 +1,4001 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &28475831394176492
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8917853549083235961}
+  m_Layer: 0
+  m_Name: Perderos_ R Finger11
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8917853549083235961
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28475831394176492}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.0000000025944134, y: -0.000000014673569, z: -0.17410813, w: 0.98472655}
+  m_LocalPosition: {x: -0.5551674, y: 0, z: 0.00000030517577}
+  m_LocalScale: {x: 1, y: 1, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3089159082659441888}
+  m_LocalEulerAnglesHint: {x: -0.00000079951747, y: -0.0000019790339, z: -58.868324}
+--- !u!1 &32366686074247003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9047985750765249646}
+  - component: {fileID: 587546590283826450}
+  m_Layer: 0
+  m_Name: Perderos_ L Thigh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9047985750765249646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32366686074247003}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5479652, y: 0.80541855, z: 0.09897644, w: 0.20307332}
+  m_LocalPosition: {x: 0.0000007629394, y: 0.0000009155273, z: 0.66026795}
+  m_LocalScale: {x: 1, y: 1, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6439890615000984776}
+  m_Father: {fileID: 217342243527573952}
+  m_LocalEulerAnglesHint: {x: -26.599903, y: -149.4942, z: -109.34722}
+--- !u!136 &587546590283826450
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32366686074247003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 2.4
+  m_Direction: 0
+  m_Center: {x: -1.03, y: -0.1, z: 0}
+--- !u!1 &132734825130979105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 656587580291593802}
+  - component: {fileID: 5931400495395951711}
+  m_Layer: 0
+  m_Name: Perderos_ Neck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &656587580291593802
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132734825130979105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 8.269089e-14, y: 0.00000071469185, z: -0.25767657, w: 0.9662312}
+  m_LocalPosition: {x: -1.6809869, y: -0.000642395, z: -0.0000000017834827}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8958763846990683065}
+  - {fileID: 216058898942697104}
+  - {fileID: 120482443383073439}
+  - {fileID: 5433875446744866952}
+  m_Father: {fileID: 1926362499523204606}
+  m_LocalEulerAnglesHint: {x: 12.839193, y: 12.411047, z: -38.101677}
+--- !u!136 &5931400495395951711
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132734825130979105}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 2.2
+  m_Direction: 2
+  m_Center: {x: -0.6, y: -0.6, z: 0}
+--- !u!1 &176546705976228230
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5922282400118070527}
+  - component: {fileID: 378036316848615790}
+  m_Layer: 0
+  m_Name: Right Claw Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5922282400118070527
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176546705976228230}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &378036316848615790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176546705976228230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb41d3df9fa46f19b2d08e7d6750d0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClawForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2.25
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -970897688
+  useRootMotion: 1
+  trackDuration: 1.17
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &233720459854162643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184800298930187479}
+  - component: {fileID: 4787703938259214962}
+  m_Layer: 0
+  m_Name: Right Turn Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1184800298930187479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233720459854162643}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4787703938259214962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233720459854162643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569e0f174ede477990a5516087795288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightTurnSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 7
+  minAngle: 45
+  maxAngle: 135
+  cooldown: 4
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 540397994
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  turnDuration: 0.75
+  maxTurnSpeed: 240
+--- !u!1 &235350135601578406
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 217342243527573952}
+  - component: {fileID: 6218977740262479440}
+  m_Layer: 0
+  m_Name: Perderos_ Pelvis
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &217342243527573952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235350135601578406}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.49999934, w: 0.50000066}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 9047985750765249646}
+  - {fileID: 3371199652696704401}
+  - {fileID: 8215559527850871658}
+  - {fileID: 7140008179115441614}
+  m_Father: {fileID: 7808170085990973582}
+  m_LocalEulerAnglesHint: {x: -85.924934, y: -179.0954, z: -91.00166}
+--- !u!136 &6218977740262479440
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235350135601578406}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.95
+  m_Height: 2.3
+  m_Direction: 2
+  m_Center: {x: -0.02, y: 0.13, z: 0}
+--- !u!1 &337392102107978249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8131206740413183958}
+  m_Layer: 0
+  m_Name: Perderos_ Tail2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8131206740413183958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337392102107978249}
+  serializedVersion: 2
+  m_LocalRotation: {x: -2.4267447e-14, y: -0.000000062077056, z: 0.022381399, w: 0.99974954}
+  m_LocalPosition: {x: -0.32832244, y: -0.00030639648, z: -8.498318e-10}
+  m_LocalScale: {x: 1.0000001, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 132753890219721891}
+  m_LocalEulerAnglesHint: {x: 0.03309706, y: 6.335757, z: 3.7043993}
+--- !u!1 &360148385499517564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1033639488534488116}
+  m_Layer: 0
+  m_Name: Attacks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1033639488534488116
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360148385499517564}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4390384781324230559}
+  - {fileID: 872084743408207579}
+  - {fileID: 6374044935234766326}
+  - {fileID: 5922282400118070527}
+  - {fileID: 7423506996687137735}
+  - {fileID: 2585256838081163497}
+  - {fileID: 594655706491539977}
+  - {fileID: 5611240901073836669}
+  - {fileID: 733241142820730493}
+  - {fileID: 1923133753475031536}
+  - {fileID: 3872133505700837338}
+  - {fileID: 940808886173270946}
+  - {fileID: 1184800298930187479}
+  - {fileID: 7317096668947242006}
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &370900469545635181
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4298537926020310646}
+  m_Layer: 0
+  m_Name: Perderos_ L Finger11
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4298537926020310646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 370900469545635181}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000001467357, y: 0.000000002594414, z: -0.17410816, w: 0.98472655}
+  m_LocalPosition: {x: -0.55516756, y: 0, z: 0}
+  m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4629327615702566343}
+  m_LocalEulerAnglesHint: {x: -0.0000004854388, y: -0.00000082189393, z: -94.00251}
+--- !u!1 &377450378601606795
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7808170085990973582}
+  m_Layer: 0
+  m_Name: Perderos_
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7808170085990973582
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377450378601606795}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.2705979, y: -0.2705983, z: 0.65328103, w: 0.653282}
+  m_LocalPosition: {x: -0, y: 1.825592, z: 3.3748467}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 217342243527573952}
+  m_Father: {fileID: 2502556648975515432}
+  m_LocalEulerAnglesHint: {x: 47.61937, y: -2.6571586, z: 82.253555}
+--- !u!1 &404898186159681403
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8440623968400709230}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_Right_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8440623968400709230
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404898186159681403}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000023833502, y: -0.0000000063125203, z: 0.02647663, w: 0.99964947}
+  m_LocalPosition: {x: -0.2809615, y: 0.0000015258788, z: 0.00000061035155}
+  m_LocalScale: {x: 0.9999998, y: 0.9999998, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5354337292905720598}
+  m_LocalEulerAnglesHint: {x: -5.113685, y: -0.16341469, z: -36.643093}
+--- !u!1 &417904877706821101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3872133505700837338}
+  - component: {fileID: 1337988281538202538}
+  m_Layer: 0
+  m_Name: Jump Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &3872133505700837338
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417904877706821101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1337988281538202538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417904877706821101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331a3cf6c9a14aec9435d2cad0aea952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossJumpSmash
+  <MinDistance>k__BackingField: 20
+  <MaxDistance>k__BackingField: 100
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 12
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1842980855
+  useRootMotion: 0
+  trackDuration: 1
+  trackSpeed: 120
+  <Recovery>k__BackingField: 1.2
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  jump:
+    airDuration: 0.63
+    maxJumpDistance: 100
+    homingSpeed: 6
+    impactOffset: 2.5
+    radius: 5
+    damage: 25
+    reaction: 2
+--- !u!1 &433655993077558519
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5430704497526775389}
+  - component: {fileID: 300069194218846193}
+  m_Layer: 0
+  m_Name: Perderos_ L Foot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5430704497526775389
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433655993077558519}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.06663053, y: 0.026805837, z: -0.09256881, w: 0.9931127}
+  m_LocalPosition: {x: -1.4631671, y: -0.00000015258789, z: -0.00000015258789}
+  m_LocalScale: {x: 1, y: 1, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7824382683158754500}
+  - {fileID: 6659874580138982648}
+  - {fileID: 3762397399189889858}
+  m_Father: {fileID: 6439890615000984776}
+  m_LocalEulerAnglesHint: {x: -3.8339741, y: 4.300934, z: -35.654808}
+--- !u!65 &300069194218846193
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433655993077558519}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.62, y: 1.56, z: 1.2}
+  m_Center: {x: -0.38, y: 0.35, z: -0.09}
+--- !u!1 &571707755603245690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7824382683158754500}
+  m_Layer: 0
+  m_Name: Perderos_ L Toe0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7824382683158754500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571707755603245690}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.099335484, y: -0.109755166, z: -0.73325557, w: 0.6636434}
+  m_LocalPosition: {x: -0.5901738, y: 0.5246316, z: -0.48643127}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5430704497526775389}
+  m_LocalEulerAnglesHint: {x: -17.025925, y: 0.00005357446, z: -95.70585}
+--- !u!1 &605852908856948554
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6374044935234766326}
+  - component: {fileID: 4091713680808868829}
+  m_Layer: 0
+  m_Name: Right Claw
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6374044935234766326
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605852908856948554}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4091713680808868829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605852908856948554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6e03913ee043f6971b16a4b88db045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRightClaw
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 1.5
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 737642192
+  useRootMotion: 0
+  trackDuration: 1.17
+  trackSpeed: 180
+  <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &712007109501232593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1735085810410520160}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_Left_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1735085810410520160
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712007109501232593}
+  serializedVersion: 2
+  m_LocalRotation: {x: -4.8534704e-11, y: -0.0000000018324963, z: -0.026476376, w: 0.99964947}
+  m_LocalPosition: {x: -0.2809613, y: -0.0000012207031, z: 7.2759575e-14}
+  m_LocalScale: {x: 0.99999976, y: 0.99999976, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2216387636836195396}
+  m_LocalEulerAnglesHint: {x: 5.1136346, y: -0.16339025, z: 36.64312}
+--- !u!1 &813476281324207604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7317096668947242006}
+  - component: {fileID: 4663631127443257715}
+  m_Layer: 0
+  m_Name: Charge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7317096668947242006
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813476281324207604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4663631127443257715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813476281324207604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b7e9d4c1a3f4e8b8d6c5a4b3c2d1e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChargePattern
+  <MinDistance>k__BackingField: 10
+  <MaxDistance>k__BackingField: 40
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 15
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1628729824
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 1.5
+  hits: []
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  useChance: 0.75
+  aimDuration: 1.5
+  aimTurnSpeed: 180
+  aimRunAnimSpeed: 0.3
+  chargeDistance: 25
+  chargeSpeed: 20
+  chargeRunAnimSpeed: 1.5
+  passThroughMask:
+    serializedVersion: 2
+    m_Bits: 8
+  hitRadius: 5
+  chargeDamage: 20
+  chargeReaction: 2
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 128
+  headOnAngle: 60
+  stunDuration: 3
+  jump:
+    airDuration: 0.63
+    maxJumpDistance: 30
+    homingSpeed: 6
+    impactOffset: 2.5
+    radius: 5
+    damage: 25
+    reaction: 2
+--- !u!1 &980785988783344487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3303142208817887709}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_Left_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3303142208817887709
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980785988783344487}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.024419228, y: -0.0606582, z: -0.3726465, w: 0.9256667}
+  m_LocalPosition: {x: -0.05178772, y: 0.19635803, z: -0.18328217}
+  m_LocalScale: {x: 1.0000002, y: 1.0000002, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2216387636836195396}
+  m_Father: {fileID: 8126002702457042405}
+  m_LocalEulerAnglesHint: {x: -0.5029005, y: -7.4815845, z: -3.823683}
+--- !u!1 &992883040556167321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6766836199743222152}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_Right_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6766836199743222152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992883040556167321}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.92566675, y: -0.3726465, z: -0.06065798, w: -0.02441914}
+  m_LocalPosition: {x: -0.051787604, y: 0.19635834, z: 0.18299957}
+  m_LocalScale: {x: 1, y: 1, z: 0.9999999}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5354337292905720598}
+  m_Father: {fileID: 8126002702457042405}
+  m_LocalEulerAnglesHint: {x: -0.50289875, y: -172.51842, z: -176.1763}
+--- !u!1 &1005048426707131229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4109727274318726085}
+  m_Layer: 0
+  m_Name: Perderos_ L Clavicle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4109727274318726085
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005048426707131229}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7056087, y: -0.14643241, z: -0.67613393, w: 0.15335178}
+  m_LocalPosition: {x: -0.7674182, y: -0.30976227, z: 0.36346292}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8855998276797327792}
+  m_Father: {fileID: 1926362499523204606}
+  m_LocalEulerAnglesHint: {x: 1.0541147, y: -92.21553, z: -155.53792}
+--- !u!1 &1117699196020986104
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4355236846357376596}
+  m_Layer: 0
+  m_Name: Perderos_ R Toe1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4355236846357376596
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117699196020986104}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.000000020757952, y: -0.0000000111453575, z: -0.7273799, w: 0.6862351}
+  m_LocalPosition: {x: -0.5311948, y: 0.66106796, z: 0.17505355}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6774984454045783904}
+  m_LocalEulerAnglesHint: {x: 0.10224728, y: 0.062489577, z: -94.030174}
+--- !u!1 &1198753219526506470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3371199652696704401}
+  - component: {fileID: 275055840747533007}
+  m_Layer: 0
+  m_Name: Perderos_ R Thigh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3371199652696704401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198753219526506470}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.54796505, y: 0.80541813, z: -0.09897673, w: -0.20307519}
+  m_LocalPosition: {x: -0.0000010681152, y: -0.0000009155273, z: -0.66026795}
+  m_LocalScale: {x: 1, y: 1, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6129779640340359996}
+  m_Father: {fileID: 217342243527573952}
+  m_LocalEulerAnglesHint: {x: 28.196613, y: 144.16289, z: -103.17598}
+--- !u!136 &275055840747533007
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198753219526506470}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 2.4
+  m_Direction: 0
+  m_Center: {x: -1.03, y: -0.1, z: 0}
+--- !u!1 &1234573706195494870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5433875446744866952}
+  m_Layer: 0
+  m_Name: Perderos_JawRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5433875446744866952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234573706195494870}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5572404, y: -0.031129166, z: 0.24425642, w: 0.7930025}
+  m_LocalPosition: {x: -0.8814775, y: -0.28220367, z: -0.6370074}
+  m_LocalScale: {x: 1, y: 1, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 656587580291593802}
+  m_LocalEulerAnglesHint: {x: 53.721844, y: -38.200253, z: -46.932312}
+--- !u!1 &1422599955173298839
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7424337981487024006}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_06
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7424337981487024006
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422599955173298839}
+  serializedVersion: 2
+  m_LocalRotation: {x: -3.1439653e-16, y: -3.538775e-15, z: -0.08849476, w: 0.99607664}
+  m_LocalPosition: {x: -0.21870758, y: 0, z: 0.000000017959247}
+  m_LocalScale: {x: 1.0000002, y: 1.0000002, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6791428457906888582}
+  m_LocalEulerAnglesHint: {x: 2.0260687e-13, y: -3.5311443e-13, z: 29.845959}
+--- !u!1 &1432960754592002992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6262867502889662784}
+  - component: {fileID: 6144288691239144105}
+  m_Layer: 0
+  m_Name: SK_Perderos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6262867502889662784
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432960754592002992}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 200775759416838399}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &6144288691239144105
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432960754592002992}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: b315f8704d3006242b819dd5b14e7b22, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  serializedVersion: 2
+  m_Quality: 4
+  m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
+  m_Mesh: {fileID: 4300000, guid: ef9e3e8cca119c1439f6d55bf09d919f, type: 3}
+  m_Bones:
+  - {fileID: 216058898942697104}
+  - {fileID: 656587580291593802}
+  - {fileID: 5433875446744866952}
+  - {fileID: 1926362499523204606}
+  - {fileID: 4109727274318726085}
+  - {fileID: 6439890615000984776}
+  - {fileID: 4112378843641603069}
+  - {fileID: 4355236846357376596}
+  - {fileID: 6479467815069596720}
+  - {fileID: 5430704497526775389}
+  - {fileID: 3371199652696704401}
+  - {fileID: 6774984454045783904}
+  - {fileID: 9047985750765249646}
+  - {fileID: 7824382683158754500}
+  - {fileID: 6659874580138982648}
+  - {fileID: 3762397399189889858}
+  - {fileID: 7442259897372012083}
+  - {fileID: 6129779640340359996}
+  - {fileID: 8958763846990683065}
+  - {fileID: 8855998276797327792}
+  - {fileID: 217342243527573952}
+  - {fileID: 2232701012330962855}
+  - {fileID: 120482443383073439}
+  - {fileID: 8215559527850871658}
+  - {fileID: 1907680379331344968}
+  - {fileID: 5525921320501932372}
+  - {fileID: 5040556369064083961}
+  - {fileID: 7767468425734050808}
+  - {fileID: 4629327615702566343}
+  - {fileID: 4298537926020310646}
+  - {fileID: 7124790788724213446}
+  - {fileID: 5598494305449440464}
+  - {fileID: 6564785559177149957}
+  - {fileID: 7157789597635627553}
+  - {fileID: 972190643144826117}
+  - {fileID: 8917853549083235961}
+  - {fileID: 6482625339120425336}
+  - {fileID: 4638595552318386104}
+  - {fileID: 3089159082659441888}
+  - {fileID: 3060180535046495764}
+  - {fileID: 6766836199743222152}
+  - {fileID: 1735085810410520160}
+  - {fileID: 2216387636836195396}
+  - {fileID: 3303142208817887709}
+  - {fileID: 7424337981487024006}
+  - {fileID: 6791428457906888582}
+  - {fileID: 5354337292905720598}
+  - {fileID: 8126002702457042405}
+  - {fileID: 5202289531056869843}
+  - {fileID: 1732610472041752967}
+  - {fileID: 1535359811271332108}
+  - {fileID: 8440623968400709230}
+  - {fileID: 7140008179115441614}
+  - {fileID: 132753890219721891}
+  - {fileID: 8131206740413183958}
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 217342243527573952}
+  m_AABB:
+    m_Center: {x: -2.2914748, y: 2.09448, z: -0.1384883}
+    m_Extent: {x: 5.3651023, y: 5.477199, z: 6.435447}
+  m_DirtyAABB: 0
+--- !u!1 &1433622034075053398
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4390384781324230559}
+  - component: {fileID: 4377086415526891515}
+  m_Layer: 0
+  m_Name: Left Claw
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4390384781324230559
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433622034075053398}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4377086415526891515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433622034075053398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739847bc62084c0c9a734901799ba3b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawPattern
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 1.5
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1812146055
+  useRootMotion: 0
+  trackDuration: 1.17
+  trackSpeed: 180
+  <Recovery>k__BackingField: 0.3
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &1749531850625552294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6129779640340359996}
+  - component: {fileID: 4153521130573288539}
+  m_Layer: 0
+  m_Name: Perderos_ R Calf
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6129779640340359996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749531850625552294}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000008426408, y: 0.000000012289844, z: 0.56548667, w: 0.82475746}
+  m_LocalPosition: {x: -1.8999922, y: 0.000000076293944, z: 0.00000015258789}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6774984454045783904}
+  m_Father: {fileID: 3371199652696704401}
+  m_LocalEulerAnglesHint: {x: -0.0000002779133, y: -0.000004415363, z: 97.43726}
+--- !u!136 &4153521130573288539
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749531850625552294}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 1.6
+  m_Direction: 0
+  m_Center: {x: -0.81, y: -0.06, z: 0.1}
+--- !u!1 &1779514840329960376
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9167687495682191807}
+  - component: {fileID: 7425740346377951778}
+  m_Layer: 0
+  m_Name: Turn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &9167687495682191807
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779514840329960376}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7425740346377951778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779514840329960376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ac2c6175b6454db6c1108efa020fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossTurnState
+  turnSpeed: 90
+  angleMargin: 5
+  doneAngle: 2
+  chaseReadyAngle: 30
+  timeout: 2.5
+  directionDampTime: 0.15
+--- !u!1 &2013845438132418562
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 940808886173270946}
+  - component: {fileID: 788158842028150654}
+  m_Layer: 0
+  m_Name: Left Turn Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &940808886173270946
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2013845438132418562}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &788158842028150654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2013845438132418562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3a5e3b8e90d423cb138eac5593253d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftTurnSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 7
+  minAngle: -135
+  maxAngle: -45
+  cooldown: 4
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1452908429
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  turnDuration: 0.75
+  maxTurnSpeed: 240
+--- !u!1 &2070865353350938924
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 216058898942697104}
+  m_Layer: 0
+  m_Name: Perderos_JawLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &216058898942697104
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070865353350938924}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.79300416, y: 0.2442559, z: -0.03112727, w: 0.55723834}
+  m_LocalPosition: {x: -0.88147914, y: -0.28220734, z: 0.6372235}
+  m_LocalScale: {x: 1.0000001, y: 0.9999999, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 656587580291593802}
+  m_LocalEulerAnglesHint: {x: 53.699467, y: -141.77127, z: -130.5298}
+--- !u!1 &2151372807566224830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8855998276797327792}
+  - component: {fileID: 4564383425683549763}
+  m_Layer: 0
+  m_Name: Perderos_ L UpperArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8855998276797327792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2151372807566224830}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.6170281, y: -0.120108426, z: 0.15186198, w: 0.7627505}
+  m_LocalPosition: {x: -1.1064175, y: 0.00000030517577, z: 0}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1907680379331344968}
+  m_Father: {fileID: 4109727274318726085}
+  m_LocalEulerAnglesHint: {x: -59.670216, y: -9.125338, z: -12.57663}
+--- !u!136 &4564383425683549763
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2151372807566224830}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.85
+  m_Height: 2.6
+  m_Direction: 0
+  m_Center: {x: -1.5, y: 0.05, z: -0.05}
+--- !u!1 &2159510788095735382
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6774984454045783904}
+  - component: {fileID: 8316101045973504682}
+  m_Layer: 0
+  m_Name: Perderos_ R Foot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6774984454045783904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159510788095735382}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.06663049, y: -0.026805943, z: -0.09256887, w: 0.99311274}
+  m_LocalPosition: {x: -1.4631671, y: 0.00000015258789, z: -0.00000030517577}
+  m_LocalScale: {x: 1, y: 0.99999994, z: 0.9999999}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6479467815069596720}
+  - {fileID: 4355236846357376596}
+  - {fileID: 4112378843641603069}
+  m_Father: {fileID: 6129779640340359996}
+  m_LocalEulerAnglesHint: {x: 13.027772, y: -13.609716, z: -49.603123}
+--- !u!65 &8316101045973504682
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159510788095735382}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.62, y: 1.56, z: 1.2}
+  m_Center: {x: -0.38, y: 0.35, z: 0.09}
+--- !u!1 &2497357247457163862
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8215559527850871658}
+  - component: {fileID: 4125310781666684408}
+  m_Layer: 0
+  m_Name: Perderos_ Spine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8215559527850871658
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2497357247457163862}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000214807, y: 0.00000077117534, z: -0.11930762, w: 0.99285734}
+  m_LocalPosition: {x: -0.7621983, y: -0.001300354, z: 0.0000010588194}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1926362499523204606}
+  m_Father: {fileID: 217342243527573952}
+  m_LocalEulerAnglesHint: {x: 5.775365, y: 0.7473754, z: -14.888075}
+--- !u!136 &4125310781666684408
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2497357247457163862}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.1
+  m_Height: 2.7
+  m_Direction: 2
+  m_Center: {x: -0.53, y: 0.04, z: 0}
+--- !u!1 &2547797454836923000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1535359811271332108}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1535359811271332108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2547797454836923000}
+  serializedVersion: 2
+  m_LocalRotation: {x: -5.5650896e-18, y: -2.0011422e-16, z: -0.02779882, w: 0.9996135}
+  m_LocalPosition: {x: -0.35757598, y: 0.0000012207031, z: 0.00000003231995}
+  m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6791428457906888582}
+  m_Father: {fileID: 8126002702457042405}
+  m_LocalEulerAnglesHint: {x: 1.3746273e-14, y: -1.8365612e-14, z: 36.814075}
+--- !u!1 &2785905779355096486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 872084743408207579}
+  - component: {fileID: 5374203458365668163}
+  m_Layer: 0
+  m_Name: Left Claw Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &872084743408207579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785905779355096486}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5374203458365668163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785905779355096486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7518184b81e14eb184ab02b80b4bc514, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLeftClawForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2.25
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1920930122
+  useRootMotion: 1
+  trackDuration: 1.17
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.45
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &3059538110728108582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7423506996687137735}
+  - component: {fileID: 3645352601674145374}
+  m_Layer: 0
+  m_Name: Smash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7423506996687137735
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3059538110728108582}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3645352601674145374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3059538110728108582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27e8482fc0eb4d29962671b93dc08071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmash
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -1083039596
+  useRootMotion: 0
+  trackDuration: 1.5
+  trackSpeed: 180
+  <Recovery>k__BackingField: 0.4
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &3062403070286099641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5525921320501932372}
+  m_Layer: 0
+  m_Name: Perderos_ L Finger21
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5525921320501932372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3062403070286099641}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0000000035745393, y: -0.0000000010490273, z: -0.2815961, w: 0.95953304}
+  m_LocalPosition: {x: -0.41196746, y: 0.00000030517577, z: -0.00000030517577}
+  m_LocalScale: {x: 1, y: 0.99999994, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7767468425734050808}
+  m_LocalEulerAnglesHint: {x: 0.00000019874675, y: 0.0000017258977, z: -85.94933}
+--- !u!1 &3072198716126356488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4112378843641603069}
+  m_Layer: 0
+  m_Name: Perderos_ R Toe2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4112378843641603069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3072198716126356488}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.038611706, y: -0.07625289, z: -0.71178627, w: 0.6971764}
+  m_LocalPosition: {x: -0.58398885, y: 0.6005511, z: -0.29880843}
+  m_LocalScale: {x: 1, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6774984454045783904}
+  m_LocalEulerAnglesHint: {x: -9.279088, y: -2.805545, z: -91.65374}
+--- !u!1 &3326976559168768314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 972190643144826117}
+  m_Layer: 0
+  m_Name: Perderos_ R Finger21
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &972190643144826117
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3326976559168768314}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.000000011345186, y: 0.000000012200101, z: -0.2815961, w: 0.95953304}
+  m_LocalPosition: {x: -0.41196716, y: -0.00000061035155, z: 0.00000030517577}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4638595552318386104}
+  m_LocalEulerAnglesHint: {x: -0.0000007585813, y: 0.00000093061436, z: -50.815155}
+--- !u!1 &3367227231343084381
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1907680379331344968}
+  - component: {fileID: 7178273986771717613}
+  m_Layer: 0
+  m_Name: Perderos_ L Forearm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1907680379331344968
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367227231343084381}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000009174093, y: 0.000000020382256, z: 0.410442, w: 0.9118867}
+  m_LocalPosition: {x: -2.9344416, y: 0, z: -0.00000030517577}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5040556369064083961}
+  m_Father: {fileID: 8855998276797327792}
+  m_LocalEulerAnglesHint: {x: -0.00000049824615, y: 0.000003785543, z: 124.06316}
+--- !u!136 &7178273986771717613
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367227231343084381}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.7
+  m_Height: 2.9
+  m_Direction: 0
+  m_Center: {x: -0.9, y: 0.16, z: 0}
+--- !u!1 &3400669791353281375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 594655706491539977}
+  - component: {fileID: 5070346573389025199}
+  m_Layer: 0
+  m_Name: 2Combo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &594655706491539977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3400669791353281375}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5070346573389025199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3400669791353281375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33524a8e0b1e40aa8618cd30c7049ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2Combo
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 2.5
+  <Weight>k__BackingField: 0.75
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 1320152918
+  useRootMotion: 0
+  trackDuration: 1.83
+  trackSpeed: 180
+  <Recovery>k__BackingField: 1
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &3430693542239893754
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6659874580138982648}
+  m_Layer: 0
+  m_Name: Perderos_ L Toe1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6659874580138982648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3430693542239893754}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000021064503, y: 6.131044e-10, z: -0.72737986, w: 0.68623513}
+  m_LocalPosition: {x: -0.53119475, y: 0.6610682, z: -0.17505355}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5430704497526775389}
+  m_LocalEulerAnglesHint: {x: -0.00004836987, y: 0.000014815343, z: -93.334465}
+--- !u!1 &3453681675014333659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6601743136249257147}
+  - component: {fileID: 7360682572995916398}
+  m_Layer: 0
+  m_Name: Idle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6601743136249257147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3453681675014333659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7360682572995916398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3453681675014333659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1657b5e6ce18487d8e128193228a1aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossIdleState
+  intentTimeout: 5
+  retryDelay: 0.3
+  faceHalfAngle: 45
+  melees:
+  - {fileID: 4377086415526891515}
+  - {fileID: 5374203458365668163}
+  - {fileID: 4091713680808868829}
+  - {fileID: 378036316848615790}
+  - {fileID: 3645352601674145374}
+  - {fileID: 588864280852202731}
+  - {fileID: 5070346573389025199}
+  - {fileID: 2544212416036314323}
+  - {fileID: 1639146330187405594}
+  - {fileID: 4984115569597563364}
+  - {fileID: 1337988281538202538}
+  - {fileID: 788158842028150654}
+  - {fileID: 4787703938259214962}
+  - {fileID: 4663631127443257715}
+  hop: {fileID: 4887717736631722759}
+--- !u!1 &3492820963610160150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4629327615702566343}
+  m_Layer: 0
+  m_Name: Perderos_ L Finger1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4629327615702566343
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3492820963610160150}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.009785026, y: -0.045974582, z: -0.20031777, w: 0.9786028}
+  m_LocalPosition: {x: -0.7486737, y: -0.060327146, z: -0.23112212}
+  m_LocalScale: {x: 0.9999999, y: 0.99999994, z: 0.9999998}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4298537926020310646}
+  m_Father: {fileID: 5040556369064083961}
+  m_LocalEulerAnglesHint: {x: -2.15313, y: -4.940565, z: -44.898705}
+--- !u!1 &3498878427826445007
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6439890615000984776}
+  - component: {fileID: 3985760983141939576}
+  m_Layer: 0
+  m_Name: Perderos_ L Calf
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6439890615000984776
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3498878427826445007}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.000000007726875, y: 0.000000041432507, z: 0.56548655, w: 0.8247575}
+  m_LocalPosition: {x: -1.899992, y: 0.000000076293944, z: 0.00000015258789}
+  m_LocalScale: {x: 0.99999976, y: 0.9999999, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5430704497526775389}
+  m_Father: {fileID: 9047985750765249646}
+  m_LocalEulerAnglesHint: {x: 0.0000016838679, y: -0.00000051240215, z: 87.111145}
+--- !u!136 &3985760983141939576
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3498878427826445007}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 1.6
+  m_Direction: 0
+  m_Center: {x: -0.81, y: -0.06, z: -0.1}
+--- !u!1 &3677156495568904537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7124790788724213446}
+  m_Layer: 0
+  m_Name: Perderos_ L Finger01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7124790788724213446
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3677156495568904537}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0000000023220457, y: -0.000000016497392, z: -0.31818452, w: 0.9480288}
+  m_LocalPosition: {x: -0.55011994, y: 0, z: -0.00000061035155}
+  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999998}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7157789597635627553}
+  m_LocalEulerAnglesHint: {x: 0.0000016506037, y: -0.00000023355553, z: -58.24814}
+--- !u!1 &3839551794974068160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3060180535046495764}
+  m_Layer: 0
+  m_Name: Perderos_ R Finger01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3060180535046495764
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3839551794974068160}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0000000035316825, y: -0.0000000011853297, z: -0.31818452, w: 0.9480288}
+  m_LocalPosition: {x: -0.55011964, y: 0.00000015258789, z: 0}
+  m_LocalScale: {x: 1, y: 0.99999994, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6482625339120425336}
+  m_LocalEulerAnglesHint: {x: 0.0000021216047, y: 0.0000016697551, z: -33.361435}
+--- !u!1 &3969005885032052515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5611240901073836669}
+  - component: {fileID: 2544212416036314323}
+  m_Layer: 0
+  m_Name: 2Combo Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5611240901073836669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969005885032052515}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2544212416036314323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969005885032052515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ace5c71683049adb6057c82ccc7fa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss2ComboForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 3.75
+  <Weight>k__BackingField: 0.75
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: 109528201
+  useRootMotion: 1
+  trackDuration: 2
+  trackSpeed: 120
+  <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &4417057529064989734
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2502556648975515432}
+  m_Layer: 0
+  m_Name: root
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2502556648975515432
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4417057529064989734}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7808170085990973582}
+  - {fileID: 2753639787488649115}
+  - {fileID: 3613847894739870803}
+  m_Father: {fileID: 200775759416838399}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!1 &4418327442962730948
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7767468425734050808}
+  m_Layer: 0
+  m_Name: Perderos_ L Finger2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7767468425734050808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4418327442962730948}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.01349991, y: 0.086761214, z: -0.14874142, w: 0.98497015}
+  m_LocalPosition: {x: -0.7778015, y: -0.0506427, z: 0.28104004}
+  m_LocalScale: {x: 0.99999994, y: 0.99999976, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5525921320501932372}
+  m_Father: {fileID: 5040556369064083961}
+  m_LocalEulerAnglesHint: {x: -0.04492109, y: 10.074612, z: -41.6804}
+--- !u!1 &4531180776945928119
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 132753890219721891}
+  m_Layer: 0
+  m_Name: Perderos_ Tail1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &132753890219721891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4531180776945928119}
+  serializedVersion: 2
+  m_LocalRotation: {x: -2.2945892e-13, y: -0.000000062076936, z: 0.022381345, w: 0.99974954}
+  m_LocalPosition: {x: -0.34870207, y: -0.0002609253, z: -7.241033e-10}
+  m_LocalScale: {x: 0.9999998, y: 0.9999999, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8131206740413183958}
+  m_Father: {fileID: 7140008179115441614}
+  m_LocalEulerAnglesHint: {x: -0.33815452, y: 1.4614137, z: 11.788316}
+--- !u!1 &4763910620185119128
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7140008179115441614}
+  - component: {fileID: 3300105574051171360}
+  m_Layer: 0
+  m_Name: Perderos_ Tail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7140008179115441614
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4763910620185119128}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0000010021058, y: -0.0000007909099, z: 0.98833585, w: -0.15229}
+  m_LocalPosition: {x: 0.6680437, y: -0.743504, z: 0.00000047351}
+  m_LocalScale: {x: 1.0000001, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 132753890219721891}
+  m_Father: {fileID: 217342243527573952}
+  m_LocalEulerAnglesHint: {x: -0.6454429, y: 1.7690483, z: -151.22408}
+--- !u!136 &3300105574051171360
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4763910620185119128}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 1.07
+  m_Direction: 0
+  m_Center: {x: -0.53, y: 0, z: 0}
+--- !u!1 &4932608810264429530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6564785559177149957}
+  - component: {fileID: 6080955981895099578}
+  m_Layer: 0
+  m_Name: Perderos_ R Forearm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6564785559177149957
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4932608810264429530}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000042466493, y: 0.000000021738295, z: 0.41044208, w: 0.9118867}
+  m_LocalPosition: {x: -2.934442, y: 0, z: -0.00000030517577}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5598494305449440464}
+  m_Father: {fileID: 2232701012330962855}
+  m_LocalEulerAnglesHint: {x: 0.0000035766739, y: 0.0000013364181, z: 83.92308}
+--- !u!136 &6080955981895099578
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4932608810264429530}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.7
+  m_Height: 2.9
+  m_Direction: 0
+  m_Center: {x: -0.9, y: 0.16, z: 0}
+--- !u!1 &5106571617324015388
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5598494305449440464}
+  - component: {fileID: 1606465241036716554}
+  m_Layer: 0
+  m_Name: Perderos_ R Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5598494305449440464
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5106571617324015388}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.2769627, y: -0.026987338, z: -0.13052921, w: 0.9515911}
+  m_LocalPosition: {x: -2.3085883, y: 0.00000015258789, z: 0}
+  m_LocalScale: {x: 1, y: 1.0000001, z: 1.0000002}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6482625339120425336}
+  - {fileID: 3089159082659441888}
+  - {fileID: 4638595552318386104}
+  m_Father: {fileID: 6564785559177149957}
+  m_LocalEulerAnglesHint: {x: 51.20473, y: -10.836257, z: -33.069088}
+--- !u!65 &1606465241036716554
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5106571617324015388}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7, y: 1.16, z: 1.75}
+  m_Center: {x: -0.95, y: 0.22, z: 0.27}
+--- !u!1 &5368559757405871259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 770699486715204046}
+  - component: {fileID: 4887717736631722759}
+  m_Layer: 0
+  m_Name: Hop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &770699486715204046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5368559757405871259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4887717736631722759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5368559757405871259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ca84b5891b44709b4e838ec681e7f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHopState
+  tooCloseDistance: 3
+  wideAngle: 60
+  chance: 0.4
+  cooldown: 8
+  airDuration: 0.6
+  maxHopDistance: 20
+  sideAngle: 45
+  turnSpeed: 180
+  timeout: 2
+  followPatterns:
+  - {fileID: 5374203458365668163}
+  - {fileID: 378036316848615790}
+  - {fileID: 588864280852202731}
+  - {fileID: 2544212416036314323}
+  - {fileID: 4984115569597563364}
+--- !u!1 &5428490949904501660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6479467815069596720}
+  m_Layer: 0
+  m_Name: Perderos_ R Toe0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6479467815069596720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5428490949904501660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.099335484, y: 0.10975519, z: -0.73325557, w: 0.66364336}
+  m_LocalPosition: {x: -0.590174, y: 0.5246315, z: 0.48643157}
+  m_LocalScale: {x: 1, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6774984454045783904}
+  m_LocalEulerAnglesHint: {x: 17.126816, y: -0.15070087, z: -96.43387}
+--- !u!1 &5576455583841988067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7442259897372012083}
+  m_Layer: 0
+  m_Name: Perderos_ R Clavicle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7442259897372012083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5576455583841988067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7056083, y: -0.14643426, z: 0.6761336, w: -0.15335372}
+  m_LocalPosition: {x: -0.7674183, y: -0.30976042, z: -0.36346468}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2232701012330962855}
+  m_Father: {fileID: 1926362499523204606}
+  m_LocalEulerAnglesHint: {x: -9.473143, y: 107.493515, z: -152.544}
+--- !u!1 &5722038130961994895
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5202289531056869843}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5202289531056869843
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722038130961994895}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0000000028986051, y: -0.00000004994822, z: 0.05793473, w: 0.9983204}
+  m_LocalPosition: {x: -0.4189749, y: 0, z: -0.00000004989488}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8126002702457042405}
+  m_Father: {fileID: 1732610472041752967}
+  m_LocalEulerAnglesHint: {x: 0.0000034217376, y: -0.000004600233, z: 36.642544}
+--- !u!1 &6083731488664419170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5354337292905720598}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_Right_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5354337292905720598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6083731488664419170}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000040217632, y: -0.00000021015241, z: -0.18796264, w: 0.9821762}
+  m_LocalPosition: {x: -0.41969657, y: -0.00000061035155, z: 0}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8440623968400709230}
+  m_Father: {fileID: 6766836199743222152}
+  m_LocalEulerAnglesHint: {x: -4.8117576, y: 1.7406697, z: -61.42569}
+--- !u!1 &6283813380936208952
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6482625339120425336}
+  m_Layer: 0
+  m_Name: Perderos_ R Finger0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6482625339120425336
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6283813380936208952}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.47926718, y: 0.46754208, z: 0.05568896, w: 0.74067956}
+  m_LocalPosition: {x: -0.14883728, y: 0.077612914, z: 0.5077307}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3060180535046495764}
+  m_Father: {fileID: 5598494305449440464}
+  m_LocalEulerAnglesHint: {x: -49.64442, y: 80.81011, z: -45.27578}
+--- !u!1 &6508351681074504637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 200775759416838399}
+  - component: {fileID: 246675874423528317}
+  - component: {fileID: 6146927584407496567}
+  - component: {fileID: 1861756219444596382}
+  - component: {fileID: 4721780714661062354}
+  - component: {fileID: 6313832497312916263}
+  m_Layer: 0
+  m_Name: Perderos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &200775759416838399
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 2502556648975515432}
+  - {fileID: 6262867502889662784}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!95 &246675874423528317
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: ef9e3e8cca119c1439f6d55bf09d919f, type: 3}
+  m_Controller: {fileID: 9100000, guid: aa36e3cfbc6f7ad4786ff6961c71bad6, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!54 &6146927584407496567
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 1
+  m_Constraints: 80
+  m_CollisionDetection: 3
+--- !u!114 &1861756219444596382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a787f25a2c5040479f8efdf1b4674e1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossMonster
+  defaultState: {fileID: 7360682572995916398}
+  <Animator>k__BackingField: {fileID: 246675874423528317}
+  <Body>k__BackingField: {fileID: 6146927584407496567}
+  <Movement>k__BackingField: {fileID: 4721780714661062354}
+  <AnimEventListener>k__BackingField: {fileID: 6313832497312916263}
+  <Target>k__BackingField: {fileID: 0}
+  sightHalfAngle: 20
+  sightRange: 30
+  moveHalfAngle: 45
+  keepMoveHalfAngle: 90
+  telegraphPoolKey: AttackTelegraph
+--- !u!114 &4721780714661062354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6635b3effc644205b1651f7cacde86ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossMovement
+  body: {fileID: 6146927584407496567}
+  blockMask:
+    serializedVersion: 2
+    m_Bits: 136
+  castRadius: 5
+  castHeight: 0.5
+--- !u!114 &6313832497312916263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43d5013f84bc96846ab2b7997218a7f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.AnimStateEventListener
+--- !u!1 &6514804415617949282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6176514972253701882}
+  - component: {fileID: 1480043761567533512}
+  m_Layer: 0
+  m_Name: Chase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6176514972253701882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6514804415617949282}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1480043761567533512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6514804415617949282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aaa66fa0d9247d0b3ee9acea73a2069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossChaseStateBase
+  walkSpeed: 5
+  runSpeed: 10
+  rotateSpeed: 60
+  rethinkInterval: 1
+  maxRotateSpeed: 90
+  slowStartAngle: 20
+  slowEndAngle: 90
+  minSpeedRatio: 0.4
+--- !u!1 &6654441410010606763
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2585256838081163497}
+  - component: {fileID: 588864280852202731}
+  m_Layer: 0
+  m_Name: Smash Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2585256838081163497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6654441410010606763}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &588864280852202731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6654441410010606763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 296dde739c644b6ebe433dffda3d9c20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossSmashForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 3
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -234574752
+  useRootMotion: 1
+  trackDuration: 1.5
+  trackSpeed: 120
+  <Recovery>k__BackingField: 0.6
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &6818046879313038815
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 733241142820730493}
+  - component: {fileID: 1639146330187405594}
+  m_Layer: 0
+  m_Name: 3Combo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &733241142820730493
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6818046879313038815}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1639146330187405594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6818046879313038815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce8262d4a9c48a48f0443aaa5c66cdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3Combo
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 3
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -2047656717
+  useRootMotion: 0
+  trackDuration: 3
+  trackSpeed: 180
+  <Recovery>k__BackingField: 1.5
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &6852771485358171125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3089159082659441888}
+  m_Layer: 0
+  m_Name: Perderos_ R Finger1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3089159082659441888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6852771485358171125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.009785, y: 0.045974564, z: -0.20031779, w: 0.9786028}
+  m_LocalPosition: {x: -0.7486743, y: -0.060327146, z: 0.23112182}
+  m_LocalScale: {x: 1, y: 1, z: 0.9999999}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8917853549083235961}
+  m_Father: {fileID: 5598494305449440464}
+  m_LocalEulerAnglesHint: {x: -1.6163521, y: 4.6314864, z: -17.233728}
+--- !u!1 &7016417630469929558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2216387636836195396}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_Left_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2216387636836195396
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7016417630469929558}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.000000009358461, y: -0.00000004890151, z: 0.18796264, w: 0.9821762}
+  m_LocalPosition: {x: -0.41969633, y: 0, z: -0.000000049572918}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1735085810410520160}
+  m_Father: {fileID: 3303142208817887709}
+  m_LocalEulerAnglesHint: {x: 4.811783, y: 1.7407492, z: 61.425697}
+--- !u!1 &7211862012705750292
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3613847894739870803}
+  m_Layer: 0
+  m_Name: States
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3613847894739870803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7211862012705750292}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6601743136249257147}
+  - {fileID: 9167687495682191807}
+  - {fileID: 6176514972253701882}
+  - {fileID: 770699486715204046}
+  - {fileID: 1033639488534488116}
+  m_Father: {fileID: 2502556648975515432}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7411618435033107499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6791428457906888582}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6791428457906888582
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7411618435033107499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0, z: -0.000003889202, w: 1}
+  m_LocalPosition: {x: -0.27338532, y: -0.00000061035155, z: 0.000000022466047}
+  m_LocalScale: {x: 1.0000002, y: 1.0000002, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7424337981487024006}
+  m_Father: {fileID: 1535359811271332108}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 39.999554}
+--- !u!1 &7506169441984858113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3762397399189889858}
+  m_Layer: 0
+  m_Name: Perderos_ L Toe2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3762397399189889858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7506169441984858113}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.038611706, y: 0.076252885, z: -0.71178627, w: 0.69717646}
+  m_LocalPosition: {x: -0.58398896, y: 0.6005513, z: 0.29880843}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5430704497526775389}
+  m_LocalEulerAnglesHint: {x: 9.345618, y: 2.9834578, z: -90.94437}
+--- !u!1 &8070827585998629441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8958763846990683065}
+  - component: {fileID: 3184407386692510528}
+  m_Layer: 0
+  m_Name: Perderos_ Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8958763846990683065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8070827585998629441}
+  serializedVersion: 2
+  m_LocalRotation: {x: -8.32485e-13, y: -0.0000013282826, z: 0.47890258, w: 0.87786806}
+  m_LocalPosition: {x: -0.92955, y: 0, z: 1.1641532e-12}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 656587580291593802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3184407386692510528
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8070827585998629441}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.9, y: 2.5, z: 2.9}
+  m_Center: {x: -0.33, y: 0.88, z: 0}
+--- !u!1 &8105041017626406967
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1732610472041752967}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1732610472041752967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8105041017626406967}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0, z: -0.2806118, w: 0.95982134}
+  m_LocalPosition: {x: -0.48632511, y: 0.31943297, z: -0.00000030517577}
+  m_LocalScale: {x: 1, y: 1, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5202289531056869843}
+  m_Father: {fileID: 120482443383073439}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -60.09344}
+--- !u!1 &8145013087306913183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4638595552318386104}
+  m_Layer: 0
+  m_Name: Perderos_ R Finger2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4638595552318386104
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8145013087306913183}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.013499902, y: -0.08676124, z: -0.14874142, w: 0.98497015}
+  m_LocalPosition: {x: -0.7778021, y: -0.0506427, z: -0.28104034}
+  m_LocalScale: {x: 1, y: 0.9999999, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 972190643144826117}
+  m_Father: {fileID: 5598494305449440464}
+  m_LocalEulerAnglesHint: {x: 0.04492141, y: -10.074611, z: -6.5462246}
+--- !u!1 &8366446798375009193
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8126002702457042405}
+  m_Layer: 0
+  m_Name: Perderos_Tongue_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8126002702457042405
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8366446798375009193}
+  serializedVersion: 2
+  m_LocalRotation: {x: 2.077554e-16, y: -7.2370315e-16, z: 0.27592802, w: 0.9611783}
+  m_LocalPosition: {x: -0.38168302, y: 0.000013122558, z: -2.9176588e-11}
+  m_LocalScale: {x: 0.99999976, y: 0.99999976, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1535359811271332108}
+  - {fileID: 3303142208817887709}
+  - {fileID: 6766836199743222152}
+  m_Father: {fileID: 5202289531056869843}
+  m_LocalEulerAnglesHint: {x: 8.207307e-14, y: -2.6612286e-14, z: 72.034645}
+--- !u!1 &8395491758694593462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1923133753475031536}
+  - component: {fileID: 4984115569597563364}
+  m_Layer: 0
+  m_Name: 3Combo Forward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1923133753475031536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8395491758694593462}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1033639488534488116}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4984115569597563364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8395491758694593462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9335ea5cbdf64daf8fe59d17a7a46150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.Boss3ComboForward
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 10
+  minAngle: -35
+  maxAngle: 35
+  cooldown: 4.5
+  <Weight>k__BackingField: 0.5
+  <IsUrgent>k__BackingField: 0
+  <CanApproach>k__BackingField: 0
+  trigger: -619602676
+  useRootMotion: 1
+  trackDuration: 3.17
+  trackSpeed: 120
+  <Recovery>k__BackingField: 2.25
+  hits:
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  - shape:
+      kind: 1
+      radius: 8
+      angle: 120
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+--- !u!1 &8442722759216034541
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2232701012330962855}
+  - component: {fileID: 7544535902427168399}
+  m_Layer: 0
+  m_Name: Perderos_ R UpperArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2232701012330962855
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8442722759216034541}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.6170281, y: 0.12010843, z: 0.15186198, w: 0.7627505}
+  m_LocalPosition: {x: -1.1064175, y: 0, z: -0.00000015258789}
+  m_LocalScale: {x: 0.99999994, y: 1.0000001, z: 1.0000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6564785559177149957}
+  m_Father: {fileID: 7442259897372012083}
+  m_LocalEulerAnglesHint: {x: 75.91986, y: 106.72213, z: 96.437836}
+--- !u!136 &7544535902427168399
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8442722759216034541}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.85
+  m_Height: 2.6
+  m_Direction: 0
+  m_Center: {x: -1.5, y: 0.05, z: 0.05}
+--- !u!1 &8631714356669628749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 120482443383073439}
+  m_Layer: 0
+  m_Name: Perderos_JawLower
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &120482443383073439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8631714356669628749}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.9879866, y: -0.15453954, z: 0.0000005574517, w: -0.0000017996848}
+  m_LocalPosition: {x: -0.71817404, y: 0.7092065, z: -0.000003967285}
+  m_LocalScale: {x: 1, y: 0.9999999, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1732610472041752967}
+  m_Father: {fileID: 656587580291593802}
+  m_LocalEulerAnglesHint: {x: -0.00017386612, y: 179.99986, z: -151.96198}
+--- !u!1 &8707016091251894504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5040556369064083961}
+  - component: {fileID: 2030222367795285433}
+  m_Layer: 0
+  m_Name: Perderos_ L Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5040556369064083961
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8707016091251894504}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.2769627, y: 0.026987359, z: -0.13052924, w: 0.9515911}
+  m_LocalPosition: {x: -2.3085883, y: 0.00000015258789, z: 0.00000061035155}
+  m_LocalScale: {x: 1, y: 1.0000001, z: 1.0000002}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7157789597635627553}
+  - {fileID: 4629327615702566343}
+  - {fileID: 7767468425734050808}
+  m_Father: {fileID: 1907680379331344968}
+  m_LocalEulerAnglesHint: {x: -45.204735, y: 22.19106, z: -42.22487}
+--- !u!65 &2030222367795285433
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8707016091251894504}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7, y: 1.16, z: 1.75}
+  m_Center: {x: -0.95, y: 0.22, z: -0.27}
+--- !u!1 &8938257918934168802
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2753639787488649115}
+  - component: {fileID: 4042777697495299232}
+  m_Layer: 0
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2753639787488649115
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8938257918934168802}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071067, y: 0.00000004741519, z: 0.000000047415206, w: 0.70710695}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 10, y: 0.5, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2502556648975515432}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!64 &4042777697495299232
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8938257918934168802}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &9153466638633310776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1926362499523204606}
+  - component: {fileID: 7951107256480606021}
+  m_Layer: 0
+  m_Name: Perderos_ Spine1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1926362499523204606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9153466638633310776}
+  serializedVersion: 2
+  m_LocalRotation: {x: -9.610867e-14, y: 0.0000003298149, z: -0.118912205, w: 0.9929048}
+  m_LocalPosition: {x: -1.6809341, y: -0.0013006591, z: -0.0000000036077108}
+  m_LocalScale: {x: 1, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4109727274318726085}
+  - {fileID: 656587580291593802}
+  - {fileID: 7442259897372012083}
+  m_Father: {fileID: 8215559527850871658}
+  m_LocalEulerAnglesHint: {x: 6.487076, y: 3.2936642, z: -39.081818}
+--- !u!136 &7951107256480606021
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9153466638633310776}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Height: 4.4
+  m_Direction: 1
+  m_Center: {x: -0.8, y: 0.15, z: 0}
+--- !u!1 &9217900618312643531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7157789597635627553}
+  m_Layer: 0
+  m_Name: Perderos_ L Finger0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7157789597635627553
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9217900618312643531}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.47926712, y: -0.46754208, z: 0.05568897, w: 0.74067956}
+  m_LocalPosition: {x: -0.14883758, y: 0.07761322, z: -0.50773114}
+  m_LocalScale: {x: 1, y: 1, z: 0.9999999}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7124790788724213446}
+  m_Father: {fileID: 5040556369064083961}
+  m_LocalEulerAnglesHint: {x: 49.644417, y: -80.81011, z: -55.523243}

@@ -12,6 +12,7 @@ namespace TeamOdd.Boss.Development
     {
         [Title("Components")]
         [SerializeField] private Animator animator;
+        [SerializeField] private BossMovement movement; // 비어 있으면 transform을 직접 옮김
 
         [Title("Motion")]
         [SerializeField] private int currentMotionIndex;
@@ -48,8 +49,15 @@ namespace TeamOdd.Boss.Development
 
             if (Key.R.GetKeyDown())
             {
-                transform.position = resetPosition;
-                transform.eulerAngles = resetRotation;
+                if (movement != null)
+                {
+                    movement.Teleport(resetPosition, Quaternion.Euler(resetRotation));
+                }
+                else
+                {
+                    transform.position = resetPosition;
+                    transform.eulerAngles = resetRotation;
+                }
             }
         }
 

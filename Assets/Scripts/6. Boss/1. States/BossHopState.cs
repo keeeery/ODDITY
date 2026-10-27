@@ -62,8 +62,8 @@ namespace TeamOdd.Boss
 
             // 남은 체공 시간 안에 착지 지점에 닿도록 수평 속도를 맞춤
             float remainTime = Mathf.Max(airDuration - (Clock.LocalTime - jumpStartTime), Clock.LocalDeltaTime);
-            Vector3 velocity = (landing - Body.position) / remainTime;
-            Body.linearVelocity = new Vector3(velocity.x, Body.linearVelocity.y, velocity.z);
+            Vector3 velocity = (landing - Movement.Position) / remainTime;
+            Movement.Move(velocity * Clock.LocalDeltaTime);
         }
 
         protected override void OnExit()
@@ -123,7 +123,7 @@ namespace TeamOdd.Boss
         // 대상에서 보스 쪽 방향을 좌우로 살짝 틀고, 이어질 공격 사거리 중간만큼 떨어진 곳에 착지
         private void StartJump()
         {
-            jumpStart = Body.position;
+            jumpStart = Movement.Position;
 
             Vector3 away = jumpStart - Target.position;
             away.y = 0f;
@@ -139,11 +139,7 @@ namespace TeamOdd.Boss
             isJumping = true;
         }
 
-        private void StopJump()
-        {
-            if (isJumping) Body.linearVelocity = new Vector3(0f, Body.linearVelocity.y, 0f);
-            isJumping = false;
-        }
+        private void StopJump() => isJumping = false;
 
         private bool TryPickFollow(out BossMeleePattern result)
         {
