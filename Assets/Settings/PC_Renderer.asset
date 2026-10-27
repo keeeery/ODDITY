@@ -37,7 +37,8 @@ MonoBehaviour:
   - {fileID: 2147300000}
   - {fileID: 2147300001}
   - {fileID: 7833122117494664109}
-  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000ad6b866f10d7b46c
+  - {fileID: 2147300002}
+  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000ad6b866f10d7b46ca232fd7f00000000
   m_UseNativeRenderPass: 1
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
@@ -122,9 +123,18 @@ MonoBehaviour:
   m_Name: Time Freeze Overlay
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.TimeControl.TimeFreezeOverlayFeature
   m_Active: 1
-  overlayShader: {fileID: 4800000, guid: e43f52eea3b849e38299edd06106fb72, type: 3}
-  color: {r: 0.225, g: 0.45, b: 1, a: 0.275}
-  rimColor: {r: 0.425, g: 0.65, b: 1, a: 0.775}
-  rimPower: 2.5
-  edgeColor: {r: 0.675, g: 0.8, b: 1, a: 0.925}
-  edgeWidth: 0.15
+  overlayMaterial: {fileID: 2100000, guid: 0174bc2066b44e0c98033fd0f8ec1998, type: 2}
+--- !u!114 &2147300002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01a94cb1d9ad49e1a6f15cdc3f87ca4d, type: 3}
+  m_Name: Hit Flash
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.HitFlashFeature
+  m_Active: 1
+  flashMaterial: {fileID: 2100000, guid: a6fbc7ba576743f8a091908fb13d7d40, type: 2}

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: HitImpact
+  m_Shader: {fileID: 4800000, guid: c96165562eca424cb606d3a6ba8b4f75, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _AxisBias: 0.35
+    - _BackDarken: 0.35
+    - _CoreOnTop: 0.8
+    - _CoreSize: 0.16
+    - _DepthSoftness: 0.35
+    - _FineRayWidth: 0.012
+    - _Progress: 0
+    - _RayDensity: 0.3
+    - _RayWidth: 0.042
+    - _Seed: 0
+    - _SlashStrength: 1.2
+    - _Squash: 0.72
+    m_Colors:
+    - _Color: {r: 1.35, g: 1.32, b: 1.28, a: 1}
+    - _TipColor: {r: 0.5, g: 0.95, b: 1.5, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

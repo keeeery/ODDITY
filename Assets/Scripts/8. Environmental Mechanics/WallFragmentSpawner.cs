@@ -23,12 +23,15 @@ namespace TeamOdd.Arena
         [FormerlySerializedAs("smallFragmentPrefabs")]
         [SerializeField] private PsychokinesisObject[] mediumFragmentPrefabs;
         [SerializeField] private Rigidbody[] smallVisualFragmentPrefabs;
+        // 맵에 배치된 금속 소품이 부서질 때 쓰는 얇은 금속 조각, 소품마다 다른 머티리얼을 입혀 꺼낸다.
+        [SerializeField] private Rigidbody[] metalShardPrefabs;
 
         // 크기별 공유 풀. Prefab에는 각 목록의 첫 번째 파편을 쓰고, 꺼낼 때 무작위 파편의 형태를 입힌다.
         [Header("Pool")]
         [SerializeField] private ObjectPoolManager.ObjectPoolData largeFragmentPool;
         [SerializeField] private ObjectPoolManager.ObjectPoolData mediumFragmentPool;
         [SerializeField] private ObjectPoolManager.ObjectPoolData smallFragmentPool;
+        [SerializeField] private ObjectPoolManager.ObjectPoolData metalShardPool;
 
         [Header("Spawn")]
         [SerializeField, Min(0f)] private float spawnRadius = 1.8f;
@@ -37,6 +40,10 @@ namespace TeamOdd.Arena
         [SerializeField, Min(0f)] private float impactSpawnRadius = 0.15f;
         [SerializeField, Min(0.01f)] private float impactFragmentsPerKilogram = 1f;
         [SerializeField, Min(MinimumImpactFragmentCount)] private int maxImpactFragmentCount = 30;
+        [Tooltip("금속 소품은 시야를 덜 가리도록 콘크리트보다 적게 흩뿌린다.")]
+        [SerializeField, Min(0.01f)] private float metalShardsPerKilogram = 0.4f;
+        [SerializeField, Min(MinimumImpactFragmentCount)] private int maxMetalShardCount = 8;
+        [SerializeField, Min(0f)] private float metalShardSpawnRadius = 0.5f;
 
         // 보스 충격파처럼 활성화된 파편을 찾아야 하는 쪽에서 사용, 크기별 풀의 부모(비어 있을 수 있음)
         public Transform[] FragmentPoolParents => new[] { largeFragmentPool.Parent, mediumFragmentPool.Parent, smallFragmentPool.Parent };
@@ -46,6 +53,7 @@ namespace TeamOdd.Arena
             CreatePool(largeFragmentPool, nameof(largeFragmentPool));
             CreatePool(mediumFragmentPool, nameof(mediumFragmentPool));
             CreatePool(smallFragmentPool, nameof(smallFragmentPool));
+            CreatePool(metalShardPool, nameof(metalShardPool));
         }
 
         private void CreatePool(ObjectPoolManager.ObjectPoolData data, string poolField)
@@ -70,8 +78,17 @@ namespace TeamOdd.Arena
             PsychokinesisObject.Shattered -= SpawnImpactDebris;
         }
 
-        public void SpawnImpactDebris(Vector3 point, Vector3 normal, float mass)
+        // debrisMaterial이 있으면 그 머티리얼의 금속 조각으로, 없으면(벽 파편, 보스 패턴 오브젝트) 콘크리트 파편으로 부서진다.
+        public void SpawnImpactDebris(Vector3 point, Vector3 normal, float mass, Material debrisMaterial)
         {
+            if (debrisMaterial != null)
+            {
+                int shardCount = Mathf.Clamp(Mathf.RoundToInt(mass * metalShardsPerKilogram),
+                    MinimumImpactFragmentCount, maxMetalShardCount);
+                SpawnFragments(metalShardPrefabs, metalShardPool, shardCount, point, normal, metalShardSpawnRadius, ImpactSpeedMultiplier, debrisMaterial);
+                return;
+            }
+
             int count = Mathf.Clamp(Mathf.RoundToInt(mass * impactFragmentsPerKilogram),
                 MinimumImpactFragmentCount, maxImpactFragmentCount);
             SpawnFragments(smallVisualFragmentPrefabs, smallFragmentPool, count, point, normal, impactSpawnRadius, ImpactSpeedMultiplier);
@@ -111,6 +128,38 @@ namespace TeamOdd.Arena
             UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
             Debug.Log("큰 파편 10개, 중간 파편 20개, 연출용 작은 파편 5개의 Prefab을 생성하고 목록에 할당했습니다.", this);
+        }
+
+        [Tooltip("생성할 금속 조각의 가장 긴 축 길이 범위(m)")]
+        [SerializeField] private Vector2 metalShardDiameter = new Vector2(0.25f, 0.45f);
+
+        [ContextMenu("Generate Metal Shard Prefabs (6)")]
+        private void GenerateMetalShardPrefabs()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("Prefab 생성은 Play Mode를 종료한 뒤 실행해 주세요.", this);
+                return;
+            }
+
+            UnityEditor.Undo.RecordObject(this, "Assign generated metal shard prefabs");
+            metalShardPrefabs = WallFragmentPrefabGenerator.Generate<Rigidbody>(fragmentTemplate, 6, metalShardDiameter, fragmentDensity, "MetalShard", true, true);
+
+            // 금속 조각 풀은 작은 파편 풀과 같은 부모·확장 단위를 쓴다.
+            UnityEditor.SerializedObject serializedSpawner = new UnityEditor.SerializedObject(this);
+            UnityEditor.SerializedProperty pool = serializedSpawner.FindProperty(nameof(metalShardPool));
+            UnityEditor.SerializedProperty smallPool = serializedSpawner.FindProperty(nameof(smallFragmentPool));
+            if (string.IsNullOrEmpty(pool.FindPropertyRelative("key").stringValue))
+                pool.FindPropertyRelative("key").stringValue = "MetalShardFragment";
+            pool.FindPropertyRelative("expandSize").intValue = smallPool.FindPropertyRelative("expandSize").intValue;
+            pool.FindPropertyRelative("parent").objectReferenceValue = smallPool.FindPropertyRelative("parent").objectReferenceValue;
+            pool.FindPropertyRelative("prefab").objectReferenceValue = metalShardPrefabs[0].gameObject;
+            serializedSpawner.ApplyModifiedPropertiesWithoutUndo();
+
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            Debug.Log("금속 조각 6개의 Prefab을 생성하고 목록과 풀에 할당했습니다.", this);
         }
 
         // ObjectPoolData의 필드가 private이므로 직렬화 경로로 풀 Prefab만 교체한다.
@@ -192,12 +241,13 @@ namespace TeamOdd.Arena
             return false;
         }
 
-        private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f)
+        // materialOverride가 있으면 꺼낸 파편에 원래 형태의 머티리얼 대신 입힌다 (다음에 꺼낼 때 ApplyVariant가 되돌림).
+        private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f, Material materialOverride = null)
         {
             Quaternion surfaceRotation = Quaternion.LookRotation(normal);
             Vector2 speedRange = launchSpeed * speedMultiplier;
             // 연출용 작은 파편끼리는 겹쳐 생성되어도 무방하다.
-            bool ignoreDebris = pool == smallFragmentPool;
+            bool ignoreDebris = pool == smallFragmentPool || pool == metalShardPool;
 
             for (int index = 0; index < count; index++)
             {
@@ -227,6 +277,7 @@ namespace TeamOdd.Arena
                 WallFragment fragment = SpawnVariant(prefab, pool, position, rotation);
 
                 if (fragment == null) continue;
+                if (materialOverride != null) fragment.GetComponent<MeshRenderer>().sharedMaterial = materialOverride;
 
                 Rigidbody body = fragment.GetComponent<Rigidbody>();
                 Vector3 direction = (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;

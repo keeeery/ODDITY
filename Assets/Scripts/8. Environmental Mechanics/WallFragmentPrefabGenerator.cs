@@ -13,7 +13,8 @@ namespace TeamOdd.Arena
         private const float MediumDeformationStrength = 1.25f;
         private const string OutputFolder = "Assets/Prefabs/8. Environmental Mechanics/GeneratedFragments";
 
-        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 diameterRange, float density, string group, bool visualOnly = false) where T : Component
+        // shard면 둥근 돌덩이 대신 얇고 각진 금속 조각(UV 0~1)을 만든다.
+        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 diameterRange, float density, string group, bool visualOnly = false, bool shard = false) where T : Component
         {
             string folder = OutputFolder + "/" + group;
             Directory.CreateDirectory(folder);
@@ -29,7 +30,9 @@ namespace TeamOdd.Arena
             {
                 string name = (group + "Object") + (index + 1).ToString("D2");
                 float diameter = Mathf.Lerp(minimumDiameter, maximumDiameter, (index + 0.5f) / count);
-                Mesh generated = CreateFragmentMesh(diameter, index + (group == "Large" ? 20 : 0), maxSubdivisions, deformationStrength);
+                Mesh generated = shard
+                    ? CreateShardMesh(diameter, index)
+                    : CreateFragmentMesh(diameter, index + (group == "Large" ? 20 : 0), maxSubdivisions, deformationStrength);
                 generated.name = name;
                 string meshPath = folder + "/" + name + ".asset";
                 Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
@@ -87,6 +90,7 @@ namespace TeamOdd.Arena
             mesh.indexFormat = generated.indexFormat;
             mesh.vertices = generated.vertices;
             mesh.normals = generated.normals;
+            mesh.uv = generated.uv;
             mesh.triangles = generated.triangles;
             mesh.bounds = generated.bounds;
             mesh.UploadMeshData(false);
@@ -177,6 +181,71 @@ namespace TeamOdd.Arena
                 triangles = triangles,
                 normals = normals
             };
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        // 무작위 볼록 다각형을 두께만큼 밀어낸 뒤 살짝 휘게 해 찌그러진 금속판 조각처럼 만든다.
+        // UV는 판 앞뒤 면 기준 0~1이라, 머티리얼 타일링으로 원본 텍스처의 원하는 영역을 입힐 수 있다.
+        private static Mesh CreateShardMesh(float diameter, int variation)
+        {
+            System.Random random = new System.Random(variation * 7919 + 17);
+            int sides = 5 + variation % 3;
+            float aspect = 0.45f + (float)random.NextDouble() * 0.35f;
+            // 가장 긴 축이 약 2인 단위 공간 기준의 반 두께, 최종 두께는 지름의 약 6%
+            const float HalfThickness = 0.06f;
+            float bend = (0.15f + (float)random.NextDouble() * 0.2f) * (variation % 2 == 0 ? 1f : -1f);
+            Vector2[] outline = new Vector2[sides];
+
+            for (int index = 0; index < sides; index++)
+            {
+                float angle = (index + ((float)random.NextDouble() - 0.5f) * 0.6f) / sides * Mathf.PI * 2f;
+                float radius = 0.6f + (float)random.NextDouble() * 0.4f;
+                outline[index] = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle) * aspect) * radius;
+            }
+
+            Vector3 Point(Vector2 point, float side) => new Vector3(point.x, point.y, side * HalfThickness + bend * point.x * point.x);
+            Vector2 Uv(Vector2 point) => new Vector2(point.x * 0.5f + 0.5f, point.y * 0.5f + 0.5f);
+
+            var vertices = new System.Collections.Generic.List<Vector3>();
+            var uvs = new System.Collections.Generic.List<Vector2>();
+            var triangles = new System.Collections.Generic.List<int>();
+
+            // 앞·뒷면: 가운데에서 부채꼴로 나눔
+            foreach (float side in new[] { 1f, -1f })
+            {
+                int center = vertices.Count;
+                vertices.Add(Point(Vector2.zero, side));
+                uvs.Add(Uv(Vector2.zero));
+                foreach (Vector2 point in outline)
+                {
+                    vertices.Add(Point(point, side));
+                    uvs.Add(Uv(point));
+                }
+                for (int index = 0; index < sides; index++)
+                {
+                    int a = center + 1 + index;
+                    int b = center + 1 + (index + 1) % sides;
+                    if (side > 0f) triangles.AddRange(new[] { center, a, b });
+                    else triangles.AddRange(new[] { center, b, a });
+                }
+            }
+
+            // 옆면: 모서리마다 따로 정점을 둬 각지게 보이도록 함
+            for (int index = 0; index < sides; index++)
+            {
+                Vector2 a = outline[index];
+                Vector2 b = outline[(index + 1) % sides];
+                int start = vertices.Count;
+                vertices.AddRange(new[] { Point(a, 1f), Point(b, 1f), Point(b, -1f), Point(a, -1f) });
+                uvs.AddRange(new[] { Uv(a), Uv(b), Uv(b), Uv(a) });
+                triangles.AddRange(new[] { start, start + 2, start + 1, start, start + 3, start + 2 });
+            }
+
+            Vector3[] positions = vertices.ToArray();
+            NormalizeDiameter(positions, diameter);
+            Mesh mesh = new Mesh { vertices = positions, uv = uvs.ToArray(), triangles = triangles.ToArray() };
+            mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             return mesh;
         }

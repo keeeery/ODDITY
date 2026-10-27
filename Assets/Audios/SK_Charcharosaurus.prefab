@@ -787,6 +787,7 @@ GameObject:
   - component: {fileID: 4391235115479835729}
   - component: {fileID: 7477955140076880982}
   - component: {fileID: 560260013335335844}
+  - component: {fileID: 4127609318475520613}
   m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
@@ -4570,3 +4571,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!114 &4127609318475520613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808844dd18424726a0e855a388e832cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitFeedback
+  flashDuration: 0.12
+  strongHitDamage: 60
+  impactMaterial: {fileID: 2100000, guid: a3289664271548d28330e282e8fea8a4, type: 2}
+  impactSize: 3
+  impactDuration: 0.3
+  impactTowardCamera: 0.15
+  impactRollRange: 25
+  impactPoolSize: 3
+  surfaceSnapDistance: 1.5
+  impactLightColor: {r: 0.85, g: 0.93, b: 1, a: 1}
+  impactLightIntensity: 8
+  impactLightRange: 4
+  debrisMaterial: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+  debrisCount: 12
+  debrisSpeed: {x: 6, y: 12}
+  debrisLifetime: {x: 0.3, y: 0.6}
+  debrisSize: 0.08
+  debrisSpawnRadius: 0.15
+  debrisTipColor: {r: 0.6, g: 0.9, b: 1, a: 1}

@@ -14,7 +14,7 @@ namespace TeamOdd.TimeControl
     /// - 풀리면 기억해 둔 값으로 되돌림
     /// - LocalTime은 멈춰 있는 동안 흐르지 않는 시계, 쿨타임·타이머를 Time.time 대신 이 값으로 재면 정지 시간만큼 자연스럽게 밀림
     /// 정지는 개별 정지(Freeze/Unfreeze)와 전체 정지(FreezeWorld/UnfreezeWorld) 두 갈래이고, 둘 다 횟수로 세므로 겹쳐 걸어도 안전
-    /// 멈춰 있는 동안 메시 위에 파란 반투명 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
+    /// 멈춰 있는 동안 메시 위에 파란 홀로그램 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TimeFreezable : MonoBehaviour
@@ -32,6 +32,8 @@ namespace TeamOdd.TimeControl
         [SerializeField, Min(0.01f)] private float overlayCoverDuration = 0.3f;
         [Tooltip("풀릴 때 막이 머리끝에서 발밑까지 걷히는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f)] private float overlayUncoverDuration = 0.4f;
+        [Tooltip("멈추는 순간 막에 글리치가 일었다가 잦아드는 시간(초), 정지가 이어지는 동안은 잔잔하게 둔다.")]
+        [SerializeField, Min(0.01f)] private float overlayGlitchDuration = 0.35f;
 
         private struct BodyState
         {
@@ -81,6 +83,18 @@ namespace TeamOdd.TimeControl
         // 덮일 때는 빠르게 올라오다 머리끝에서, 걷힐 때는 빠르게 내려가다 발밑에서 감속(cubic ease-out)
         public float OverlayProgress => isOverlayCovering ? 1f - Cube(1f - overlayProgress) : Cube(overlayProgress);
         public IReadOnlyList<Renderer> OverlayRenderers => overlayRenderers;
+
+        // 막의 글리치 세기(0~1), 멈춘 순간에만 1에서 줄어듦
+        public float OverlayGlitch
+        {
+            get
+            {
+                if (isApplied == false) return 0f;
+
+                float remain = 1f - Mathf.Clamp01((Time.time - pauseStartTime) / overlayGlitchDuration);
+                return remain * remain;
+            }
+        }
 
         private bool ShouldFreeze => freezeCount > 0 || (worldFreezeCount > 0 && isWorldExempt == false);
 

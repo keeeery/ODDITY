@@ -19,14 +19,15 @@ namespace TeamOdd.Combat
 
         public override int TakeDamage(DamageEvent @event)
         {
-            transform.DOKill(complete: true);
-            transform.DOPunchScale(
-                punch: Vector3.one * 0.2f,
-                duration: 0.2f,
-                vibrato: 1,
-                elasticity: 0f
-            );
-            
+            // 피격 연출은 BossHitFeedback으로 대신함
+            // transform.DOKill(complete: true);
+            // transform.DOPunchScale(
+            //     punch: Vector3.one * 0.2f,
+            //     duration: 0.2f,
+            //     vibrato: 1,
+            //     elasticity: 0f
+            // );
+
             return base.TakeDamage(@event);
         }
 
