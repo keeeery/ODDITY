@@ -8,9 +8,9 @@
       "hash": "ceac8d6946b1125fe782cd171fbcb245b567dbf9"
     },
     "com.ncai.varco3d.bridge": {
-      "version": "file:C:/Users/Garden/Downloads/VARCO3D-Bridge-for-Unity",
+      "version": "file:VARCO3D-Bridge-for-Unity",
       "depth": 0,
-      "source": "local",
+      "source": "embedded",
       "dependencies": {
         "com.unity.importer.usd": "1.0.0-pre.2"
       }
