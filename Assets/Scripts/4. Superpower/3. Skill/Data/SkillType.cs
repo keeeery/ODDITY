@@ -8,6 +8,7 @@ namespace TeamOdd.Superpower
         Shockwave,
         PsychoSlam,
         PsychoRapidFire,
+        PsychoTempest,
 
         // 방어
         Heal,
