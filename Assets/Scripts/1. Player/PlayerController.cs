@@ -78,7 +78,7 @@ namespace TeamOdd.Player
         [SerializeField, Min(0.1f)] private float attackBlendSpeed = 35f;
         [SerializeField, Min(1f)] private float attackAimDistance = 14f;
 
-        [Header("피격")] 
+        [Header("피격")]
         private float earlyWakeUpCooldown;
         public float MaxEarlyWakeUpCooldown;
         public float WakeUpTime;
@@ -227,7 +227,7 @@ namespace TeamOdd.Player
             if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
             {
                 Quaternion targetRotation =
-                    SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)
+                    heldObject != null
                         ? Quaternion.LookRotation(Vector3.forward)
                         : Quaternion.LookRotation(moveVector);
                 transform.rotation =
@@ -588,8 +588,12 @@ namespace TeamOdd.Player
             Vector3 dir = transform.position - bossPos;
             
             dir.y = 0;
+            if (dir.sqrMagnitude < 0.0001f) dir = -transform.forward; // 공격자와 위치가 겹치면 뒤로 날린다
             dir.Normalize();
-            
+
+            // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
+            transform.rotation = Quaternion.LookRotation(-dir);
+
             float t = 0, prevY = 0;
             
             animator.SetInteger(HitMotion, motionIndex);
