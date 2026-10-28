@@ -26,9 +26,11 @@ namespace TeamOdd.Player
         private AnimStateEventListener eventListener;
 
         private bool isManuallyLocked = false;
-
-        protected override void OnInitialize()
+        
+        private void Awake()
         {
+            DontDestroyOnLoad(this);
+            
             CharacterController = GetComponent<CharacterController>();
             PlayerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
@@ -67,7 +69,6 @@ namespace TeamOdd.Player
         
         private void HandleRollRequested()
         {
-            // if (stamina < 100f) return;
             if (stamina < PlayerController.NeedRollStamina) return;
 
             ConsumeStamina(PlayerController.NeedRollStamina);

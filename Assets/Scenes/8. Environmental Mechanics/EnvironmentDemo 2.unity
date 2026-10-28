@@ -362,7 +362,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 11127901}
-  - component: {fileID: 2147000020}
   - component: {fileID: 2147000021}
   m_Layer: 0
   m_Name: UI
@@ -20582,6 +20581,7 @@ Transform:
   - {fileID: 560866509}
   - {fileID: 2009241621}
   - {fileID: 514935507}
+  - {fileID: 1214751895}
   - {fileID: 76110447}
   m_Father: {fileID: 273411543}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47713,6 +47713,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 67344606218481644, guid: 94c021e25ebbd1f40832abb40d26987d, type: 3}
   m_PrefabInstance: {fileID: 1214681030}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1214751894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1214751895}
+  m_Layer: 0
+  m_Name: MetalShard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1214751895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214751894}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 569445978}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1215589740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54110,6 +54141,10 @@ PrefabInstance:
       propertyPath: <Target>k__BackingField
       value: 
       objectReference: {fileID: 2205336347470601070}
+    - target: {fileID: 5758417875896292843, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: groundMask.m_Bits
+      value: 2043
+      objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_Name
       value: Perderos
@@ -57324,7 +57359,13 @@ MonoBehaviour:
   - {fileID: 5958717546450965173, guid: 29c861232ff7f4089acbceb6219d0b6a, type: 3}
   - {fileID: 9105829553262659977, guid: 9bac800aeef2b4bfdb55afd7a5815fc1, type: 3}
   - {fileID: 2992500339128823242, guid: 879a514d18f1c49e0a646095b2093829, type: 3}
-  metalShardPrefabs: []
+  metalShardPrefabs:
+  - {fileID: 3236477246616575714, guid: 4a1a56fd8653d46f18e2412bb7499f07, type: 3}
+  - {fileID: 2943323925901786957, guid: 2c4cd03b000c340dca0c596c93659c12, type: 3}
+  - {fileID: 3499122352732337124, guid: bdd52e9c1496247dc8e508268b2ebbe6, type: 3}
+  - {fileID: 3481224767239049935, guid: f7c9edf7fd8cf40a48c63674f368d92c, type: 3}
+  - {fileID: 3198381604904624901, guid: 3e37cc4f78d72404697294c0caf3d334, type: 3}
+  - {fileID: 1560669643426364235, guid: 4f32e787ee8e34431879483a55442cd0, type: 3}
   largeFragmentPool:
     key: WallFragment.Large
     prefab: {fileID: 4686032179533201624, guid: b687e6c56360540f8b609c95d4aabe62, type: 3}
@@ -57341,10 +57382,10 @@ MonoBehaviour:
     expandSize: 24
     parent: {fileID: 514935507}
   metalShardPool:
-    key: 
-    prefab: {fileID: 0}
-    expandSize: 0
-    parent: {fileID: 0}
+    key: MetalShardFragment
+    prefab: {fileID: 1844719635934787086, guid: 4a1a56fd8653d46f18e2412bb7499f07, type: 3}
+    expandSize: 24
+    parent: {fileID: 1214751895}
   spawnRadius: 1.8
   launchSpeed: {x: 4, y: 8}
   spinSpeed: 8
@@ -83389,21 +83430,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 273411543}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2147000020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 11127900}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6516d4b29e9746d292f6ca2ca5e2e5ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisTestHealthUI
-  enemies:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &2147000021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83422,6 +83448,7 @@ MonoBehaviour:
   - {fileID: 2205336347470601074}
   - {fileID: 1902345672}
   - {fileID: 1982781881}
+  - {fileID: 747568469}
 --- !u!114 &2147100001
 MonoBehaviour:
   m_ObjectHideFlags: 0

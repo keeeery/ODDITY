@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -18,6 +19,9 @@ namespace TeamOdd.Arena
         private const int MinimumImpactFragmentCount = 3;
         private const float ImpactSpeedMultiplier = 0.3f;
         private readonly Collider[] spawnOverlaps = new Collider[128];
+        // 실제로 만들어진 풀과, 비어 있어 이미 경고한 풀 (경고는 풀마다 한 번만)
+        private readonly HashSet<ObjectPoolManager.ObjectPoolData> readyPools = new();
+        private readonly HashSet<ObjectPoolManager.ObjectPoolData> warnedPools = new();
 
         [SerializeField] private PsychokinesisObject[] largeFragmentPrefabs;
         [FormerlySerializedAs("smallFragmentPrefabs")]
@@ -66,6 +70,17 @@ namespace TeamOdd.Arena
             }
 
             ObjectPoolManager.Instance.CreatePool(data);
+            readyPools.Add(data);
+        }
+
+        // 파편 목록이 비었거나 풀이 만들어지지 않았으면 생성하지 않음, 씬 설정이 빠진 경우 예외 대신 경고만 남김
+        private bool CanSpawn(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool)
+        {
+            if (prefabs != null && prefabs.Length > 0 && readyPools.Contains(pool)) return true;
+
+            if (warnedPools.Add(pool))
+                Debug.LogWarning($"{name}: 파편 목록이 비어 있거나 풀이 만들어지지 않아 파편을 생성하지 않습니다. (풀 키: '{pool?.Key}')", this);
+            return false;
         }
 
         private void OnEnable()
@@ -81,7 +96,8 @@ namespace TeamOdd.Arena
         // debrisMaterial이 있으면 그 머티리얼의 금속 조각으로, 없으면(벽 파편, 보스 패턴 오브젝트) 콘크리트 파편으로 부서진다.
         public void SpawnImpactDebris(Vector3 point, Vector3 normal, float mass, Material debrisMaterial)
         {
-            if (debrisMaterial != null)
+            // 금속 조각이 준비되지 않은 씬에서는 콘크리트 파편으로 대신 부서진다.
+            if (debrisMaterial != null && CanSpawn(metalShardPrefabs, metalShardPool))
             {
                 int shardCount = Mathf.Clamp(Mathf.RoundToInt(mass * metalShardsPerKilogram),
                     MinimumImpactFragmentCount, maxMetalShardCount);
@@ -187,10 +203,37 @@ namespace TeamOdd.Arena
             SpawnFragments(smallVisualFragmentPrefabs, smallFragmentPool, 9, point, normal, spawnRadius);
         }
 
-        // 크기별 풀에서 무작위 형태의 파편을 꺼내 배치
+        // 벽 앞에 무언가(돌진한 보스)가 막고 있을 때 사용, 정면 대신 벽을 따라 좌우·위로 튀게 함
+        // sideGap: 충돌 지점에서 좌우로 비워 둘 거리(m), shatterGrace: 보스에 닿아도 파편화하지 않는 시간(초)
+        // 보스 패턴으로 생긴 오브젝트로 표시되어, 던졌다가 벽에 맞으면 파편화된다.
+        public void SpawnAlongWall(Vector3 point, Vector3 normal, float sideGap, float shatterGrace)
+        {
+            normal.y = 0f;
+            normal.Normalize();
+            WallSpread spread = new WallSpread(sideGap, shatterGrace);
+            SpawnFragments(largeFragmentPrefabs, largeFragmentPool, 1, point, normal, spawnRadius, spread: spread);
+            SpawnFragments(mediumFragmentPrefabs, mediumFragmentPool, 5, point, normal, spawnRadius, spread: spread);
+            SpawnFragments(smallVisualFragmentPrefabs, smallFragmentPool, 9, point, normal, spawnRadius, spread: spread);
+        }
+
+        private readonly struct WallSpread
+        {
+            public readonly float SideGap;
+            public readonly float ShatterGrace;
+
+            public WallSpread(float sideGap, float shatterGrace)
+            {
+                SideGap = sideGap;
+                ShatterGrace = shatterGrace;
+            }
+        }
+
+        // 크기별 풀에서 무작위 형태의 파편을 꺼내 배치, 목록이 비었거나 풀이 비면 null
         public WallFragment SpawnFragment(FragmentSize size, Vector3 position, Quaternion rotation)
         {
             Component[] prefabs = GetPrefabs(size);
+            if (CanSpawn(prefabs, GetPool(size)) == false) return null;
+
             return SpawnVariant(prefabs[Random.Range(0, prefabs.Length)], GetPool(size), position, rotation);
         }
 
@@ -242,9 +285,13 @@ namespace TeamOdd.Arena
         }
 
         // materialOverride가 있으면 꺼낸 파편에 원래 형태의 머티리얼 대신 입힌다 (다음에 꺼낼 때 ApplyVariant가 되돌림).
-        private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f, Material materialOverride = null)
+        // spread가 있으면 충돌 지점 정면을 비우고 벽을 따라 좌우·위로 생성·발사한다.
+        private void SpawnFragments(Component[] prefabs, ObjectPoolManager.ObjectPoolData pool, int count, Vector3 point, Vector3 normal, float radius, float speedMultiplier = 1f, Material materialOverride = null, WallSpread? spread = null)
         {
+            if (CanSpawn(prefabs, pool) == false) return;
+
             Quaternion surfaceRotation = Quaternion.LookRotation(normal);
+            Vector3 wallTangent = surfaceRotation * Vector3.right;
             Vector2 speedRange = launchSpeed * speedMultiplier;
             // 연출용 작은 파편끼리는 겹쳐 생성되어도 무방하다.
             bool ignoreDebris = pool == smallFragmentPool || pool == metalShardPool;
@@ -260,10 +307,13 @@ namespace TeamOdd.Arena
                 float clearance = halfExtents.magnitude + center.magnitude + SpawnClearance;
                 Vector3 position = Vector3.zero;
                 bool foundSpace = false;
+                float side = Random.value < 0.5f ? -1f : 1f;
 
                 for (int attempt = 0; attempt < MaxSpawnAttempts; attempt++)
                 {
-                    Vector2 offset = Random.insideUnitCircle * radius;
+                    Vector2 offset = spread.HasValue
+                        ? new Vector2(side * (spread.Value.SideGap + Random.value * radius), Random.value * radius)
+                        : Random.insideUnitCircle * radius;
                     position = point + normal * clearance + surfaceRotation * new Vector3(offset.x, offset.y, 0f);
 
                     if (IsSpawnBlocked(position + rotation * center, halfExtents, rotation, ignoreDebris)) continue;
@@ -278,9 +328,16 @@ namespace TeamOdd.Arena
 
                 if (fragment == null) continue;
                 if (materialOverride != null) fragment.GetComponent<MeshRenderer>().sharedMaterial = materialOverride;
+                if (spread.HasValue && fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject))
+                {
+                    psychokinesisObject.GrantBossShatterGrace(spread.Value.ShatterGrace);
+                    psychokinesisObject.MarkSpawnedByBoss();
+                }
 
                 Rigidbody body = fragment.GetComponent<Rigidbody>();
-                Vector3 direction = (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
+                Vector3 direction = spread.HasValue
+                    ? (wallTangent * side + Vector3.up * 0.7f + normal * 0.2f + Random.insideUnitSphere * 0.3f).normalized
+                    : (normal + Random.insideUnitSphere * 0.6f + Vector3.up * 0.35f).normalized;
                 body.linearVelocity = direction * Random.Range(speedRange.x, speedRange.y);
                 body.angularVelocity = Random.onUnitSphere * spinSpeed;
             }
