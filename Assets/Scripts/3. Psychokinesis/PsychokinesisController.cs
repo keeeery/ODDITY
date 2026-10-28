@@ -163,10 +163,12 @@ namespace TeamOdd.Psychokinesis
 
         private void LateUpdate()
         {
-            PsychokinesisObject target = FindFocus();
+#if UNITY_EDITOR
+            candidateCount = 0;
+#endif
 
             if (heldObject == null)
-                SetFocus(Cursor.lockState == CursorLockMode.Locked ? target : null);
+                SetFocus(Cursor.lockState == CursorLockMode.Locked ? FindFocus() : null);
 
             if (grabRequested)
             {
@@ -304,8 +306,9 @@ namespace TeamOdd.Psychokinesis
             float bestScore = float.PositiveInfinity;
             float nearestDistance = float.PositiveInfinity;
             float aspect = aimCamera.aspect;
+            Vector3 playerPosition = player.transform.position;
 #if UNITY_EDITOR
-            candidateCount = 0;
+            bool showCandidates = UnityEditor.Handles.ShouldRenderGizmos();
 #endif
 
             for (int i = 0; i < count; i++)
@@ -318,13 +321,20 @@ namespace TeamOdd.Psychokinesis
                     continue;
 
                 Vector3 position = GetTargetingPosition(queryColliders[i], ray);
-                float distance = Vector3.Distance(player.transform.position, position);
+                float distance = Vector3.Distance(playerPosition, position);
                 Vector3 viewport = aimCamera.WorldToViewportPoint(position);
                 Vector2 delta = new Vector2((viewport.x - 0.5f) * aspect, viewport.y - 0.5f);
                 float score = delta.magnitude;
+                bool isBetter = score < bestScore || (Mathf.Approximately(score, bestScore) && distance < nearestDistance);
+                bool needsVisibilityCheck = isBetter;
+#if UNITY_EDITOR
+                needsVisibilityCheck = needsVisibilityCheck || showCandidates;
+#endif
+                if (needsVisibilityCheck == false) continue;
+
                 bool visible = HasLineOfSight(position, candidate.transform);
 #if UNITY_EDITOR
-                candidates[candidateCount++] = new TargetingCandidate
+                if (showCandidates) candidates[candidateCount++] = new TargetingCandidate
                 {
                     Target = candidate,
                     CenterDistance = score,
@@ -333,9 +343,7 @@ namespace TeamOdd.Psychokinesis
                     Visible = visible
                 };
 #endif
-                if (visible == false) continue;
-
-                if (score < bestScore || (Mathf.Approximately(score, bestScore) && distance < nearestDistance))
+                if (visible && isBetter)
                 {
                     best = candidate;
                     bestScore = score;
