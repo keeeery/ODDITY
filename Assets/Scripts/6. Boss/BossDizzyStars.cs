@@ -202,6 +202,13 @@ namespace TeamOdd.Boss
             foreach (Transform bone in GetComponentsInChildren<Transform>(true))
                 if (bone.name.EndsWith(" Head")) return bone;
 
+            // 휴머노이드 보스는 뼈 이름 규칙이 달라 아바타의 머리 뼈를 씀
+            if (TryGetComponent(out Animator animator) && animator.isHuman)
+            {
+                Transform humanHead = animator.GetBoneTransform(HumanBodyBones.Head);
+                if (humanHead != null) return humanHead;
+            }
+
             Debug.LogWarning($"[{nameof(BossDizzyStars)}] {name}에서 머리 뼈(\" Head\")를 찾지 못했습니다. Head를 직접 지정하세요.", this);
             return null;
         }

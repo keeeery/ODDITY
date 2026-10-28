@@ -294,6 +294,10 @@ namespace TeamOdd.Boss
             foreach (Transform bone in GetComponentsInChildren<Transform>(true))
                 if (IsPart(bone.name, "Spine") || IsPart(bone.name, "Neck") || IsPart(bone.name, "Head")) found.Add(bone);
 
+            // 휴머노이드 보스는 뼈 이름 규칙이 달라 아바타의 척추·목·머리 뼈를 씀
+            if (found.Count == 0)
+                AddHumanBones(found, HumanBodyBones.Spine, HumanBodyBones.Chest, HumanBodyBones.UpperChest, HumanBodyBones.Neck, HumanBodyBones.Head);
+
             if (found.Count == 0)
                 Debug.LogWarning($"[{nameof(BossDizzy)}] {name}에서 척추·목·머리 뼈를 찾지 못했습니다. Bones를 직접 지정하세요.", this);
 
@@ -305,7 +309,21 @@ namespace TeamOdd.Boss
             var found = new List<Transform>();
             foreach (Transform bone in GetComponentsInChildren<Transform>(true))
                 if (bone.name.EndsWith(" Clavicle")) found.Add(bone);
+
+            if (found.Count == 0) AddHumanBones(found, HumanBodyBones.LeftShoulder, HumanBodyBones.RightShoulder);
             return found.ToArray();
+        }
+
+        // 아바타에 매핑되지 않은 뼈(UpperChest 등)는 건너뜀
+        private void AddHumanBones(List<Transform> found, params HumanBodyBones[] humanBones)
+        {
+            if (TryGetComponent(out Animator animator) == false || animator.isHuman == false) return;
+
+            foreach (HumanBodyBones humanBone in humanBones)
+            {
+                Transform bone = animator.GetBoneTransform(humanBone);
+                if (bone != null) found.Add(bone);
+            }
         }
 
         // " Neck", " Neck1"처럼 공백 + 부위 이름 + 숫자(없어도 됨)로 끝나는지

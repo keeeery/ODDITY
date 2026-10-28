@@ -134,11 +134,20 @@ namespace TeamOdd.Boss
         }
 
         // 지금 상태와 무관하게 즉시 끊음, 예약해 둔 다음 상태도 무시
+        // 상태 맵은 실제 타입으로 찾으므로 하위 클래스(휴머노이드 그로기 등)도 찾히도록 GetType 사용
         private void HandleBroken()
         {
             StateMachine.ClearReservedState();
-            StateMachine.ChangeState(typeof(BossGroggyState), true);
+            StateMachine.ChangeState(GetType(), true);
         }
+
+        // 쓰러지는 동안의 자세, 기본은 Death 클립을 Motion Time으로 감음. 전용 클립이 있는 보스는 재정의
+        protected virtual void ApplyFallPose(float progress)
+            => Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(fallStartTime, lieTime, progress));
+
+        // 일어나는 동안의 자세(progress는 이징이 걸린 0~1), 기본은 Death 클립을 거꾸로 감음
+        protected virtual void ApplyGetUpPose(float progress)
+            => Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(lieTime, getUpEndTime, progress));
 
         #region PHASE_METHODS
 
@@ -152,7 +161,7 @@ namespace TeamOdd.Boss
         private void UpdateFall(float elapsed)
         {
             float progress = Mathf.Clamp01(elapsed / fallDuration);
-            Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(fallStartTime, lieTime, progress));
+            ApplyFallPose(progress);
 
             if (hasImpacted == false && progress >= impactAt) PlayImpact();
             if (progress >= 1f) StartPhase(GroggyPhase.Lie);
@@ -171,7 +180,7 @@ namespace TeamOdd.Boss
         {
             float progress = Mathf.Clamp01(elapsed / getUpDuration);
             float eased = progress * progress * (3f - 2f * progress);
-            Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(lieTime, getUpEndTime, eased));
+            ApplyGetUpPose(eased);
 
             if (progress < 1f) return;
             StateMachine.Restart();
