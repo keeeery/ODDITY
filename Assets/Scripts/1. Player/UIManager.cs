@@ -16,8 +16,7 @@ namespace TeamOdd
         
         [SerializeField] private GameObject missionUI;
         [SerializeField] private GameObject skillUI;
-
-
+        
         [SerializeField] private GameObject battleUI;
 
         private void Update()
@@ -26,7 +25,7 @@ namespace TeamOdd
             {
                 if (SimpleInput.GetKeyDown(Key.Escape))
                     LockCursor(false);
-                else if (Cursor.lockState != CursorLockMode.Locked &&
+                else if (Cursor.lockState != CursorLockMode.Locked ||
                          (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left)
                           || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
                     LockCursor(true);
@@ -44,12 +43,6 @@ namespace TeamOdd
             Cursor.visible = locked == false;
 
             isManuallyLocked = isManuallyLock;
-
-            // Start 실행 순서에 기대지 않고, 처음 쓸 때 가져온다
-            if (playerController == null)
-                playerController = Player.Player.Instance.PlayerController;
-            if (cameraController == null)
-                cameraController = Player.Player.Instance.CameraController;
 
             playerController.enabled = locked;
             cameraController.enabled = locked;
