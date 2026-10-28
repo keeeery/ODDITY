@@ -14,6 +14,8 @@ namespace TeamOdd.UI
         [Header("Bars")]
         [SerializeField] private VectorBar hpBar;
         [SerializeField] private VectorBar staminaBar;
+        [Tooltip("체력바가 줄 때 남는 잔상 색, 바(VectorBar)의 설정보다 우선한다. 기본값은 보스 이름 텍스트와 같은 회백색")]
+        [SerializeField] private Color hpTrailColor = new(0.847f, 0.824f, 0.769f, 1f);
 
         [Header("Hit Feedback")]
         [SerializeField] private DamageVignette damageVignette;
@@ -34,6 +36,9 @@ namespace TeamOdd.UI
         {
             player ??= FindAnyObjectByType<Player.Player>();
             combatEntity ??= player.GetComponent<CombatEntity>();
+
+            // 잔상 색을 씬마다 맞추지 않도록 여기서 적용
+            if (hpBar != null) hpBar.TrailColor = hpTrailColor;
         }
 
         private void Start()

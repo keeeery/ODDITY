@@ -27,6 +27,10 @@ namespace TeamOdd.Psychokinesis
         [Header("Throw Damage")]
         [SerializeField, Min(0f)] private float throwDamageScale = 1f;
 
+        [Header("Groggy")]
+        [Tooltip("휘두르기·던지기로 준 피해에 곱해 무력화 피해로 쓰는 배율, 무거운 물체를 빠르게 맞힐수록 크게 깎는다.")]
+        [SerializeField, Min(0f)] private float groggyScale = 1f;
+
         [Header("Boss Step")]
         [Tooltip("맵에 배치된 오브젝트가 보스 다리·발에 닿았을 때 좌우로 밀려나는 수평 속도(m/s)")]
         [SerializeField, Min(0f)] private float bossPushSpeed = 4f;
@@ -296,7 +300,7 @@ namespace TeamOdd.Psychokinesis
             if (pendingDamage != null) return;
 
             SetImpact(point);
-            DamageInfo info = new DamageInfo(damage, point, collider);
+            DamageInfo info = new DamageInfo(damage, point, collider, groggy: Mathf.RoundToInt(damage * groggyScale));
             pendingDamage = new DamageEvent(damageSender, target, info);
             pendingDamageManager = CombatManager.Instance;
             pendingDamageManager.OnDamageEventExecuted += HandleDamageExecuted;

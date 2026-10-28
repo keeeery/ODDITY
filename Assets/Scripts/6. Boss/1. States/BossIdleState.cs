@@ -42,6 +42,9 @@ namespace TeamOdd.Boss
 
         protected override void OnExit() { }
 
+        // 끊긴 패턴의 후딜을 다시 시작한 Idle에 적용하지 않음
+        public override void ResetMemory() => executed = null;
+
         private void Think()
         {
             if (TryFollowUp()) return;

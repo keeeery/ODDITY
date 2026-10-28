@@ -10,7 +10,7 @@ namespace TeamOdd.Boss
     // - 포효: 진입 트리거(Roar), 끝나면(OnAttackEnded) 준비 시작
     // - 준비: aimDuration 동안 제자리 Run을 느리게 재생하며 대상 쪽으로 회전
     // - 돌진: 방향을 고정하고 chargeDistance만큼 달림, 대상은 통과하며 한 번만 피해
-    // - 벽에 정면으로 부딪히면 GetHitFront 후 stunDuration 동안 행동불능, 끝나면 후딜 없이 Idle
+    // - 벽에 정면으로 부딪히면 피격 모션 후 느린 Idle 반복(isStunned)과 BossDizzy 흔들림으로 stunDuration 동안 헤롱거리고, 끝나면 후딜 없이 Idle
     // - 끝까지 달리면 대상 위치로 점프스매시 후 포효, 마지막 포효의 OnAttackEnded로 종료(후딜 적용)
     // - 점프스매시를 쓰지 않는 보스는 포효 대신 대상 쪽으로 돌며 양손 내려찍기(hits[0])로 마무리할 수 있음
     public class BossCharge : BossMeleePattern
@@ -51,6 +51,8 @@ namespace TeamOdd.Boss
         [SerializeField] private LayerMask wallMask; // 부딪히면 행동불능이 되는 레이어
         [SerializeField] private float headOnAngle = 60f; // 진행 방향과 벽 사이 각이 이 이하일 때만 행동불능, 넘으면 벽을 따라 미끄러지며 계속 돌진
         [SerializeField] private float stunDuration = 3f; // 벽에 부딪힌 순간부터 잼, GetHitFront 재생 시간 포함
+        [Tooltip("행동불능이 끝나기 이 시간(초) 전에 헤롱거림을 풀어, 정신을 차리는 블렌드가 행동불능 안에서 끝나게 함")]
+        [SerializeField, Min(0f)] private float stunRecoverTime = 0.6f;
         [SerializeField] private WallFragmentSpawner fragmentSpawner; // 벽에 정면으로 박으면 부딪힌 지점에서 파편 생성, 비어 있으면 씬에서 찾음
         [SerializeField, Range(0f, 1.5f)] private float fragmentSideGapRatio = 0.4f; // 충돌 지점 좌우로 비워 둘 거리(몸통 반경 대비 비율), 파편이 보스 정면이 아닌 양옆에서 튀게 함
         [SerializeField] private float fragmentShatterGrace = 0.5f; // 생성 직후 보스 다리·발에 닿아도 파편화하지 않는 시간(초)
@@ -75,6 +77,8 @@ namespace TeamOdd.Boss
         private Vector3 chargeDir;
         private bool hasHitTarget;
         private bool wasStunned;
+        private bool isDizzy;
+        private BossDizzy dizzy;
         private AttackTelegraph pathTelegraph;
 
         private int rollFrame = -1;
@@ -113,6 +117,7 @@ namespace TeamOdd.Boss
         {
             base.Initialize(stateMachine);
             jump.Initialize(root);
+            dizzy = root.GetComponent<BossDizzy>(); // 없으면 흔들림 없이 피격·느린 Idle만 재생
 
             // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 비어 있으면 씬에서 찾음
             if (fragmentSpawner == null) fragmentSpawner = FindAnyObjectByType<WallFragmentSpawner>();
@@ -159,6 +164,7 @@ namespace TeamOdd.Boss
             CancelPathTelegraph();
             EndCharge();
             jump.Stop();
+            Recover();
 
             Animator.SetBool(BossAnimParams.IS_CHARGING, false);
             Animator.ResetTrigger(BossAnimParams.CHARGE_STUN);
@@ -291,13 +297,28 @@ namespace TeamOdd.Boss
             wasStunned = true;
 
             Animator.SetBool(BossAnimParams.IS_CHARGING, false);
+            Animator.SetBool(BossAnimParams.IS_STUNNED, true);
             Animator.SetTrigger(BossAnimParams.CHARGE_STUN);
+
+            isDizzy = true;
+            if (dizzy != null) dizzy.Sway.Begin();
         }
 
         private void UpdateStun()
         {
+            if (Clock.LocalTime >= phaseEndTime - stunRecoverTime) Recover();
             if (Clock.LocalTime < phaseEndTime) return;
             StateMachine.ChangeState(typeof(BossIdleState));
+        }
+
+        // 느린 Idle 반복에서 Idle로 돌아가고 흔들림이 잦아듦, 패턴이 중간에 끊겨도 헤롱거림이 남지 않도록 종료 때도 부름
+        private void Recover()
+        {
+            if (isDizzy == false) return;
+            isDizzy = false;
+
+            Animator.SetBool(BossAnimParams.IS_STUNNED, false);
+            if (dizzy != null) dizzy.Sway.End();
         }
 
         private void StartJumpSmash()

@@ -90,6 +90,8 @@ namespace TeamOdd.Boss
             return TryPickFollow(out follow);
         }
 
+        public override void ResetMemory() => follow = null;
+
         // 착지 후 Idle에서 한 번만 꺼내 씀
         public BossMeleePattern TakeFollow()
         {

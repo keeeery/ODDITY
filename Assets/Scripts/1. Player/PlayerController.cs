@@ -57,6 +57,12 @@ namespace TeamOdd.Player
         [Header("보스 몸 겹침")]
         [Tooltip("겹치면 바깥으로 빼내는 레이어(보스 부위, 다리 사이 막기 콜라이더)")]
         [SerializeField] private LayerMask bodyBlockLayers;
+        [Tooltip("양쪽에서 감싼 부위에 끼여 밀어내는 방향이 서로 상쇄될 때, 빠져나갈 방향으로 밀려나는 속도(m/s)")]
+        [SerializeField, Min(0.1f)] private float bodyEscapeSpeed = 8f;
+        [Tooltip("끼였을 때 몸 밖으로 빠져나갈 자리를 찾는 최대 거리(m)")]
+        [SerializeField, Min(0.5f)] private float bodyEscapeSearchDistance = 4f;
+        [Tooltip("빠져나가는 길에 있으면 막힌 방향으로 보는 레이어(벽 등)")]
+        [SerializeField] private LayerMask bodyEscapeBlockLayers = 1 << 7;
 
         [Header("홀딩")]
         [SerializeField, Range(0f, 90f)]
@@ -112,6 +118,8 @@ namespace TeamOdd.Player
         private float appliedPushSpeedRatio = 1f; // 이번 프레임 이동에 적용 (직전 프레임 계산값)
         private Vector3 slideOffDirection; // Move 중 보스 몸 위에 올라선 것을 찾으면 정해지고, 다음 이동에서 한 번 쓰고 비움
         private readonly Collider[] bodyOverlaps = new Collider[16];
+        private Vector3 escapeDirection;        // 끼임에서 빠져나가는 중인 방향, 몸에서 다 빠져나오면 비움
+        private Vector3 blockedEscapeDirection; // 벽 등에 막혀 나아가지 못한 방향, 다음 탐색에서 뺌
 
         private bool defaultRotateTowardMove;
         private bool isHolding;
@@ -395,6 +403,7 @@ namespace TeamOdd.Player
         // 한 번 겹치면 그 콜라이더를 무시하고 지나가 버리므로, 겹친 만큼 직접 바깥으로 빼냄
         // 위아래로 빼내면 발 위에 올라서거나 바닥에 묻히므로 수평으로만 밀고, Move로 밀어 벽은 뚫지 않음
         // 피격·구르기 중에도 겹치지 않아야 하므로 Update의 조기 반환과 관계없이 매 프레임 검사
+        // 머리와 팔 사이처럼 양쪽에서 감싼 부위에 끼이면 밀어내는 방향이 서로 상쇄되므로, 몸 밖으로 가장 가깝게 빠지는 방향을 찾아 다 빠질 때까지 밀어냄
         private void PushOutOfBodies()
         {
             if (bodyBlockLayers.value == 0 || controller.enabled == false) return;
@@ -406,6 +415,9 @@ namespace TeamOdd.Player
                 bodyBlockLayers, QueryTriggerInteraction.Ignore);
 
             Vector3 push = Vector3.zero;
+            Vector3 bodyCenterSum = Vector3.zero;
+            float largestPush = 0f;
+            int pushCount = 0;
 
             for (int index = 0; index < count; index++)
             {
@@ -417,10 +429,88 @@ namespace TeamOdd.Player
                         other, otherTransform.position, otherTransform.rotation, out Vector3 direction, out float distance) == false)
                     continue;
 
-                push += GetHorizontalPush(other, direction, distance);
+                Vector3 single = GetHorizontalPush(other, direction, distance);
+                push += single;
+                largestPush = Mathf.Max(largestPush, single.magnitude);
+                bodyCenterSum += other.attachedRigidbody != null ? other.attachedRigidbody.position : other.bounds.center;
+                pushCount++;
             }
 
+            // 한 번 빠져나가기 시작하면 남은 한 부위가 다른 부위 쪽으로 되밀어 다시 끼이지 않도록 몸에서 다 빠질 때까지 같은 방향으로 감
+            bool isPinched = pushCount >= 2 && push.magnitude < largestPush * 0.5f;
+            if (pushCount > 0 && (isPinched || escapeDirection != Vector3.zero))
+            {
+                EscapeFromBodies(center, offset, radius, bodyCenterSum / pushCount);
+                return;
+            }
+
+            escapeDirection = Vector3.zero;
+            blockedEscapeDirection = Vector3.zero;
             if (push != Vector3.zero) controller.Move(push);
+        }
+
+        private void EscapeFromBodies(Vector3 center, Vector3 offset, float radius, Vector3 bodyCenter)
+        {
+            if (escapeDirection == Vector3.zero) escapeDirection = FindEscapeDirection(center, offset, radius, bodyCenter);
+            if (escapeDirection == Vector3.zero) return;
+
+            Vector3 step = escapeDirection * (bodyEscapeSpeed * Time.deltaTime);
+            Vector3 before = transform.position;
+            controller.Move(step);
+
+            // 벽 등에 막혀 거의 못 나아갔으면 그 방향은 빼고 다음 프레임에 다시 찾음
+            Vector3 moved = transform.position - before;
+            moved.y = 0f;
+            if (moved.magnitude >= step.magnitude * 0.3f) return;
+
+            blockedEscapeDirection = escapeDirection;
+            escapeDirection = Vector3.zero;
+        }
+
+        // 수평 16방향 중 몸에서 가장 가깝게 빠지는 방향, 거리가 비슷하면 몸 중심의 바깥쪽을 고름
+        private Vector3 FindEscapeDirection(Vector3 center, Vector3 offset, float radius, Vector3 bodyCenter)
+        {
+            const int DirectionCount = 16;
+
+            Vector3 outward = transform.position - bodyCenter;
+            outward.y = 0f;
+            outward = outward.sqrMagnitude > 0.0001f ? outward.normalized : -transform.forward;
+
+            Vector3 best = Vector3.zero;
+            float bestScore = float.PositiveInfinity;
+
+            for (int index = 0; index < DirectionCount; index++)
+            {
+                Vector3 direction = Quaternion.AngleAxis(360f / DirectionCount * index, Vector3.up) * Vector3.forward;
+                if (blockedEscapeDirection != Vector3.zero && Vector3.Dot(direction, blockedEscapeDirection) > 0.9f) continue;
+                if (TryGetClearDistance(center, offset, radius, direction, out float distance) == false) continue;
+
+                float score = distance - Vector3.Dot(direction, outward) * 0.5f;
+                if (score >= bestScore) continue;
+
+                bestScore = score;
+                best = direction;
+            }
+
+            return best;
+        }
+
+        // 이 방향으로 몇 m 가야 몸에서 완전히 빠지는지, 가는 길에 벽이 있거나 탐색 거리 안에서 못 빠지면 false
+        private bool TryGetClearDistance(Vector3 center, Vector3 offset, float radius, Vector3 direction, out float distance)
+        {
+            const float Step = 0.25f;
+            float probeRadius = radius * 0.95f; // 바닥·옆 물체에 스치기만 한 것은 겹침으로 보지 않음
+
+            for (distance = Step; distance <= bodyEscapeSearchDistance; distance += Step)
+            {
+                Vector3 probe = center + direction * distance;
+                if (Physics.CheckCapsule(probe + offset, probe - offset, probeRadius, bodyEscapeBlockLayers, QueryTriggerInteraction.Ignore))
+                    return false;
+                if (Physics.CheckCapsule(probe + offset, probe - offset, probeRadius, bodyBlockLayers, QueryTriggerInteraction.Ignore) == false)
+                    return true;
+            }
+
+            return false;
         }
 
         // 빼낼 방향이 거의 위아래면(내려찍은 손 아래 등) 보스 몸 중심의 바깥쪽으로 밀어냄
