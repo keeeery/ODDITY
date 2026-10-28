@@ -17,8 +17,10 @@ namespace TeamOdd.Boss
         [SerializeField] private Rigidbody body;
 
         [Title("Settings")]
-        [SerializeField] private LayerMask blockMask; // 보스가 통과하지 못하는 레이어 (벽, 기둥, 플레이어)
-        [SerializeField] private float castRadius = 5f; // 몸통 콜라이더의 수평 반경에 맞춤
+        [SerializeField] private LayerMask blockMask; // 다리 사이 막기 캡슐 반경으로 막는 레이어 (플레이어)
+        [SerializeField] private float castRadius = 1f; // 다리 사이 막기 캡슐의 반경에 맞춤
+        [SerializeField] private LayerMask wallMask; // 몸 전체 반경으로 막는 레이어 (벽, 기둥)
+        [SerializeField] private float wallRadius = 3f; // 머리·팔·꼬리까지 덮는 몸의 수평 반경, 벽에 몸이 파고들지 않게 함
         [SerializeField] private float castHeight = 0.5f; // 보스 위치에서 판정 구 중심까지의 높이
 
         [Title("States")]
@@ -30,10 +32,10 @@ namespace TeamOdd.Boss
         // 막힌 물리 스텝마다 발생, 벽 충돌 그로기 같은 반응은 구독하는 상태가 판단
         public event Action<BossBlockInfo> OnBlocked;
 
-        // 몸통의 수평 반경
-        public float BodyRadius => castRadius;
+        // 몸 전체의 수평 반경(벽 판정 반경)
+        public float BodyRadius => wallRadius;
 
-        // 돌진처럼 잠깐 특정 대상을 통과해야 할 때 blockMask에서 뺄 레이어, 쓴 쪽이 끝날 때 0으로 되돌림
+        // 돌진처럼 잠깐 특정 대상을 통과해야 할 때 blockMask·wallMask에서 뺄 레이어, 쓴 쪽이 끝날 때 0으로 되돌림
         public LayerMask PassThroughMask { get; set; }
 
         // 아직 물리 스텝에 반영되지 않은 이동량까지 더한 위치
@@ -126,13 +128,24 @@ namespace TeamOdd.Boss
             return result;
         }
 
-        // 몸통 콜라이더가 납작한 원기둥이라 캡슐로는 맞출 수 없어 같은 반경의 구로 판정
-        // 시작할 때 이미 겹친 콜라이더는 감지하지 못함
+        // 플레이어는 다리 사이 막기 캡슐 반경, 벽은 몸 전체 반경의 구로 판정하고 먼저 닿는 쪽에서 막음
+        // 플레이어를 몸 반경으로 막으면 다리 사이까지 못 들어오고, 벽을 캡슐 반경으로 막으면 머리·꼬리가 벽에 파고듦
+        // 구라서 회전해도 모양이 같아 회전은 검사하지 않음, 시작할 때 이미 겹친 콜라이더는 감지하지 못함
         private bool TryCast(Vector3 position, Vector3 dir, float distance, out RaycastHit hit)
         {
             Vector3 origin = position + Vector3.up * castHeight;
-            int mask = blockMask & ~PassThroughMask;
-            return Physics.SphereCast(origin, castRadius, dir, out hit, distance, mask, QueryTriggerInteraction.Ignore);
+            bool hitBody = Cast(origin, castRadius, blockMask, dir, distance, out RaycastHit bodyHit);
+            bool hitWall = Cast(origin, wallRadius, wallMask, dir, distance, out RaycastHit wallHit);
+
+            hit = hitWall && (hitBody == false || wallHit.distance < bodyHit.distance) ? wallHit : bodyHit;
+            return hitBody || hitWall;
+        }
+
+        private bool Cast(Vector3 origin, float radius, LayerMask layers, Vector3 dir, float distance, out RaycastHit hit)
+        {
+            int mask = layers & ~PassThroughMask;
+            hit = default;
+            return mask != 0 && Physics.SphereCast(origin, radius, dir, out hit, distance, mask, QueryTriggerInteraction.Ignore);
         }
 
         #region CAST_VISUALIZATION
@@ -142,8 +155,13 @@ namespace TeamOdd.Boss
         {
             Color originalColor = UnityEditor.Handles.color;
 
+            Vector3 center = transform.position + Vector3.up * castHeight;
+
             UnityEditor.Handles.color = Color.green;
-            UnityEditor.Handles.DrawWireDisc(transform.position + Vector3.up * castHeight, Vector3.up, castRadius);
+            UnityEditor.Handles.DrawWireDisc(center, Vector3.up, castRadius);
+
+            UnityEditor.Handles.color = Color.yellow;
+            UnityEditor.Handles.DrawWireDisc(center, Vector3.up, wallRadius);
 
             UnityEditor.Handles.color = originalColor;
         }

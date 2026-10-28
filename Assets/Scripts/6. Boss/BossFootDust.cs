@@ -128,6 +128,9 @@ namespace TeamOdd.Boss
             return hasChargingParameter && boss.Animator.GetBool(BossAnimParams.IS_CHARGING);
         }
 
+        // 애니메이션 이벤트 없이 무거운 몸이 땅에 닿는 순간(무력화로 주저앉음 등)에 쓰는 쪽이 부름
+        public void PlayLanding() => Land();
+
         private void HandleAnimEvent(string eventName, string parameter)
         {
             if (string.Equals(eventName, "OnJumpLand") || string.Equals(eventName, "OnHopLand")) Land();

@@ -31,6 +31,7 @@ namespace TeamOdd.Boss
         [Title("States")]
         [ShowInInspector, ReadOnly] public float IntentStartTime { get; private set; }
         [ShowInInspector, ReadOnly] public BossMeleePattern Intent { get; private set; }
+        [ShowInInspector, ReadOnly] private BossMeleePattern followUp; // 앞 패턴이 끝나자마자 이어 갈 공격(포효 후 연계 등)
 
         [Title("Telegraph")]
         [Tooltip("패턴들이 공유하는 피격 범위 표시(AttackTelegraph) 풀의 키, 풀은 ObjectPoolManager에 등록")]
@@ -107,6 +108,28 @@ namespace TeamOdd.Boss
         }
         
         public void ClearIntent() => Intent = null;
+
+        // Idle이 다음 판단에서 한 번만 꺼내 씀, intent와 달리 다시 고르지 않고 사거리 안이면 바로 실행
+        public void SetFollowUp(BossMeleePattern pattern) => followUp = pattern;
+
+        public BossMeleePattern TakeFollowUp()
+        {
+            BossMeleePattern result = followUp;
+            followUp = null;
+            return result;
+        }
+
+        // 이전 판단(의도·연계·예약 상태·상태별 기억)을 모두 버리고 기본 상태부터 새로 시작
+        public override void Restart()
+        {
+            ClearIntent();
+            followUp = null;
+
+            foreach (BossStateBase state in GetComponentsInChildren<BossStateBase>(true))
+                state.ResetMemory();
+
+            base.Restart();
+        }
 
         public void RotateYaw(float deltaAngle, float maxDegrees)
         {

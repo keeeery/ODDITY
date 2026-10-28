@@ -20,21 +20,23 @@ namespace TeamOdd.Superpower
         private readonly float duration;
         private readonly float height;
         private readonly int damage;
+        private readonly int groggy;
         private readonly float range;
         private readonly float angle;
 
         private BossMonster target; // CanExecute에서 고른 대상, Execute에서 씀
 
-        public PsychoSlamSkill(string name, float cooldown, float duration, float height, int damage, float range, float angle) : base(name, cooldown)
+        public PsychoSlamSkill(string name, float cooldown, float duration, float height, int damage, int groggy, float range, float angle) : base(name, cooldown)
         {
             this.duration = duration;
             this.height = height;
             this.damage = damage;
+            this.groggy = groggy;
             this.range = range;
             this.angle = angle;
         }
 
-        public override string Describe() => $"보스 정지 {duration}초 · 높이 {height}m · 피해 {damage} · 사거리 {range}m";
+        public override string Describe() => $"보스 정지 {duration}초 · 높이 {height}m · 피해 {damage} · 무력화 {groggy} · 사거리 {range}m";
 
         protected override bool CanExecute(SkillContext context)
         {
@@ -166,7 +168,7 @@ namespace TeamOdd.Superpower
                 return;
             }
 
-            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, HitReaction.Knockdown);
+            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, HitReaction.Knockdown, groggy);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, receiver, info));
         }
     }

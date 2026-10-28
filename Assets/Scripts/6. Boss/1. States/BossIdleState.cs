@@ -42,9 +42,12 @@ namespace TeamOdd.Boss
 
         protected override void OnExit() { }
 
+        // 끊긴 패턴의 후딜을 다시 시작한 Idle에 적용하지 않음
+        public override void ResetMemory() => executed = null;
+
         private void Think()
         {
-            if (TryFollowHop()) return;
+            if (TryFollowUp()) return;
 
             if (IsIntentValid() == false) root.ClearIntent();
 
@@ -98,13 +101,12 @@ namespace TeamOdd.Boss
         // 이미 추적 중이었다면 더 넓은 각도까지 멈추지 않고 계속 추적
         private bool CanMove() => isChasing ? root.CanKeepMovingToTarget : root.CanMoveToTarget;
 
-        // 점프로 자리를 잡고 돌아왔으면 골라 둔 공격을 바로 실행, 사거리를 벗어났으면 평소처럼 다시 판단
-        // 착지한 자리에서 장애물에 가려졌으면 시야가 필요한 공격은 쓰지 않음
-        private bool TryFollowHop()
+        // 점프로 자리를 잡고 돌아왔거나(Hop) 앞 패턴이 연계 공격을 남겼으면(포효 등) 골라 둔 공격을 바로 실행
+        // 사거리를 벗어났으면 평소처럼 다시 판단, 장애물에 가려졌으면 시야가 필요한 공격은 쓰지 않음
+        private bool TryFollowUp()
         {
-            if (hop == null) return false;
-
-            BossMeleePattern follow = hop.TakeFollow();
+            BossMeleePattern follow = hop != null ? hop.TakeFollow() : null;
+            if (follow == null) follow = root.TakeFollowUp();
             if (follow == null || follow.IsInRange == false) return false;
             if (follow.IsSightClear == false) return false;
 

@@ -46,6 +46,8 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(0.01f)] private float trailRingDuration = 0.22f;
 
         [Header("Impact")]
+        [Tooltip("염동탄이 닿을 때 주는 무력화 피해")]
+        [SerializeField, Min(0)] private int groggyDamage = 8;
         [SerializeField, Min(0.1f)] private float impactRippleSize = 5.53f;
         [SerializeField, Min(0.01f)] private float impactRippleDuration = 0.3f;
 
@@ -247,7 +249,7 @@ namespace TeamOdd.Psychokinesis
 
             if (shot.Target != null && shot.HitCollider != null && IsAlive(shot.Target) && combatEntity != null)
             {
-                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, point, shot.HitCollider);
+                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, point, shot.HitCollider, groggy: groggyDamage);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(combatEntity, shot.Target, info));
             }
 
