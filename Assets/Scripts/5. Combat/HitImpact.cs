@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace TeamOdd.Combat
@@ -11,8 +12,8 @@ namespace TeamOdd.Combat
 
         private MeshRenderer meshRenderer;
         private MaterialPropertyBlock properties;
-        private float duration;
-        private float elapsed;
+        private float progress;
+        private Tween impactTween;
         private float size;
         private float roll;
         private Light flashLight;
@@ -41,17 +42,13 @@ namespace TeamOdd.Combat
             if (debris != null) Destroy(debris.gameObject);
         }
 
-        private void LateUpdate()
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float progress = elapsed / duration;
-            if (progress >= 1f)
-            {
-                gameObject.SetActive(false);
-                return;
-            }
+        private void OnDisable() => impactTween?.Kill();
 
-            FaceCamera();
+        private void LateUpdate() => FaceCamera();
+
+        private void SetProgress(float value)
+        {
+            progress = value;
             UpdateLight(progress);
             properties.SetFloat(ProgressId, progress);
             meshRenderer.SetPropertyBlock(properties);
@@ -74,8 +71,8 @@ namespace TeamOdd.Combat
 
             transform.position = position;
             this.size = size;
-            duration = Mathf.Max(seconds, 0.01f);
-            elapsed = 0f;
+            impactTween?.Kill();
+            progress = 0f;
             roll = Random.Range(-rollRange, rollRange);
 
             properties.SetFloat(SeedId, Random.Range(0f, 100f));
@@ -85,6 +82,9 @@ namespace TeamOdd.Combat
             gameObject.SetActive(true);
             FaceCamera();
             UpdateLight(0f);
+            impactTween = DOTween.To(() => progress, SetProgress, 1f, Mathf.Max(seconds, 0.01f))
+                .SetEase(Ease.Linear).SetUpdate(UpdateType.Late, true).SetTarget(this)
+                .OnComplete(() => gameObject.SetActive(false)).OnKill(() => impactTween = null);
         }
 
         // intensity가 0이면 점광원을 쓰지 않음

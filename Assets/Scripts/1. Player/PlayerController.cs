@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Study.Utilities;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
@@ -101,6 +102,7 @@ namespace TeamOdd.Player
         private bool isRestoringFacing;
         private float bodyTargetYaw;
         private float restoreTargetYaw;
+        private float minimapYawOffset;
         private float ikBlend;
         private float throwPrepareBlend; // 0: 팔을 뻗은 홀딩 자세, 1: 던지기 준비 자세
         private Vector3 lastHandTarget;
@@ -108,6 +110,7 @@ namespace TeamOdd.Player
         private Transform externalHoldTarget; // 염동 내려찍기처럼 물체가 아닌 대상을 붙잡는 스킬이 지정
         private float attackStartTime = float.NegativeInfinity;
         private float attackPushAtStart;
+        private Sequence attackSequence;
         private float attackPull; // 0: 평소, 1: 손을 당겨 모음
         private float attackPush; // 0: 평소, 1: 앞으로 다 뻗음
 
@@ -125,6 +128,7 @@ namespace TeamOdd.Player
 
         // 물체를 들고 있거나 스킬이 붙잡을 대상을 지정해 홀딩 자세인지 (카메라 줌인 등에 사용)
         public bool HasHoldTarget => HoldTarget != null;
+        public float MinimapFacingYaw => transform.eulerAngles.y - minimapYawOffset;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
@@ -153,6 +157,11 @@ namespace TeamOdd.Player
         {
             defaultRotateTowardMove = rotateTowardMove;
             CacheLeftFingerRestPose();
+        }
+
+        private void OnDisable()
+        {
+            StopAttackMotion();
         }
 
         private void Update()
@@ -368,8 +377,7 @@ namespace TeamOdd.Player
             float t = 1f - Mathf.Exp(-holdTurnSpeed * Time.deltaTime);
 
             // 구르면 공격 자세도 끊음
-            if (IsRolling) attackStartTime = float.NegativeInfinity;
-            UpdateAttackPulse();
+            if (IsRolling) StopAttackMotion();
 
             if ((HoldTarget == null && IsAttackStance == false) || IsRolling)
             {
@@ -383,6 +391,8 @@ namespace TeamOdd.Player
                 ikBlend = Mathf.Lerp(ikBlend, 0f, t);
                 throwPrepareBlend = 0f;
                 RestoreFacing(t);
+                minimapYawOffset = Mathf.LerpAngle(minimapYawOffset, 0f, t);
+                if (Mathf.Abs(minimapYawOffset) < 0.01f) minimapYawOffset = 0f;
                 return;
             }
 
@@ -398,7 +408,11 @@ namespace TeamOdd.Player
             if (armYaw < 0f) bodyTargetYaw = aimYaw + holdBodyLeadAngle;
             else if (armYaw > armYawRange) bodyTargetYaw = aimYaw + holdBodyLeadAngle - armYawRange;
 
-            SetBodyYaw(Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t));
+            // 표시 방향은 같은 속도로 조준을 따라가고, 홀딩 자세 때문에 더 돌아간 몸 각도만 제외한다.
+            float minimapYaw = Mathf.LerpAngle(MinimapFacingYaw, aimYaw, t);
+            float bodyYaw = Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t);
+            SetBodyYaw(bodyYaw);
+            minimapYawOffset = Mathf.DeltaAngle(minimapYaw, bodyYaw);
 
             // 공격은 한 번 누르자마자 팔이 올라와야 하므로 더 빠르게 블렌드
             if (HoldTarget != null) ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
@@ -534,33 +548,45 @@ namespace TeamOdd.Player
         // 손을 당겼다 앞으로 뻗는 동작을 시작하고, 염동탄이 손을 떠날 때까지의 시간(초)을 돌려줌
         public float PlayAttackMotion()
         {
+            attackSequence?.Kill();
             attackPushAtStart = attackPush;
             attackStartTime = Time.time;
+            attackPull = 0f;
+            attackSequence = DOTween.Sequence()
+                .Append(DOTween.To(() => 0f, SetAttackWindup, 1f, attackWindup).SetEase(Ease.Linear))
+                .Append(DOTween.To(() => 0f, SetAttackThrust, 1f, attackThrust).SetEase(Ease.OutCubic))
+                .Append(DOTween.To(() => 0f, SetAttackRecovery, 1f, attackRecover).SetEase(Ease.Linear))
+                .OnKill(() => attackSequence = null);
             return attackWindup + attackThrust * attackReleasePoint;
         }
 
-        // 연타 중 다시 누르면 뻗어 있던 팔을 당기면서 이어지도록, 시작할 때 뻗은 정도에서 출발
-        private void UpdateAttackPulse()
+        // 연타 시 현재 뻗은 정도에서 다시 당기고, 기존 SmoothStep 곡선을 유지한다.
+        private void SetAttackWindup(float progress)
         {
-            float elapsed = Time.time - attackStartTime;
+            float blend = Mathf.SmoothStep(0f, 1f, progress);
+            attackPull = blend;
+            attackPush = attackPushAtStart * (1f - blend);
+        }
 
-            if (elapsed < attackWindup)
-            {
-                float k = Mathf.SmoothStep(0f, 1f, elapsed / attackWindup);
-                attackPull = k;
-                attackPush = attackPushAtStart * (1f - k);
-            }
-            else if (elapsed < attackWindup + attackThrust)
-            {
-                float k = 1f - Mathf.Pow(1f - (elapsed - attackWindup) / attackThrust, 3f);
-                attackPull = 1f - k;
-                attackPush = k;
-            }
-            else
-            {
-                attackPull = 0f;
-                attackPush = 1f - Mathf.SmoothStep(0f, 1f, (elapsed - attackWindup - attackThrust) / attackRecover);
-            }
+        private void SetAttackThrust(float progress)
+        {
+            attackPull = 1f - progress;
+            attackPush = progress;
+        }
+
+        private void SetAttackRecovery(float progress)
+        {
+            attackPull = 0f;
+            attackPush = 1f - Mathf.SmoothStep(0f, 1f, progress);
+        }
+
+        private void StopAttackMotion()
+        {
+            attackSequence?.Kill();
+            attackSequence = null;
+            attackStartTime = float.NegativeInfinity;
+            attackPull = 0f;
+            attackPush = 0f;
         }
 
         #endregion
@@ -571,6 +597,8 @@ namespace TeamOdd.Player
             float dur = 0.6f)
         {
             if(reaction==HitReaction.None || isHit) return;
+
+            StopAttackMotion();
             
             // 넉백 중 다시 맞으면 이전 넉백을 끊고 새로 시작
             if (hitReactionRoutine != null) StopCoroutine(hitReactionRoutine);

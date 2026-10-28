@@ -55,6 +55,7 @@ namespace TeamOdd.UI
         private readonly VectorShape shape = new();
         private float trailAmount = 1f;
         private float trailHoldUntil;
+        private Tween trailTween;
         private float flashAlpha;
         private Vector3 shakeOffset;
 
@@ -70,6 +71,7 @@ namespace TeamOdd.UI
                 if (clamped < fillAmount) trailHoldUntil = Time.time + trailDelay;
                 fillAmount = clamped;
                 if (useTrail == false || trailAmount < fillAmount) trailAmount = fillAmount;
+                UpdateTrail();
                 SetVerticesDirty();
             }
         }
@@ -77,6 +79,8 @@ namespace TeamOdd.UI
         // 잔상 없이 바로 맞춘다. 대상이 바뀌는 경우처럼 줄어든 것이 피해가 아닐 때 쓴다.
         public void SetFillImmediate(float amount)
         {
+            trailTween?.Kill();
+            trailTween = null;
             fillAmount = Mathf.Clamp01(amount);
             trailAmount = fillAmount;
             SetVerticesDirty();
@@ -100,6 +104,8 @@ namespace TeamOdd.UI
         protected override void OnDisable()
         {
             DOTween.Kill(this);
+            trailTween?.Kill();
+            trailTween = null;
             flashAlpha = 0f;
             shakeOffset = Vector3.zero;
             base.OnDisable();
@@ -111,12 +117,19 @@ namespace TeamOdd.UI
             trailAmount = fillAmount;
         }
 
-        private void Update()
+        private void UpdateTrail()
         {
-            if (Application.isPlaying == false || trailAmount <= fillAmount || Time.time < trailHoldUntil) return;
+            trailTween?.Kill();
+            trailTween = null;
+            if (Application.isPlaying == false || isActiveAndEnabled == false ||
+                useTrail == false || trailAmount <= fillAmount) return;
 
-            trailAmount = Mathf.MoveTowards(trailAmount, fillAmount, trailSpeed * Time.deltaTime);
-            SetVerticesDirty();
+            float duration = (trailAmount - fillAmount) / trailSpeed;
+            // Flash()가 같은 컴포넌트의 연출을 종료해도 잔상은 계속 진행한다.
+            trailTween = DOTween.To(() => trailAmount, value => trailAmount = value, fillAmount, duration)
+                .SetDelay(Mathf.Max(0f, trailHoldUntil - Time.time))
+                .SetEase(Ease.Linear).OnUpdate(SetVerticesDirty).OnComplete(SetVerticesDirty)
+                .OnKill(() => trailTween = null);
         }
 
 #if UNITY_EDITOR

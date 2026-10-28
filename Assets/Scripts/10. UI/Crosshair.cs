@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,7 +60,9 @@ namespace TeamOdd.UI
         private float currentRingRadius;
         private float ringAlpha;
         private Color ringColor;
-        private float lastHitTime = float.NegativeInfinity;
+        private float hitAlpha;
+        private float currentHitRadius;
+        private Sequence hitSequence;
         private PsychokinesisController subscribed;
 
         protected override void Start()
@@ -88,7 +91,29 @@ namespace TeamOdd.UI
             if (subscribed != null) subscribed.AttackHit += HandleAttackHit;
         }
 
-        private void HandleAttackHit() => lastHitTime = Time.time;
+        protected override void OnDisable()
+        {
+            hitSequence?.Kill();
+            hitSequence = null;
+            hitAlpha = 0f;
+            base.OnDisable();
+        }
+
+        private void HandleAttackHit()
+        {
+            if (isActiveAndEnabled == false) return;
+
+            hitSequence?.Kill();
+            hitAlpha = 1f;
+            currentHitRadius = hitStartRadius;
+            hitSequence = DOTween.Sequence()
+                .Join(DOTween.To(() => hitAlpha, value => hitAlpha = value, 0f, hitDuration)
+                    .SetEase(Ease.Linear))
+                .Join(DOTween.To(() => currentHitRadius, value => currentHitRadius = value, hitEndRadius, hitDuration)
+                    .SetEase(Ease.OutQuad))
+                .OnUpdate(SetVerticesDirty).OnComplete(SetVerticesDirty).OnKill(() => hitSequence = null);
+            SetVerticesDirty();
+        }
 
         private void Update()
         {
@@ -140,14 +165,11 @@ namespace TeamOdd.UI
                 AddTicks(vh, center, 0f, tickRadius, attackTickLength, attackTickWidth, tick, antiAlias);
             }
 
-            float hitProgress = (Time.time - lastHitTime) / hitDuration;
-
-            if (hitProgress >= 0f && hitProgress < 1f)
+            if (hitAlpha > 0f)
             {
-                float eased = 1f - (1f - hitProgress) * (1f - hitProgress);
                 Color hit = hitColor;
-                hit.a *= 1f - hitProgress;
-                AddTicks(vh, center, 45f, Mathf.Lerp(hitStartRadius, hitEndRadius, eased), hitLength, hitWidth, hit, antiAlias);
+                hit.a *= hitAlpha;
+                AddTicks(vh, center, 45f, currentHitRadius, hitLength, hitWidth, hit, antiAlias);
             }
 
             shape.SetCircle(center, dotRadius, CircleSegments);

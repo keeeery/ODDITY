@@ -32280,7 +32280,7 @@ MonoBehaviour:
   boss: {fileID: 0}
   viewCamera: {fileID: 0}
   ground: {fileID: 0}
-  worldRadius: 30
+  worldRadius: 20
   showBossOffscreen: 1
   showObjectsOffscreen: 0
   edgeMarkerSize: 16
@@ -32296,6 +32296,8 @@ MonoBehaviour:
   textureSize: 256
   cameraHeight: 50
   cameraDepthBelow: 50
+  floorHeightAbove: 1
+  floorDepthBelow: 0.5
   playerDotSize: 10
   playerTipLength: 1.7
   bossDotSize: 14
@@ -57369,21 +57371,25 @@ MonoBehaviour:
   largeFragmentPool:
     key: WallFragment.Large
     prefab: {fileID: 4686032179533201624, guid: b687e6c56360540f8b609c95d4aabe62, type: 3}
+    initialSize: 0
     expandSize: 3
     parent: {fileID: 560866509}
   mediumFragmentPool:
     key: WallFragment.Medium
     prefab: {fileID: 547534361205058159, guid: ab2d1ba7e58b04be6a7780630366d8ed, type: 3}
+    initialSize: 0
     expandSize: 15
     parent: {fileID: 2009241621}
   smallFragmentPool:
     key: WallFragment.Small
     prefab: {fileID: 482713679938954292, guid: 9dbc250e8e5fe40cd9ff7f14cde60838, type: 3}
+    initialSize: 60
     expandSize: 24
     parent: {fileID: 514935507}
   metalShardPool:
     key: MetalShardFragment
     prefab: {fileID: 1844719635934787086, guid: 4a1a56fd8653d46f18e2412bb7499f07, type: 3}
+    initialSize: 0
     expandSize: 24
     parent: {fileID: 1214751895}
   spawnRadius: 1.8
@@ -75727,6 +75733,7 @@ MonoBehaviour:
   objectPoolDatas:
   - key: AttackTelegraph
     prefab: {fileID: 4718203915467520101, guid: 8a1d4e7f2b3c4d5e8f9a0b1c2d3e4f5a, type: 3}
+    initialSize: 0
     expandSize: 4
     parent: {fileID: 76110447}
 --- !u!1001 &1963350329
