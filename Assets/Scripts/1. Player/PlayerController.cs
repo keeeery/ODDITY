@@ -46,6 +46,18 @@ namespace TeamOdd.Player
         [SerializeField, Min(0.01f)] private float maxPushMass = 50f;
         [SerializeField, Range(0f, 1f)] private float minPushSpeedRatio = 0.3f;
 
+        [Header("보스 위 미끄러짐")]
+        [Tooltip("위에 올라서면 바깥으로 미끄러져 떨어지는 레이어(보스 몸)")]
+        [SerializeField] private LayerMask slideOffLayers;
+        [Tooltip("미끄러져 떨어지는 수평 속도(m/s)")]
+        [SerializeField, Min(0f)] private float slideOffSpeed = 6f;
+        [Tooltip("밟은 면의 법선 y가 이 값보다 크면 위에 올라선 것으로 봄, 옆면에 부딪힌 것은 제외")]
+        [SerializeField, Range(0f, 1f)] private float slideOffMinNormalY = 0.3f;
+
+        [Header("보스 몸 겹침")]
+        [Tooltip("겹치면 바깥으로 빼내는 레이어(보스 부위, 다리 사이 막기 콜라이더)")]
+        [SerializeField] private LayerMask bodyBlockLayers;
+
         [Header("홀딩")]
         [SerializeField, Range(0f, 90f)]
         private float holdBodyLeadAngle = 50f;
@@ -98,6 +110,8 @@ namespace TeamOdd.Player
 
         private float pushSpeedRatio = 1f; // 이번 프레임 Move 중 밀고 있는 물체로 계산
         private float appliedPushSpeedRatio = 1f; // 이번 프레임 이동에 적용 (직전 프레임 계산값)
+        private Vector3 slideOffDirection; // Move 중 보스 몸 위에 올라선 것을 찾으면 정해지고, 다음 이동에서 한 번 쓰고 비움
+        private readonly Collider[] bodyOverlaps = new Collider[16];
 
         private bool defaultRotateTowardMove;
         private bool isHolding;
@@ -228,6 +242,10 @@ namespace TeamOdd.Player
 
             Vector3 totalMove = (moveVector * (speed * appliedPushSpeedRatio)) + new Vector3(0, velocity.y, 0);
 
+            // 보스 발·등 위에 올라서 있으면 바깥으로 미끄러뜨려 떨어뜨림, 떨어지는 동안은 평소처럼 중력을 받음
+            totalMove += slideOffDirection * slideOffSpeed;
+            slideOffDirection = Vector3.zero;
+
             controller.Move(totalMove * Time.deltaTime);
 
             bool isMove = inputRaw != Vector2.zero;
@@ -264,8 +282,10 @@ namespace TeamOdd.Player
             UpdateHoldArmIK();
         }
 
+        // 보스 부위가 애니메이션으로 움직인 뒤에 겹침을 검사
         private void LateUpdate()
         {
+            PushOutOfBodies();
             ApplyHoldFingerBendScale();
         }
 
@@ -331,6 +351,8 @@ namespace TeamOdd.Player
         // CharacterController는 Rigidbody에 힘을 전달하지 못해 직접 물체를 밀어줌
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
+            TrySlideOff(hit);
+
             Rigidbody body = hit.collider.attachedRigidbody;
             if (body == null || body.isKinematic || body.mass >= maxPushMass) return;
 
@@ -349,6 +371,76 @@ namespace TeamOdd.Player
 
             // 프레임레이트와 무관하도록 힘 * deltaTime을 충격량으로 전달
             body.AddForceAtPosition(pushDir * (pushForce * Time.deltaTime), hit.point, ForceMode.Impulse);
+        }
+
+        // 보스 몸 윗면을 밟았으면 몸 중심에서 바깥쪽을 미끄러질 방향으로 정함
+        // 안쪽(다리 사이)으로 떨어뜨리면 보스가 때릴 수 없는 자리에 들어가므로 항상 바깥쪽
+        private void TrySlideOff(ControllerColliderHit hit)
+        {
+            if ((slideOffLayers.value & (1 << hit.gameObject.layer)) == 0) return;
+            if (hit.normal.y <= slideOffMinNormalY) return;
+
+            Rigidbody body = hit.collider.attachedRigidbody;
+            Vector3 center = body != null ? body.position : hit.collider.bounds.center;
+
+            Vector3 direction = transform.position - center;
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f) direction = new Vector3(hit.normal.x, 0f, hit.normal.z);
+            if (direction.sqrMagnitude < 0.0001f) direction = -transform.forward;
+
+            slideOffDirection = direction.normalized;
+        }
+
+        // CharacterController는 스스로 움직일 때만 막히고, 애니메이션·Kinematic 이동으로 다가온 보스 부위에는 밀려나지 않음
+        // 한 번 겹치면 그 콜라이더를 무시하고 지나가 버리므로, 겹친 만큼 직접 바깥으로 빼냄
+        // 위아래로 빼내면 발 위에 올라서거나 바닥에 묻히므로 수평으로만 밀고, Move로 밀어 벽은 뚫지 않음
+        // 피격·구르기 중에도 겹치지 않아야 하므로 Update의 조기 반환과 관계없이 매 프레임 검사
+        private void PushOutOfBodies()
+        {
+            if (bodyBlockLayers.value == 0 || controller.enabled == false) return;
+
+            float radius = controller.radius;
+            Vector3 center = transform.TransformPoint(controller.center);
+            Vector3 offset = Vector3.up * Mathf.Max(controller.height * 0.5f - radius, 0f);
+            int count = Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
+                bodyBlockLayers, QueryTriggerInteraction.Ignore);
+
+            Vector3 push = Vector3.zero;
+
+            for (int index = 0; index < count; index++)
+            {
+                Collider other = bodyOverlaps[index];
+                if (other == controller || other.transform.IsChildOf(transform)) continue;
+
+                Transform otherTransform = other.transform;
+                if (Physics.ComputePenetration(controller, transform.position, transform.rotation,
+                        other, otherTransform.position, otherTransform.rotation, out Vector3 direction, out float distance) == false)
+                    continue;
+
+                push += GetHorizontalPush(other, direction, distance);
+            }
+
+            if (push != Vector3.zero) controller.Move(push);
+        }
+
+        // 빼낼 방향이 거의 위아래면(내려찍은 손 아래 등) 보스 몸 중심의 바깥쪽으로 밀어냄
+        // 비스듬히 겹친 만큼 수평으로는 더 밀어야 빠지므로 수평 성분 비율로 나눔(한 프레임에 덜 빠져도 다음 프레임에 이어서 빠짐)
+        private Vector3 GetHorizontalPush(Collider other, Vector3 direction, float distance)
+        {
+            Vector3 horizontal = new Vector3(direction.x, 0f, direction.z);
+            float horizontalRatio = horizontal.magnitude;
+
+            if (horizontalRatio < 0.3f)
+            {
+                Rigidbody body = other.attachedRigidbody;
+                horizontal = transform.position - (body != null ? body.position : other.bounds.center);
+                horizontal.y = 0f;
+                if (horizontal.sqrMagnitude < 0.0001f) horizontal = -transform.forward;
+
+                return horizontal.normalized * distance;
+            }
+
+            return horizontal / horizontalRatio * (distance / horizontalRatio);
         }
 
         #endregion

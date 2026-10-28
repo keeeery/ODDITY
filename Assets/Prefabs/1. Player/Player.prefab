@@ -254,6 +254,14 @@ MonoBehaviour:
   pushForce: 150
   maxPushMass: 50
   minPushSpeedRatio: 0.3
+  slideOffLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  slideOffSpeed: 6
+  slideOffMinNormalY: 0.3
+  bodyBlockLayers:
+    serializedVersion: 2
+    m_Bits: 68
   holdBodyLeadAngle: 50
   armYawRange: 30
   holdTurnSpeed: 15

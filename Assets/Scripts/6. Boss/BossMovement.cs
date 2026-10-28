@@ -126,7 +126,7 @@ namespace TeamOdd.Boss
             return result;
         }
 
-        // 몸통 콜라이더가 납작한 원기둥이라 캡슐로는 맞출 수 없어 같은 반경의 구로 판정
+        // 다리 사이를 막는 루트의 세로 캡슐과 같은 반경의 구로 판정, 회전해도 모양이 같아 회전은 검사하지 않음
         // 시작할 때 이미 겹친 콜라이더는 감지하지 못함
         private bool TryCast(Vector3 position, Vector3 dir, float distance, out RaycastHit hit)
         {

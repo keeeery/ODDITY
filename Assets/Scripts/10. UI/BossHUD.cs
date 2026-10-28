@@ -7,7 +7,8 @@ namespace TeamOdd.UI
 {
     // 보스 체력(CombatEntity)을 VectorBar로 보여주는 HUD
     // 보스를 지정하지 않으면 씬에서 활성화된 보스를 찾아 연결하므로, 보스를 켜고 끄며 바꿔도 따라감
-    // 보스가 없거나 사라지면 바를 비움
+    // 보스가 없거나 사라지면 바를 비우고 HUD를 숨김
+    [RequireComponent(typeof(CanvasGroup))]
     public class BossHUD : MonoBehaviour
     {
         [Header("References")]
@@ -31,7 +32,8 @@ namespace TeamOdd.UI
         private void Awake()
         {
             findsBoss = boss == null;
-            canvasGroup = GetComponent<CanvasGroup>();
+            // RequireComponent는 이미 씬에 배치된 HUD에는 붙지 않으므로 없으면 직접 추가
+            if (TryGetComponent(out canvasGroup) == false) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
 
         private void Start()
@@ -43,8 +45,6 @@ namespace TeamOdd.UI
 
         private void Update()
         {
-            canvasGroup.alpha = boss == null ? 0f : 1f;
-            
             // 연결된 보스가 꺼지거나 사라지면 활성화된 다른 보스로 바꾸고, 바는 새 보스의 체력으로 바로 맞춤
             if (findsBoss && (boss == null || boss.isActiveAndEnabled == false))
             {
@@ -57,6 +57,8 @@ namespace TeamOdd.UI
                 }
             }
 
+            // 보스를 다시 찾은 뒤에 정해야 바뀐 프레임에 한 번 깜빡이지 않음
+            canvasGroup.alpha = boss == null ? 0f : 1f;
             UpdateFill(hpBar, GetHpRatio());
         }
 

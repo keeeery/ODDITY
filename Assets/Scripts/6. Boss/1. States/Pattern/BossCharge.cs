@@ -12,6 +12,7 @@ namespace TeamOdd.Boss
     // - 돌진: 방향을 고정하고 chargeDistance만큼 달림, 대상은 통과하며 한 번만 피해
     // - 벽에 정면으로 부딪히면 GetHitFront 후 stunDuration 동안 행동불능, 끝나면 후딜 없이 Idle
     // - 끝까지 달리면 대상 위치로 점프스매시 후 포효, 마지막 포효의 OnAttackEnded로 종료(후딜 적용)
+    // - 점프스매시를 쓰지 않는 보스는 포효 대신 대상 쪽으로 돌며 양손 내려찍기(hits[0])로 마무리할 수 있음
     public class BossCharge : BossMeleePattern
     {
         private enum ChargePhase
@@ -22,6 +23,7 @@ namespace TeamOdd.Boss
             Stun,
             JumpSmash,
             EndRoar,
+            EndSmash,
         }
 
         [Title("Usage")]
@@ -58,6 +60,10 @@ namespace TeamOdd.Boss
 
         [Title("Finish")]
         [SerializeField] private bool useJumpSmash = true; // 끄면 끝까지 달린 뒤 점프스매시 없이 바로 마무리 포효, 점프 모션이 없는 보스(Charcharosaurus)용
+        [Tooltip("점프스매시를 쓰지 않을 때 마무리 포효 대신 양손 내려찍기(smash 트리거), 판정은 타격 목록의 첫 번째(hits[0])")]
+        [SerializeField, HideIf(nameof(useJumpSmash))] private bool useFinishSmash;
+        [Tooltip("내려찍기를 시작하고 대상 쪽으로 도는 시간(초)")]
+        [SerializeField, Min(0f), ShowIf(nameof(UsesFinishSmash))] private float finishSmashTrackDuration = 0.4f;
 
         [SerializeField, HideLabel] private BossJumpSmashMotion jump = new();
 
@@ -95,10 +101,13 @@ namespace TeamOdd.Boss
         // 벽에 부딪혀 행동불능이 끝난 경우엔 이미 충분히 멈춰 있었으므로 후딜을 주지 않음
         public override float AppliedRecovery => wasStunned ? 0f : Recovery;
 
-        protected override bool UsesMeleeHits => false;
+        // 마무리 내려찍기는 SmashAttack 상태의 OnHitWarn·OnHit 신호로 BossMeleePattern이 hits[0]을 처리
+        protected override bool UsesMeleeHits => UsesFinishSmash;
 
-        // 첫 포효와 점프스매시의 종료 신호는 다음 단계로 넘기는 데 쓰고, 마지막 포효에서만 끝냄
-        protected override bool CanEndByAnimation => phase == ChargePhase.EndRoar;
+        private bool UsesFinishSmash => useJumpSmash == false && useFinishSmash;
+
+        // 첫 포효와 점프스매시의 종료 신호는 다음 단계로 넘기는 데 쓰고, 마지막 포효·내려찍기에서만 끝냄
+        protected override bool CanEndByAnimation => phase == ChargePhase.EndRoar || phase == ChargePhase.EndSmash;
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
@@ -138,6 +147,10 @@ namespace TeamOdd.Boss
                 case ChargePhase.JumpSmash:
                     jump.Update();
                     break;
+
+                case ChargePhase.EndSmash:
+                    UpdateEndSmash();
+                    break;
             }
         }
 
@@ -151,6 +164,7 @@ namespace TeamOdd.Boss
             Animator.ResetTrigger(BossAnimParams.CHARGE_STUN);
             if (useJumpSmash) Animator.ResetTrigger(BossAnimParams.JUMP_SMASH); // 점프스매시를 쓰지 않는 보스의 Animator엔 파라미터가 없음
             Animator.ResetTrigger(BossAnimParams.ROAR);
+            if (UsesFinishSmash) Animator.ResetTrigger(BossAnimParams.SMASH);
         }
 
         protected override void OnPatternAnimEventOccurs(string name, string param)
@@ -301,7 +315,23 @@ namespace TeamOdd.Boss
             EndCharge();
 
             Animator.SetBool(BossAnimParams.IS_CHARGING, false);
-            StartEndRoar();
+
+            if (UsesFinishSmash) StartEndSmash();
+            else StartEndRoar();
+        }
+
+        // 달리기에서 Idle을 거쳐 SmashAttack으로 넘어감, 내려찍기 직전까지 대상 쪽으로 돌아 지나친 대상을 노림
+        private void StartEndSmash()
+        {
+            phase = ChargePhase.EndSmash;
+            phaseEndTime = Clock.LocalTime + finishSmashTrackDuration;
+            Animator.SetTrigger(BossAnimParams.SMASH);
+        }
+
+        private void UpdateEndSmash()
+        {
+            if (Clock.LocalTime >= phaseEndTime) return;
+            root.RotateYaw(root.SignedAngleToTarget, aimTurnSpeed * Clock.LocalDeltaTime);
         }
 
         private void StartEndRoar()
