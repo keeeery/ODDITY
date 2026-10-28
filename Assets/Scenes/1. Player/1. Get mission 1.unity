@@ -2346,6 +2346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UIManager
   missionUI: {fileID: 346190480}
   skillUI: {fileID: 0}
+  battleUI: {fileID: 0}
 --- !u!1 &349941897
 GameObject:
   m_ObjectHideFlags: 0
@@ -3126,7 +3127,7 @@ RectTransform:
   - {fileID: 321485885}
   - {fileID: 1070183956}
   - {fileID: 691193651}
-  m_Father: {fileID: 969837228}
+  m_Father: {fileID: 1296100648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4757,7 +4758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38f40c56780204e488d116c48d65e6fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionNPC
-  missionUI: {fileID: 1559976144}
+  popupUI: {fileID: 1559976144}
   distance: 2
   player: {fileID: 0}
 --- !u!65 &790270730
@@ -6219,6 +6220,8 @@ MonoBehaviour:
   textureSize: 256
   cameraHeight: 50
   cameraDepthBelow: 50
+  floorHeightAbove: 1
+  floorDepthBelow: 0.5
   playerDotSize: 10
   playerTipLength: 1.7
   bossDotSize: 14
@@ -6455,74 +6458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eede01cf483a496388ffc51f31974940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.Player
---- !u!1 &969837225
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 969837228}
-  - component: {fileID: 969837227}
-  - component: {fileID: 969837226}
-  m_Layer: 0
-  m_Name: Augment
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &969837226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969837225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39a71e3ea18b472da7030969bc5463e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipToggle
-  panel: {fileID: 0}
-  inventory: {fileID: 1640213443}
-  disableWhileOpen:
-  - {fileID: 939539098}
-  - {fileID: 1640213439}
-  - {fileID: 1405247493}
-  - {fileID: 21484292}
---- !u!114 &969837227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969837225}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6516d4b29e9746d292f6ca2ca5e2e5ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisTestHealthUI
-  enemies:
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!4 &969837228
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969837225}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 495439035}
-  m_Father: {fileID: 1296100648}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &971189699
 GameObject:
   m_ObjectHideFlags: 0
@@ -8085,7 +8020,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1559976145}
-  - {fileID: 969837228}
+  - {fileID: 495439035}
   m_Father: {fileID: 346190481}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -12251,7 +12186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38f40c56780204e488d116c48d65e6fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionNPC
-  missionUI: {fileID: 495439034}
+  popupUI: {fileID: 495439034}
   distance: 2
   player: {fileID: 0}
 --- !u!65 &1839199134
