@@ -17,6 +17,9 @@ namespace TeamOdd
         [SerializeField] private GameObject missionUI;
         [SerializeField] private GameObject skillUI;
 
+
+        [SerializeField] private GameObject battleUI;
+
         private void Update()
         {
             if (isManuallyLocked == false)
@@ -24,9 +27,15 @@ namespace TeamOdd
                 if (SimpleInput.GetKeyDown(Key.Escape))
                     LockCursor(false);
                 else if (Cursor.lockState != CursorLockMode.Locked &&
-                         (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
+                         (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left)
+                          || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
                     LockCursor(true);
             }
+        }
+
+        public void BattleUIActive(bool active)
+        {
+            battleUI.SetActive(active);
         }
         
         public void LockCursor(bool locked, bool isManuallyLock = false)

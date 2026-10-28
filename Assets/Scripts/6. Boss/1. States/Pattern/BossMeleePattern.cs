@@ -258,7 +258,8 @@ namespace TeamOdd.Boss
             Player.PlayerController player = Player.Player.Instance.PlayerController;
             if (player.IsInvincible) return;
 
-            player.ApplyHitReaction(reaction, push.GetDirection(root.transform, hitCenter, Target.position), push);
+            player.ApplyHitReaction(reaction, push.GetDirection(root.transform, hitCenter, Target.position), push,
+                root.transform.position);
             SendDamage(damage, reaction, hitPoint);
         }
 

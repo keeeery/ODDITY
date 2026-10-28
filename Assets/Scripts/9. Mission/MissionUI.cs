@@ -56,6 +56,7 @@ namespace TeamOdd.Mission
             Player.Player.Instance.CharacterController.enabled = true;
 
             SceneLoadManager.Instance.LoadScene(stageSceneName);
+            UIManager.Instance.BattleUIActive(true);
             CloseUI();
             // SceneManager.LoadScene(stageSceneName);
         }
