@@ -94,15 +94,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.40927
+      value: -1.2
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.49999958
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.50515
+      value: -8.8
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.w
@@ -243,13 +243,48 @@ MonoBehaviour:
   runSpeed: 7
   jumpHeight: 1.2
   gravity: -9.81
-  NeedRunStamina: 0
+  NeedRunStamina: 5
   moveReference: {fileID: 0}
   rotateTowardMove: 1
   turnSpeed: 720
-  rollDistance: 4
-  rollDuration: 0.6
-  NeedRollStamina: 0
+  rollDistance: 6
+  moveEndTime: 1
+  speedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0083351135
+      value: 0.98809814
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.34397846
+      value: 1.1591042
+      inSlope: 0.8480234
+      outSlope: 0.8480234
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.84710693
+      value: 0.86421967
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  rollStateName: Roll
+  rollClipName: Unarmed-DiveRoll-Forward1
+  NeedRollStamina: 40
   animator: {fileID: 0}
   pushForce: 150
   maxPushMass: 50
@@ -273,9 +308,10 @@ MonoBehaviour:
   attackWristBend: 45
   attackBlendSpeed: 35
   attackAimDistance: 14
-  MaxEarlyWakeUpCooldown: 0
-  WakeUpTime: 0
-  InvincibleTime: 0
+  MaxEarlyWakeUpCooldown: 5
+  WakeUpTime: 3
+  InvincibleTime: 1.5
+  maxHitAnimationWait: 3
   isHit: 0
   CanWakeUp: 0
   heldObject: {fileID: 0}
@@ -333,7 +369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
-  <Collider>k__BackingField: {fileID: 0}
+  <Collider>k__BackingField: {fileID: 677289072813033125}
   <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
 --- !u!114 &5859343519902430467
 MonoBehaviour:
@@ -348,6 +384,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisForceWave
   projectileSpeed: 55
+  lingerDuration: 0.1
+  lingerSpeed: 2.5
+  accelerationDuration: 0.12
+  lingerSwell: 1.2
   handForwardOffset: 0.15
   rippleMaterial: {fileID: 2100000, guid: 79784d6cffe8a42a7a48ecf6995f19f7, type: 2}
   handRippleSize: 2.03

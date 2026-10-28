@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using Study.Utilities;
 using TeamOdd.Combat;
@@ -34,12 +33,18 @@ namespace TeamOdd.Player
         [SerializeField] private float turnSpeed = 720f;
 
         [Header("구르기")]
+        // 커브 Y = 1일 때 속도가 rollDistance / (Roll 길이 * moveEndTime), 실제 거리는 rollDistance * 커브 넓이
         [SerializeField] private float rollDistance = 4f;
-        [SerializeField] private float rollDuration = 0.6f;
+        [SerializeField, Range(0.05f, 1f)] private float moveEndTime = 0.7f; // 이 진행도 이후로는 이동하지 않음
+        // X: Roll 진행도 0 ~ moveEndTime을 0~1로 늘린 값, Y: 속도 배율
+        [SerializeField] private AnimationCurve speedCurve = new();
+        [SerializeField] private string rollStateName = "Roll";
+        [SerializeField] private string rollClipName = "Unarmed-DiveRoll-Forward1"; // 첫 구르기 전 길이 계산용
         public float NeedRollStamina;
+        private int rollStateHash;
+        private bool hasEnteredRollState; // 이번 구르기에서 Roll 상태를 한 번이라도 거쳤는지
 
         [SerializeField] private Animator animator;
-        private readonly Dictionary<string, AnimationClip> clipDic = new();
 
         [Header("밀기")]
         [SerializeField, Min(0f)] private float pushForce = 150f;
@@ -136,8 +141,8 @@ namespace TeamOdd.Player
         public bool IsSprinting { get; private set; }
         public bool IsInvincible { get; private set; }
 
-        // 있으면 구르기 속도를 커브로 제어, 없으면 rollDistance / rollDuration 고정 속도
-        public PlayerRollCurve RollCurve { get; set; }
+        // 마지막으로 확인한 Roll 상태 길이(초, 상태 Speed 반영)
+        public float RollStateLength { get; private set; } = 1f;
 
         public event Action OnRollRequested;
 
@@ -148,11 +153,14 @@ namespace TeamOdd.Player
             animator = GetComponent<Animator>();
 
             earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
-            
-            AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
 
-            foreach (AnimationClip clip in clips)
-                clipDic.Add(clip.name, clip);
+            rollStateHash = Animator.StringToHash(rollStateName);
+            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+            {
+                if (clip.name != rollClipName) continue;
+                RollStateLength = clip.length;
+                break;
+            }
         }
 
         private void Start()
@@ -294,7 +302,7 @@ namespace TeamOdd.Player
 
             rollDir = inputDir.sqrMagnitude > 0.0001f ? inputDir.normalized : transform.forward;
 
-            if (RollCurve != null) RollCurve.BeginRoll();
+            hasEnteredRollState = false;
             animator.SetTrigger(Rolling);
         }
 
@@ -306,16 +314,55 @@ namespace TeamOdd.Player
 
         private void ExecuteRollMovement()
         {
-            // 커브 적용 전 코드
-            // float rollSpeed = rollDistance / rollDuration;
-            // Vector3 rollMove = (rollDir * rollSpeed) + new Vector3(0, gravity, 0);
-            // controller.Move(rollMove * Time.deltaTime);
+            float normalizedTime = ReadRollNormalizedTime(out bool found);
+            if (found) hasEnteredRollState = true;
 
-            var horizontal = RollCurve != null
-                ? RollCurve.EvaluateVelocity(rollDir)
-                : rollDir * (rollDistance / rollDuration);
+            Vector3 horizontal = rollDir * GetSpeedAt(normalizedTime);
             Vector3 rollMove = horizontal + new Vector3(0, gravity, 0);
             controller.Move(rollMove * Time.deltaTime);
+        }
+
+        // Roll 상태 진행도에서의 속도(m/s)
+        public float GetSpeedAt(float normalizedTime)
+        {
+            if (normalizedTime < 0f || normalizedTime >= moveEndTime) return 0f;
+
+            float moveSeconds = RollStateLength * moveEndTime;
+            if (moveSeconds <= 0f) return 0f;
+
+            // 커브 넓이로 나누지 않으므로 커브 값이 곧 기준 속도(rollDistance / moveSeconds)의 배율
+            return rollDistance * Mathf.Max(0f, speedCurve.Evaluate(normalizedTime / moveEndTime)) / moveSeconds;
+        }
+
+        private float ReadRollNormalizedTime(out bool found)
+        {
+            found = true;
+
+            AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(0);
+            if (current.shortNameHash == rollStateHash)
+            {
+                RollStateLength = current.length;
+                return current.normalizedTime;
+            }
+
+            // 다른 상태에서 Roll로 블렌딩되는 중이면 넘어가는 대상의 진행도를 사용
+            if (animator.IsInTransition(0))
+            {
+                AnimatorStateInfo next = animator.GetNextAnimatorStateInfo(0);
+                if (next.shortNameHash == rollStateHash)
+                {
+                    RollStateLength = next.length;
+                    return next.normalizedTime;
+                }
+            }
+
+            found = false;
+
+            // Roll 상태를 이미 빠져나갔으면 이동 끝 (EndRolling보다 전이가 먼저 끝나는 경우)
+            if (hasEnteredRollState) return 1f;
+
+            // 트리거는 켰지만 애니메이터가 아직 처리하지 않은 프레임은 시작 속도로 이동
+            return 0f;
         }
 
         #endregion
@@ -619,14 +666,20 @@ namespace TeamOdd.Player
 
             direction.y = 0f;
             direction.Normalize();
+            
+            int motionIndex;
 
+            if (reaction == HitReaction.Knockdown)
+            {
+                motionIndex = 1;
+            }
+            else
+            {
+                motionIndex = push.HasMovement ? 2 : 0;
+            }
+            
             // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
-            Vector3 toAttacker = attackerPosition - transform.position;
-            toAttacker.y = 0f;
-            if (toAttacker.sqrMagnitude > 0.0001f)
-                transform.rotation = Quaternion.LookRotation(toAttacker);
-
-            animator.SetInteger(HitMotion, reaction == HitReaction.Knockdown ? 1 : 0);
+            animator.SetInteger(HitMotion, motionIndex);
             animator.SetTrigger(Hit);
 
             if (push.HasMovement)
@@ -649,6 +702,11 @@ namespace TeamOdd.Player
 
             if (reaction == HitReaction.Knockdown)
             {
+                Vector3 toAttacker = attackerPosition - transform.position;
+                toAttacker.y = 0f;
+                if (toAttacker.sqrMagnitude > 0.0001f)
+                    transform.rotation = Quaternion.LookRotation(toAttacker);
+                
                 float elapsed = 0f;
                 while (elapsed < WakeUpTime)
                 {
