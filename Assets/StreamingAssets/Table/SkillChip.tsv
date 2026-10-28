@@ -10,3 +10,4 @@ Id	Name	Description	CellCount	UnitSpriteKey	Category	SkillType	Cooldown	Cost	Par
 2010	염동 연사 칩	주변 6m 안의 염동력으로 들 수 있는 물체 최대 5개를 끌어와 0.15초 간격으로 조준한 곳에 하나씩 발사합니다.	5	AugmentationChip/ChipUnit_Purple	Attack	PsychoRapidFire	10	0	Radius=6;Count=7;Interval=0.15;Speed=30	
 2011	시간 역행 칩	10초 이전 자리와 그때의 체력·스태미나로 되돌아갑니다.	5	AugmentationChip/ChipUnit_Purple	Defense	TimeReverse	30	0	Duration=10	
 2012	염동 폭풍 칩	10초 동안 적을 추적해 초당 10의 피해를 입히는 폭풍을 부릅니다.	6	AugmentationChip/ChipUnit_Purple	Attack	PsychoTempest	20	0	Duration=10;DPS=10;TrackSpeed=10;Radius=2.5;TickInterval=0.25	Skill/PsychoTempest
+2013	염동 구체 칩	바라보는 방향으로 염동력 구체를 던집니다. 구체는 적에 닿으면 크게 느려지며 통과하는 동안 초당 20의 피해를 입힙니다.	4	AugmentationChip/ChipUnit_Purple	Attack	PsychoOrb	8	0	Speed=25;SlowSpeed=2;Range=30;Radius=1;DPS=20;TickInterval=0.25	Skill/PsychoOrb
