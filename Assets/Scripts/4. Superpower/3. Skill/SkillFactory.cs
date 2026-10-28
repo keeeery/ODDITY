@@ -28,6 +28,7 @@ namespace TeamOdd.Superpower
                 // 방어
                 SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),
                 SkillType.Barrier => new BarrierSkill(name, cooldown, p.GetInt("Shield"), p.GetFloat("Duration")),
+                SkillType.TimeReverse => new TimeReverseSkill(name, cooldown, p.GetFloat("Duration")),
 
                 // 유틸
                 SkillType.Blink => new BlinkSkill(name, cooldown, p.GetFloat("Distance"), p.GetBool("PassThrough")),

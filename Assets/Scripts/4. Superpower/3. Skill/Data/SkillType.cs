@@ -12,6 +12,7 @@ namespace TeamOdd.Superpower
         // 방어
         Heal,
         Barrier,
+        TimeReverse,
 
         // 유틸
         Blink,

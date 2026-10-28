@@ -21,6 +21,9 @@ namespace TeamOdd.Combat
 
         public int Hp => hp;
         public int Shield => Time.time < shieldEndTime ? shield : 0;
+
+        // true인 동안 피해를 받지 않는다 (시간 역행으로 되감는 중)
+        public bool IsInvincible { get; set; }
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
 
@@ -46,7 +49,7 @@ namespace TeamOdd.Combat
 
         public virtual int TakeDamage(DamageEvent @event)
         {
-            if (IsDead) return 0;
+            if (IsDead || IsInvincible) return 0;
 
             int dmg = Mathf.Max(1, @event.Info.Damage - CurrentStats.Def);
 
@@ -83,6 +86,14 @@ namespace TeamOdd.Combat
         {
             shield = amount;
             shieldEndTime = Time.time + duration;
+        }
+
+        // 체력을 그 값으로 바로 맞춘다 (시간 역행으로 기록해 둔 체력으로 되돌릴 때). 죽어 있으면 바꾸지 않는다
+        public void SetHp(int value)
+        {
+            if (IsDead) return;
+
+            hp = Mathf.Clamp(value, 1, CurrentStats.MaxHp);
         }
 
         protected void OnDeath()

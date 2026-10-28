@@ -16,6 +16,9 @@ namespace TeamOdd.Player
 
         public float Stamina => stamina;
 
+        // true인 동안 이동 입력을 받지 않는다 (시간 역행으로 되감는 중)
+        public bool IsMoveLocked { get; set; }
+
         // 최대 스태미나 = 기본값(PlayerStats 에셋) + 증강칩 보너스. 칩을 끼우고 빼면 바로 바뀌므로 쓸 때마다 읽는다
         public float MaxStamina => combatEntity.CurrentStats.Get(StatType.MaxStamina);
 
@@ -94,11 +97,17 @@ namespace TeamOdd.Player
             lastConsumeTime = Time.time;
         }
 
+        // 스태미나를 그 값으로 바로 맞춘다 (시간 역행으로 기록해 둔 스태미나로 되돌릴 때)
+        public void SetStamina(float value)
+        {
+            stamina = Mathf.Clamp(value, 0f, MaxStamina);
+        }
+
         public void ControllerActive()
         {
             bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
-            
-            PlayerController.enabled = cursorLocked;
+
+            PlayerController.enabled = cursorLocked && IsMoveLocked == false;
             CameraController.enabled = cursorLocked;
         }
         

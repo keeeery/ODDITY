@@ -8,3 +8,4 @@ Id	Name	Description	CellCount	UnitSpriteKey	Category	SkillType	Cooldown	Cost	Par
 2008	크기 조절 칩	들고 있거나 조준한 염동력 오브젝트의 크기와 무게를 2배로 키웁니다.	4	AugmentationChip/ChipUnit_Purple	Utility	Resize	10	0	Multiplier=2
 2009	시간 감속 칩	5초 동안 플레이어를 제외한 모든 것의 시간이 느리게 흐릅니다.	5	AugmentationChip/ChipUnit_Purple	Utility	TimeSlow	30	0	Duration=5;Multiplier=0.5
 2010	염동 연사 칩	주변 6m 안의 염동력으로 들 수 있는 물체 최대 5개를 끌어와 0.15초 간격으로 조준한 곳에 하나씩 발사합니다.	5	AugmentationChip/ChipUnit_Purple	Attack	PsychoRapidFire	10	0	Radius=6;Count=7;Interval=0.15;Speed=30
+2011	시간 역행 칩	10초 이전 자리와 그때의 체력·스태미나로 되돌아갑니다.	5	AugmentationChip/ChipUnit_Purple	Defense	TimeReverse	30	0	Duration=10
