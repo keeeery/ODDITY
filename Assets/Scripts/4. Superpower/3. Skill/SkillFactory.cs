@@ -25,7 +25,7 @@ namespace TeamOdd.Superpower
                 SkillType.Barrage => new BarrageSkill(name, cooldown, p.GetString("Projectile"), p.GetInt("Count"), p.GetFloat("Spread")),
                 SkillType.Barrier => new BarrierSkill(name, cooldown, p.GetInt("Shield"), p.GetFloat("Duration")),
                 SkillType.TimeStop => new TimeStopSkill(name, cooldown, p.GetFloat("Duration")),
-                SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Damage"), p.GetFloat("Range"), p.GetFloat("Angle")),
+                SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Damage"), p.GetInt("Groggy"), p.GetFloat("Range"), p.GetFloat("Angle")),
                 _ => null,
             };
 

@@ -36,8 +36,10 @@ namespace TeamOdd.Boss
             [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), OnHitWarn에서 OnHit까지의 시간에 맞춘다.")]
             [Min(0f)] public float warnDuration = 0.5f;
             [Min(0)] public int damage = 10;
-            [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-            public HitReaction reaction = HitReaction.Stagger;
+            [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+            public HitReaction reaction = HitReaction.Knockback;
+            [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 거리와 높이가 0이면 제자리에서 피격 모션만 재생한다.")]
+            public HitPush push = HitPush.Create(2f, 0f, 0.6f);
             [Tooltip("켜면 예고 순간 범위를 고정하고 보스 회전 추적도 멈춘다. 루트 모션으로 이동하며 때리는 공격에 사용한다.")]
             public bool lockOnWarn;
             [Tooltip("예고부터 타격까지 루트 모션으로 보스가 이동하는 거리(m), x는 오른쪽, y는 앞쪽. 고정할 범위를 이만큼 옮겨 둔다.")]
@@ -232,7 +234,7 @@ namespace TeamOdd.Boss
             Pose pose = isLocked[index] ? lockedPoses[index] : GetHitPose(hit, Vector2.zero);
             isLocked[index] = false;
             
-            TryHit(hit.shape, pose, hit.damage, hit.reaction);
+            TryHit(hit.shape, pose, hit.damage, hit.reaction, hit.push);
 
             // 예고 없이 타격했으면 타격 순간에만 범위를 보여 줌
             AttackTelegraph resolved = hitTelegraphs[index] != null ? hitTelegraphs[index] : root.ShowTelegraph(hit.shape, pose, 0f);
@@ -241,21 +243,28 @@ namespace TeamOdd.Boss
         }
 
         // 대상 몸통 반경만큼 범위를 넓혀 판정, 대상이 범위 끝에 걸쳐 있어도 맞음
-        protected bool TryHit(TelegraphShape shape, Pose pose, int damage, HitReaction reaction)
+        // 밀어내는 방향의 판정 중심은 범위 기준 위치(pose.position)
+        protected bool TryHit(TelegraphShape shape, Pose pose, int damage, HitReaction reaction, HitPush push)
         {
             if (shape.Contains(pose, Target.position, targetRadius) == false) return false;
 
-            if (Player.Player.Instance.PlayerController.IsInvincible == false)
-            {
-                Debug.Log("try");
-                Player.Player.Instance.PlayerController.ApplyHitReaction(root.transform.position, reaction, shape.radius);
-                SendDamage(damage, reaction, Target.position);
-            }
+            ApplyHit(pose.position, damage, reaction, push, Target.position);
             return true;
         }
 
+        // 무적(구르기, 기상 직후)이 아니면 피격 반응과 피해를 함께 전달, hitCenter는 넉백 방향을 FromHitCenter로 정할 때 기준점
+        protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint)
+        {
+            Player.PlayerController player = Player.Player.Instance.PlayerController;
+            if (player.IsInvincible) return;
+
+            player.ApplyHitReaction(reaction, push.GetDirection(root.transform, hitCenter, Target.position), push,
+                root.transform.position);
+            SendDamage(damage, reaction, hitPoint);
+        }
+
         // 피해를 받을 수 있는 대상일 때만 전달, 보낸 쪽은 보스 전용 피격 처리(ICombatable)를 정리할 때까지 비워 둠
-        // 반응은 피해 정보에 담아 보내고, 경직/다운 처리는 피격 대상이 담당
+        // 반응은 피해 정보에 담아 보내고, 넉백/넉다운 처리는 피격 대상이 담당
         protected void SendDamage(int damage, HitReaction reaction, Vector3 hitPoint)
         {
             Debug.Log($"[{GetType().Name}] 피격, 피해 {damage}, 반응 {reaction}", this);

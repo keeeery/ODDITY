@@ -15,6 +15,7 @@ namespace TeamOdd.Arena
     public sealed class WallFragmentSpawner : MonoBehaviour
     {
         private const int MaxSpawnAttempts = 8;
+        private const int MaxDebrisSpawnAttempts = 2;
         private const float SpawnClearance = 0.1f;
         private const int MinimumImpactFragmentCount = 3;
         private const float ImpactSpeedMultiplier = 0.3f;
@@ -50,7 +51,7 @@ namespace TeamOdd.Arena
         [SerializeField, Min(0f)] private float metalShardSpawnRadius = 0.5f;
 
         // 보스 충격파처럼 활성화된 파편을 찾아야 하는 쪽에서 사용, 크기별 풀의 부모(비어 있을 수 있음)
-        public Transform[] FragmentPoolParents => new[] { largeFragmentPool.Parent, mediumFragmentPool.Parent, smallFragmentPool.Parent };
+        public Transform GetFragmentPoolParent(FragmentSize size) => GetPool(size).Parent;
 
         private void Start()
         {
@@ -295,6 +296,8 @@ namespace TeamOdd.Arena
             Vector2 speedRange = launchSpeed * speedMultiplier;
             // 연출용 작은 파편끼리는 겹쳐 생성되어도 무방하다.
             bool ignoreDebris = pool == smallFragmentPool || pool == metalShardPool;
+            // 연출용 파편은 막힌 위치를 오래 탐색하기보다 생략해 동시 파괴 시 검사량 제한 (성능 고려)
+            int maxAttempts = ignoreDebris ? MaxDebrisSpawnAttempts : MaxSpawnAttempts;
 
             for (int index = 0; index < count; index++)
             {
@@ -309,7 +312,7 @@ namespace TeamOdd.Arena
                 bool foundSpace = false;
                 float side = Random.value < 0.5f ? -1f : 1f;
 
-                for (int attempt = 0; attempt < MaxSpawnAttempts; attempt++)
+                for (int attempt = 0; attempt < maxAttempts; attempt++)
                 {
                     Vector2 offset = spread.HasValue
                         ? new Vector2(side * (spread.Value.SideGap + Random.value * radius), Random.value * radius)

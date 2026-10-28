@@ -31,13 +31,16 @@ namespace TeamOdd.Combat
         public Collider Collider { get; }
         // 피격 반응, Knockdown은 강공격으로 취급한다.
         public HitReaction Reaction { get; }
+        // 무력화 피해, 받는 쪽에 무력화 수치가 있으면 그만큼 깎는다(보스 BossGroggy). 방어력은 적용하지 않음
+        public int Groggy { get; }
         
-        public DamageInfo(int damage, Vector3 hitPoint, Collider collider, HitReaction reaction = HitReaction.None)
+        public DamageInfo(int damage, Vector3 hitPoint, Collider collider, HitReaction reaction = HitReaction.None, int groggy = 0)
         {
             Damage = damage;
             HitPoint = hitPoint;
             Collider = collider;
             Reaction = reaction;
+            Groggy = groggy;
         }
     }
 

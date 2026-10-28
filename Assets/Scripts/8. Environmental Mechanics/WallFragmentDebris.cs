@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using TeamOdd.TimeControl;
 using UnityEngine;
@@ -22,7 +23,8 @@ namespace TeamOdd.Arena
         private float stableTime;
         private float currentDespawnDelay;
         private bool isDespawning;
-        private float despawnTime;
+        private float shrinkProgress;
+        private Tween shrinkTween;
         private Vector3 startScale;
         private Vector3 startPosition;
         private Vector3 shrinkPivot;
@@ -52,6 +54,7 @@ namespace TeamOdd.Arena
 
         private void ResetState()
         {
+            shrinkTween?.Kill();
             supports.Clear();
             stableTime = 0f;
             isDespawning = false;
@@ -63,11 +66,7 @@ namespace TeamOdd.Arena
             // 시간 정지 중에는 멈춰 있는 시간을 정착 시간으로 세지 않음
             if (clock.IsFrozen) return;
 
-            if (isDespawning)
-            {
-                UpdateShrink();
-                return;
-            }
+            if (isDespawning) return;
 
             if (supports.Count == 0 ||
                 body.linearVelocity.sqrMagnitude > linearSpeedThreshold * linearSpeedThreshold ||
@@ -86,24 +85,24 @@ namespace TeamOdd.Arena
         private void BeginDespawn()
         {
             isDespawning = true;
-            despawnTime = 0f;
+            shrinkProgress = 0f;
             startScale = transform.localScale;
             startPosition = transform.position;
             // 중앙을 기준으로 스케일을 줄이면 어색하여 바닥에 닿은 아래쪽 중심을 기준으로 줄어들게 함
             Bounds bounds = meshRenderer.bounds;
             shrinkPivot = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
             body.isKinematic = true;
+            shrinkTween = DOTween.To(() => shrinkProgress, SetShrinkProgress, 1f, shrinkDuration)
+                .SetEase(Ease.Linear).SetUpdate(UpdateType.Fixed).SetTarget(body)
+                .OnComplete(fragment.ReturnToPool).OnKill(() => shrinkTween = null);
         }
 
-        private void UpdateShrink()
+        private void SetShrinkProgress(float value)
         {
-            despawnTime += Time.fixedDeltaTime;
-            float t = Mathf.Clamp01(despawnTime / shrinkDuration);
-            float scale = 1f - t * t;
+            shrinkProgress = value;
+            float scale = 1f - value * value;
             transform.localScale = startScale * scale;
             transform.position = shrinkPivot + (startPosition - shrinkPivot) * scale;
-
-            if (t >= 1f) fragment.ReturnToPool();
         }
 
         private void OnCollisionEnter(Collision collision)

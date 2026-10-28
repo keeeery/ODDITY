@@ -46,6 +46,8 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(0.01f)] private float trailRingDuration = 0.22f;
 
         [Header("Impact")]
+        [Tooltip("염동탄이 닿을 때 주는 무력화 피해")]
+        [SerializeField, Min(0)] private int groggyDamage = 8;
         [SerializeField, Min(0.1f)] private float impactRippleSize = 5.53f;
         [SerializeField, Min(0.01f)] private float impactRippleDuration = 0.3f;
 
@@ -67,7 +69,7 @@ namespace TeamOdd.Psychokinesis
             public float Duration;
             public bool Billboard;
             public bool Timed; // false면 염동탄이 직접 움직이고 끝냄
-            public bool Active;
+            public int ActiveIndex = -1;
         }
 
         private sealed class Shot
@@ -89,7 +91,8 @@ namespace TeamOdd.Psychokinesis
         private readonly List<float> pendingLaunches = new();
         private readonly List<Shot> shots = new();
         private readonly Stack<Shot> shotPool = new();
-        private readonly List<Effect> ripples = new();
+        private readonly Stack<Effect> effectPool = new();
+        private readonly List<Effect> activeEffects = new();
         private readonly Collider[] overlap = new Collider[32];
         private readonly HashSet<Rigidbody> pushed = new();
 
@@ -132,7 +135,7 @@ namespace TeamOdd.Psychokinesis
             for (int index = shots.Count - 1; index >= 0; index--)
                 UpdateShot(index);
 
-            UpdateEffects(ripples);
+            UpdateEffects();
         }
 
         #region PUBLIC_METHODS
@@ -171,7 +174,7 @@ namespace TeamOdd.Psychokinesis
             shot.Age = 0f;
             shot.Released = false;
             shot.NextRing = trailRingInterval;
-            shot.Bullet = RentEffect(ripples, GetQuadMesh(), rippleMaterial, "Force Bullet");
+            shot.Bullet = RentEffect(GetQuadMesh(), rippleMaterial, "Force Bullet");
             if (shot.Bullet != null) shot.Bullet.Timed = false;
             shots.Add(shot);
 
@@ -246,7 +249,7 @@ namespace TeamOdd.Psychokinesis
 
             if (shot.Target != null && shot.HitCollider != null && IsAlive(shot.Target) && combatEntity != null)
             {
-                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, point, shot.HitCollider);
+                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, point, shot.HitCollider, groggy: groggyDamage);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(combatEntity, shot.Target, info));
             }
 
@@ -316,7 +319,7 @@ namespace TeamOdd.Psychokinesis
 
         private void PlayRipple(Vector3 position, Quaternion rotation, bool billboard, float size, float duration, float startRadius, float endRadius)
         {
-            Effect effect = RentEffect(ripples, GetQuadMesh(), rippleMaterial, "Force Ripple");
+            Effect effect = RentEffect(GetQuadMesh(), rippleMaterial, "Force Ripple");
             if (effect == null) return;
 
             effect.Transform.SetPositionAndRotation(position, rotation);
@@ -337,13 +340,16 @@ namespace TeamOdd.Psychokinesis
         }
 
         // 시간이 정해진 연출(고리)만 진행시키고, 염동탄이 직접 움직이는 연출은 건너뜀
-        private void UpdateEffects(List<Effect> pool)
+        private void UpdateEffects()
         {
-            Quaternion billboard = GetBillboardRotation();
+            if (activeEffects.Count == 0) return;
 
-            foreach (Effect effect in pool)
+            Quaternion billboard = GetBillboardRotation();
+            // 반환 시 끝 항목을 옮기므로 이미 처리한 항목이 다시 갱신되지 않게 역순으로 순회한다.
+            for (int index = activeEffects.Count - 1; index >= 0; index--)
             {
-                if (effect.Active == false || effect.Timed == false) continue;
+                Effect effect = activeEffects[index];
+                if (effect.Timed == false) continue;
 
                 effect.Elapsed += Time.deltaTime;
                 float progress = effect.Elapsed / effect.Duration;
@@ -360,41 +366,51 @@ namespace TeamOdd.Psychokinesis
             }
         }
 
-        private Effect RentEffect(List<Effect> pool, Mesh mesh, Material material, string effectName)
+        private Effect RentEffect(Mesh mesh, Material material, string effectName)
         {
             if (material == null) return null;
 
-            Effect effect = pool.Find(candidate => candidate.Active == false);
-            if (effect == null)
-            {
-                var effectObject = new GameObject(effectName);
-                effectObject.transform.SetParent(GetEffectRoot(), false);
-                effectObject.AddComponent<MeshFilter>().sharedMesh = mesh;
-                MeshRenderer meshRenderer = effectObject.AddComponent<MeshRenderer>();
-                meshRenderer.sharedMaterial = material;
-                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                meshRenderer.receiveShadows = false;
-                effect = new Effect
-                {
-                    Transform = effectObject.transform,
-                    Renderer = meshRenderer,
-                    Properties = new MaterialPropertyBlock()
-                };
-                pool.Add(effect);
-            }
-
-            effect.Active = true;
+            Effect effect = effectPool.Count > 0 ? effectPool.Pop() : CreateEffect(mesh, material, effectName);
             effect.Timed = true;
             effect.Billboard = false;
             effect.Elapsed = 0f;
+            effect.Duration = 0f;
+            effect.ActiveIndex = activeEffects.Count;
+            activeEffects.Add(effect);
             effect.Transform.gameObject.SetActive(true);
             return effect;
         }
 
-        private static void Release(Effect effect)
+        private Effect CreateEffect(Mesh mesh, Material material, string effectName)
         {
-            effect.Active = false;
+            GameObject effectObject = new GameObject(effectName);
+            effectObject.transform.SetParent(GetEffectRoot(), false);
+            effectObject.AddComponent<MeshFilter>().sharedMesh = mesh;
+            MeshRenderer meshRenderer = effectObject.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = material;
+            meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            meshRenderer.receiveShadows = false;
+            return new Effect
+            {
+                Transform = effectObject.transform,
+                Renderer = meshRenderer,
+                Properties = new MaterialPropertyBlock()
+            };
+        }
+
+        private void Release(Effect effect)
+        {
+            if (effect.ActiveIndex < 0) return;
+
+            int index = effect.ActiveIndex;
+            int lastIndex = activeEffects.Count - 1;
+            Effect last = activeEffects[lastIndex];
+            activeEffects[index] = last;
+            last.ActiveIndex = index;
+            activeEffects.RemoveAt(lastIndex);
+            effect.ActiveIndex = -1;
             if (effect.Transform != null) effect.Transform.gameObject.SetActive(false);
+            effectPool.Push(effect);
         }
 
         private static Quaternion GetBillboardRotation()

@@ -65,8 +65,10 @@ namespace TeamOdd.Boss
         [Title("Hit")]
         [SerializeField, Min(0)] private int largeDamage = 20;
         [SerializeField, Min(0)] private int mediumDamage = 10;
-        [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-        [SerializeField] private HitReaction reaction = HitReaction.Stagger;
+        [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+        [SerializeField] private HitReaction reaction = HitReaction.Knockback;
+        [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 오브젝트가 떨어진 지점")]
+        [SerializeField] private HitPush push = HitPush.Create(1.5f, 0f, 0.4f, HitPush.DirectionMode.FromHitCenter);
 
         [Title("Telegraph")]
         [Tooltip("착지 지점 표시 반경에 곱할 배율, 1이면 오브젝트의 수평 크기와 같다. 피격 판정도 이 범위를 사용한다.")]
@@ -181,7 +183,7 @@ namespace TeamOdd.Boss
             if (fragment.isActiveAndEnabled == false) yield break;
             if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) yield break;
 
-            TryHit(shape, pose, damage, reaction);
+            TryHit(shape, pose, damage, reaction, push);
         }
 
         // 초기 낙하 속도와 중력만으로 height만큼 떨어지는 시간(공기 저항 무시)

@@ -160,6 +160,7 @@ Transform:
   - {fileID: 4813529423562907885}
   - {fileID: 353169173551604087}
   - {fileID: 4718157356823597850}
+  - {fileID: 2513778487363039578}
   m_Father: {fileID: 6366305689365515654}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &628497947562117113
@@ -785,11 +786,15 @@ GameObject:
   - component: {fileID: 5617293112904674764}
   - component: {fileID: 689814531121425060}
   - component: {fileID: 4391235115479835729}
-  - component: {fileID: 7477955140076880982}
   - component: {fileID: 560260013335335844}
   - component: {fileID: 4127609318475520613}
   - component: {fileID: 4521623819942262813}
   - component: {fileID: 3157543016238967022}
+  - component: {fileID: 4131325009642158294}
+  - component: {fileID: 3374236431281579078}
+  - component: {fileID: 2779756049810924992}
+  - component: {fileID: 1806004382529604527}
+  - component: {fileID: 7161079441656988280}
   m_Layer: 6
   m_Name: SK_Charcharosaurus
   m_TagString: Untagged
@@ -813,6 +818,7 @@ Transform:
   - {fileID: 8672937814003737655}
   - {fileID: 6547780937883220029}
   - {fileID: 8535586910388637671}
+  - {fileID: 7354628155209719270}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!95 &6020067126372009872
@@ -1712,6 +1718,12 @@ MonoBehaviour:
     warnDuration: 0.56
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &5844296647884378143
@@ -2257,6 +2269,7 @@ MonoBehaviour:
   - {fileID: 5502451583672451264}
   - {fileID: 1526546028186094052}
   - {fileID: 4554608892249188006}
+  - {fileID: 2470903307000598164}
 --- !u!1 &7646533345748698016
 GameObject:
   m_ObjectHideFlags: 0
@@ -2788,6 +2801,7 @@ Transform:
   - {fileID: 433801578694169552}
   - {fileID: 6936841839475107555}
   - {fileID: 1817673964857115038}
+  - {fileID: 6285400869305177202}
   m_Father: {fileID: 8535586910388637671}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &404701223987581413
@@ -2826,6 +2840,12 @@ MonoBehaviour:
     warnDuration: 0.56
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 2.38}
   hitFadeDuration: 0.3
@@ -2898,6 +2918,12 @@ MonoBehaviour:
     warnDuration: 0.56
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2149664734680885421
@@ -2968,6 +2994,12 @@ MonoBehaviour:
     warnDuration: 0.56
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 2.38}
   hitFadeDuration: 0.3
@@ -3039,7 +3071,13 @@ MonoBehaviour:
     offset: {x: 0, y: 8.2}
     warnDuration: 0.48
     damage: 10
-    reaction: 1
+    reaction: 2
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &1252071134404114645
@@ -3109,7 +3147,13 @@ MonoBehaviour:
     offset: {x: 0, y: 8.2}
     warnDuration: 0.48
     damage: 10
-    reaction: 1
+    reaction: 2
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 1.2}
   hitFadeDuration: 0.3
@@ -3182,6 +3226,12 @@ MonoBehaviour:
     warnDuration: 0.58
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   - shape:
       kind: 2
       radius: 0
@@ -3192,6 +3242,12 @@ MonoBehaviour:
     warnDuration: 1.0
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2743604352633935117
@@ -3262,6 +3318,12 @@ MonoBehaviour:
     warnDuration: 0.63
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 2.38}
   - shape:
@@ -3274,6 +3336,12 @@ MonoBehaviour:
     warnDuration: 0.56
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.87}
   hitFadeDuration: 0.3
@@ -3346,6 +3414,12 @@ MonoBehaviour:
     warnDuration: 0.58
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   - shape:
       kind: 2
       radius: 0
@@ -3356,6 +3430,12 @@ MonoBehaviour:
     warnDuration: 0.96
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   - shape:
       kind: 0
       radius: 2.5
@@ -3366,6 +3446,12 @@ MonoBehaviour:
     warnDuration: 0.73
     damage: 10
     reaction: 1
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &3386899951334730820
@@ -3436,6 +3522,12 @@ MonoBehaviour:
     warnDuration: 0.6
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 2.38}
   - shape:
@@ -3448,6 +3540,12 @@ MonoBehaviour:
     warnDuration: 0.57
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.87}
   - shape:
@@ -3460,6 +3558,12 @@ MonoBehaviour:
     warnDuration: 0.7
     damage: 10
     reaction: 1
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 8.58}
   hitFadeDuration: 0.3
@@ -3757,6 +3861,13 @@ MonoBehaviour:
   waves:
   - origin: {fileID: 6366305689365515654}
     damage: 10
+    reaction: 1
+    push:
+      distance: 20
+      height: 0
+      duration: 0.6
+      direction: 1
+      angleOffset: 0
     radius: 20
   jumpAvoidHeight: 0.5
   groundLayers:
@@ -4321,13 +4432,45 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.669, y: 1.834, z: 1.842}
   m_Center: {x: -0.365, y: 0.633, z: 0.091}
+--- !u!1 &6700468834959802934
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7354628155209719270}
+  - component: {fileID: 7477955140076880982}
+  m_Layer: 2
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7354628155209719270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6700468834959802934}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6366305689365515654}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &7477955140076880982
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2243586315636391990}
+  m_GameObject: {fileID: 6700468834959802934}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -4341,9 +4484,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1
-  m_Height: 6
-  m_Direction: 2
-  m_Center: {x: 0, y: 1, z: 0.4}
+  m_Height: 3.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!114 &560260013335335844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4424,6 +4567,12 @@ MonoBehaviour:
     warnDuration: 0.75
     damage: 15
     reaction: 1
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -4498,6 +4647,12 @@ MonoBehaviour:
     warnDuration: 0.75
     damage: 15
     reaction: 1
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -4622,8 +4777,12 @@ MonoBehaviour:
   body: {fileID: 5363785815632091185}
   blockMask:
     serializedVersion: 2
-    m_Bits: 136
-  castRadius: 3
+    m_Bits: 8
+  castRadius: 1
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 128
+  wallRadius: 3
   castHeight: 0.5
 --- !u!1 &3067039969720787805
 GameObject:
@@ -4682,7 +4841,23 @@ MonoBehaviour:
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 1.5
-  hits: []
+  hits:
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0, y: 8.2}
+    warnDuration: 0.48
+    damage: 10
+    reaction: 2
+    push:
+      distance: 2.5
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   useChance: 0.75
@@ -4698,12 +4873,20 @@ MonoBehaviour:
   hitRadius: 3
   chargeDamage: 20
   chargeReaction: 2
+  chargePush:
+    distance: 3
+    height: 0.5
+    duration: 0.6
+    direction: 0
+    angleOffset: 0
   wallMask:
     serializedVersion: 2
     m_Bits: 128
   headOnAngle: 60
   stunDuration: 3
   useJumpSmash: 0
+  useFinishSmash: 1
+  finishSmashTrackDuration: 0.4
   jump:
     airDuration: 0.63
     maxJumpDistance: 30
@@ -4712,6 +4895,12 @@ MonoBehaviour:
     radius: 5
     damage: 25
     reaction: 2
+    push:
+      distance: 5
+      height: 0.5
+      duration: 0.6
+      direction: 1
+      angleOffset: 0
 --- !u!114 &3157543016238967022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4745,3 +4934,277 @@ MonoBehaviour:
   chargeSize: {x: 1, y: 1.6}
   chargeLifetime: {x: 0.8, y: 1.2}
   chargeOpacity: 0.7
+--- !u!114 &4131325009642158294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae715c1807fca42adb20c958d4dfb6ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRoarWave
+  rippleMaterial: {fileID: 2100000, guid: a2e6cd94a9d3402993b569e1345402fb, type: 2}
+  mouth: {fileID: 0}
+  groundCount: 3
+  groundRadius: 6.5
+  groundHeight: 0.3
+  groundDuration: 0.7
+  airCount: 2
+  airRadius: 5
+  airDuration: 0.5
+  interval: 0.12
+  dustMaterial: {fileID: 2100000, guid: a6194cc4fb56a4cab85d9c590d3f93c7, type: 2}
+  dustShockwaveDiameter: 14
+  dustShockwaveLifetime: 0.8
+  dustCount: 16
+  dustSpeed: {x: 7, y: 11}
+  dustSize: {x: 1.2, y: 2}
+  dustLifetime: {x: 0.6, y: 1}
+  dustOpacity: 0.6
+--- !u!1 &2664631129622252094
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6285400869305177202}
+  - component: {fileID: 2470903307000598164}
+  m_Layer: 6
+  m_Name: Roar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6285400869305177202
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2664631129622252094}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353169173551604087}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2470903307000598164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2664631129622252094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 493536ff3c13045fb9f1b3577c4b5c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossRoarPattern
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 5.5
+  minAngle: -180
+  maxAngle: 180
+  cooldown: 5
+  <Weight>k__BackingField: 1
+  <IsUrgent>k__BackingField: 1
+  <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 0
+  trigger: 1751088286
+  useRootMotion: 0
+  trackDuration: 0
+  trackSpeed: 90
+  <Recovery>k__BackingField: 0.8
+  hits: []
+  hitFadeDuration: 0.3
+  showRangeWhenInactive: 1
+  minStayTime: 0.75
+  radius: 6.5
+  warnDuration: 0.8
+  damage: 5
+  reaction: 1
+  push:
+    distance: 7.5
+    height: 0.3
+    duration: 0.6
+    direction: 1
+    angleOffset: 0
+  rangeFadeDuration: 0.3
+  followPatterns:
+  - {fileID: 404701223987581413}
+  - {fileID: 3113309671431656573}
+  - {fileID: 3603808996938800509}
+  - {fileID: 7144967502863657079}
+  - {fileID: 5853785563169541488}
+  faceTurnSpeed: 300
+  wave: {fileID: 4131325009642158294}
+--- !u!114 &3374236431281579078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9fe392e6152f433aa289e5cce0a7694, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzy
+  bones: []
+  phaseLagPerBone: 25
+  sway:
+    fadeInDuration: 0.8
+    fadeOutDuration: 0.5
+  spineAngle: 3
+  neckAngle: 9
+  headAngle: 8
+  yawSwayAngle: 10
+  circleFrequency: 0.55
+  yawSwayFrequency: 0.23
+  irregularity: 0.35
+  slump:
+    fadeInDuration: 0.6
+    fadeOutDuration: 0.8
+  droopAngle: {x: 0, y: 0, z: 0}
+  heaveAngle: {x: 0.8, y: 2.5, z: 2}
+  heaveFrequency: 0.75
+  pinnedLimbs: []
+  trembleAngle: 0.4
+  trembleFrequency: 9
+--- !u!114 &1806004382529604527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e7249c70a7104ff1a456cc339cd3f86, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzyStars
+  starMaterial: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+  head: {fileID: 0}
+  count: 4
+  size: 0.45
+  thickness: 0.22
+  color: {r: 1, g: 0.9, b: 0.55, a: 1}
+  opacity: 0.75
+  height: 1.2
+  radius: 1.1
+  speed: 110
+  tilt: 15
+  bob: 0.12
+  twinkleFrequency: 1.6
+  twinkleDepth: 0.5
+  weightRange: {x: 0.35, y: 0.9}
+--- !u!114 &7161079441656988280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df4da7ae2241745159a2f555cde3cee4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzyBreath
+  breathMaterial: {fileID: 2100000, guid: 2179120debb674221bf54e03bf74e679, type: 2}
+  mouth: {fileID: 0}
+  mouthOffset: {x: 0, y: 0.1, z: 0.15}
+  mouthWidth: 0.2
+  downAngle: 10
+  splayAngle: 10
+  syncWithHeave: 1
+  breathInterval: {x: 1.1, y: 1.6}
+  exhaleDuration: 0.35
+  weightThreshold: 0.2
+  puffsPerNostril: 4
+  puffSpeed: {x: 2.5, y: 4}
+  puffSpread: 0.3
+  puffSize: {x: 0.25, y: 0.45}
+  puffLifetime: {x: 0.8, y: 1.3}
+  puffOpacity: 0.35
+  snortCountScale: 2.5
+  snortSpeedScale: 1.6
+  snortSizeScale: 1.3
+--- !u!114 &2779756049810924992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243586315636391990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d04f04c88ad426ba7e96b729ba4db8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggy
+  maxGroggy: 100
+  regenDelay: 5
+  regenRate: 8
+--- !u!1 &2248361736134890105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2513778487363039578}
+  - component: {fileID: 3386897225930322591}
+  m_Layer: 6
+  m_Name: Groggy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2513778487363039578
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2248361736134890105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8535586910388637671}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3386897225930322591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2248361736134890105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60283914ff0084556a5ad564bb727a03, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggyState
+  duration: 6
+  crossFadeDuration: 0.25
+  fallStartTime: 0.6
+  lieTime: 0.965
+  fallDuration: 1
+  impactAt: 0.32
+  impactShakeTrauma: 0.3
+  getUpDuration: 2
+  getUpEndTime: 0.11
+  hitStopDuration: 0.12
+  flashDuration: 0.3
+  shakeTrauma: 0.45
+  shakeFadeTime: 0.5

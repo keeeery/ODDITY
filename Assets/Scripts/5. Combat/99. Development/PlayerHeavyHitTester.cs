@@ -17,7 +17,7 @@ namespace TeamOdd.Combat.Development
         private void Update()
         {
             if (heavyHitKey.GetKeyDown()) Hit(heavyDamage, HitReaction.Knockdown);
-            else if (normalHitKey.GetKeyDown()) Hit(normalDamage, HitReaction.Stagger);
+            else if (normalHitKey.GetKeyDown()) Hit(normalDamage, HitReaction.Knockback);
         }
 
         private void Hit(int damage, HitReaction reaction)

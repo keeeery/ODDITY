@@ -32,5 +32,8 @@ namespace TeamOdd.Boss
         }
 
         protected virtual void OnUpdate() { }
+
+        // 상태머신을 처음부터 다시 시작할 때 불림(무력화 회복 등), 다음 판단에 넘기려고 들고 있던 값을 비움
+        public virtual void ResetMemory() { }
     }
 }
