@@ -170,7 +170,7 @@ namespace TeamOdd.Psychokinesis
 
             if (grabRequested)
             {
-                if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(MaxMass) && HasGrabStamina())
+                if (heldObject == null && focusedObject != null && CanGrab(focusedObject) && HasGrabStamina())
                 {
                     heldObject = focusedObject;
                     Ray grabRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
@@ -558,7 +558,13 @@ namespace TeamOdd.Psychokinesis
 
             focusedObject = target;
 
-            if (focusedObject != null) focusedObject.SetFocused(true, focusedObject.IsAvailable(MaxMass));
+            if (focusedObject != null) focusedObject.SetFocused(true, CanGrab(focusedObject));
+        }
+
+        // 염동 산탄 칩처럼 스킬이 이미 잡고 있는 오브젝트는 잡을 수 없음 (외곽선도 잡을 수 없는 색으로 표시)
+        private bool CanGrab(PsychokinesisObject target)
+        {
+            return target.IsHeld == false && target.IsAvailable(MaxMass);
         }
 
 #if UNITY_EDITOR

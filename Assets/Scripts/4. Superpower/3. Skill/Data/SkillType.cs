@@ -7,7 +7,7 @@ namespace TeamOdd.Superpower
         // 공격
         Shockwave,
         PsychoSlam,
-        Barrage,
+        PsychoRapidFire,
 
         // 방어
         Heal,

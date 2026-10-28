@@ -23,7 +23,7 @@ namespace TeamOdd.Superpower
                 // 공격
                 SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Damage")),
                 SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Damage"), p.GetFloat("Range"), p.GetFloat("Angle")),
-                SkillType.Barrage => new BarrageSkill(name, cooldown, p.GetString("Projectile"), p.GetInt("Count"), p.GetFloat("Spread")),
+                SkillType.PsychoRapidFire => new PsychoRapidFireSkill(name, cooldown, p.GetFloat("Radius"), p.GetInt("Count"), p.GetFloat("Interval"), p.GetFloat("Speed")),
 
                 // 방어
                 SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),
