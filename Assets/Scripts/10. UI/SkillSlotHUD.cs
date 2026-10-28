@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using TeamOdd.Superpower;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace TeamOdd.UI
             public TMP_Text Cooldown;
             public OwnedChip Chip;
             public bool WasCoolingDown;
+            public Tween FlashTween;
         }
 
         [Header("References")]
@@ -65,6 +67,12 @@ namespace TeamOdd.UI
         private void OnDisable()
         {
             if (inventory != null) inventory.SkillSlotsChanged -= Refresh;
+            foreach (Slot slot in slots)
+            {
+                slot.FlashTween?.Kill();
+                slot.FlashTween = null;
+                slot.Graphic.FlashAlpha = 0f;
+            }
         }
 
         private void Update()
@@ -112,6 +120,8 @@ namespace TeamOdd.UI
                 slot.Name.text = slot.Chip != null ? GetShortName(slot.Chip.Def.Name) : "";
                 // 장착하는 순간 쿨타임이 이미 끝나 있으면 번쩍이는 연출 없이 바로 사용 가능 상태로 둔다.
                 slot.WasCoolingDown = slot.Chip != null && slot.Chip.Skill.IsReady == false;
+                slot.FlashTween?.Kill();
+                slot.FlashTween = null;
                 slot.Graphic.FlashAlpha = 0f;
                 UpdateCooldown(slot);
             }
@@ -130,8 +140,14 @@ namespace TeamOdd.UI
             slot.Name.alpha = coolingDown ? 0.45f : 1f;
             slot.Key.alpha = slot.Chip != null ? 0.55f : 0.3f;
 
-            if (slot.WasCoolingDown && coolingDown == false) slot.Graphic.FlashAlpha = 1f;
-            else if (slot.Graphic.FlashAlpha > 0f) slot.Graphic.FlashAlpha -= Time.deltaTime / readyFlashDuration;
+            if (slot.WasCoolingDown && coolingDown == false)
+            {
+                slot.FlashTween?.Kill();
+                slot.Graphic.FlashAlpha = 1f;
+                slot.FlashTween = DOTween.To(() => slot.Graphic.FlashAlpha,
+                        value => slot.Graphic.FlashAlpha = value, 0f, readyFlashDuration)
+                    .SetEase(Ease.Linear).OnKill(() => slot.FlashTween = null);
+            }
             slot.WasCoolingDown = coolingDown;
         }
 

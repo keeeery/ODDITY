@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace TeamOdd.Combat
         private MeshFilter[] meshFilters; // 메시가 바뀔 수 있어 그릴 때마다 읽음
         private float duration;
         private float remain;
+        private Tween flashTween;
 
         // 번쩍이는 중인 대상
         public static IReadOnlyList<HitFlash> Active => active;
@@ -37,14 +39,6 @@ namespace TeamOdd.Combat
             meshFilters = Array.ConvertAll(renderers, item => item.GetComponent<MeshFilter>());
         }
 
-        private void Update()
-        {
-            if (remain <= 0f) return;
-
-            remain -= Time.unscaledDeltaTime;
-            if (remain <= 0f) Stop();
-        }
-
         private void OnDisable() => Stop();
 
         #region PUBLIC_METHODS
@@ -59,8 +53,12 @@ namespace TeamOdd.Combat
             if (isActiveAndEnabled == false || seconds <= 0f) return;
 
             if (remain <= 0f) active.Add(this);
+            flashTween?.Kill();
             duration = seconds;
             remain = seconds;
+            flashTween = DOTween.To(() => remain, value => remain = value, 0f, seconds)
+                .SetEase(Ease.Linear).SetUpdate(true).SetTarget(this)
+                .OnComplete(Stop).OnKill(() => flashTween = null);
         }
 
         // 메시가 없으면 0
@@ -80,6 +78,7 @@ namespace TeamOdd.Combat
 
         private void Stop()
         {
+            flashTween?.Kill();
             active.Remove(this);
             remain = 0f;
         }
