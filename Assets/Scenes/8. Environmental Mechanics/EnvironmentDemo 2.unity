@@ -57379,6 +57379,7 @@ MonoBehaviour:
   smallFragmentPool:
     key: WallFragment.Small
     prefab: {fileID: 482713679938954292, guid: 9dbc250e8e5fe40cd9ff7f14cde60838, type: 3}
+    initialSize: 60
     expandSize: 24
     parent: {fileID: 514935507}
   metalShardPool:
