@@ -596,47 +596,41 @@ namespace TeamOdd.Player
         #region 피격
 
         // direction: 밀려날 수평 방향, 거리·높이·시간은 공격마다 정한 push를 따름
+        // attackerPosition: 맞는 순간 바라볼 공격자 위치
         // 피격 반응 중 다시 맞으면 피해만 받고 반응은 새로 시작하지 않음
-        public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push)
+        public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
             if (reaction == HitReaction.None || isHit) return;
 
             StopAttackMotion();
 
-            StartCoroutine(PlayHitReaction(reaction, direction, push));
+            StartCoroutine(PlayHitReaction(reaction, direction, push, attackerPosition));
         }
 
         // 피격 모션의 EndHit 신호, 넉다운은 기상 모션 끝에서 옴
         public void EndHitAnimation() => hitAnimationEnded = true;
 
-        private IEnumerator PlayHitReaction(HitReaction reaction, Vector3 direction, HitPush push)
+        private IEnumerator PlayHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
             isHit = true;
             hitAnimationEnded = false;
             // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
             CanWakeUp = false;
 
-            animator.SetInteger(HitMotion, reaction == HitReaction.Knockdown ? 1 : 0);
-            
-            Vector3 dir = transform.position - bossPos;
-            
-            dir.y = 0;
-            if (dir.sqrMagnitude < 0.0001f) dir = -transform.forward; // 공격자와 위치가 겹치면 뒤로 날린다
-            dir.Normalize();
+            direction.y = 0f;
+            direction.Normalize();
 
             // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
-            transform.rotation = Quaternion.LookRotation(-dir);
+            Vector3 toAttacker = attackerPosition - transform.position;
+            toAttacker.y = 0f;
+            if (toAttacker.sqrMagnitude > 0.0001f)
+                transform.rotation = Quaternion.LookRotation(toAttacker);
 
-            float t = 0, prevY = 0;
-            
-            animator.SetInteger(HitMotion, motionIndex);
+            animator.SetInteger(HitMotion, reaction == HitReaction.Knockdown ? 1 : 0);
             animator.SetTrigger(Hit);
 
             if (push.HasMovement)
             {
-                direction.y = 0f;
-                direction.Normalize();
-
                 float t = 0f, prevY = 0f;
 
                 while (t < 1f)
