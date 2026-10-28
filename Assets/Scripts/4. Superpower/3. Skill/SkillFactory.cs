@@ -32,6 +32,7 @@ namespace TeamOdd.Superpower
                 // 유틸
                 SkillType.Blink => new BlinkSkill(name, cooldown, p.GetFloat("Distance"), p.GetBool("PassThrough")),
                 SkillType.TimeStop => new TimeStopSkill(name, cooldown, p.GetFloat("Duration")),
+                SkillType.TimeSlow => new TimeSlowSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Multiplier")),
                 SkillType.Resize => new ResizeSkill(name, cooldown, p.GetFloat("Multiplier")),
 
                 _ => null,

@@ -16,6 +16,7 @@ namespace TeamOdd.Superpower
         // 유틸
         Blink,
         TimeStop,
+        TimeSlow,
         Resize,
     }
 }
