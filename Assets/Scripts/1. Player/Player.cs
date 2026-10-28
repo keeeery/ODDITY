@@ -42,17 +42,6 @@ namespace TeamOdd.Player
         {
             if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)
                 stamina = Mathf.Min(maxStamina, stamina + staminaRegenRate * Time.deltaTime);
-
-            if (isManuallyLocked == false)
-            {
-                if (SimpleInput.GetKeyDown(Key.Escape))
-                    LockCursor(false);
-                else if (Cursor.lockState != CursorLockMode.Locked &&
-                         (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
-                    LockCursor(true);
-            }
-            
-            ControllerActive();
         }
 
         private void OnEnable()
@@ -95,22 +84,6 @@ namespace TeamOdd.Player
         {
             stamina = Mathf.Max(0, stamina - amount);
             lastConsumeTime = Time.time;
-        }
-
-        public void ControllerActive()
-        {
-            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
-            
-            PlayerController.enabled = cursorLocked;
-            CameraController.enabled = cursorLocked;
-        }
-        
-        public void LockCursor(bool locked, bool isManuallyLock = false)
-        {
-            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = locked == false;
-
-            isManuallyLocked = isManuallyLock;
         }
     }
 }

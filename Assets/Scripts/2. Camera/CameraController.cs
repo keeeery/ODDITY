@@ -56,7 +56,7 @@ namespace TeamOdd.CameraMove
         private void Start()
         {
            target = Player.Player.Instance;
-           target.LockCursor(true);
+           UIManager.Instance.LockCursor(true);
            target.CameraController = this;
            yaw = target.transform.eulerAngles.y;
 

@@ -1,10 +1,7 @@
-﻿using RPGCharacterAnims;
-using Study.MiniDefence;
+﻿using Study.MiniDefence;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using CameraController = TeamOdd.CameraMove.CameraController;
 
 namespace TeamOdd.Mission
 {
@@ -56,19 +53,16 @@ namespace TeamOdd.Mission
             }
             
             Player.Player.Instance.CharacterController.enabled = false;
-            //Player.Player.Instance.transform.position = Vector3.zero;
             Player.Player.Instance.CharacterController.enabled = true;
 
             SceneLoadManager.Instance.LoadScene(stageSceneName);
-            Player.Player.Instance.CameraController = Camera.main.GetComponent<CameraController>();
-            Debug.Log("move scene");
             CloseUI();
             // SceneManager.LoadScene(stageSceneName);
         }
 
         public void CloseUI()
         {
-            Player.Player.Instance.LockCursor(true);
+            UIManager.Instance.LockCursor(true);
             gameObject.SetActive(false);
         }
     }
