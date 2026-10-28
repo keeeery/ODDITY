@@ -42,6 +42,8 @@ namespace TeamOdd.Boss
         [SerializeField] private float hitRadius = 5f; // 보스 위치 기준, 이 안에 대상이 들어오면 피해
         [SerializeField] private int chargeDamage = 20;
         [SerializeField] private HitReaction chargeReaction = HitReaction.Knockdown;
+        [Tooltip("돌진에 부딪힌 대상을 밀어내는 거리·높이·시간과 방향")]
+        [SerializeField] private HitPush chargePush = HitPush.Create(5f, 0.5f, 0.6f);
 
         [Title("Wall")]
         [SerializeField] private LayerMask wallMask; // 부딪히면 행동불능이 되는 레이어
@@ -176,7 +178,7 @@ namespace TeamOdd.Boss
 
             if (string.Equals(name, "OnJumpLand"))
             {
-                TryHit(jump.ImpactShape, jump.Land(), jump.Damage, jump.Reaction);
+                TryHit(jump.ImpactShape, jump.Land(), jump.Damage, jump.Reaction, jump.Push);
             }
         }
 
@@ -240,7 +242,7 @@ namespace TeamOdd.Boss
             if (hasHitTarget) return;
 
             Pose pose = new Pose(Movement.Position, Movement.Rotation);
-            hasHitTarget = TryHit(TelegraphShape.Circle(hitRadius), pose, chargeDamage, chargeReaction);
+            hasHitTarget = TryHit(TelegraphShape.Circle(hitRadius), pose, chargeDamage, chargeReaction, chargePush);
         }
 
         // BossMovement의 FixedUpdate에서 불림

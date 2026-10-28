@@ -83,7 +83,7 @@ namespace TeamOdd.Player
                     PlayerController.EndRoll();
                     break;
                 case "EndHit":
-                    PlayerController.isHit = false;
+                    PlayerController.EndHitAnimation();
                     break;    
                 case "WakeUp":
                     PlayerController.CanWakeUp = true;

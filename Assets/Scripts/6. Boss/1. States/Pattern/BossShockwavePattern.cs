@@ -20,8 +20,10 @@ namespace TeamOdd.Boss
             [Tooltip("충격파가 터질 중심, 높이는 무시하고 이 지점 아래 바닥에서 터진다.")]
             public Transform origin;
             [Min(0)] public int damage = 10;
-            [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-            public HitReaction reaction = HitReaction.Stagger;
+            [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+            public HitReaction reaction = HitReaction.Knockback;
+            [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 충격파가 터진 지점")]
+            public HitPush push = HitPush.Create(3f, 0f, 0.6f, HitPush.DirectionMode.FromHitCenter);
             [Min(0f)] public float radius = 10f;
         }
 
@@ -117,7 +119,7 @@ namespace TeamOdd.Boss
             TelegraphShape shape = GetShape(wave);
             isWarned[index] = false;
 
-            TryHit(shape, pose, wave.damage, wave.reaction);
+            TryHit(shape, pose, wave.damage, wave.reaction, wave.push);
 
             BossFragmentLift.LiftInRange(fragmentSpawner, shape, pose, liftHeight, liftDuration);
 

@@ -22,6 +22,8 @@ namespace TeamOdd.Boss
         [SerializeField] private float radius = 5f;
         [SerializeField] private int damage = 25;
         [SerializeField] private HitReaction reaction = HitReaction.Knockdown;
+        [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 착지 충격 지점")]
+        [SerializeField] private HitPush push = HitPush.Create(4f, 0.5f, 0.6f, HitPush.DirectionMode.FromHitCenter);
 
         [Title("Lift")]
         [Tooltip("착지 지점 기준으로 염동력 오브젝트를 띄울 반경(m), 피해 범위(radius)와 따로 정한다.")]
@@ -43,6 +45,7 @@ namespace TeamOdd.Boss
         public TelegraphShape ImpactShape => TelegraphShape.Circle(radius);
         public int Damage => damage;
         public HitReaction Reaction => reaction;
+        public HitPush Push => push;
 
         // 보스 프리팹은 씬 오브젝트를 참조할 수 없으므로 씬에서 찾음
         public void Initialize(BossMonster root)

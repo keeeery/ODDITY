@@ -227,6 +227,12 @@ MonoBehaviour:
     warnDuration: 0.55
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.09}
   hitFadeDuration: 0.3
@@ -299,6 +305,12 @@ MonoBehaviour:
     warnDuration: 0.69
     damage: 15
     reaction: 1
+    push:
+      distance: 2.3
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -605,6 +617,12 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    push:
+      distance: 8
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -617,6 +635,12 @@ MonoBehaviour:
     radius: 5
     damage: 25
     reaction: 2
+    push:
+      distance: 5
+      height: 0.5
+      duration: 0.6
+      direction: 1
+      angleOffset: 0
 --- !u!1 &433655993077558519
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,6 +809,12 @@ MonoBehaviour:
     warnDuration: 0.55
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -893,6 +923,12 @@ MonoBehaviour:
   hitRadius: 5
   chargeDamage: 20
   chargeReaction: 2
+  chargePush:
+    distance: 5
+    height: 0.5
+    duration: 0.6
+    direction: 0
+    angleOffset: 0
   wallMask:
     serializedVersion: 2
     m_Bits: 128
@@ -911,6 +947,12 @@ MonoBehaviour:
     radius: 5
     damage: 25
     reaction: 2
+    push:
+      distance: 5
+      height: 0.5
+      duration: 0.6
+      direction: 1
+      angleOffset: 0
 --- !u!1 &946175710364733286
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,6 +1457,12 @@ MonoBehaviour:
     warnDuration: 0.55
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -1606,6 +1654,12 @@ MonoBehaviour:
     warnDuration: 0.69
     damage: 15
     reaction: 1
+    push:
+      distance: 2.3
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -1924,6 +1978,12 @@ MonoBehaviour:
     warnDuration: 0.55
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.19}
   hitFadeDuration: 0.3
@@ -1997,6 +2057,12 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    push:
+      distance: 8
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -2086,6 +2152,12 @@ MonoBehaviour:
     warnDuration: 0.69
     damage: 10
     reaction: 1
+    push:
+      distance: 2.3
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -2307,6 +2379,12 @@ MonoBehaviour:
     warnDuration: 0.57
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   - shape:
@@ -2319,6 +2397,12 @@ MonoBehaviour:
     warnDuration: 0.62
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -2651,6 +2735,12 @@ MonoBehaviour:
     warnDuration: 0.56
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.25}
   - shape:
@@ -2663,6 +2753,12 @@ MonoBehaviour:
     warnDuration: 0.8
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.98}
   hitFadeDuration: 0.3
@@ -3555,6 +3651,12 @@ MonoBehaviour:
     warnDuration: 0.69
     damage: 10
     reaction: 1
+    push:
+      distance: 2.3
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.62}
   hitFadeDuration: 0.3
@@ -3627,6 +3729,12 @@ MonoBehaviour:
     warnDuration: 0.54
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   - shape:
@@ -3639,6 +3747,12 @@ MonoBehaviour:
     warnDuration: 0.6
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   - shape:
@@ -3651,6 +3765,12 @@ MonoBehaviour:
     warnDuration: 0.93
     damage: 10
     reaction: 1
+    push:
+      distance: 2.3
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -3723,6 +3843,12 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    push:
+      distance: 8
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -3731,6 +3857,12 @@ MonoBehaviour:
   - origin: {fileID: 200775759416838399}
     damage: 10
     reaction: 1
+    push:
+      distance: 20
+      height: 0
+      duration: 0.6
+      direction: 1
+      angleOffset: 0
     radius: 20
   groundLayers:
     serializedVersion: 2
@@ -4088,6 +4220,12 @@ MonoBehaviour:
     warnDuration: 0.5
     damage: 10
     reaction: 1
+    push:
+      distance: 8
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
@@ -4219,6 +4357,12 @@ MonoBehaviour:
     warnDuration: 0.54
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.14}
   - shape:
@@ -4231,6 +4375,12 @@ MonoBehaviour:
     warnDuration: 0.76
     damage: 10
     reaction: 1
+    push:
+      distance: 0
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 4.73}
   - shape:
@@ -4243,6 +4393,12 @@ MonoBehaviour:
     warnDuration: 0.95
     damage: 10
     reaction: 1
+    push:
+      distance: 2.3
+      height: 0
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
     lockOnWarn: 1
     moveLead: {x: 0, y: 5.58}
   hitFadeDuration: 0.3

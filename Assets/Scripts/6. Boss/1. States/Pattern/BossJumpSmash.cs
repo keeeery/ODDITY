@@ -43,7 +43,7 @@ namespace TeamOdd.Boss
 
             if (string.Equals(name, "OnJumpLand"))
             {
-                TryHit(jump.ImpactShape, jump.Land(), jump.Damage, jump.Reaction);
+                TryHit(jump.ImpactShape, jump.Land(), jump.Damage, jump.Reaction, jump.Push);
             }
         }
 

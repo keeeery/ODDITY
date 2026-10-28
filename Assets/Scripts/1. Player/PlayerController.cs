@@ -84,9 +84,11 @@ namespace TeamOdd.Player
         public float MaxEarlyWakeUpCooldown;
         public float WakeUpTime;
         public float InvincibleTime; 
+        // 피격 모션 끝 신호(EndHit)가 상태 전환 등으로 오지 않아도 행동 불가로 묶이지 않도록 기다리는 최대 시간(초)
+        [SerializeField, Min(0.1f)] private float maxHitAnimationWait = 3f;
         public bool isHit;
         public bool CanWakeUp;
-        private Coroutine hitReactionRoutine;
+        private bool hitAnimationEnded;
 
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
@@ -593,45 +595,49 @@ namespace TeamOdd.Player
 
         #region 피격
 
-        public void ApplyHitReaction(Vector3 attackerPos, HitReaction reaction, float dist = 6f, float height = 2f,
-            float dur = 0.6f)
+        // direction: 밀려날 수평 방향, 거리·높이·시간은 공격마다 정한 push를 따름
+        // 피격 반응 중 다시 맞으면 피해만 받고 반응은 새로 시작하지 않음
+        public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push)
         {
-            if(reaction==HitReaction.None || isHit) return;
+            if (reaction == HitReaction.None || isHit) return;
 
             StopAttackMotion();
-            
-            // 넉백 중 다시 맞으면 이전 넉백을 끊고 새로 시작
-            if (hitReactionRoutine != null) StopCoroutine(hitReactionRoutine);
 
-            if (reaction == HitReaction.Stagger)
-                hitReactionRoutine = StartCoroutine(PlayHitReaction(attackerPos, reaction, 0, dist, 0f, dur));
-            if (reaction == HitReaction.Knockdown)
-                hitReactionRoutine = StartCoroutine(PlayHitReaction(attackerPos, reaction, 1, dist, height, dur));
+            StartCoroutine(PlayHitReaction(reaction, direction, push));
         }
 
-        private IEnumerator PlayHitReaction(Vector3 bossPos, HitReaction reaction, int motionIndex,float dist = 6f, float height = 2f, float dur = 0.6f)
+        // 피격 모션의 EndHit 신호, 넉다운은 기상 모션 끝에서 옴
+        public void EndHitAnimation() => hitAnimationEnded = true;
+
+        private IEnumerator PlayHitReaction(HitReaction reaction, Vector3 direction, HitPush push)
         {
             isHit = true;
-            
-            Vector3 dir = transform.position - bossPos;
-            
-            dir.y = 0;
-            dir.Normalize();
-            
-            float t = 0, prevY = 0;
-            
-            animator.SetInteger(HitMotion, motionIndex);
+            hitAnimationEnded = false;
+            // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
+            CanWakeUp = false;
+
+            animator.SetInteger(HitMotion, reaction == HitReaction.Knockdown ? 1 : 0);
             animator.SetTrigger(Hit);
-            
-            while (t < 1f)
+
+            if (push.HasMovement)
             {
-                t += Time.deltaTime / dur;
-                float y = height * t * (1f - t);
-                Vector3 move = dir * (dist * (Time.deltaTime / dur));
-                move.y = y - prevY;
-                prevY = y;
-                controller.Move(move); // 벽 충돌은 Move가 처리
-                yield return null;
+                direction.y = 0f;
+                direction.Normalize();
+
+                float t = 0f, prevY = 0f;
+
+                while (t < 1f)
+                {
+                    float step = Mathf.Min(Time.deltaTime / push.duration, 1f - t);
+                    t += step;
+                    // 가운데(t = 0.5)에서 최고 높이 height에 닿는 포물선
+                    float y = 4f * push.height * t * (1f - t);
+                    Vector3 move = direction * (push.distance * step);
+                    move.y = y - prevY;
+                    prevY = y;
+                    controller.Move(move); // 벽 충돌은 Move가 처리
+                    yield return null;
+                }
             }
 
             if (reaction == HitReaction.Knockdown)
@@ -650,10 +656,32 @@ namespace TeamOdd.Player
                 }
             
                 animator.SetTrigger(WakeUp);
-            
+
+                // 무적은 기상 시작부터 InvincibleTime 동안, 기상 모션이 먼저 끝나면 무적인 채로 행동 가능
                 IsInvincible = true;
-                yield return new WaitForSeconds(InvincibleTime);
-                IsInvincible = false;   
+                float invincibleEndTime = Time.time + InvincibleTime;
+
+                yield return WaitHitAnimationEnd();
+                isHit = false;
+
+                float remaining = invincibleEndTime - Time.time;
+                if (remaining > 0f) yield return new WaitForSeconds(remaining);
+                IsInvincible = false;
+                yield break;
+            }
+
+            // 밀려나는 이동과 피격 모션이 모두 끝나야 행동 가능
+            yield return WaitHitAnimationEnd();
+            isHit = false;
+        }
+
+        private IEnumerator WaitHitAnimationEnd()
+        {
+            float elapsed = 0f;
+            while (hitAnimationEnded == false && elapsed < maxHitAnimationWait)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
             }
         }
 
