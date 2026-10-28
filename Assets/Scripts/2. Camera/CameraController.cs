@@ -96,7 +96,7 @@ namespace TeamOdd.CameraMove
             if (trauma <= 0f) return;
 
             float power = trauma * trauma;
-            noiseTime += Time.deltaTime * shakeFrequency;
+            noiseTime += Time.unscaledDeltaTime * shakeFrequency;
 
             positionOffset = new Vector3(
                 Noise(0, noiseTime) * maxShakePosition.x,
@@ -107,7 +107,7 @@ namespace TeamOdd.CameraMove
                 Noise(4, noiseTime) * maxShakeRotation.y * power,
                 Noise(5, noiseTime) * maxShakeRotation.z * power);
 
-            trauma = Mathf.Max(0f, trauma - currentDecay * Time.deltaTime);
+            trauma = Mathf.Max(0f, trauma - currentDecay * Time.unscaledDeltaTime);
         }
 
         // 축마다 시드를 달리한 -1~1 Perlin 노이즈

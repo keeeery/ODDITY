@@ -23,6 +23,21 @@ namespace TeamOdd.Psychokinesis
 
         [Header("Normal Attack")]
         [SerializeField, Min(0.01f)] private float attackInterval = 0.25f;
+        [Tooltip("기본 공격의 무력화 피해를 현재 공격력에 비례해 계산한다.")]
+        [SerializeField] private bool scaleAttackGroggy;
+        [SerializeField, Min(0f)] private float attackGroggyScale = 0.27f;
+
+        [Header("Object Damage Override")]
+        [Tooltip("이 플레이어가 던지거나 휘두른 물체에 씬별 피해 설정을 적용한다.")]
+        [SerializeField] private bool overrideObjectDamage;
+        [Tooltip("중형·대형·탱크 등급의 최소 질량(kg), 각 기준 미만은 이전 등급으로 처리한다.")]
+        [SerializeField] private Vector3 objectMassThresholds = new Vector3(4.5f, 9f, 12f);
+        [SerializeField, Min(1)] private int smallObjectDamage = 25;
+        [SerializeField, Min(1)] private int mediumObjectDamage = 60;
+        [SerializeField, Min(1)] private int largeObjectDamage = 110;
+        [SerializeField, Min(1)] private int tankObjectDamage = 150;
+        [Tooltip("등급별 고정 피해에 곱하는 무력화 배율")]
+        [SerializeField, Min(0f)] private float objectGroggyScale = 0.3f;
 
         [Header("Swing Activation")]
         [SerializeField, Min(0f)] private float swingMinSpeed = 8f;
@@ -114,6 +129,23 @@ namespace TeamOdd.Psychokinesis
                 hasAttackTarget = heldObject == null && TryFindAttackTarget(out _, out _, out _, out _);
                 return hasAttackTarget;
             }
+        }
+
+        public int CalculateAttackGroggy(int damage, int fallback)
+            => scaleAttackGroggy ? Mathf.RoundToInt(damage * attackGroggyScale) : fallback;
+
+        public bool TryCalculateObjectDamage(float mass, out int damage, out int groggy)
+        {
+            damage = 0;
+            groggy = 0;
+            if (overrideObjectDamage == false) return false;
+
+            if (mass >= objectMassThresholds.z) damage = tankObjectDamage;
+            else if (mass >= objectMassThresholds.y) damage = largeObjectDamage;
+            else if (mass >= objectMassThresholds.x) damage = mediumObjectDamage;
+            else damage = smallObjectDamage;
+            groggy = Mathf.RoundToInt(damage * objectGroggyScale);
+            return true;
         }
 
         private void Awake()

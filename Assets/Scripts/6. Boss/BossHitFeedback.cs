@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TeamOdd.Boss
 {
-    // 보스 피격 연출: 모든 피격은 윤곽 번쩍임, 받은 피해가 기준 이상이면 충격·점광원·입자(HitImpact)를 더함
+    // 보스 피격 연출: 모든 피격은 윤곽 번쩍임, 중간 피격부터 충격·점광원·입자와 히트스탑, 강한 피격은 더 큰 충격과 카메라 흔들림도 더함
     // 루트 캡슐 기준 맞은 지점은 허공일 수 있어, 충격은 부위 콜라이더 표면으로 옮겨서 터뜨린다.
     [DisallowMultipleComponent]
     public sealed class BossHitFeedback : MonoBehaviour
@@ -14,12 +14,30 @@ namespace TeamOdd.Boss
         [Tooltip("윤곽이 번쩍였다가 사라지는 시간(초)")]
         [SerializeField, Min(0.01f)] private float flashDuration = 0.12f;
 
+        [Title("Medium Hit")]
+        [Tooltip("실제로 받은 피해(방어력을 뺀 값)가 이 값 이상이면 중간 피격, 강한 피격 조건을 먼저 적용한다.")]
+        [SerializeField, Min(1)] private int mediumHitDamage = 20;
+        [Tooltip("중간 피격의 히트스탑 시간(초), 0이면 쓰지 않음")]
+        [SerializeField, Min(0f)] private float mediumHitStop = 0.03f;
+
         [Title("Strong Hit")]
-        [Tooltip("실제로 받은 피해(방어력을 뺀 값)가 이 값 이상이면 강한 피격으로 보고 흰색 충격을 더한다.")]
+        [Tooltip("실제로 받은 피해(방어력을 뺀 값)가 이 값 이상이거나 Knockdown 공격이면 강한 피격으로 본다.")]
         [SerializeField, Min(1)] private int strongHitDamage = 60;
+        [Tooltip("강한 피격의 히트스탑 시간(초), 0이면 쓰지 않음")]
+        [SerializeField, Min(0f)] private float strongHitStop = 0.07f;
+        [Tooltip("강한 피격의 카메라 trauma(0~1), 실제 세기는 trauma², 0이면 쓰지 않음")]
+        [SerializeField, Range(0f, 1f)] private float strongShakeTrauma = 0.45f;
+        [Tooltip("강한 피격의 카메라 흔들림이 사라지는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float strongShakeFadeTime = 0.3f;
+        [Tooltip("강한 피격의 충격 크기 배율, 중간 피격의 Impact Size 기준")]
+        [SerializeField, Min(1f)] private float strongImpactSizeMultiplier = 1.5f;
+        [Tooltip("강한 피격의 입자 수 배율, Debris Count 기준")]
+        [SerializeField, Min(1f)] private float strongDebrisCountMultiplier = 2f;
+        [Tooltip("강한 피격의 입자 속도 배율, 높일수록 더 멀리 퍼진다.")]
+        [SerializeField, Min(1f)] private float strongDebrisSpeedMultiplier = 1.2f;
         [Tooltip("TeamOdd/Hit Impact 셰이더 머티리얼, 빛줄기 굵기·베기 섬광 세기·타원 정도·몸에 가려지는 정도는 머티리얼에서 조정한다.")]
         [SerializeField] private Material impactMaterial;
-        [Tooltip("충격 연출의 크기(m), 빛줄기가 뻗는 지름")]
+        [Tooltip("중간 피격의 충격 크기(m), 빛줄기가 뻗는 지름, 강한 피격은 배율을 곱한다.")]
         [SerializeField, Min(0.1f)] private float impactSize = 3f;
         [Tooltip("충격이 터졌다가 사라지는 시간(초)")]
         [SerializeField, Min(0.05f)] private float impactDuration = 0.3f;
@@ -63,7 +81,9 @@ namespace TeamOdd.Boss
         private CombatManager combatManager;
         private Collider[] bodyParts;
         private HitImpact[] impacts;
+        private HitImpact[] strongImpacts;
         private int nextImpact;
+        private int nextStrongImpact;
 
         private void Awake()
         {
@@ -87,6 +107,12 @@ namespace TeamOdd.Boss
         {
             if (combatManager != null) combatManager.OnDamageEventExecuted -= HandleDamageExecuted;
 
+            DestroyImpacts(impacts);
+            DestroyImpacts(strongImpacts);
+        }
+
+        private static void DestroyImpacts(HitImpact[] impacts)
+        {
             if (impacts == null) return;
             foreach (HitImpact impact in impacts)
                 if (impact != null) Destroy(impact.gameObject);
@@ -97,27 +123,60 @@ namespace TeamOdd.Boss
             if (receivedDamage <= 0 || self == null || ReferenceEquals(damageEvent.Receiver, self) == false) return;
 
             flash.Play(flashDuration);
-            if (receivedDamage >= strongHitDamage) PlayImpact(SnapToBody(damageEvent.Info.HitPoint));
+            if (receivedDamage >= strongHitDamage || damageEvent.Info.Reaction == HitReaction.Knockdown)
+            {
+                PlayImpact(SnapToBody(damageEvent.Info.HitPoint), true);
+                HitStop.Request(strongHitStop);
+                ShakeCamera(strongShakeTrauma);
+            }
+            else if (receivedDamage >= mediumHitDamage)
+            {
+                PlayImpact(SnapToBody(damageEvent.Info.HitPoint), false);
+                HitStop.Request(mediumHitStop);
+            }
         }
 
-        private void PlayImpact(Vector3 position)
+        private void ShakeCamera(float trauma)
+        {
+            if (trauma <= 0f) return;
+
+            Player.Player player = Player.Player.Instance;
+            if (player != null && player.CameraController != null) player.CameraController.AddTrauma(trauma, strongShakeFadeTime);
+        }
+
+        private void PlayImpact(Vector3 position, bool isStrong)
         {
             if (impactMaterial == null) return;
 
-            impacts ??= CreateImpacts();
-            HitImpact impact = impacts[nextImpact];
-            nextImpact = (nextImpact + 1) % impacts.Length;
-            impact.Play(position, impactSize, impactDuration, impactTowardCamera, impactRollRange);
+            HitImpact impact;
+            if (isStrong)
+            {
+                strongImpacts ??= CreateImpacts(true);
+                impact = strongImpacts[nextStrongImpact];
+                nextStrongImpact = (nextStrongImpact + 1) % strongImpacts.Length;
+            }
+            else
+            {
+                impacts ??= CreateImpacts(false);
+                impact = impacts[nextImpact];
+                nextImpact = (nextImpact + 1) % impacts.Length;
+            }
+
+            float size = isStrong ? impactSize * strongImpactSizeMultiplier : impactSize;
+            impact.Play(position, size, impactDuration, impactTowardCamera, impactRollRange);
         }
 
-        private HitImpact[] CreateImpacts()
+        private HitImpact[] CreateImpacts(bool isStrong)
         {
-            var result = new HitImpact[impactPoolSize];
+            int count = isStrong ? Mathf.RoundToInt(debrisCount * strongDebrisCountMultiplier) : debrisCount;
+            Vector2 speed = isStrong ? debrisSpeed * strongDebrisSpeedMultiplier : debrisSpeed;
+            float size = isStrong ? impactSize * strongImpactSizeMultiplier : impactSize;
+            HitImpact[] result = new HitImpact[impactPoolSize];
             for (int index = 0; index < result.Length; index++)
             {
                 result[index] = HitImpact.Create(impactMaterial, $"{name} Hit Impact");
                 result[index].SetLight(impactLightColor, impactLightIntensity, impactLightRange);
-                result[index].SetDebris(debrisMaterial, debrisCount, debrisSpeed, debrisLifetime, debrisSize, impactSize * debrisSpawnRadius, debrisTipColor);
+                result[index].SetDebris(debrisMaterial, count, speed, debrisLifetime, debrisSize, size * debrisSpawnRadius, debrisTipColor);
             }
             return result;
         }

@@ -249,7 +249,9 @@ namespace TeamOdd.Psychokinesis
 
             if (shot.Target != null && shot.HitCollider != null && IsAlive(shot.Target) && combatEntity != null)
             {
-                DamageInfo info = new DamageInfo(combatEntity.CurrentStats.Atk, point, shot.HitCollider, groggy: groggyDamage);
+                int damage = combatEntity.CurrentStats.Atk;
+                int groggy = controller != null ? controller.CalculateAttackGroggy(damage, groggyDamage) : groggyDamage;
+                DamageInfo info = new DamageInfo(damage, point, shot.HitCollider, groggy: groggy);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(combatEntity, shot.Target, info));
             }
 

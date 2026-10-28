@@ -11,6 +11,9 @@ namespace TeamOdd.Combat
         [field: Title("Settings")]
         [field: SerializeField, Required] public CombatStats Stats { get; private set; }
 
+        [Tooltip("씬에서 사용할 최대 체력, 0이면 Stats의 값을 사용한다.")]
+        [SerializeField, Min(0)] private int maxHpOverride;
+
         // 기본값(Stats) + 증강칩 등 런타임 보너스. 전투 계산은 이 값을 읽는다
         public RuntimeStats CurrentStats { get; private set; }
 
@@ -24,6 +27,7 @@ namespace TeamOdd.Combat
         protected virtual void Awake()
         {
             CurrentStats = new RuntimeStats(Stats);
+            if (maxHpOverride > 0) CurrentStats.Add(StatType.MaxHp, maxHpOverride - Stats.MaxHp);
             CurrentStats.Changed += OnStatsChanged;
             hp = CurrentStats.MaxHp;
             prevMaxHp = CurrentStats.MaxHp;

@@ -25,6 +25,7 @@ namespace TeamOdd.Superpower
         private readonly float angle;
 
         private BossMonster target; // CanExecute에서 고른 대상, Execute에서 씀
+        private SkillCaster descriptionCaster;
 
         public PsychoSlamSkill(string name, float cooldown, float duration, float height, int damage, int groggy, float range, float angle) : base(name, cooldown)
         {
@@ -36,7 +37,17 @@ namespace TeamOdd.Superpower
             this.angle = angle;
         }
 
-        public override string Describe() => $"보스 정지 {duration}초 · 높이 {height}m · 피해 {damage} · 무력화 {groggy} · 사거리 {range}m";
+        public void BindDescriptionCaster(SkillCaster caster) => descriptionCaster = caster;
+
+        public override string Describe()
+        {
+            int appliedDamage = damage;
+            int appliedGroggy = groggy;
+            if (descriptionCaster != null)
+                descriptionCaster.ApplyPsychoSlamDamageOverride(ref appliedDamage, ref appliedGroggy);
+
+            return $"보스 정지 {duration}초 · 높이 {height}m · 피해 {appliedDamage} · 무력화 {appliedGroggy} · 사거리 {range}m";
+        }
 
         protected override bool CanExecute(SkillContext context)
         {
@@ -168,7 +179,12 @@ namespace TeamOdd.Superpower
                 return;
             }
 
-            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, HitReaction.Knockdown, groggy);
+            int appliedDamage = damage;
+            int appliedGroggy = groggy;
+            if (owner != null && owner.TryGetComponent(out SkillCaster caster))
+                caster.ApplyPsychoSlamDamageOverride(ref appliedDamage, ref appliedGroggy);
+
+            DamageInfo info = new DamageInfo(appliedDamage, hitPoint, receiver.Collider, HitReaction.Knockdown, appliedGroggy);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, receiver, info));
         }
     }

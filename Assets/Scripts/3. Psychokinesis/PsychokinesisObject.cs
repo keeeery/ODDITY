@@ -244,10 +244,10 @@ namespace TeamOdd.Psychokinesis
             canDealThrowDamage = false;
             Vector3 targetVelocity = other.attachedRigidbody != null ? other.attachedRigidbody.linearVelocity : Vector3.zero;
             float impactSpeed = (throwVelocity - targetVelocity).magnitude;
-            int damage = Mathf.RoundToInt(body.mass * impactSpeed * throwDamageScale);
+            int damage = CalculateDamage(impactSpeed, throwDamageScale, out int groggy);
             Debug.Log($"[투척 피해 요청] {name} → {target.GameObject.name}: "
-                + $"RoundToInt(질량 {body.mass:F2} × 충돌 상대속도 {impactSpeed:F2} × 배율 {throwDamageScale:F2}) = {damage}", this);
-            SendDamage(target, other, other.ClosestPoint(body.worldCenterOfMass), damage);
+                + $"질량 {body.mass:F2}, 피해 {damage}, 무력화 {groggy}", this);
+            SendDamage(target, other, other.ClosestPoint(body.worldCenterOfMass), damage, groggy);
             damageSender = null;
             return true;
         }
@@ -295,12 +295,25 @@ namespace TeamOdd.Psychokinesis
             return true;
         }
 
-        private void SendDamage(ICombatable target, Collider collider, Vector3 point, int damage)
+        private int CalculateDamage(float speed, float scale, out int groggy)
+        {
+            float momentum = body.mass * speed;
+            if (damageSender != null && damageSender.GameObject != null &&
+                damageSender.GameObject.TryGetComponent(out PsychokinesisController controller) &&
+                controller.TryCalculateObjectDamage(body.mass, out int overriddenDamage, out groggy))
+                return overriddenDamage;
+
+            int damage = Mathf.RoundToInt(momentum * scale);
+            groggy = Mathf.RoundToInt(damage * groggyScale);
+            return damage;
+        }
+
+        private void SendDamage(ICombatable target, Collider collider, Vector3 point, int damage, int groggy)
         {
             if (pendingDamage != null) return;
 
             SetImpact(point);
-            DamageInfo info = new DamageInfo(damage, point, collider, groggy: Mathf.RoundToInt(damage * groggyScale));
+            DamageInfo info = new DamageInfo(damage, point, collider, groggy: groggy);
             pendingDamage = new DamageEvent(damageSender, target, info);
             pendingDamageManager = CombatManager.Instance;
             pendingDamageManager.OnDamageEventExecuted += HandleDamageExecuted;
@@ -397,10 +410,10 @@ namespace TeamOdd.Psychokinesis
             swingHitTarget = other;
             swingHitPoint = point;
             lastSwingHitTime = Time.time;
-            int damage = Mathf.RoundToInt(body.mass * swingSpeed * swingDamageScale);
+            int damage = CalculateDamage(swingSpeed, swingDamageScale, out int groggy);
             Debug.Log($"[휘두르기 피해 요청] {name} → {receiver.GameObject.name}: "
-                + $"RoundToInt(질량 {body.mass:F2} × 직전 물리 스텝 속도 {swingSpeed:F2} × 배율 {swingDamageScale:F2}) = {damage}", this);
-            SendDamage(receiver, other, point, damage);
+                + $"질량 {body.mass:F2}, 피해 {damage}, 무력화 {groggy}", this);
+            SendDamage(receiver, other, point, damage, groggy);
             Release(body.linearVelocity);
             return true;
         }

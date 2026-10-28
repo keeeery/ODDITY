@@ -20,6 +20,7 @@ namespace TeamOdd.Superpower
         private static readonly List<OwnedChip> chips = new();
         private static readonly OwnedChip[] skillSlots = new OwnedChip[SkillSlotCount]; // 빈 슬롯은 null
         private CombatEntity owner;
+        private SkillCaster skillCaster;
 
         public IReadOnlyList<OwnedChip> Chips => chips;
         public IReadOnlyList<OwnedChip> SkillSlots => skillSlots;
@@ -33,6 +34,9 @@ namespace TeamOdd.Superpower
         private void Awake()
         {
             owner = GetComponent<CombatEntity>();
+            skillCaster = GetComponent<SkillCaster>();
+            foreach (OwnedChip chip in chips)
+                if (chip.Skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
         }
 
         // cells는 칩을 주는 쪽이 ChipShapeLibrary.Roll로 정한 모양
@@ -40,6 +44,7 @@ namespace TeamOdd.Superpower
         public void Add(AugmentationChipDef def, Vector2Int[] cells)
         {
             SuperpowerSkill skill = def.ChipType == ChipType.Skill ? SkillFactory.Create(def) : null;
+            if (skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
             chips.Add(new OwnedChip(def, cells, skill));
         }
 
