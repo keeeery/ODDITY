@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using DG.Tweening;
 using Study.Utilities;
@@ -116,6 +116,9 @@ namespace TeamOdd.Player
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
         private Vector3 velocity;
+        private Coroutine hitRoutine;
+        private float savedHitStepOffset;
+        private bool hasHitStepOffset;
         private Vector3 rollDir;
         private float moveX, moveZ;
 
@@ -162,6 +165,8 @@ namespace TeamOdd.Player
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
         public bool IsInvincible { get; private set; }
+        // 염동 내려찍기처럼 시전 중 이동·구르기·공격·다른 스킬과 카메라 회전을 막는 동안
+        public bool IsActionLocked { get; private set; }
 
         // 마지막으로 확인한 Roll 상태 길이(초, 상태 Speed 반영)
         public float RollStateLength { get; private set; } = 1f;
@@ -194,6 +199,13 @@ namespace TeamOdd.Player
         private void OnDisable()
         {
             StopAttackMotion();
+            if (hitRoutine != null)
+            {
+                StopCoroutine(hitRoutine);
+                IsInvincible = false;
+            }
+            hitRoutine = null;
+            FinishHitReaction();
         }
 
         private void Update()
@@ -230,7 +242,7 @@ namespace TeamOdd.Player
             if (IsSprinting)
                 Player.Instance.ConsumeStamina(NeedRunStamina * Time.deltaTime);
 
-            Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
+            Vector2 inputRaw = ReadMoveInput();
             
             IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed);
 
@@ -282,9 +294,12 @@ namespace TeamOdd.Player
 
         #region 애니메이션
 
+        // 행동이 잠긴 동안은 이동 입력이 없는 것으로 봄, 중력은 그대로 받음
+        private Vector2 ReadMoveInput() => IsActionLocked ? Vector2.zero : SimpleInput.GetMoveAxisRaw();
+
         private void WalkAnimation()
         {
-            Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
+            Vector2 inputRaw = ReadMoveInput();
 
             bool isMove = inputRaw != Vector2.zero;
             bool isRun = IsSprinting;
@@ -311,7 +326,7 @@ namespace TeamOdd.Player
 
         private void CheckRollInput()
         {
-            if (SimpleInput.GetKeyDown(Key.G) == false) return;
+            if (IsActionLocked || SimpleInput.GetKeyDown(Key.G) == false) return;
 
             OnRollRequested?.Invoke();
         }
@@ -587,6 +602,8 @@ namespace TeamOdd.Player
         // 들고 있는 물체 없이도 target 쪽으로 홀딩 자세와 팔 IK를 취함, 던지기 준비 자세는 쓰지 않음
         public void BeginExternalHold(Transform target) => externalHoldTarget = target;
 
+        public void SetActionLocked(bool locked) => IsActionLocked = locked;
+
         // 다른 스킬이 그사이 대상을 바꿨으면 그쪽을 유지
         public void EndExternalHold(Transform target)
         {
@@ -659,7 +676,7 @@ namespace TeamOdd.Player
             if (isRestoringFacing == false) return;
 
             // 이동 입력이 들어오면 이동 방향 회전에 맡김
-            if (SimpleInput.GetMoveAxisRaw() != Vector2.zero)
+            if (ReadMoveInput() != Vector2.zero)
             {
                 isRestoringFacing = false;
                 return;
@@ -833,7 +850,7 @@ namespace TeamOdd.Player
 
             StopAttackMotion();
 
-            StartCoroutine(PlayHitReaction(reaction, direction, push, attackerPosition));
+            hitRoutine = StartCoroutine(PlayHitReaction(reaction, direction, push, attackerPosition));
         }
 
         // 피격 모션의 EndHit 신호, 넉다운은 기상 모션 끝에서 옴
@@ -841,85 +858,130 @@ namespace TeamOdd.Player
 
         private IEnumerator PlayHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
-            isHit = true;
-            hitAnimationEnded = false;
-            // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
-            CanWakeUp = false;
-
-            direction.y = 0f;
-            direction.Normalize();
-            
-            int motionIndex;
-
-            if (reaction == HitReaction.Knockdown)
+            bool hasFinishedReaction = false;
+            try
             {
-                motionIndex = 1;
+                isHit = true;
+                savedHitStepOffset = controller.stepOffset;
+                hasHitStepOffset = true;
+                controller.stepOffset = 0f;
+                velocity.y = Mathf.Min(velocity.y, 0f);
+                if (psychokinesisController != null) psychokinesisController.InterruptForHit();
+                heldObject = null;
+                animator.SetLayerWeight(1, 0f);
+                hitAnimationEnded = false;
+                // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
+                CanWakeUp = false;
+
+                direction.y = 0f;
+                direction.Normalize();
+
+                int motionIndex;
+
+                if (reaction == HitReaction.Knockdown)
+                {
+                    motionIndex = 1;
+                }
+                else
+                {
+                    motionIndex = push.HasMovement ? 2 : 0;
+                }
+
+                // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
+                animator.SetInteger(HitMotion, motionIndex);
+                animator.SetTrigger(Hit);
+
+                if (push.HasMovement)
+                {
+                    float t = 0f, prevY = 0f;
+
+                    while (t < 1f)
+                    {
+                        float step = Mathf.Min(Time.deltaTime / push.duration, 1f - t);
+                        t += step;
+                        // 가운데(t = 0.5)에서 최고 높이 height에 닿는 포물선
+                        float y = 4f * push.height * t * (1f - t);
+                        Vector3 move = direction * (push.distance * step);
+                        move.y = y - prevY;
+                        prevY = y;
+                        MoveDuringHit(move, push.height > 0f);
+                        yield return null;
+                    }
+                }
+
+                if (reaction == HitReaction.Knockdown)
+                {
+                    Vector3 toAttacker = attackerPosition - transform.position;
+                    toAttacker.y = 0f;
+                    if (toAttacker.sqrMagnitude > 0.0001f)
+                        transform.rotation = Quaternion.LookRotation(toAttacker);
+
+                    float elapsed = 0f;
+                    while (elapsed < WakeUpTime)
+                    {
+                        if (CanWakeUp && earlyWakeUpCooldown <= 0f && SimpleInput.GetKeyDown(Key.Space))
+                        {
+                            earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
+                            CanWakeUp = false;
+                            break;
+                        }
+                        MoveDuringHit(Vector3.zero);
+                        elapsed += Time.deltaTime;
+                        yield return null;
+                    }
+
+                    animator.SetTrigger(WakeUp);
+
+                    // 무적은 기상 시작부터 InvincibleTime 동안, 기상 모션이 먼저 끝나면 무적인 채로 행동 가능
+                    IsInvincible = true;
+                    float invincibleEndTime = Time.time + InvincibleTime;
+
+                    yield return WaitHitAnimationEnd();
+                    FinishHitReaction();
+                    hasFinishedReaction = true;
+
+                    float remaining = invincibleEndTime - Time.time;
+                    if (remaining > 0f) yield return new WaitForSeconds(remaining);
+                    IsInvincible = false;
+                    yield break;
+                }
+
+                // 밀려나는 이동과 피격 모션이 모두 끝나야 행동 가능
+                yield return WaitHitAnimationEnd();
+                FinishHitReaction();
+                hasFinishedReaction = true;
+            }
+            finally
+            {
+                if (hasFinishedReaction == false) FinishHitReaction();
+                hitRoutine = null;
+            }
+        }
+
+        // 지정된 넉다운 포물선 구간만 높이를 보존하고, 그 외 피격 대기 중에는 계속 낙하한다.
+        private void MoveDuringHit(Vector3 displacement, bool preserveArc = false)
+        {
+            if (preserveArc)
+            {
+                velocity.y = 0f;
             }
             else
             {
-                motionIndex = push.HasMovement ? 2 : 0;
-            }
-            
-            // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
-            animator.SetInteger(HitMotion, motionIndex);
-            animator.SetTrigger(Hit);
-
-            if (push.HasMovement)
-            {
-                float t = 0f, prevY = 0f;
-
-                while (t < 1f)
-                {
-                    float step = Mathf.Min(Time.deltaTime / push.duration, 1f - t);
-                    t += step;
-                    // 가운데(t = 0.5)에서 최고 높이 height에 닿는 포물선
-                    float y = 4f * push.height * t * (1f - t);
-                    Vector3 move = direction * (push.distance * step);
-                    move.y = y - prevY;
-                    prevY = y;
-                    controller.Move(move); // 벽 충돌은 Move가 처리
-                    yield return null;
-                }
+                velocity.y = IsGrounded && velocity.y < 0f ? -2f : velocity.y + gravity * Time.deltaTime;
+                displacement.y += velocity.y * Time.deltaTime;
             }
 
-            if (reaction == HitReaction.Knockdown)
-            {
-                Vector3 toAttacker = attackerPosition - transform.position;
-                toAttacker.y = 0f;
-                if (toAttacker.sqrMagnitude > 0.0001f)
-                    transform.rotation = Quaternion.LookRotation(toAttacker);
-                
-                float elapsed = 0f;
-                while (elapsed < WakeUpTime)
-                {
-                    if (CanWakeUp && earlyWakeUpCooldown <= 0f && SimpleInput.GetKeyDown(Key.Space))
-                    {
-                        earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
-                        CanWakeUp = false;
-                        break;
-                    }
-                    elapsed += Time.deltaTime;
-                    yield return null;
-                }
-            
-                animator.SetTrigger(WakeUp);
+            displacement += slideOffDirection * (slideOffSpeed * Time.deltaTime);
+            slideOffDirection = Vector3.zero;
+            controller.Move(displacement);
+        }
 
-                // 무적은 기상 시작부터 InvincibleTime 동안, 기상 모션이 먼저 끝나면 무적인 채로 행동 가능
-                IsInvincible = true;
-                float invincibleEndTime = Time.time + InvincibleTime;
-
-                yield return WaitHitAnimationEnd();
-                isHit = false;
-
-                float remaining = invincibleEndTime - Time.time;
-                if (remaining > 0f) yield return new WaitForSeconds(remaining);
-                IsInvincible = false;
-                yield break;
-            }
-
-            // 밀려나는 이동과 피격 모션이 모두 끝나야 행동 가능
-            yield return WaitHitAnimationEnd();
+        private void FinishHitReaction()
+        {
             isHit = false;
+            if (hasHitStepOffset == false) return;
+            if (controller != null) controller.stepOffset = savedHitStepOffset;
+            hasHitStepOffset = false;
         }
 
         private IEnumerator WaitHitAnimationEnd()
@@ -927,6 +989,7 @@ namespace TeamOdd.Player
             float elapsed = 0f;
             while (hitAnimationEnded == false && elapsed < maxHitAnimationWait)
             {
+                MoveDuringHit(Vector3.zero);
                 elapsed += Time.deltaTime;
                 yield return null;
             }

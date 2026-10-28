@@ -114,6 +114,25 @@ namespace TeamOdd.Psychokinesis
         public Vector3 Viewport => aimCamera.WorldToViewportPoint(new Vector3(0.5f, 0.5f));
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
+        private bool IsActionLocked => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsActionLocked;
+        private bool IsHit => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.isHit;
+
+        public bool CanNormalAttack => heldObject == null && IsHit == false && IsActionLocked == false;
+
+        // 피격 순간 입력 예약과 발사 준비를 버리고, 물체는 투척 피해 없이 즉시 내려놓는다.
+        public void InterruptForHit()
+        {
+            grabRequested = false;
+            releaseRequested = false;
+            throwRequested = false;
+            attackRequested = false;
+            throwPrepareStartTime = float.NegativeInfinity;
+            swingActiveUntil = float.NegativeInfinity;
+            targetInitialized = false;
+            if (heldObject != null) ReleaseHeld(false);
+            SetFocus(null);
+            if (forceWave != null) forceWave.CancelPendingLaunches();
+        }
 
         // 플레이어의 공격(기본 공격, 투척, 휘두르기)이 실제로 피해를 줬을 때 (조준점 적중 표시용)
         public event Action AttackHit;
@@ -123,6 +142,7 @@ namespace TeamOdd.Psychokinesis
         {
             get
             {
+                if (CanNormalAttack == false) return false;
                 if (attackTargetFrame == Time.frameCount) return hasAttackTarget;
 
                 attackTargetFrame = Time.frameCount;
@@ -158,7 +178,14 @@ namespace TeamOdd.Psychokinesis
 
         private void Update()
         {
-            if (Cursor.lockState != CursorLockMode.Locked)
+            if (IsHit)
+            {
+                InterruptForHit();
+                return;
+            }
+
+            // 커서가 풀렸거나 스킬 시전으로 행동이 잠기면 들고 있던 물체를 놓고 입력을 받지 않음
+            if (Cursor.lockState != CursorLockMode.Locked || IsActionLocked)
             {
                 releaseRequested = true;
                 grabRequested = false;
@@ -198,6 +225,13 @@ namespace TeamOdd.Psychokinesis
 #if UNITY_EDITOR
             candidateCount = 0;
 #endif
+
+            // Update에서 받은 입력도 같은 프레임에 피격되거나 시전이 시작되면 실행하지 않는다.
+            if (IsHit || IsActionLocked || Cursor.lockState != CursorLockMode.Locked)
+            {
+                InterruptForHit();
+                return;
+            }
 
             if (heldObject == null)
                 SetFocus(Cursor.lockState == CursorLockMode.Locked ? FindFocus() : null);
@@ -260,6 +294,12 @@ namespace TeamOdd.Psychokinesis
 
         private void FixedUpdate()
         {
+            if (IsHit)
+            {
+                InterruptForHit();
+                return;
+            }
+
             if (heldObject != null && (releaseRequested || heldObject.IsHeld == false || heldObject.IsAvailable(maxMass) == false))
                 ReleaseHeld(false);
 

@@ -29,6 +29,10 @@ namespace TeamOdd.CameraMove
         [SerializeField] private float minYaw = -40f;
         [SerializeField] private float maxYaw = 70f;
 
+        [Header("대상 고정 (염동 내려찍기 등)")]
+        [Tooltip("대상이 화면 중앙에 오도록 시점을 돌리는 빠르기, 클수록 빨리 맞춰진다. 거리는 홀딩 줌인 값을 그대로 쓴다")]
+        [SerializeField, Min(0.1f)] private float focusTurnSpeed = 8f;
+
         [Header("충돌")]
         [Tooltip("카메라가 막힐 레이어")]
         [SerializeField] private LayerMask collisionMask = ~0;
@@ -52,6 +56,17 @@ namespace TeamOdd.CameraMove
         private float pitch; // 상하 회전 누적값
 
         private bool isHeld;
+        private Transform focusTarget;     // 지정되면 마우스 대신 이 대상이 화면 중앙에 오도록 시점을 돌림
+        private Vector3 lastBasePosition;  // 지난 프레임의 흔들림 전 카메라 위치, 대상을 볼 각도 계산에 씀
+
+        // 대상을 화면 중앙에 두는 고정 시점을 켬
+        public void BeginFocus(Transform focus) => focusTarget = focus;
+
+        // 다른 쪽이 그사이 대상을 바꿨으면 그쪽을 유지
+        public void EndFocus(Transform focus)
+        {
+            if (focusTarget == focus) focusTarget = null;
+        }
 
         private void Start()
         {
@@ -62,7 +77,8 @@ namespace TeamOdd.CameraMove
 
            currentOffset = pivotOffset;
            currentDistance = distance;
-           
+           lastBasePosition = transform.position;
+
            DOTween.defaultUpdateType = UpdateType.Normal;
         }
 
@@ -119,6 +135,7 @@ namespace TeamOdd.CameraMove
 
             UpdateRotation();
             Vector3 basePosition = UpdatePosition();
+            lastBasePosition = basePosition;
             UpdateTrauma(out Vector3 posOffset, out Quaternion rotOffset);
 
             // 흔들림은 렌더 직전에만 더한다. yaw/pitch 누적값은 건드리지 않음
@@ -137,10 +154,21 @@ namespace TeamOdd.CameraMove
         private void UpdateRotation()
         {
             const float MOUSE_AXIS_SCALE = 0.1f;
-            Vector2 delta = SimpleInput.GetMouseDelta() * MOUSE_AXIS_SCALE;
 
-            yaw += delta.x * mouseSensitivity;
-            pitch -= delta.y * mouseSensitivity;
+            // 흔들림이 매 프레임 기준 회전 위에 얹히므로 시점을 고정해도 회전 적용은 계속함
+            if (focusTarget != null)
+            {
+                AimAtFocus();
+            }
+            else
+            {
+                // 스킬 시전으로 행동이 잠긴 동안은 마우스로 시점을 돌리지 않음
+                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * MOUSE_AXIS_SCALE;
+
+                yaw += delta.x * mouseSensitivity;
+                pitch -= delta.y * mouseSensitivity;
+            }
+
             pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
             // if (isHeld)
@@ -150,6 +178,19 @@ namespace TeamOdd.CameraMove
             // 오히려 x축 회전 하한선 조정해야 할 듯, 카메라 아래로 쭉 당기면 플레이어 관통돼서 보임
 
             transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        }
+
+        // 지난 프레임 카메라 위치에서 대상을 보는 각도로 서서히 돌림
+        // 카메라 위치가 회전을 따라 공전해도 몇 프레임 안에 대상이 화면 중앙에 맞춰지고, yaw/pitch를 같이 바꾸므로 풀었을 때 시점이 튀지 않음
+        private void AimAtFocus()
+        {
+            Vector3 toFocus = focusTarget.position - lastBasePosition;
+            if (toFocus.sqrMagnitude < 0.0001f) return;
+
+            Vector3 look = Quaternion.LookRotation(toFocus).eulerAngles;
+            float t = 1f - Mathf.Exp(-focusTurnSpeed * Time.deltaTime);
+            yaw = Mathf.LerpAngle(yaw, look.y, t);
+            pitch = Mathf.LerpAngle(pitch, Mathf.DeltaAngle(0f, look.x), t);
         }
 
         private Vector3 UpdatePosition()

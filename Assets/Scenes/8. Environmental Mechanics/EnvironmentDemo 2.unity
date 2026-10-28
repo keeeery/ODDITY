@@ -54577,7 +54577,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4663631127443257715, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: chargeReaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4663631127443257715, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: jump.push.height
@@ -69712,7 +69712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4554608892249188006, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: chargeReaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4554608892249188006, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: jump.push.height
@@ -75689,6 +75689,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2205336347470601081}
+    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2205336347470601082}
   m_SourcePrefab: {fileID: 100100000, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
 --- !u!114 &1902345672 stripped
 MonoBehaviour:
@@ -85726,6 +85729,20 @@ MonoBehaviour:
   chipIds: d6070000d7070000
   grantOnStart: 1
   grantKey: 102
+  inventory: {fileID: 2205336347470601080}
+--- !u!114 &2205336347470601082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104909016154580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f57aef2672441a68bdc748a3364b3b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipEquipTester
+  chipIds: d6070000d7070000
   inventory: {fileID: 2205336347470601080}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

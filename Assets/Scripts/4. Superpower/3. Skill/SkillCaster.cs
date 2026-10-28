@@ -1,5 +1,6 @@
 using Study.Utilities;
 using TeamOdd.Combat;
+using TeamOdd.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,7 @@ namespace TeamOdd.Superpower
 
         private AugmentationChipInventory inventory;
         private CombatEntity owner;
+        private PlayerController playerController;
 
         [Header("Psycho Slam Override")]
         [Tooltip("이 플레이어의 내려찍기에 씬 전용 피해·무력화 값을 사용한다.")]
@@ -46,6 +48,7 @@ namespace TeamOdd.Superpower
         {
             inventory = GetComponent<AugmentationChipInventory>();
             owner = GetComponent<CombatEntity>();
+            playerController = GetComponent<PlayerController>();
         }
 
         private void Update()
@@ -65,6 +68,10 @@ namespace TeamOdd.Superpower
         private void Use(int slot)
         {
             if (owner != null && owner.IsDead)
+                return;
+
+            // 피격 중이거나 다른 스킬(염동 내려찍기 등)을 시전하는 동안은 쓰지 않는다.
+            if (playerController != null && (playerController.isHit || playerController.IsActionLocked))
                 return;
 
             OwnedChip chip = inventory.SkillSlots[slot];

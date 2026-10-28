@@ -1,5 +1,6 @@
 using System.Collections;
 using TeamOdd.Boss;
+using TeamOdd.CameraMove;
 using TeamOdd.Combat;
 using TeamOdd.Player;
 using TeamOdd.TimeControl;
@@ -12,6 +13,7 @@ namespace TeamOdd.Superpower
     // - 대상: 플레이어에서 Range m 안, 조준 방향에서 좌우 Angle도 안에 있는 가장 가까운 보스. 없으면 쓰지 않고 쿨타임도 돌지 않는다
     // - 진행: Duration초 동안 보스를 멈춘 채 Height m까지 들어 올리고, 마지막 slamTime초에 원래 바닥으로 내려찍은 뒤 정지를 푼다
     // - 그동안 플레이어는 염동력 홀딩 자세로 보스 몸통 쪽에 팔을 뻗어, 보스를 따라 팔이 올라갔다 내려찍힌다
+    // - 그동안 플레이어의 이동·구르기·염동력·다른 스킬이 막히고, 카메라는 홀딩 줌인 거리 그대로 보스를 화면 중앙에 두는 시점으로 고정된다. 내려찍을 때 연출은 보스 피격 연출(BossHitFeedback)이 맡음
     public class PsychoSlamSkill : SuperpowerSkill
     {
         private const float SlamTime = 0.15f;          // 내려찍는 데 걸리는 시간 (초)
@@ -89,14 +91,21 @@ namespace TeamOdd.Superpower
         }
 
         // 보스는 멈춰서 kinematic이므로 물리 스텝마다 MovePosition으로 옮긴다
-        // 보스가 중간에 사라져도 플레이어 홀딩 자세는 풀리도록 finally에서 정리
+        // 시전하는 동안 플레이어는 다른 행동이 막히고 카메라는 보스 몸통을 바라보는 고정 시점이 됨
+        // 보스가 중간에 사라져도 플레이어 홀딩 자세와 행동 잠금은 풀리도록 finally에서 정리
         private IEnumerator Slam(BossMonster boss, CombatEntity owner, PlayerController holder)
         {
             TimeFreezable clock = boss.Clock;
             Rigidbody body = boss.Body;
             Transform holdPoint = CreateHoldPoint(body);
+            CameraController view = holder != null && holder.TryGetComponent(out Player.Player player) ? player.CameraController : null;
             clock.Freeze();
-            if (holder != null) holder.BeginExternalHold(holdPoint);
+            if (holder != null)
+            {
+                holder.BeginExternalHold(holdPoint);
+                holder.SetActionLocked(true);
+            }
+            if (view != null) view.BeginFocus(holdPoint);
 
             try
             {
@@ -109,7 +118,12 @@ namespace TeamOdd.Superpower
             }
             finally
             {
-                if (holder != null) holder.EndExternalHold(holdPoint);
+                if (holder != null)
+                {
+                    holder.EndExternalHold(holdPoint);
+                    holder.SetActionLocked(false);
+                }
+                if (view != null) view.EndFocus(holdPoint);
                 if (holdPoint != null) Object.Destroy(holdPoint.gameObject);
             }
         }
