@@ -42,6 +42,7 @@ namespace TeamOdd.Mission
             bossImage.sprite = missionDef.BossSprite;
             missionDescription.SetText($"{missionDef.MissionDescription} \n Reward : {missionDef.Reward}");
             stageSceneName = missionDef.NextStageName;
+            Debug.Log(stageSceneName);
         }
 
         public void MoveToNextStage()
