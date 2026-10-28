@@ -3383,8 +3383,12 @@ MonoBehaviour:
   body: {fileID: 6146927584407496567}
   blockMask:
     serializedVersion: 2
-    m_Bits: 136
+    m_Bits: 8
   castRadius: 1.2
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 128
+  wallRadius: 5
   castHeight: 0.5
 --- !u!114 &7391046285517320164
 MonoBehaviour:

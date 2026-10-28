@@ -54520,6 +54520,10 @@ PrefabInstance:
       propertyPath: chargePush.angleOffset
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4721780714661062354, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: wallRadius
+      value: 4.8
+      objectReference: {fileID: 0}
     - target: {fileID: 4787703938259214962, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
       value: 2
@@ -54722,7 +54726,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: waves.Array.data[0].reaction
@@ -68946,6 +68950,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -111.893845
       objectReference: {fileID: 0}
+    - target: {fileID: 1526546028186094052, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526546028186094052, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].push.direction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1633509194278741931, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -15.429265
@@ -69218,6 +69230,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 9.73212
       objectReference: {fileID: 0}
+    - target: {fileID: 4521623819942262813, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: wallRadius
+      value: 4.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4613534212967812257, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0.0000009699949
@@ -69369,6 +69385,14 @@ PrefabInstance:
     - target: {fileID: 5471695479009158482, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -115.24833
+      objectReference: {fileID: 0}
+    - target: {fileID: 5502451583672451264, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].reaction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5502451583672451264, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: hits.Array.data[0].push.direction
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5720140332535686106, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
