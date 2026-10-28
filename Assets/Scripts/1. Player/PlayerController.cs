@@ -102,6 +102,7 @@ namespace TeamOdd.Player
         private bool isRestoringFacing;
         private float bodyTargetYaw;
         private float restoreTargetYaw;
+        private float minimapYawOffset;
         private float ikBlend;
         private float throwPrepareBlend; // 0: 팔을 뻗은 홀딩 자세, 1: 던지기 준비 자세
         private Vector3 lastHandTarget;
@@ -127,6 +128,7 @@ namespace TeamOdd.Player
 
         // 물체를 들고 있거나 스킬이 붙잡을 대상을 지정해 홀딩 자세인지 (카메라 줌인 등에 사용)
         public bool HasHoldTarget => HoldTarget != null;
+        public float MinimapFacingYaw => transform.eulerAngles.y - minimapYawOffset;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
@@ -389,6 +391,8 @@ namespace TeamOdd.Player
                 ikBlend = Mathf.Lerp(ikBlend, 0f, t);
                 throwPrepareBlend = 0f;
                 RestoreFacing(t);
+                minimapYawOffset = Mathf.LerpAngle(minimapYawOffset, 0f, t);
+                if (Mathf.Abs(minimapYawOffset) < 0.01f) minimapYawOffset = 0f;
                 return;
             }
 
@@ -404,7 +408,11 @@ namespace TeamOdd.Player
             if (armYaw < 0f) bodyTargetYaw = aimYaw + holdBodyLeadAngle;
             else if (armYaw > armYawRange) bodyTargetYaw = aimYaw + holdBodyLeadAngle - armYawRange;
 
-            SetBodyYaw(Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t));
+            // 표시 방향은 같은 속도로 조준을 따라가고, 홀딩 자세 때문에 더 돌아간 몸 각도만 제외한다.
+            float minimapYaw = Mathf.LerpAngle(MinimapFacingYaw, aimYaw, t);
+            float bodyYaw = Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t);
+            SetBodyYaw(bodyYaw);
+            minimapYawOffset = Mathf.DeltaAngle(minimapYaw, bodyYaw);
 
             // 공격은 한 번 누르자마자 팔이 올라와야 하므로 더 빠르게 블렌드
             if (HoldTarget != null) ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
