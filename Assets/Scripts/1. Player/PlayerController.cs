@@ -17,6 +17,7 @@ namespace TeamOdd.Player
         private static readonly int Rolling = Animator.StringToHash("Rolling");
         private static readonly int Hit = Animator.StringToHash("Hit");
         private static readonly int HitMotion = Animator.StringToHash("HitMotion");
+        private static readonly int HitDir = Animator.StringToHash("HitDir");
         private static readonly int WakeUp = Animator.StringToHash("WakeUp");
         private static readonly int Dead = Animator.StringToHash("Dead");
 
@@ -109,9 +110,11 @@ namespace TeamOdd.Player
         public float InvincibleTime; 
         // 피격 모션 끝 신호(EndHit)가 상태 전환 등으로 오지 않아도 행동 불가로 묶이지 않도록 기다리는 최대 시간(초)
         [SerializeField, Min(0.1f)] private float maxHitAnimationWait = 3f;
-        public bool isHit;
+        public bool IsHit;
         public bool CanWakeUp;
         private bool hitAnimationEnded;
+
+        private bool isDead = false;
 
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
@@ -165,6 +168,7 @@ namespace TeamOdd.Player
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
         public bool IsInvincible { get; private set; }
+        public bool IsDead => isDead;
         // 염동 내려찍기처럼 시전 중 이동·구르기·공격·다른 스킬과 카메라 회전을 막는 동안
         public bool IsActionLocked { get; private set; }
 
@@ -216,7 +220,7 @@ namespace TeamOdd.Player
         {
             earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - Time.deltaTime);
             
-            if (isHit) return;
+            if (IsHit) return;
 
             UpdatePushSpeedRatio();
             UpdateHoldFacing();
@@ -254,7 +258,6 @@ namespace TeamOdd.Player
             moveZ = SmoothAxis(moveZ, inputRaw.y);
 
             if (moveReference == null) moveReference = Camera.main.transform;
-            if (moveReference == null) moveReference = Player.Instance.CameraController.transform;
 
             Transform reference = moveReference;
 
@@ -321,6 +324,12 @@ namespace TeamOdd.Player
             animator.SetBool(Run, isRun);
         }
 
+        public void DeathAnimation()
+        {
+            animator.SetTrigger(Dead);
+            isDead = true;
+        }
+        
         private void OnAnimatorIK(int layerIndex)
         {
             UpdateHoldArmIK();
@@ -339,7 +348,7 @@ namespace TeamOdd.Player
 
         private void CheckRollInput()
         {
-            if (IsActionLocked || SimpleInput.GetKeyDown(Key.G) == false) return;
+            if (IsActionLocked || IsHit || SimpleInput.GetKeyDown(Key.Space) == false) return;
 
             OnRollRequested?.Invoke();
         }
@@ -707,7 +716,7 @@ namespace TeamOdd.Player
         // 기본 공격은 같은 팔 IK로 조준 방향을 향해 당겼다가 뻗음
         private void UpdateHoldArmIK()
         {
-            if (isHit)
+            if (IsHit)
             {
                 animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0f);
                 animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0f);
@@ -867,7 +876,7 @@ namespace TeamOdd.Player
         // 피격 반응 중 다시 맞으면 피해만 받고 반응은 새로 시작하지 않음
         public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
-            if (reaction == HitReaction.None || isHit) return;
+            if (reaction == HitReaction.None || IsHit) return;
 
             StopAttackMotion();
 
@@ -882,7 +891,7 @@ namespace TeamOdd.Player
             bool hasFinishedReaction = false;
             try
             {
-                isHit = true;
+                IsHit = true;
                 savedHitStepOffset = controller.stepOffset;
                 hasHitStepOffset = true;
                 controller.stepOffset = 0f;
@@ -914,6 +923,15 @@ namespace TeamOdd.Player
                     motionIndex = push.HasMovement ? 2 : 0;
                 }
 
+                Vector3 toAttacker = attackerPosition - transform.position;
+                toAttacker.y = 0f;
+
+                float hitDir = Vector3.Dot(toAttacker, transform.forward) >= 0f ? 0f : 1f;
+
+                if (toAttacker.sqrMagnitude < 0.0001f) hitDir = 0f;
+
+                animator.SetFloat(HitDir, hitDir);
+
                 // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
                 animator.SetInteger(HitMotion, motionIndex);
                 animator.SetTrigger(Hit);
@@ -938,11 +956,6 @@ namespace TeamOdd.Player
 
                 if (reaction == HitReaction.Knockdown)
                 {
-                    Vector3 toAttacker = attackerPosition - transform.position;
-                    toAttacker.y = 0f;
-                    if (toAttacker.sqrMagnitude > 0.0001f)
-                        transform.rotation = Quaternion.LookRotation(toAttacker);
-
                     float elapsed = 0f;
                     while (elapsed < WakeUpTime)
                     {
@@ -1005,7 +1018,7 @@ namespace TeamOdd.Player
 
         private void FinishHitReaction()
         {
-            isHit = false;
+            IsHit = false;
             if (hasHitStepOffset == false) return;
             if (controller != null) controller.stepOffset = savedHitStepOffset;
             hasHitStepOffset = false;

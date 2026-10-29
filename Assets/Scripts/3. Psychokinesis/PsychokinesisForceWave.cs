@@ -126,7 +126,7 @@ namespace TeamOdd.Psychokinesis
         // 애니메이션·IK가 끝난 손 위치에서 쏘도록 LateUpdate에서 처리
         private void LateUpdate()
         {
-            if (playerController != null && playerController.isHit) CancelPendingLaunches();
+            if (playerController != null && playerController.IsHit) CancelPendingLaunches();
 
             while (pendingLaunches.Count > 0 && Time.time >= pendingLaunches[0])
             {
@@ -145,7 +145,7 @@ namespace TeamOdd.Psychokinesis
         // 손을 당겼다 뻗는 동작을 시작하고, 손이 앞으로 나가는 순간에 염동탄을 쏜다.
         public void Fire()
         {
-            if (playerController != null && (playerController.isHit || playerController.IsActionLocked)) return;
+            if (playerController != null && (playerController.IsHit || playerController.IsActionLocked)) return;
 
             float releaseDelay = playerController != null ? playerController.PlayAttackMotion() : 0f;
             pendingLaunches.Add(Time.time + releaseDelay);
