@@ -1439,6 +1439,10 @@ MonoBehaviour:
   finishDebrisUpSpread: 0.65
   finishDebrisDownSpread: 0.45
   finishImpactRollRange: 8
+  finishCenterBias: 1
+  finishAxisBias: 0.75
+  finishRayDensity: 0.2
+  finishCoreSize: 0.16
   impactMaterial: {fileID: 2100000, guid: a3289664271548d28330e282e8fea8a4, type: 2}
   impactSize: 3
   impactDuration: 0.3
@@ -1696,8 +1700,7 @@ MonoBehaviour:
   opacity: 0.45
   duration: 1.8
   fadeInDuration: 0.2
-  riseHeight: 0.9
-  endScale: 0.97
+  holdDuration: 0.6
   dissolveStart: 0.35
   wipeStart: 0.25
   wipeSoftness: 0.6

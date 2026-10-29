@@ -9,7 +9,7 @@ namespace TeamOdd.Boss
     // - 마무리 일격: 히트스탑 뒤 월드 전체를 크게 느리게 했다가(SlowMotion) 서서히 원래 속도로 되돌리고, 윤곽 번쩍임·카메라 흔들림을 더함
     //   카메라 FOV도 순간 좁혔다가 슬로모션이 풀리는 동안 함께 되돌림(줌 펀치), 맞은 자리의 큰 충격·입자는 BossHitFeedback이 맡음
     // - 쓰러짐: 땅에 닿는 클립 위치를 지나면 그로기보다 많은 흙먼지와 큰 흔들림, 몸에서 염동 빛 입자(BossDeathResidue)가 피어오르고 카메라가 천천히 물러남
-    //   잠시 뒤 같은 모습의 홀로그램 막(BossDeathShed)이 허물처럼 떠올라 흩어짐
+    //   잠시 뒤 같은 모습의 홀로그램(BossDeathShed)으로 바뀌어 제자리에서 흩어짐
     // - 누움: 다 쓰러진 자세로 멈추고 상태머신은 더 진행하지 않음
     // 클립 구간은 보스마다 다르므로 인스펙터 값으로 맞춘다. 사망한 보스는 CombatEntity가 바로 지우지 않도록 막는다.
     public class BossDeathState : BossStateBase
@@ -55,7 +55,7 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float impactShakeFadeTime = 1f;
 
         [Title("Aftermath")]
-        [Tooltip("땅에 닿은 뒤 홀로그램 막이 벗겨지기 시작할 때까지의 시간(초), 흙먼지가 먼저 퍼지도록")]
+        [Tooltip("땅에 닿은 뒤 홀로그램으로 바뀌기 시작할 때까지의 시간(초), 흙먼지가 먼저 퍼지도록")]
         [SerializeField, Min(0f)] private float shedDelay = 0.35f;
         [Tooltip("땅에 닿은 뒤 카메라가 더 물러나는 거리(m), 0이면 물러나지 않는다.")]
         [SerializeField, Min(0f)] private float pullBackDistance = 1.5f;
@@ -82,7 +82,7 @@ namespace TeamOdd.Boss
             entity = root.GetComponent<CombatEntity>();
             footDust = root.GetComponent<BossFootDust>();
             residue = root.GetComponent<BossDeathResidue>(); // 없으면 빛 입자 없이 쓰러짐
-            shed = root.GetComponent<BossDeathShed>(); // 없으면 홀로그램 막 없이 쓰러짐
+            shed = root.GetComponent<BossDeathShed>(); // 없으면 홀로그램 없이 쓰러진 채로 남음
             flash = HitFlash.GetOrAdd(root.gameObject);
 
             // 상태는 꺼진 채로 기다리므로 Initialize에서 구독

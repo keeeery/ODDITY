@@ -31,13 +31,14 @@ Material:
   - _GLITCHDEBUG_ON
   - _SOFTINTERSECTIONFEATURE_COLOR
   - _SOFTINTERSECTION_COLOR
-  - _ZWRITE_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - DepthOnly
+  - DepthNormals
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -235,7 +236,7 @@ Material:
     - _VoxelizationAffect: 1
     - _VoxelizationAffect1: 1
     - _VoxelizationFeature: 0
-    - _ZWrite: 1
+    - _ZWrite: 0
     - __dirty: 1
     m_Colors:
     - _Color: {r: 0.620945, g: 1.420074, b: 3.953349, a: 0.05098039}

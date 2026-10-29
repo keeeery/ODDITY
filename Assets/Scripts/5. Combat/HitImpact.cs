@@ -9,6 +9,9 @@ namespace TeamOdd.Combat
     {
         private static readonly int ProgressId = Shader.PropertyToID("_Progress");
         private static readonly int SeedId = Shader.PropertyToID("_Seed");
+        private static readonly int AxisBiasId = Shader.PropertyToID("_AxisBias");
+        private static readonly int RayDensityId = Shader.PropertyToID("_RayDensity");
+        private static readonly int CoreSizeId = Shader.PropertyToID("_CoreSize");
 
         private MeshRenderer meshRenderer;
         private MaterialPropertyBlock properties;
@@ -124,6 +127,14 @@ namespace TeamOdd.Combat
             this.aspect = Mathf.Max(aspect, 0.1f);
             debrisUpSpread = Mathf.Clamp01(upSpread);
             debrisDownSpread = Mathf.Clamp01(downSpread);
+        }
+
+        // 이 충격만 머티리얼 값을 바꿈, axisBias: 가로 줄기만 길게 하는 정도, rayDensity: 줄기 수, coreSize: 가운데 둥근 섬광 크기
+        public void SetLook(float axisBias, float rayDensity, float coreSize)
+        {
+            properties.SetFloat(AxisBiasId, axisBias);
+            properties.SetFloat(RayDensityId, rayDensity);
+            properties.SetFloat(CoreSizeId, coreSize);
         }
 
         // false면 히트스톱 동안 멈춰 있다가 슬로모션 배율대로 느리게 퍼짐(마무리 일격)

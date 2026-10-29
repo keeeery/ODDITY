@@ -13,6 +13,9 @@ namespace TeamOdd.Combat
 
         private Coroutine routine;
 
+        // 지금 슬로모션 배율, 슬로모션 중이 아니면 1. 시간으로 움직이지 않는 것(마우스 시점 회전 등)을 함께 느리게 할 때 씀
+        public static float Scale { get; private set; } = 1f;
+
         public static void Play(float scale, float hold, float recover)
         {
             if (instance == null)
@@ -47,6 +50,7 @@ namespace TeamOdd.Combat
 
         private static void Apply(float scale)
         {
+            Scale = scale;
             HitStop.BaseTimeScale = scale;
             Time.fixedDeltaTime = defaultFixedDeltaTime * scale;
         }
@@ -60,7 +64,11 @@ namespace TeamOdd.Combat
 
         // 도메인 리로드 없이 플레이할 때를 위한 초기화
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => defaultFixedDeltaTime = -1f;
+        private static void ResetStatics()
+        {
+            defaultFixedDeltaTime = -1f;
+            Scale = 1f;
+        }
 
         private void OnDisable()
         {

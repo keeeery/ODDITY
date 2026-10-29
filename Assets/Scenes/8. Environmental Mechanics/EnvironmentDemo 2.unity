@@ -54171,9 +54171,21 @@ PrefabInstance:
       propertyPath: <Target>k__BackingField
       value: 
       objectReference: {fileID: 2205336347470601070}
+    - target: {fileID: 5585251523130210030, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: holdDuration
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5585251523130210030, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: dissolveStart
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_Name
       value: Perderos
+      objectReference: {fileID: 0}
+    - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -68252,6 +68264,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SK_Charcharosaurus
       objectReference: {fileID: 0}
+    - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3996771544257051573, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: fragmentSpawner
       value: 
@@ -68260,6 +68276,14 @@ PrefabInstance:
       propertyPath: fragmentSpawner
       value: 
       objectReference: {fileID: 1433546535}
+    - target: {fileID: 5041538878998490745, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: holdDuration
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041538878998490745, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: dissolveStart
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 6366305689365515654, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.42930126

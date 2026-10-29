@@ -58,6 +58,14 @@ namespace TeamOdd.Boss
         [SerializeField, Range(0f, 1f)] private float finishDebrisDownSpread = 0.45f;
         [Tooltip("마무리 일격 충격을 화면 가로에서 무작위로 기울이는 최대 각도(도), 작을수록 늘 가로로 눕는다.")]
         [SerializeField, Range(0f, 180f)] private float finishImpactRollRange = 8f;
+        [Tooltip("마무리 일격이 터질 자리, 0: 맞은 자리, 1: 카메라에서 몸 중심을 바라봤을 때 보이는 몸 표면. 사이 값은 둘을 섞은 곳을 바라본다.")]
+        [SerializeField, Range(0f, 1f)] private float finishCenterBias = 1f;
+        [Tooltip("마무리 일격에서 가로 줄기만 길고 세로 줄기는 짧게 하는 정도(0~1), 클수록 사방으로 뻗는 해 모양에서 멀어진다. 머티리얼의 Slash Axis Bias 대신 쓴다.")]
+        [SerializeField, Range(0f, 1f)] private float finishAxisBias = 0.75f;
+        [Tooltip("마무리 일격의 빛줄기 수(0~1), 머티리얼의 Ray Density 대신 쓴다.")]
+        [SerializeField, Range(0f, 1f)] private float finishRayDensity = 0.2f;
+        [Tooltip("마무리 일격 가운데 둥근 섬광 크기, 머티리얼의 Core Size 대신 쓴다.")]
+        [SerializeField, Range(0f, 0.5f)] private float finishCoreSize = 0.16f;
 
         [Title("Impact")]
         [Tooltip("TeamOdd/Hit Impact 셰이더 머티리얼, 빛줄기 굵기·베기 섬광 세기·타원 정도·몸에 가려지는 정도는 머티리얼에서 조정한다.")]
@@ -151,7 +159,7 @@ namespace TeamOdd.Boss
 
             if (self is CombatEntity { IsDead: true })
             {
-                PlayFinishImpact(SnapToBody(damageEvent.Info.HitPoint));
+                PlayFinishImpact(GetFinishPoint(damageEvent.Info.HitPoint));
                 return;
             }
 
@@ -210,6 +218,7 @@ namespace TeamOdd.Boss
                 finishImpact = HitImpact.Create(impactMaterial, $"{name} Finish Impact");
                 finishImpact.SetUnscaledTime(false);
                 finishImpact.SetShape(finishImpactAspect, finishDebrisUpSpread, finishDebrisDownSpread);
+                finishImpact.SetLook(finishAxisBias, finishRayDensity, finishCoreSize);
                 finishImpact.SetLight(impactLightColor, impactLightIntensity * 1.5f, impactLightRange * 1.5f);
                 finishImpact.SetDebris(debrisMaterial, Mathf.RoundToInt(debrisCount * finishDebrisCountMultiplier),
                     debrisSpeed * finishDebrisSpeedMultiplier, debrisLifetime * finishDebrisLifetimeMultiplier,
@@ -232,6 +241,51 @@ namespace TeamOdd.Boss
                 result[index].SetDebris(debrisMaterial, count, speed, debrisLifetime, debrisSize, size * debrisSpawnRadius, debrisTipColor);
             }
             return result;
+        }
+
+        // 카메라에서 몸 중심(맞은 자리와 섞은 곳)을 바라봤을 때 처음 닿는 몸 표면, 늘 몸통 한가운데의 보이는 쪽에서 터지도록
+        // 시선이 몸에 닿지 않으면 그 자리에서 가장 가까운 표면
+        private Vector3 GetFinishPoint(Vector3 hitPoint)
+        {
+            if (bodyParts.Length == 0 || TryGetBodyCenter(out Vector3 center) == false) return SnapToBody(hitPoint);
+
+            Vector3 target = Vector3.Lerp(hitPoint, center, finishCenterBias);
+            Camera camera = Camera.main;
+            if (camera == null) return SnapToBody(target);
+
+            Vector3 origin = camera.transform.position;
+            Vector3 toTarget = target - origin;
+            float targetDistance = toTarget.magnitude;
+            if (targetDistance <= 0.001f) return SnapToBody(target);
+
+            var ray = new Ray(origin, toTarget / targetDistance);
+            float bestDistance = float.MaxValue;
+            foreach (Collider part in bodyParts)
+            {
+                if (part == null || part.enabled == false || part.gameObject.activeInHierarchy == false) continue;
+                if (part.Raycast(ray, out RaycastHit hit, targetDistance + surfaceSnapDistance) && hit.distance < bestDistance)
+                    bestDistance = hit.distance;
+            }
+
+            return bestDistance < float.MaxValue ? ray.GetPoint(bestDistance) : SnapToBody(target);
+        }
+
+        // 켜진 부위 콜라이더를 모두 감싸는 바운드의 중심
+        private bool TryGetBodyCenter(out Vector3 center)
+        {
+            Bounds bounds = default;
+            bool hasBounds = false;
+            foreach (Collider part in bodyParts)
+            {
+                if (part == null || part.enabled == false || part.gameObject.activeInHierarchy == false) continue;
+
+                if (hasBounds) bounds.Encapsulate(part.bounds);
+                else bounds = part.bounds;
+                hasBounds = true;
+            }
+
+            center = bounds.center;
+            return hasBounds;
         }
 
         // 시선이 맞은 지점 근처에서 몸에 닿으면 그 자리, 아니면 가장 가까운 부위 표면

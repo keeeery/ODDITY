@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace TeamOdd.Boss
 {
-    // 쓰러진 보스에서 같은 모습의 홀로그램 막이 허물처럼 벗겨져 살짝 떠오르다 흩어지는 사망 연출.
-    // 부를 때 SkinnedMeshRenderer들의 지금 자세를 메시로 구워 홀로그램 머티리얼(Knife/Hologram Shader Unlit)로 그리고,
-    // 나타남(Alpha) → 떠오르며 아주 살짝 줄어듦 → 노이즈로 녹아 사라짐(Dissolve Hide)과 함께 아래에서 위로 지워짐 순서로 진행한 뒤 구운 메시까지 지운다.
+    // 쓰러진 보스가 같은 모습의 홀로그램으로 바뀌어 제자리에서 흩어지는 사망 연출.
+    // 부를 때 SkinnedMeshRenderer들의 지금 자세를 메시로 구워 홀로그램 머티리얼(Knife/Hologram Shader Unlit)로 같은 자리에 그리고,
+    // 나타남(Alpha) → 다 나타나면 원본 메시를 끄고 몸 충돌도 없앰 → 노이즈로 녹아 사라짐(Dissolve Hide)과 함께 아래에서 위로 지워짐 순서로 진행한 뒤 구운 메시까지 지운다.
     // 아래에서 위로 지우는 건 셰이더의 상자 마스크(Mask Feature)로, 지울 높이 아래를 모두 덮는 큰 상자를 올리며 그 위 경계만 부드럽게 남긴다.
     // 게임 시간을 따르므로 슬로모션 중에는 함께 느려진다.
     [DisallowMultipleComponent]
@@ -30,14 +30,12 @@ namespace TeamOdd.Boss
         [SerializeField, Range(0f, 1f)] private float opacity = 0.45f;
 
         [Title("Motion")]
-        [Tooltip("시작부터 다 사라질 때까지의 시간(초)")]
+        [Tooltip("사라지는 과정(녹음·지워짐)이 진행되는 시간(초), 머무는 시간 뒤부터 잰다.")]
         [SerializeField, Min(0.1f)] private float duration = 1.8f;
-        [Tooltip("나타나는 데 걸리는 시간(초), 몸과 겹친 채 갑자기 튀어나오지 않도록")]
+        [Tooltip("나타나는 데 걸리는 시간(초), 다 나타나면 원본 메시를 끈다.")]
         [SerializeField, Min(0f)] private float fadeInDuration = 0.2f;
-        [Tooltip("떠오르는 높이(m)")]
-        [SerializeField, Min(0f)] private float riseHeight = 1.1f;
-        [Tooltip("다 떠올랐을 때의 크기 배율, 1보다 작으면 몸 중심 기준으로 줄어든다.")]
-        [SerializeField, Range(0.5f, 1.5f)] private float endScale = 0.97f;
+        [Tooltip("다 나타난 모습 그대로 머무는 시간(초), 쓰러질 때의 흙먼지가 걷힌 뒤에 사라지기 시작하도록")]
+        [SerializeField, Min(0f)] private float holdDuration = 0.6f;
         [Tooltip("녹아 사라지기 시작하는 진행도(0~1)")]
         [SerializeField, Range(0f, 1f)] private float dissolveStart = 0.35f;
 
@@ -51,9 +49,9 @@ namespace TeamOdd.Boss
         private readonly List<MeshRenderer> shellRenderers = new();
         private MaterialPropertyBlock properties;
         private Transform shell;
-        private Vector3 startPosition;
-        private float halfHeight; // 구운 막의 절반 높이(m), 크기를 바꾸기 전 기준
+        private float halfHeight; // 구운 막의 절반 높이(m)
         private float elapsed;
+        private bool hasHiddenSource;
 
         private void Awake()
         {
@@ -70,7 +68,7 @@ namespace TeamOdd.Boss
             if (shell == null) return;
 
             elapsed += Time.deltaTime;
-            float progress = Mathf.Clamp01(elapsed / duration);
+            float progress = Mathf.Clamp01((elapsed - holdDuration) / duration);
 
             if (progress >= 1f)
             {
@@ -78,22 +76,18 @@ namespace TeamOdd.Boss
                 return;
             }
 
-            // 처음엔 몸에서 떨어지듯 빨리, 끝으로 갈수록 느리게 떠오름
-            float eased = 1f - (1f - progress) * (1f - progress);
-            shell.position = startPosition + Vector3.up * (riseHeight * eased);
-            shell.localScale = Vector3.one * Mathf.Lerp(1f, endScale, eased);
+            if (hasHiddenSource == false && elapsed >= fadeInDuration) HideSource();
 
             float alpha = opacity * (fadeInDuration > 0f ? Mathf.Clamp01(elapsed / fadeInDuration) : 1f);
             float dissolve = Mathf.InverseLerp(dissolveStart, 1f, progress);
             Apply(alpha, Mathf.Lerp(-1f, 1f, dissolve), GetWipeHeight(progress));
         }
 
-        // 막의 지금 바닥 아래(다 보임)에서 꼭대기(다 지워짐)까지, 끝으로 갈수록 빨라지게 올림
+        // 막의 바닥 아래(다 보임)에서 꼭대기(다 지워짐)까지, 끝으로 갈수록 빨라지게 올림
         private float GetWipeHeight(float progress)
         {
-            float extent = halfHeight * shell.localScale.y;
-            float bottom = shell.position.y - extent - wipeSoftness;
-            float top = shell.position.y + extent;
+            float bottom = shell.position.y - halfHeight - wipeSoftness;
+            float top = shell.position.y + halfHeight;
 
             float wipe = Mathf.InverseLerp(wipeStart, 1f, progress);
             return Mathf.Lerp(bottom, top, wipe * wipe);
@@ -110,12 +104,13 @@ namespace TeamOdd.Boss
             if (Bake() == false) return;
 
             elapsed = 0f;
+            hasHiddenSource = false;
             Apply(0f, -1f, GetWipeHeight(0f));
         }
 
         #endregion
 
-        // 지금 자세를 구워 몸 중심에 둔 부모 아래에 놓음, 부모 크기를 바꾸면 몸 중심 기준으로 커지거나 줄어듦
+        // 지금 자세를 구워 몸 중심에 둔 부모 아래 같은 자리에 놓음
         private bool Bake()
         {
             Bounds bounds = default;
@@ -134,9 +129,8 @@ namespace TeamOdd.Boss
             if (hasBounds == false) return false;
 
             shell = new GameObject($"{name} Death Shed").transform;
-            startPosition = bounds.center;
             halfHeight = bounds.extents.y;
-            shell.position = startPosition;
+            shell.position = bounds.center;
 
             foreach (SkinnedMeshRenderer source in meshes)
             {
@@ -164,6 +158,43 @@ namespace TeamOdd.Boss
             }
 
             return true;
+        }
+
+        // 홀로그램이 다 나타난 뒤 원본을 꺼 보스가 홀로그램으로 바뀐 것처럼 보이게 함, 쓰러진 보스는 다시 보이지 않음
+        private void HideSource()
+        {
+            hasHiddenSource = true;
+            foreach (SkinnedMeshRenderer source in meshes)
+                if (source != null) source.enabled = false;
+
+            DisableBodyCollision();
+        }
+
+        // 보이지 않는 몸에 플레이어가 막히거나 밀려나지 않도록 몸 콜라이더를 트리거로 바꿈
+        // 끄지 않고 트리거로 두는 건 사망 잔재(BossDeathResidue)가 부위 표면에서 계속 입자를 뿜어야 해서
+        // 바닥에 받쳐 줄 콜라이더가 없어지므로 몸체는 먼저 kinematic으로 고정, 오목한 MeshCollider는 트리거가 될 수 없어 끔
+        private void DisableBodyCollision()
+        {
+            if (TryGetComponent(out Rigidbody body))
+            {
+                if (body.isKinematic == false)
+                {
+                    body.linearVelocity = Vector3.zero;
+                    body.angularVelocity = Vector3.zero;
+                }
+                body.isKinematic = true;
+
+                // 시간이 멈춘 중이면 풀릴 때 원래(kinematic 아님)로 돌아가 바닥을 뚫고 떨어지지 않도록
+                if (TryGetComponent(out TimeControl.TimeFreezable clock)) clock.KeepKinematicAfterUnfreeze(body);
+            }
+
+            foreach (Collider part in GetComponentsInChildren<Collider>(true))
+            {
+                if (part.isTrigger) continue;
+
+                if (part is MeshCollider { convex: false }) part.enabled = false;
+                else part.isTrigger = true;
+            }
         }
 
         // wipeHeight 아래는 지워지고, 그 위 wipeSoftness 폭에 걸쳐 다시 보임
