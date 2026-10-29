@@ -80,5 +80,6 @@ namespace TeamOdd.Boss
         public static readonly int RISE_SPIN_SMASH = Animator.StringToHash("riseSpinSmash");
         public static readonly int PHASE_SHIFT = Animator.StringToHash("phaseShift");
         public static readonly int DIMENSION_SLASH = Animator.StringToHash("dimensionSlash");
+        public static readonly int CLONE_SUMMON = Animator.StringToHash("cloneSummon");
     }
 }

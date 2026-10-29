@@ -80,6 +80,7 @@ namespace TeamOdd
         [ShowInInspector, ReadOnly] private bool hasUsed;
 
         private HumanoidBossCombatEntity combatEntity;
+        private HumanoidCloneSummon cloneSummon;
         private HumanoidSlashScreen screen;
         private Renderer[] bodyRenderers;
         private readonly List<Renderer> hiddenRenderers = new();
@@ -111,6 +112,7 @@ namespace TeamOdd
         {
             base.Initialize(stateMachine);
             combatEntity = root.GetComponent<HumanoidBossCombatEntity>();
+            cloneSummon = root.GetComponentInChildren<HumanoidCloneSummon>(true);
             bodyRenderers = root.GetComponentsInChildren<Renderer>(true);
         }
 
@@ -122,6 +124,9 @@ namespace TeamOdd
             hasFrozenPose = false;
 
             if (screen == null) screen = HumanoidSlashScreen.Create(screenSortingOrder);
+
+            // 세상이 멈춘 화면에 분신이 멈춘 채 남지 않도록 바로 없앰, 재소환 대기시간은 지금부터 셈
+            if (cloneSummon != null) cloneSummon.DismissClone(true);
 
             Begin();
             StartCoroutine(Run());
