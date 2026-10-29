@@ -136,7 +136,8 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
-            bool rightHeld = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool rightHeld = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right) &&
+                             Player.Player.Instance.PlayerController.IsHit == false;
 
             if (rightHeld == false) releaseRequested = true;
             else if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right))

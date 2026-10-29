@@ -6,6 +6,7 @@ using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace TeamOdd.Player
 {
@@ -109,9 +110,11 @@ namespace TeamOdd.Player
         public float InvincibleTime; 
         // 피격 모션 끝 신호(EndHit)가 상태 전환 등으로 오지 않아도 행동 불가로 묶이지 않도록 기다리는 최대 시간(초)
         [SerializeField, Min(0.1f)] private float maxHitAnimationWait = 3f;
-        public bool isHit;
+        public bool IsHit;
         public bool CanWakeUp;
         private bool hitAnimationEnded;
+
+        private bool isDead = false;
 
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
@@ -162,6 +165,7 @@ namespace TeamOdd.Player
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
         public bool IsInvincible { get; private set; }
+        public bool IsDead => isDead;
 
         // 마지막으로 확인한 Roll 상태 길이(초, 상태 Speed 반영)
         public float RollStateLength { get; private set; } = 1f;
@@ -200,7 +204,7 @@ namespace TeamOdd.Player
         {
             earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - Time.deltaTime);
             
-            if (isHit) return;
+            if (IsHit) return;
 
             UpdatePushSpeedRatio();
             UpdateHoldFacing();
@@ -238,7 +242,6 @@ namespace TeamOdd.Player
             moveZ = SmoothAxis(moveZ, inputRaw.y);
 
             if (moveReference == null) moveReference = Camera.main.transform;
-            if (moveReference == null) moveReference = Player.Instance.CameraController.transform;
 
             Transform reference = moveReference;
 
@@ -294,6 +297,12 @@ namespace TeamOdd.Player
             animator.SetBool(Run, isRun);
         }
 
+        public void DeathAnimation()
+        {
+            animator.SetTrigger(Dead);
+            isDead = true;
+        }
+        
         private void OnAnimatorIK(int layerIndex)
         {
             UpdateHoldArmIK();
@@ -312,7 +321,7 @@ namespace TeamOdd.Player
 
         private void CheckRollInput()
         {
-            if (SimpleInput.GetKeyDown(Key.G) == false) return;
+            if (SimpleInput.GetKeyDown(Key.Space) == false || IsHit) return;
 
             OnRollRequested?.Invoke();
         }
@@ -830,7 +839,7 @@ namespace TeamOdd.Player
         // 피격 반응 중 다시 맞으면 피해만 받고 반응은 새로 시작하지 않음
         public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
-            if (reaction == HitReaction.None || isHit) return;
+            if (reaction == HitReaction.None || IsHit) return;
 
             StopAttackMotion();
 
@@ -842,7 +851,7 @@ namespace TeamOdd.Player
 
         private IEnumerator PlayHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
-            isHit = true;
+            IsHit = true;
             hitAnimationEnded = false;
             // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
             CanWakeUp = false;
@@ -910,7 +919,7 @@ namespace TeamOdd.Player
                 float invincibleEndTime = Time.time + InvincibleTime;
 
                 yield return WaitHitAnimationEnd();
-                isHit = false;
+                IsHit = false;
 
                 float remaining = invincibleEndTime - Time.time;
                 if (remaining > 0f) yield return new WaitForSeconds(remaining);
@@ -920,7 +929,7 @@ namespace TeamOdd.Player
 
             // 밀려나는 이동과 피격 모션이 모두 끝나야 행동 가능
             yield return WaitHitAnimationEnd();
-            isHit = false;
+            IsHit = false;
         }
 
         private IEnumerator WaitHitAnimationEnd()

@@ -93,7 +93,7 @@ namespace TeamOdd.UI
         {
             if (Application.isPlaying == false) return;
 
-            float alpha = hitAlpha;
+            float alpha = Player.Player.Instance.PlayerController.IsDead ? 0f : hitAlpha;
 
             if (healthRatio < lowHealthRatio)
             {
