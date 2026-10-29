@@ -1,7 +1,9 @@
 using TMPro;
 using UnityEngine;
 #if UNITY_EDITOR
+using TeamOdd.Mission;
 using UnityEditor;
+using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -22,6 +24,20 @@ namespace Study.Utilities
         private const string RootName = "Mission UI";
         private static readonly Vector2 ReferenceResolution = new Vector2(3840f, 2160f);
 
+        // Stage Move UI 와 연결할 씬 오브젝트 · 에셋
+        private const string MissionUIName = "Mission UI";
+        private const string QuestListUIName = "Quest List UI";
+        private const string StageMoveRootName = "Stage Move UI";
+        private const string StageMoveNPCName = "Stage Move NPC";
+        private const string QuestRowPrefabPath = "Assets/Prefabs/9. Mission/Quest 1.prefab";
+        private const float StageMoveUIScale = 0.65f;   // 씬의 Mission UI · Quest List UI 와 같은 비율
+
+        // 이동 실패 팝업
+        private const float MoveFailPopupWidth = 1440f;
+        private const float MoveFailPopupHeight = 860f;
+        private const float PopupButtonWidth = 500f;
+        private const float PopupButtonHeight = 150f;
+
         // 상단 바
         private const float TitleBarHeight = 240f;
         private const float TitleDividerHeight = 6f;
@@ -30,7 +46,7 @@ namespace Study.Utilities
 
         // 본문 영역
         private const float ContentPadding = 30f;
-        private const float ChapterListWidth = 1290f;
+        private const float QuestListWidth = 1290f;
         private const float PanelGap = 30f;
         private const float ScrollbarWidth = 66f;
 
@@ -41,11 +57,15 @@ namespace Study.Utilities
         private const float AcceptButtonBottom = 80f;
         private const float AcceptButtonGap = 50f;
 
-        // 미션 목록 (항목 1100 x 500, 간격 130, 위아래 여백 85)
-        private const float QuestEntryHeight = 500f;
-        private const float ListSpacing = 130f;
-        private const int ListPaddingHorizontal = 45;
-        private const int ListPaddingVertical = 85;
+        // 퀘스트 목록 (탭 → 목록 헤더 → 분류별 접이식 목록)
+        private const float QuestTabHeight = 100f;
+        private const float QuestTabWidth = 280f;
+        private const float QuestListHeaderHeight = 120f;
+        private const float CategoryHeaderHeight = 96f;
+        private const float QuestRowHeight = 110f;
+        private const float QuestRowSpacing = 6f;
+        private const float QuestIconSize = 64f;
+        private const int ListPadding = 12;
 
         #region Colors
 
@@ -57,12 +77,15 @@ namespace Study.Utilities
         private static readonly Color AcceptButtonColor = new Color(0.16f, 0.36f, 0.20f, 1f);
         private static readonly Color DetailTitleBarColor = new Color(0.17f, 0.16f, 0.15f, 1f);
         private static readonly Color PanelInner = new Color(0.10f, 0.11f, 0.12f, 1f);
-        private static readonly Color ChapterHeaderColor = new Color(0.55f, 0.12f, 0.07f, 1f);
-        private static readonly Color SubChapterHeaderColor = new Color(0.32f, 0.07f, 0.05f, 1f);
-        private static readonly Color QuestEntryColor = new Color(0.17f, 0.16f, 0.14f, 1f);
-        private static readonly Color QuestEntryBorder = new Color(0.38f, 0.30f, 0.19f, 1f);
-        private static readonly Color QuestMarkColor = new Color(1f, 0.82f, 0.15f, 1f);
-        private static readonly Color CompletedCheckColor = new Color(0.45f, 0.85f, 0.30f, 1f);
+        private static readonly Color QuestListBackground = new Color(0.36f, 0.36f, 0.36f, 1f);
+        private static readonly Color QuestTabNormal = new Color(0.62f, 0.62f, 0.62f, 1f);
+        private static readonly Color QuestTabSelected = new Color(0.96f, 0.62f, 0.16f, 1f);
+        private static readonly Color QuestListHeaderColor = new Color(0.10f, 0.47f, 0.82f, 1f);
+        private static readonly Color QuestListHeaderBorder = new Color(0.75f, 0.88f, 1f, 1f);
+        private static readonly Color CategoryHeaderColor = new Color(0.45f, 0.33f, 0.20f, 1f);
+        private static readonly Color QuestRowColor = new Color(0.68f, 0.56f, 0.38f, 1f);
+        private static readonly Color QuestRowBorder = new Color(0.50f, 0.40f, 0.26f, 1f);
+        private static readonly Color QuestStateIconColor = new Color(0.45f, 0.76f, 0.15f, 1f);
         private static readonly Color MainTextColor = new Color(0.88f, 0.86f, 0.82f, 1f);
         private static readonly Color SubTextColor = new Color(0.62f, 0.60f, 0.56f, 1f);
         private static readonly Color IllustrationPlaceholder = new Color(0.22f, 0.27f, 0.38f, 1f);
@@ -73,16 +96,32 @@ namespace Study.Utilities
 
         #region Sample Data
 
-        // (번호, 퀘스트 제목, 지역)
-        private static readonly (string number, string title, string location)[] QuestEntries =
+        private static readonly string[] QuestTabLabels = { "시작가능", "진행중", "완료" };
+        private const int SelectedQuestTabIndex = 2;
+
+        private const string QuestListTitle = "완료 퀘스트";
+        private const string QuestListCount = "513 개";
+
+        // (퀘스트 묶음 이름, 퀘스트 수)
+        private static readonly (string name, int count)[] JobQuests =
         {
-            ("",  "Attack of the Anderworld ...", "Fortress of the Alliance"),
-            ("",  "Attack of the Anderworld ...", "Fortress of the Alliance"),
-            ("",  "Attack of the Anderworld ...", "Fortress Forge"),
-            ("1", "Sacrilege in Grimmagstone...", "Fortress Forge"),
-            ("2", "Sacrilege in Grimmagstone...", "Ruins of the First Circle"),
-            ("3", "Sacrilege in Grimmagstone...", "Grimmagstone"),
-            ("5", "Allies in Grimford (1/1)", "Grimford"),
+            ("1차 전직", 3),
+            ("2차 전직", 5),
+        };
+
+        private static readonly (string name, int count)[] MainQuests =
+        {
+            ("연합 가입", 7),
+            ("루타비스", 7),
+            ("소멸의 여로", 21),
+            ("리버스 시티", 20),
+            ("츄츄 아일랜드", 26),
+            ("얌얌 아일랜드", 26),
+            ("레헬른", 33),
+            ("신비의 숲 아르카나", 27),
+            ("기억의 늪 모라스", 36),
+            ("태초의 바다 에스페라", 26),
+            ("셀라스", 21),
         };
 
         private const string DetailTitle = "The Sundering";
@@ -113,11 +152,11 @@ namespace Study.Utilities
             Undo.RegisterCreatedObjectUndo(canvas.gameObject, "Build Mission UI");
 
             Transform window = CreateJournalWindow(canvas);
-            CreateTitleBar(window);
+            CreateTitleBar(window, "Journal");
 
             Transform page = CreateMissionPage(window);
-            CreateChapterList(page);
-            CreateDetailPanel(page);
+            CreateQuestList(page);
+            CreateDetailPanel(page, DetailTitle, DetailDescription, "Accept", out _, out _, out _, out _);
 
             EditorSceneManager.MarkSceneDirty(gameObject.scene);
             Debug.Log($"[MissionUIBuilder] '{RootName}' 생성 완료.", canvas);
@@ -167,12 +206,106 @@ namespace Study.Utilities
                     Undo.DestroyObjectImmediate(old.gameObject);
             }
 
-            CreateDescriptionArea(detail, out GameObject scrollView, out GameObject acceptButton);
+            CreateDescriptionArea(detail, DetailDescription, "Accept", out GameObject scrollView, out GameObject acceptButton, out _);
             Undo.RegisterCreatedObjectUndo(scrollView, "Add Description Scroll");
             Undo.RegisterCreatedObjectUndo(acceptButton, "Add Accept Button");
 
             EditorSceneManager.MarkSceneDirty(gameObject.scene);
             Debug.Log("[MissionUIBuilder] 설명 스크롤 · 수락 버튼 추가 완료.", detail);
+        }
+
+        // 수락한 미션을 골라 해당 미션 씬으로 이동하는 창을 만들고,
+        // Quest List UI · Mission UI · Stage Move NPC 와 연결한다. 이미 있으면 지우고 다시 만든다.
+        [ContextMenu("4. Build Stage Move UI")]
+        private void BuildStageMoveUI()
+        {
+            MissionUI missionUI = FindSceneComponent<MissionUI>(MissionUIName);
+            if (missionUI == null)
+            {
+                Debug.LogWarning($"[MissionUIBuilder] MissionUI 가 붙은 '{MissionUIName}' 을(를) 찾을 수 없습니다.", this);
+                return;
+            }
+
+            Transform canvas = missionUI.transform.parent;
+            Transform questListUI = canvas.Find(QuestListUIName);
+            if (questListUI == null)
+            {
+                Debug.LogWarning($"[MissionUIBuilder] '{canvas.name}' 아래에서 '{QuestListUIName}' 을(를) 찾을 수 없습니다.", this);
+                return;
+            }
+
+            MissionListUI missionListUI = ConnectQuestList(questListUI);
+            if (missionListUI == null)
+                return;
+
+            SetReference(missionUI, "missionListUI", missionListUI);
+
+            Transform old = canvas.Find(StageMoveRootName);
+            if (old != null)
+                Undo.DestroyObjectImmediate(old.gameObject);
+
+            GameObject stageMoveUI = CreateStageMoveUI(canvas, missionListUI);
+            Undo.RegisterCreatedObjectUndo(stageMoveUI, "Build Stage Move UI");
+
+            MissionNPC stageMoveNPC = FindSceneComponent<MissionNPC>(StageMoveNPCName);
+            if (stageMoveNPC != null)
+                SetReference(stageMoveNPC, "popupUI", stageMoveUI);
+            else
+                Debug.LogWarning($"[MissionUIBuilder] '{StageMoveNPCName}' 이(가) 없어 popupUI 를 연결하지 못했습니다.", this);
+
+            EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            Debug.Log($"[MissionUIBuilder] '{StageMoveRootName}' 생성 · 연결 완료.", stageMoveUI);
+        }
+
+        // Quest List UI 에 MissionListUI 를 붙이고 목록 · 개수 텍스트 · 행 프리팹을 연결한다.
+        private MissionListUI ConnectQuestList(Transform questListUI)
+        {
+            Transform content = questListUI.Find("QuestScrollView/Viewport/Content");
+            Transform countText = questListUI.Find("QuestListHeader/QuestCountText");
+            GameObject rowPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(QuestRowPrefabPath);
+
+            if (content == null || countText == null || rowPrefab == null)
+            {
+                Debug.LogWarning("[MissionUIBuilder] Quest List UI 연결 실패. " +
+                                 $"Content: {content != null}, QuestCountText: {countText != null}, " +
+                                 $"'{QuestRowPrefabPath}': {rowPrefab != null}", this);
+                return null;
+            }
+
+            if (questListUI.TryGetComponent(out MissionListUI missionListUI) == false)
+                missionListUI = Undo.AddComponent<MissionListUI>(questListUI.gameObject);
+
+            SetReference(missionListUI, "questContent", content);
+            SetReference(missionListUI, "questRowPrefab", rowPrefab);
+            SetReference(missionListUI, "questCountText", countText.GetComponent<TMP_Text>());
+            return missionListUI;
+        }
+
+        // 같은 씬에서 이름이 일치하는 컴포넌트를 찾는다. (비활성 오브젝트 포함)
+        private T FindSceneComponent<T>(string objectName) where T : Component
+        {
+            foreach (T component in Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (component.name == objectName && component.gameObject.scene == gameObject.scene)
+                    return component;
+            }
+
+            return null;
+        }
+
+        // private [SerializeField] 필드에 참조를 넣는다. (Undo 기록됨)
+        private void SetReference(Object target, string propertyName, Object value)
+        {
+            SerializedObject serialized = new SerializedObject(target);
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            if (property == null)
+            {
+                Debug.LogWarning($"[MissionUIBuilder] {target.GetType().Name} 에 '{propertyName}' 필드가 없습니다.", target);
+                return;
+            }
+
+            property.objectReferenceValue = value;
+            serialized.ApplyModifiedProperties();
         }
 
         private GameObject FindRoot()
@@ -229,7 +362,7 @@ namespace Study.Utilities
             return window.transform;
         }
 
-        private void CreateTitleBar(Transform window)
+        private Button CreateTitleBar(Transform window, string titleLabel)
         {
             // 상단 가로 띠: 본문과 구분되도록 남색 + 아래쪽 금색 구분선
             GameObject titleBar = NewPanel("TitleBar", window, Vector2.zero);
@@ -245,15 +378,15 @@ namespace Study.Utilities
                 new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f),
                 Vector2.zero, new Vector2(0f, TitleDividerHeight));
 
-            TMP_Text title = NewText("TitleText", titleBar.transform, "Journal", 96f, TextAlignmentOptions.Center);
+            TMP_Text title = NewText("TitleText", titleBar.transform, titleLabel, 96f, TextAlignmentOptions.Center);
             title.fontStyle = FontStyles.Bold;
             title.color = TitleTextColor;
             Stretch(title.rectTransform, 0f);
 
-            CreateExitButton(titleBar.transform);
+            return CreateExitButton(titleBar.transform);
         }
 
-        private void CreateExitButton(Transform titleBar)
+        private Button CreateExitButton(Transform titleBar)
         {
             // 우측 상단 나가기 버튼
             Button exit = NewButton("ExitButton", titleBar, "Exit", out TMP_Text label);
@@ -266,6 +399,7 @@ namespace Study.Utilities
             label.fontSize = 52f;
             label.fontStyle = FontStyles.Bold;
             label.color = Color.white;
+            return exit;
         }
 
         // 상단 바 아래 영역을 꽉 채움
@@ -283,21 +417,96 @@ namespace Study.Utilities
 
         #endregion
 
-        #region Chapter List (좌측)
+        #region Quest List (좌측)
 
-        private void CreateChapterList(Transform page)
+        private void CreateQuestList(Transform page)
         {
             // 좌측 세로 패널: 왼쪽 가장자리에 붙고 위아래로 늘어난다.
-            GameObject listPanel = NewPanel("ChapterListPanel", page, Vector2.zero);
-            listPanel.GetComponent<Image>().color = PanelInner;
+            GameObject listPanel = NewPanel("QuestListPanel", page, Vector2.zero);
+            listPanel.GetComponent<Image>().color = QuestListBackground;
             AddFrame(listPanel, FrameGold, 4f);
             SetRect(listPanel.GetComponent<RectTransform>(),
                 new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f),
-                Vector2.zero, new Vector2(ChapterListWidth, 0f));
+                Vector2.zero, new Vector2(QuestListWidth, 0f));
 
-            // ScrollRect
-            GameObject scrollView = NewUI("ChapterScrollView", listPanel.transform);
-            Stretch(scrollView.GetComponent<RectTransform>(), 12f);
+            CreateQuestTabBar(listPanel.transform);
+            CreateQuestListHeader(listPanel.transform);
+            Transform content = CreateQuestScrollView(listPanel.transform,
+                ListPadding + QuestTabHeight + QuestListHeaderHeight + 12f, ListPadding);
+
+            // 분류별 목록. 시안처럼 '직업'은 접힌 상태, '메인'은 펼친 상태로 시작한다.
+            GameObject jobItems = CreateQuestCategory("Job", content, "직업", JobQuests, false);
+            CreateQuestCategory("Main", content, "메인", MainQuests, true);
+
+            jobItems.SetActive(false);
+        }
+
+        private void CreateQuestTabBar(Transform listPanel)
+        {
+            // 상단 탭 (시작가능 / 진행중 / 완료)
+            GameObject tabBar = NewUI("QuestTabBar", listPanel);
+            SetRect(tabBar.GetComponent<RectTransform>(),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -ListPadding), new Vector2(-ListPadding * 2f, QuestTabHeight));
+
+            HorizontalLayoutGroup layout = tabBar.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 8f;
+            layout.childAlignment = TextAnchor.LowerLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = true;
+
+            string[] tabNames = { "AvailableTab", "InProgressTab", "CompletedTab" };
+            for (int i = 0; i < QuestTabLabels.Length; i++)
+            {
+                bool selected = i == SelectedQuestTabIndex;
+
+                Button tab = NewButton(tabNames[i], tabBar.transform, QuestTabLabels[i], out TMP_Text label);
+                tab.GetComponent<Image>().color = selected ? QuestTabSelected : QuestTabNormal;
+                tab.gameObject.AddComponent<LayoutElement>().preferredWidth = QuestTabWidth;
+
+                label.fontSize = 52f;
+                label.fontStyle = selected ? FontStyles.Bold : FontStyles.Normal;
+                label.color = Color.white;
+            }
+        }
+
+        private void CreateQuestListHeader(Transform listPanel)
+        {
+            // 탭 아래 파란 띠: 왼쪽 목록 이름, 오른쪽 퀘스트 개수
+            GameObject header = NewPanel("QuestListHeader", listPanel, Vector2.zero);
+            header.GetComponent<Image>().color = QuestListHeaderColor;
+            AddFrame(header, QuestListHeaderBorder, 3f);
+            SetRect(header.GetComponent<RectTransform>(),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -(ListPadding + QuestTabHeight)), new Vector2(-ListPadding * 2f, QuestListHeaderHeight));
+
+            TMP_Text title = NewText("QuestListTitleText", header.transform, QuestListTitle, 64f, TextAlignmentOptions.MidlineLeft);
+            title.fontStyle = FontStyles.Bold;
+            title.color = Color.white;
+            SetRect(title.rectTransform,
+                new Vector2(0f, 0f), new Vector2(0.6f, 1f), new Vector2(0f, 0.5f),
+                new Vector2(40f, 0f), new Vector2(-40f, 0f));
+
+            TMP_Text count = NewText("QuestCountText", header.transform, QuestListCount, 60f, TextAlignmentOptions.MidlineRight);
+            count.fontStyle = FontStyles.Bold;
+            count.color = Color.white;
+            SetRect(count.rectTransform,
+                new Vector2(0.6f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f),
+                new Vector2(-40f, 0f), new Vector2(-40f, 0f));
+        }
+
+        // top: 패널 위쪽에서 스크롤 영역이 시작하는 거리 (목록 헤더 아래 ~ 패널 하단)
+        // padding: 좌 · 우 · 아래 여백
+        private Transform CreateQuestScrollView(Transform listPanel, float top, float padding)
+        {
+            GameObject scrollView = NewUI("QuestScrollView", listPanel);
+            SetRect(scrollView.GetComponent<RectTransform>(),
+                Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
+                new Vector2(0f, (padding - top) * 0.5f),
+                new Vector2(-padding * 2f, -(top + padding)));
+
             ScrollRect scrollRect = scrollView.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
             scrollRect.vertical = true;
@@ -315,14 +524,7 @@ namespace Study.Utilities
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 Vector2.zero, Vector2.zero);
 
-            VerticalLayoutGroup layout = content.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(ListPaddingHorizontal, ListPaddingHorizontal, ListPaddingVertical, ListPaddingVertical);
-            layout.spacing = ListSpacing;
-            layout.childAlignment = TextAnchor.UpperCenter;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
+            AddVerticalLayout(content, QuestRowSpacing);
 
             ContentSizeFitter fitter = content.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -335,84 +537,80 @@ namespace Study.Utilities
             scrollRect.verticalScrollbar = scrollbar;
             scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
 
-            // 목록 내용
-            CreateChapterHeader("ChapterHeader_TheSundering", content.transform, "The Sundering", ChapterHeaderColor, 180f, 80f);
-            CreateChapterHeader("SubChapterHeader_AttackOnTheAlliance", content.transform, "Attack on the Alliance", SubChapterHeaderColor, 150f, 68f);
-
-            for (int i = 0; i < QuestEntries.Length; i++)
-                CreateQuestEntry($"QuestEntry_{i + 1:00}", content.transform, QuestEntries[i]);
-
-            CreateChapterHeader("ChapterHeader_Act1", content.transform, "Act I - The Cult of Nefertari", ChapterHeaderColor, 180f, 80f);
+            return content.transform;
         }
 
-        private void CreateChapterHeader(string name, Transform parent, string label, Color color, float height, float fontSize)
+        // 분류 헤더 + 퀘스트 행 묶음. 반환값은 접고 펼 대상인 행 묶음(QuestCategoryItems_xxx).
+        private GameObject CreateQuestCategory(string id, Transform content, string label,
+            (string name, int count)[] quests, bool expanded)
         {
-            Button header = NewButton(name, parent, label, out TMP_Text text);
-            header.GetComponent<Image>().color = color;
-            AddFrame(header.gameObject, FrameGold, 3f);
-            header.gameObject.AddComponent<LayoutElement>().preferredHeight = height;
+            GameObject group = NewUI($"QuestCategory_{id}", content);
+            AddVerticalLayout(group, QuestRowSpacing);
 
-            text.fontSize = fontSize;
+            // 접이식 헤더 (펼침 ▲ / 접힘 ▼)
+            string arrow = expanded ? "▲" : "▼";
+            Button header = NewButton($"QuestCategoryHeader_{id}", group.transform, $"{arrow} {label}", out TMP_Text text);
+            header.GetComponent<Image>().color = CategoryHeaderColor;
+            header.gameObject.AddComponent<LayoutElement>().preferredHeight = CategoryHeaderHeight;
+
+            text.fontSize = 56f;
+            text.fontStyle = FontStyles.Bold;
             text.alignment = TextAlignmentOptions.MidlineLeft;
-            text.color = MainTextColor;
+            text.color = Color.white;
+            SetRect(text.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0f, 0.5f),
+                new Vector2(30f, 0f), new Vector2(-60f, 0f));
+
+            GameObject items = NewUI($"QuestCategoryItems_{id}", group.transform);
+            AddVerticalLayout(items, QuestRowSpacing);
+
+            for (int i = 0; i < quests.Length; i++)
+                CreateQuestRow($"QuestRow_{id}_{i + 1:00}", items.transform, quests[i]);
+
+            return items;
+        }
+
+        private void CreateQuestRow(string name, Transform parent, (string name, int count) data)
+        {
+            GameObject row = NewPanel(name, parent, Vector2.zero);
+            row.GetComponent<Image>().color = QuestRowColor;
+            AddFrame(row, QuestRowBorder, 2f);
+            row.AddComponent<Button>().targetGraphic = row.GetComponent<Image>();
+            row.AddComponent<LayoutElement>().preferredHeight = QuestRowHeight;
+
+            // 좌측 초록 "+" 아이콘 (스프라이트 대신 색상 블록)
+            GameObject icon = NewPanel("QuestStateIcon", row.transform, new Vector2(QuestIconSize, QuestIconSize));
+            icon.GetComponent<Image>().color = QuestStateIconColor;
+            icon.GetComponent<Image>().raycastTarget = false;
+            SetRect(icon.GetComponent<RectTransform>(),
+                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+                new Vector2(24f, 0f), new Vector2(QuestIconSize, QuestIconSize));
+
+            TMP_Text plus = NewText("PlusText", icon.transform, "+", 56f, TextAlignmentOptions.Center);
+            plus.fontStyle = FontStyles.Bold;
+            plus.color = Color.white;
+            Stretch(plus.rectTransform, 0f);
+
+            // "* 퀘스트 묶음 이름 (수)"
+            const float textLeft = 24f + QuestIconSize + 24f;
+            TMP_Text text = NewText("QuestNameText", row.transform, $"* {data.name} ({data.count})", 54f, TextAlignmentOptions.MidlineLeft);
+            text.color = Color.white;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
             SetRect(text.rectTransform,
                 Vector2.zero, Vector2.one, new Vector2(0f, 0.5f),
-                new Vector2(50f, 0f), new Vector2(-100f, 0f));
+                new Vector2(textLeft, 0f), new Vector2(-(textLeft + 24f), 0f));
         }
 
-        private void CreateQuestEntry(string name, Transform parent, (string number, string title, string location) data)
+        private static void AddVerticalLayout(GameObject go, float spacing)
         {
-            GameObject entry = NewPanel(name, parent, Vector2.zero);
-            entry.GetComponent<Image>().color = QuestEntryColor;
-            AddFrame(entry, QuestEntryBorder, 4f);
-            entry.AddComponent<Button>().targetGraphic = entry.GetComponent<Image>();
-            entry.AddComponent<LayoutElement>().preferredHeight = QuestEntryHeight;
-
-            // 좌측 "!" 아이콘
-            TMP_Text mark = NewText("QuestMarkIcon", entry.transform, "!", 220f, TextAlignmentOptions.Center);
-            mark.fontStyle = FontStyles.Bold;
-            mark.color = QuestMarkColor;
-            SetRect(mark.rectTransform,
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(40f, 0f), new Vector2(120f, 300f));
-
-            // 퀘스트 순번
-            TMP_Text number = NewText("QuestNumberText", entry.transform, data.number, 80f, TextAlignmentOptions.Center);
-            number.color = MainTextColor;
-            SetRect(number.rectTransform,
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(170f, 0f), new Vector2(90f, 120f));
-
-            const float textLeft = 290f;
-            const float textRight = 220f;
-
-            // 퀘스트 제목 (위쪽 절반, 두 줄까지)
-            TMP_Text title = NewText("QuestTitleText", entry.transform, data.title, 80f, TextAlignmentOptions.BottomLeft);
-            title.color = MainTextColor;
-            title.textWrappingMode = TextWrappingModes.Normal;
-            title.overflowMode = TextOverflowModes.Ellipsis;
-            SetRect(title.rectTransform,
-                new Vector2(0f, 0.5f), new Vector2(1f, 1f), new Vector2(0f, 0.5f),
-                new Vector2(textLeft, 0f), new Vector2(-(textLeft + textRight), -40f));
-
-            // 지역 이름 (아래쪽 절반)
-            TMP_Text location = NewText("QuestLocationText", entry.transform, data.location, 64f, TextAlignmentOptions.TopLeft);
-            location.color = SubTextColor;
-            location.textWrappingMode = TextWrappingModes.NoWrap;
-            location.overflowMode = TextOverflowModes.Ellipsis;
-            SetRect(location.rectTransform,
-                new Vector2(0f, 0f), new Vector2(1f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(textLeft, 0f), new Vector2(-(textLeft + textRight), -40f));
-
-            // 완료 체크 아이콘 (스프라이트 대신 색상 블록)
-            GameObject check = NewPanel("CompletedCheckIcon", entry.transform, new Vector2(120f, 120f));
-            check.GetComponent<Image>().color = CompletedCheckColor;
-            check.GetComponent<Image>().raycastTarget = false;
-            SetRect(check.GetComponent<RectTransform>(),
-                new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f),
-                new Vector2(-60f, 0f), new Vector2(120f, 120f));
+            VerticalLayoutGroup layout = go.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = spacing;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
         }
 
         private Scrollbar CreateVerticalScrollbar(Transform parent, float width)
@@ -442,10 +640,11 @@ namespace Study.Utilities
 
         #region Detail Panel (우측)
 
-        private void CreateDetailPanel(Transform page)
+        private void CreateDetailPanel(Transform page, string titleLabel, string descriptionLabel, string buttonLabel,
+            out TMP_Text titleText, out Image illustrationImage, out TMP_Text descriptionText, out Button actionButton)
         {
             // 우측 상세 패널: 좌측 목록 옆 남은 공간을 채운다.
-            float left = ChapterListWidth + PanelGap;
+            float left = QuestListWidth + PanelGap;
 
             GameObject detail = NewPanel("DetailPanel", page, Vector2.zero);
             detail.GetComponent<Image>().color = PanelInner;
@@ -462,10 +661,11 @@ namespace Study.Utilities
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 Vector2.zero, new Vector2(0f, titleHeight));
 
-            TMP_Text title = NewText("DetailTitleText", titleBar.transform, DetailTitle, 88f, TextAlignmentOptions.Center);
+            TMP_Text title = NewText("DetailTitleText", titleBar.transform, titleLabel, 88f, TextAlignmentOptions.Center);
             title.fontStyle = FontStyles.Bold;
             title.color = Color.white;
             Stretch(title.rectTransform, 0f);
+            titleText = title;
 
             // 삽화 (스프라이트 대신 색상 블록)
             const float illustrationTop = titleHeight + 40f;
@@ -478,11 +678,15 @@ namespace Study.Utilities
             SetRect(illustration.GetComponent<RectTransform>(),
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 new Vector2(0f, -illustrationTop), new Vector2(-80f, illustrationHeight));
+            illustrationImage = illustration.GetComponent<Image>();
 
-            CreateDescriptionArea(detail.transform, out _, out _);
+            CreateDescriptionArea(detail.transform, descriptionLabel, buttonLabel,
+                out _, out GameObject button, out descriptionText);
+            actionButton = button.GetComponent<Button>();
         }
 
-        private void CreateDescriptionArea(Transform detail, out GameObject scrollView, out GameObject acceptButton)
+        private void CreateDescriptionArea(Transform detail, string descriptionLabel, string buttonLabel,
+            out GameObject scrollView, out GameObject acceptButton, out TMP_Text descriptionText)
         {
             // 설명 영역 (삽화 아래 ~ 수락 버튼 위). 상단 위치는 CreateDetailPanel 의 제목 띠 · 삽화 배치와 맞춘다.
             const float descriptionTop = 180f + 40f + 860f + 60f;
@@ -507,7 +711,7 @@ namespace Study.Utilities
             Stretch(viewport.GetComponent<RectTransform>(), 0f);
 
             // 설명 텍스트 = 스크롤 Content. 글 길이에 맞춰 높이가 늘어난다.
-            TMP_Text description = NewText("DescriptionText", viewport.transform, DetailDescription, 64f, TextAlignmentOptions.TopLeft);
+            TMP_Text description = NewText("DescriptionText", viewport.transform, descriptionLabel, 64f, TextAlignmentOptions.TopLeft);
             description.color = MainTextColor;
             description.richText = true;
             description.lineSpacing = 10f;
@@ -530,7 +734,7 @@ namespace Study.Utilities
             scrollRect.verticalScrollbarSpacing = 20f;
 
             // 미션 수락 버튼 (패널 하단 중앙)
-            Button accept = NewButton("AcceptButton", detail, "Accept", out TMP_Text label);
+            Button accept = NewButton("AcceptButton", detail, buttonLabel, out TMP_Text label);
             accept.GetComponent<Image>().color = AcceptButtonColor;
             AddFrame(accept.gameObject, FrameGold, 4f);
             SetRect(accept.GetComponent<RectTransform>(),
@@ -542,6 +746,148 @@ namespace Study.Utilities
             label.color = Color.white;
 
             acceptButton = accept.gameObject;
+            descriptionText = description;
+        }
+
+        #endregion
+
+        #region Stage Move UI
+
+        // Mission UI 와 같은 구성: 화면을 덮는 창 + 상단 바 + 좌측 목록 / 우측 상세
+        private GameObject CreateStageMoveUI(Transform canvas, MissionListUI missionListUI)
+        {
+            GameObject root = NewUI(StageMoveRootName, canvas);
+            Stretch(root.GetComponent<RectTransform>(), 0f);
+            root.transform.localScale = Vector3.one * StageMoveUIScale;
+
+            Transform window = CreateJournalWindow(root.transform);
+            window.name = "StageMoveWindow";
+            Button exitButton = CreateTitleBar(window, "Stage Move");
+
+            Transform page = CreateMissionPage(window);
+            Transform content = CreateStageMissionList(page, out GameObject emptyText);
+            Button rowTemplate = CreateStageMissionRow(content);
+
+            CreateDetailPanel(page, "-", string.Empty, "Move",
+                out TMP_Text bossName, out Image bossImage, out TMP_Text description, out Button moveButton);
+            moveButton.name = "MoveButton";
+
+            GameObject moveFailUI = CreateMoveFailPopup(root.transform, out Button failConfirmButton);
+
+            StageMoveUI stageMoveUI = root.AddComponent<StageMoveUI>();
+            SetReference(stageMoveUI, "missionListUI", missionListUI);
+            SetReference(stageMoveUI, "missionContent", content);
+            SetReference(stageMoveUI, "missionRowTemplate", rowTemplate);
+            SetReference(stageMoveUI, "emptyText", emptyText);
+            SetReference(stageMoveUI, "bossName", bossName);
+            SetReference(stageMoveUI, "bossImage", bossImage);
+            SetReference(stageMoveUI, "missionDescription", description);
+            SetReference(stageMoveUI, "moveButton", moveButton);
+            SetReference(stageMoveUI, "moveFailUI", moveFailUI);
+
+            UnityEventTools.AddPersistentListener(exitButton.onClick, stageMoveUI.CloseUI);
+            UnityEventTools.AddPersistentListener(moveButton.onClick, stageMoveUI.MoveToStage);
+            UnityEventTools.AddBoolPersistentListener(failConfirmButton.onClick, moveFailUI.SetActive, false);
+
+            moveFailUI.SetActive(false);
+            root.SetActive(false);
+            return root;
+        }
+
+        // 좌측 수락 미션 목록. 씬의 Quest List UI 처럼 헤더 아래를 스크롤 목록이 여백 없이 채운다.
+        private Transform CreateStageMissionList(Transform page, out GameObject emptyText)
+        {
+            GameObject listPanel = NewPanel("MissionListPanel", page, Vector2.zero);
+            listPanel.GetComponent<Image>().color = QuestListBackground;
+            AddFrame(listPanel, FrameGold, 4f);
+            SetRect(listPanel.GetComponent<RectTransform>(),
+                new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f),
+                Vector2.zero, new Vector2(QuestListWidth, 0f));
+
+            GameObject header = NewPanel("MissionListHeader", listPanel.transform, Vector2.zero);
+            header.GetComponent<Image>().color = QuestListHeaderColor;
+            AddFrame(header, QuestListHeaderBorder, 3f);
+            SetRect(header.GetComponent<RectTransform>(),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                Vector2.zero, new Vector2(0f, QuestListHeaderHeight));
+
+            TMP_Text title = NewText("MissionListTitleText", header.transform, "수락한 미션", 64f, TextAlignmentOptions.MidlineLeft);
+            title.fontStyle = FontStyles.Bold;
+            title.color = Color.white;
+            SetRect(title.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0f, 0.5f),
+                new Vector2(40f, 0f), new Vector2(-80f, 0f));
+
+            Transform content = CreateQuestScrollView(listPanel.transform, QuestListHeaderHeight, 0f);
+
+            // 수락한 미션이 없을 때 목록 자리에 표시
+            TMP_Text empty = NewText("EmptyText", listPanel.transform, "수락한 미션이 없습니다", 56f, TextAlignmentOptions.Center);
+            empty.color = SubTextColor;
+            SetRect(empty.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
+                new Vector2(0f, -QuestListHeaderHeight * 0.5f), new Vector2(0f, -QuestListHeaderHeight));
+            emptyText = empty.gameObject;
+
+            return content;
+        }
+
+        // 미션 행 원본. StageMoveUI 가 수락한 미션 수만큼 복제해서 쓰고, 원본은 숨긴다.
+        private Button CreateStageMissionRow(Transform content)
+        {
+            GameObject row = NewPanel("MissionRowTemplate", content, Vector2.zero);
+            row.GetComponent<Image>().color = QuestRowColor;
+            AddFrame(row, QuestRowBorder, 2f);
+            row.AddComponent<LayoutElement>().preferredHeight = QuestRowHeight;
+
+            Button button = row.AddComponent<Button>();
+            button.targetGraphic = row.GetComponent<Image>();
+
+            TMP_Text text = NewText("QuestNameText", row.transform, "Quest Name", 54f, TextAlignmentOptions.MidlineLeft);
+            text.color = Color.white;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            SetRect(text.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0f, 0.5f),
+                new Vector2(24f, 0f), new Vector2(-48f, 0f));
+
+            return button;
+        }
+
+        // 이동할 씬이 없는 미션을 골랐을 때 띄우는 팝업 (Mission UI 의 ClickFail UI 와 같은 구성)
+        private GameObject CreateMoveFailPopup(Transform root, out Button confirmButton)
+        {
+            GameObject popup = NewPanel("MoveFail UI", root, Vector2.zero);
+            popup.GetComponent<Image>().color = DetailTitleBarColor;
+            AddFrame(popup, FrameGold, 4f);
+            SetRect(popup.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(MoveFailPopupWidth, MoveFailPopupHeight));
+
+            TMP_Text title = NewText("MoveFail Title Text", popup.transform, "이동 불가", 80f, TextAlignmentOptions.Center);
+            title.fontStyle = FontStyles.Bold;
+            title.color = TitleTextColor;
+            SetRect(title.rectTransform,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -60f), new Vector2(-80f, 140f));
+
+            TMP_Text description = NewText("MoveFail Description Text", popup.transform,
+                "아직 이동할 수 있는 스테이지가 없는 미션입니다", 64f, TextAlignmentOptions.Center);
+            SetRect(description.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
+                new Vector2(0f, 40f), new Vector2(-120f, -480f));
+
+            confirmButton = NewButton("ConfirmButton", popup.transform, "OK", out TMP_Text label);
+            confirmButton.GetComponent<Image>().color = AcceptButtonColor;
+            AddFrame(confirmButton.gameObject, FrameGold, 4f);
+            SetRect(confirmButton.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(0f, 120f), new Vector2(PopupButtonWidth, PopupButtonHeight));
+
+            label.fontSize = 72f;
+            label.fontStyle = FontStyles.Bold;
+            label.color = Color.white;
+
+            return popup;
         }
 
         #endregion

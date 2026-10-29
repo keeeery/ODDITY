@@ -2039,7 +2039,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 1.8333334
+  m_VoxelSize: 1
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: b86ac08a0fc2fe94aa859e1321905b19, type: 2}
   m_BuildHeightMesh: 0
@@ -7253,7 +7253,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 792779788}
+  m_Mesh: {fileID: 1874167529}
 --- !u!33 &1058194453
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -8535,7 +8535,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1874167529}
+  m_Mesh: {fileID: 2103205350}
 --- !u!33 &1491435241
 MeshFilter:
   m_ObjectHideFlags: 10

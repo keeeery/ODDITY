@@ -469,6 +469,15 @@ namespace TeamOdd.Psychokinesis
             OutlinedObject = this;
         }
 
+        // 크기와 질량에 factor를 곱함. 풀에서 다시 꺼낼 때 ApplyVariant가 원래 형태로 되돌림
+        // 휘두르기 여유 범위는 크기에 맞춰 다시 계산해야 하므로 트리거도 맞춤
+        public void Resize(float factor)
+        {
+            transform.localScale *= factor;
+            body.mass *= factor;
+            ResizeHitTrigger(IsHeld);
+        }
+
         // 시간 정지 중에도 플레이어가 든 오브젝트는 움직여야 하므로 먼저 정지에서 빼냄
         public void BeginHold(Collider[] ownerColliders, ICombatable sender)
         {

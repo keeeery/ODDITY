@@ -1,3 +1,4 @@
+using System;
 using Jay;
 using Study.Utilities;
 using TeamOdd.CameraMove;
@@ -16,9 +17,13 @@ namespace TeamOdd
         
         [SerializeField] private GameObject missionUI;
         [SerializeField] private GameObject skillUI;
-
-
         [SerializeField] private GameObject battleUI;
+
+        private void Start()
+        {
+            playerController = Player.Player.Instance.PlayerController;
+            cameraController = Player.Player.Instance.CameraController;
+        }
 
         private void Update()
         {
@@ -26,7 +31,7 @@ namespace TeamOdd
             {
                 if (SimpleInput.GetKeyDown(Key.Escape))
                     LockCursor(false);
-                else if (Cursor.lockState != CursorLockMode.Locked &&
+                else if (Cursor.lockState != CursorLockMode.Locked ||
                          (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left)
                           || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
                     LockCursor(true);
@@ -35,7 +40,9 @@ namespace TeamOdd
 
         public void BattleUIActive(bool active)
         {
-            battleUI.SetActive(active);
+            // 씬에 UIManager 를 배치하지 않으면 자동 생성되어 battleUI 가 비어 있다.
+            if (battleUI != null)
+                battleUI.SetActive(active);
         }
         
         public void LockCursor(bool locked, bool isManuallyLock = false)
@@ -44,12 +51,6 @@ namespace TeamOdd
             Cursor.visible = locked == false;
 
             isManuallyLocked = isManuallyLock;
-
-            // Start 실행 순서에 기대지 않고, 처음 쓸 때 가져온다
-            if (playerController == null)
-                playerController = Player.Player.Instance.PlayerController;
-            if (cameraController == null)
-                cameraController = Player.Player.Instance.CameraController;
 
             playerController.enabled = locked;
             cameraController.enabled = locked;

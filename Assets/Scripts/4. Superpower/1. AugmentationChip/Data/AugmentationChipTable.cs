@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using TeamOdd.Combat;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
 {
+    // 능력치 칩 표와 스킬 칩 표를 읽어 칩 Def를 ID로 모아 둔다. 칩을 주는 쪽은 종류와 상관없이 Get/GetDefs로 꺼낸다
     public class AugmentationChipTable
     {
-        private const string TableName = "Table/AugmentationChip.tsv";
+        private const string StatTableName = "Table/StatChip.tsv";
+        private const string SkillTableName = "Table/SkillChip.tsv";
 
         private Dictionary<int, AugmentationChipDef> defs = new();
 
@@ -23,87 +24,134 @@ namespace TeamOdd.Superpower
         {
             defs.Clear();
 
-            string path = Application.streamingAssetsPath + "/" + TableName;
-            List<AugmentationChipDTO> rows = new List<AugmentationChipDTO>();
-            using (StreamReader reader = new StreamReader(path))
+            foreach (StatChipDTO chipDto in ReadStatChips())
             {
-                reader.ReadLine();
-                while (reader.EndOfStream == false)
+                StatChipDef def = new StatChipDef
                 {
-                    AugmentationChipDTO chipDto = new();
-                    string line = reader.ReadLine();
-
-                    // 파일 끝 빈 줄은 건너뛴다
-                    if (string.IsNullOrWhiteSpace(line))
-                        continue;
-
-                    string[] cells = line.Split('\t');
-
-                    chipDto.ID = int.Parse(cells[0]);
-                    chipDto.Name = cells[1];
-                    chipDto.Description = cells[2];
-                    chipDto.StatType = cells[3];
-                    chipDto.Value = cells[4] == "" ? 0 : int.Parse(cells[4]); // 스킬 칩은 비워 둔다
-                    chipDto.UnitSpriteKey = cells[5];
-                    chipDto.CellCount = int.Parse(cells[6]);
-
-                    // 스킬 칩용으로 뒤에 붙인 칸. 능력치 칩은 줄이 여기서 끝나도 된다
-                    chipDto.ChipType = GetCell(cells, 7);
-                    chipDto.SkillType = GetCell(cells, 8);
-                    string cooldown = GetCell(cells, 9);
-                    // 소수점은 '.'만 받는다. 기본 옵션은 ','를 천 단위 구분자로 읽어 "1,5"가 15가 된다
-                    chipDto.Cooldown = cooldown == "" ? 0f : float.Parse(cooldown, NumberStyles.Float, CultureInfo.InvariantCulture);
-                    chipDto.SkillParams = GetCell(cells, 10);
-
-                    rows.Add(chipDto);
-                }
+                    StatType = Enum.Parse<StatType>(chipDto.StatType),
+                    Value = chipDto.Value,
+                };
+                SetCommon(def, chipDto);
+                Register(def);
             }
 
-            // List<AugmentationChipDTO> rows 를 이용해서 def 객체를 생성한다
-            foreach (AugmentationChipDTO chipDto in rows)
+            foreach (SkillChipDTO chipDto in ReadSkillChips())
             {
-                // ChipType 칸이 비어 있으면 원래부터 있던 능력치 칩
-                ChipType chipType = chipDto.ChipType == "" ? ChipType.Stat : Enum.Parse<ChipType>(chipDto.ChipType);
-                Sprite unitSprite = Resources.Load<Sprite>(chipDto.UnitSpriteKey);
-
-                AugmentationChipDef def = new AugmentationChipDef
+                SkillChipDef def = new SkillChipDef
                 {
-                    ID = chipDto.ID,
-                    Name = chipDto.Name,
-                    Description = chipDto.Description,
-                    ChipType = chipType,
-                    UnitSprite = unitSprite,
-                    CellCount = chipDto.CellCount,
+                    Category = Enum.Parse<SkillCategory>(chipDto.Category),
+                    SkillType = Enum.Parse<SkillType>(chipDto.SkillType),
+                    Cooldown = chipDto.Cooldown,
+                    Cost = chipDto.Cost,
+                    Params = new SkillParams(chipDto.Params),
+                    Prefab = chipDto.PrefabKey == "" ? null : Resources.Load<GameObject>(chipDto.PrefabKey),
                 };
+                SetCommon(def, chipDto);
 
-                // 칩 종류에 맞는 칸만 읽는다. 비워 둔 칸을 Enum.Parse하면 예외가 나므로 나눠서 읽는다
-                if (chipType == ChipType.Stat)
+                // 매개변수가 틀린 칩을 줍는 순간이 아니라 테이블을 읽을 때 알 수 있도록 한 번 만들어 본다
+                // 매개변수가 틀리면 여기서 예외가 나고, 만드는 코드가 없는 스킬은 지급되지 않게 빼 둔다
+                if (SkillFactory.Create(def) == null)
                 {
-                    def.StatType = Enum.Parse<StatType>(chipDto.StatType);
-                    def.Value = chipDto.Value;
-                }
-                else
-                {
-                    def.SkillType = Enum.Parse<SkillType>(chipDto.SkillType);
-                    def.Cooldown = chipDto.Cooldown;
-                    def.SkillParams = new SkillParams(chipDto.ID, chipDto.SkillParams);
-
-                    // 매개변수가 틀린 칩을 줍는 순간이 아니라 테이블을 읽을 때 알 수 있도록 한 번 만들어 본다
-                    // 만들 수 없는 칩은 지급되지 않게 빼 둔다
-                    if (SkillFactory.Create(def) == null || def.SkillParams.HasError)
-                    {
-                        Debug.LogError($"[AugmentationChipTable] {chipDto.ID}번 스킬 칩의 값이 잘못되어 테이블에서 뺍니다.");
-                        continue;
-                    }
+                    Debug.LogError($"[AugmentationChipTable] {chipDto.ID}번 스킬 칩의 값이 잘못되어 테이블에서 뺍니다.");
+                    continue;
                 }
 
-                defs[chipDto.ID] = def;
+                Register(def);
             }
 
             Debug.Log(defs.Count);
         }
 
-        // 줄이 짧아 없는 칸은 빈 칸으로 본다
-        private static string GetCell(string[] cells, int index) => index < cells.Length ? cells[index] : "";
+        // StatChip.tsv: 공통 다섯 칸 + StatType, Value
+        private static List<StatChipDTO> ReadStatChips()
+        {
+            List<StatChipDTO> rows = new List<StatChipDTO>();
+            foreach (string[] cells in ReadRows(StatTableName))
+            {
+                StatChipDTO chipDto = new();
+                ReadCommon(chipDto, cells);
+                chipDto.StatType = cells[5];
+                chipDto.Value = int.Parse(cells[6]);
+                rows.Add(chipDto);
+            }
+
+            return rows;
+        }
+
+        // SkillChip.tsv: 공통 다섯 칸 + Category, SkillType, Cooldown, Cost, Params, PrefabKey
+        private static List<SkillChipDTO> ReadSkillChips()
+        {
+            List<SkillChipDTO> rows = new List<SkillChipDTO>();
+            foreach (string[] cells in ReadRows(SkillTableName))
+            {
+                SkillChipDTO chipDto = new();
+                ReadCommon(chipDto, cells);
+                chipDto.Category = cells[5];
+                chipDto.SkillType = cells[6];
+                // 소수점은 '.'으로 적는다.
+                chipDto.Cooldown = float.Parse(cells[7]);
+                chipDto.Cost = float.Parse(cells[8]);
+                // 매개변수가 없는 스킬은 비워 둔다. 줄 끝의 빈 칸이 잘려 있어도 빈 칸으로 본다
+                chipDto.Params = cells.Length > 9 ? cells[9] : "";
+                // 프리팹이 필요 없는 스킬은 비워 둔다. Resources 폴더 기준 경로 (예: Skill/PsychoOrb)
+                chipDto.PrefabKey = cells.Length > 10 ? cells[10] : "";
+                rows.Add(chipDto);
+            }
+
+            return rows;
+        }
+
+        // 첫 줄(열 이름)은 건너뛰고 한 줄씩 칸으로 나눈다. 파일 끝 빈 줄은 건너뛴다
+        private static List<string[]> ReadRows(string tableName)
+        {
+            string path = Application.streamingAssetsPath + "/" + tableName;
+            List<string[]> rows = new List<string[]>();
+            using (StreamReader reader = new StreamReader(path))
+            {
+                reader.ReadLine();
+                while (reader.EndOfStream == false)
+                {
+                    string line = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    rows.Add(line.Split('\t'));
+                }
+            }
+
+            return rows;
+        }
+
+        // 두 표에 공통인 앞 다섯 칸
+        private static void ReadCommon(AugmentationChipDTO chipDto, string[] cells)
+        {
+            chipDto.ID = int.Parse(cells[0]);
+            chipDto.Name = cells[1];
+            chipDto.Description = cells[2];
+            chipDto.CellCount = int.Parse(cells[3]);
+            chipDto.UnitSpriteKey = cells[4];
+        }
+
+        // 공통 값을 Def로 옮긴다. 그림은 표에 적힌 경로로 찾아온다
+        private static void SetCommon(AugmentationChipDef def, AugmentationChipDTO chipDto)
+        {
+            def.ID = chipDto.ID;
+            def.Name = chipDto.Name;
+            def.Description = chipDto.Description;
+            def.UnitSprite = Resources.Load<Sprite>(chipDto.UnitSpriteKey);
+            def.CellCount = chipDto.CellCount;
+        }
+
+        // 두 표의 ID가 겹치면 앞의 칩을 덮어쓰지 않고 뒤의 칩을 뺀다
+        private void Register(AugmentationChipDef def)
+        {
+            if (defs.ContainsKey(def.ID))
+            {
+                Debug.LogError($"[AugmentationChipTable] {def.ID}번 칩이 이미 있어 {def.Name}을(를) 테이블에서 뺍니다.");
+                return;
+            }
+
+            defs[def.ID] = def;
+        }
     }
 }

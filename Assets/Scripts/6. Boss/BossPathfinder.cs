@@ -26,15 +26,15 @@ namespace TeamOdd.Boss
 
         [Title("States")]
         [ShowInInspector, ReadOnly] public bool IsDirect { get; private set; } = true;
-        [ShowInInspector, ReadOnly] private int cornerIdx = 0;
-        [ShowInInspector, ReadOnly] private int cornerCount = 0;
+        [ShowInInspector, ReadOnly] private int cornerIdx;
+        [ShowInInspector, ReadOnly] private int cornerCount;
 
         private readonly Vector3[] corners = new Vector3[MAX_CORNER_COUNT];
 
         private TimeFreezable clock;
         private NavMeshPath path;
         private NavMeshQueryFilter filter;
-        private bool hasAgentType = false;
+        private bool hasAgentType;
 
         private float nextRepathTime = float.NegativeInfinity;
         private Vector3 lastGoal;

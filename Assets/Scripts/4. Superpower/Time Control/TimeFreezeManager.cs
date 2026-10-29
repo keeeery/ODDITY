@@ -12,10 +12,10 @@ namespace TeamOdd.TimeControl
     /// </summary>
     public sealed class TimeFreezeManager : SingletonBase<TimeFreezeManager>
     {
-        // 플레이어를 제외한 모든 TimeFreezable을 duration초 동안 멈춤
-        public void FreezeWorld(float duration)
+        // 플레이어를 제외한 모든 TimeFreezable을 duration초 동안 멈춤. timeScale을 0보다 크게 주면 멈추지 않고 그 배율로 느리게
+        public void FreezeWorld(float duration, float timeScale = 0f)
         {
-            StartCoroutine(FreezeWorldRoutine(duration));
+            StartCoroutine(FreezeWorldRoutine(duration, timeScale));
         }
 
         // target 하나만 duration초 동안 멈춤
@@ -25,11 +25,11 @@ namespace TeamOdd.TimeControl
             StartCoroutine(FreezeRoutine(target, duration));
         }
 
-        private IEnumerator FreezeWorldRoutine(float duration)
+        private IEnumerator FreezeWorldRoutine(float duration, float timeScale)
         {
-            TimeFreezable.FreezeWorld();
+            TimeFreezable.FreezeWorld(timeScale);
             yield return new WaitForSeconds(duration);
-            TimeFreezable.UnfreezeWorld();
+            TimeFreezable.UnfreezeWorld(timeScale);
         }
 
         private IEnumerator FreezeRoutine(TimeFreezable target, float duration)

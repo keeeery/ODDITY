@@ -19660,7 +19660,7 @@ MonoBehaviour:
   combatEntity: {fileID: 2205336347470601075}
   hpBar: {fileID: 1144892260}
   staminaBar: {fileID: 1218552551}
-  hpTrailColor: {r: 1, g: 1, b: 1, a: 1}
+  hpTrailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
   damageVignette: {fileID: 905123404}
   cameraShakeTrauma: 0.6
   cameraShakeDuration: 0.35
@@ -35077,7 +35077,7 @@ MonoBehaviour:
   hpBar: {fileID: 420760886}
   groggyBar: {fileID: 1544739492}
   smoothGroggyBar: 1
-  trailColor: {r: 1, g: 1, b: 1, a: 1}
+  trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
 --- !u!225 &916268417
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -73590,6 +73590,10 @@ PrefabInstance:
       propertyPath: <Collider>k__BackingField
       value: 
       objectReference: {fileID: 677289072525654882}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: NeedRollStamina
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
