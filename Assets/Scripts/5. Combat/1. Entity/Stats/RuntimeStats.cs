@@ -18,9 +18,12 @@ namespace TeamOdd.Combat
             this.baseStats = baseStats;
         }
 
-        public int MaxHp => baseStats.MaxHp + GetBonus(StatType.MaxHp);
-        public int Atk => baseStats.Atk + GetBonus(StatType.Atk);
-        public int Def => baseStats.Def + GetBonus(StatType.Def);
+        public int MaxHp => Get(StatType.MaxHp);
+        public int Atk => Get(StatType.Atk);
+        public int Def => Get(StatType.Def);
+
+        // 최종값 = 기본값 + 보너스. 플레이어 전용 스탯도 같은 식으로 계산된다
+        public int Get(StatType type) => baseStats.Get(type) + GetBonus(type);
 
         public int GetBonus(StatType type) => bonus.TryGetValue(type, out int value) ? value : 0;
 

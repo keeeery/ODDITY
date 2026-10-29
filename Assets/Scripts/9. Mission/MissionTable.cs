@@ -40,7 +40,8 @@ namespace Study.MiniDefence
                     BossName = missionDto.BossName,
                     Reward = missionDto.Reward,
                     BossSprite = bossSprite,
-                    NextStageName = missionDto.NextStageName
+                    NextStageName = missionDto.NextStageName,
+                    QuestName = missionDto.QuestName
                 };
             }
         }

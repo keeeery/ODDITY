@@ -165,6 +165,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5859343519902430467}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7316520984417302651}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2864915537702138846}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -411,3 +417,27 @@ MonoBehaviour:
   pushDuration: 0.22
   heavyMass: 20
   wobbleAngle: 8
+--- !u!114 &7316520984417302651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cbaa70e586e399409d5b6b16f73a536, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeReverseRecorder
+--- !u!114 &2864915537702138846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af796d1ff8d5fd94589b17e4d426231b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeReverseEffect

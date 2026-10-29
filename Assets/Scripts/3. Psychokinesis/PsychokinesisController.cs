@@ -19,7 +19,6 @@ namespace TeamOdd.Psychokinesis
         [Header("Targeting")]
         [SerializeField, Min(1f)] private float pickupDistance = 14f;
         [SerializeField, Min(0.1f)] private float castHalfWidth = 2f;
-        [SerializeField, Min(0f)] private float maxMass = 20f;
 
         [Header("Normal Attack")]
         [SerializeField, Min(0.01f)] private float attackInterval = 0.25f;
@@ -93,12 +92,17 @@ namespace TeamOdd.Psychokinesis
         
         public PsychokinesisObject HeldObject => heldObject;
         public LayerMask QueryLayers => queryLayers;
+        // 조준 중인(외곽선이 그려진) 오브젝트. 없으면 null
+        public PsychokinesisObject FocusedObject => focusedObject;
         public bool GrabRequested => grabRequested;
         public bool ReleaseRequested => releaseRequested;
 
         public Vector3 Viewport => aimCamera.WorldToViewportPoint(new Vector3(0.5f, 0.5f));
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
+
+        // 들 수 있는 최대 질량. 기본값(PlayerStats 에셋) + 증강칩 보너스라 칩을 끼우고 빼면 바로 바뀌므로 쓸 때마다 읽는다
+        private int MaxMass => combatEntity.CurrentStats.Get(StatType.PsychoMaxMass);
 
         // 플레이어의 공격(기본 공격, 투척, 휘두르기)이 실제로 피해를 줬을 때 (조준점 적중 표시용)
         public event Action AttackHit;
@@ -172,7 +176,7 @@ namespace TeamOdd.Psychokinesis
 
             if (grabRequested)
             {
-                if (heldObject == null && focusedObject != null && focusedObject.IsAvailable(maxMass) && HasGrabStamina())
+                if (heldObject == null && focusedObject != null && CanGrab(focusedObject) && HasGrabStamina())
                 {
                     heldObject = focusedObject;
                     Ray grabRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
@@ -228,7 +232,7 @@ namespace TeamOdd.Psychokinesis
 
         private void FixedUpdate()
         {
-            if (heldObject != null && (releaseRequested || heldObject.IsHeld == false || heldObject.IsAvailable(maxMass) == false))
+            if (heldObject != null && (releaseRequested || heldObject.IsHeld == false || heldObject.IsAvailable(MaxMass) == false))
                 ReleaseHeld(false);
 
             releaseRequested = false;
@@ -560,7 +564,13 @@ namespace TeamOdd.Psychokinesis
 
             focusedObject = target;
 
-            if (focusedObject != null) focusedObject.SetFocused(true, focusedObject.IsAvailable(maxMass));
+            if (focusedObject != null) focusedObject.SetFocused(true, CanGrab(focusedObject));
+        }
+
+        // 염동 산탄 칩처럼 스킬이 이미 잡고 있는 오브젝트는 잡을 수 없음 (외곽선도 잡을 수 없는 색으로 표시)
+        private bool CanGrab(PsychokinesisObject target)
+        {
+            return target.IsHeld == false && target.IsAvailable(MaxMass);
         }
 
 #if UNITY_EDITOR

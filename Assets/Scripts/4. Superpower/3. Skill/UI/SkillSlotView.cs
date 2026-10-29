@@ -95,7 +95,10 @@ namespace TeamOdd.Superpower
         // 남은 쿨타임만큼 아이콘을 덮는다. 매 프레임 불러도 된다
         public void RefreshCooldown()
         {
-            SuperpowerSkill skill = Chip?.Skill;
+            // 빈 슬롯이면 Chip이 null
+            SuperpowerSkill skill = null;
+            if (Chip != null)
+                skill = Chip.Skill;
             float remaining = skill != null ? skill.RemainingCooldown : 0f;
 
             cooldownFill.enabled = remaining > 0f;

@@ -24,11 +24,13 @@ namespace TeamOdd.Mission
             {
                 if (SimpleInput.GetKeyDown(Key.F))
                 {
-                    if(popupUI.TryGetComponent(out AugmentationChipPanel panel))
-                        panel.Open(player.GetComponent<AugmentationChipInventory>());
-                    else popupUI.SetActive(true);
+                    bool isClose = popupUI.activeSelf == false;
                     
-                    UIManager.Instance.LockCursor(false, true);
+                    if(popupUI.TryGetComponent(out AugmentationChipPanel panel))
+                        panel.IsActivePanel(isClose, player.GetComponent<AugmentationChipInventory>());
+                    else popupUI.SetActive(isClose);
+                    
+                    UIManager.Instance.LockCursor(isClose == false, isClose);
                 }
                 else if (SimpleInput.GetKeyDown(Key.Escape))
                 {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TeamOdd.Combat;
 using UnityEngine;
@@ -44,6 +45,11 @@ namespace TeamOdd.Superpower
         // 칩이나 스킬 슬롯을 드래그 중인지. 이때 닫거나 오른쪽 클릭으로 장착을 바꾸면 들고 있는 것과 꼬인다
         public bool IsDragging => dragging != null || (SkillBar != null && SkillBar.IsDragging);
 
+        private void Awake()
+        {
+            Close();
+        }
+
         // 패널이 꺼진 채로 Close/Open이 먼저 불릴 수 있으므로 Awake에 기대지 않고 쓸 때 찾는다
         private SkillSlotBarView SkillBar
         {
@@ -55,6 +61,12 @@ namespace TeamOdd.Superpower
             }
         }
 
+        public void IsActivePanel(bool isActive, AugmentationChipInventory inventory)
+        {
+            if(inventory != null && isActive) Open(inventory);
+            else Close();
+        }
+        
         public void Open(AugmentationChipInventory inventory)
         {
             // 다른 인벤토리로 다시 열 수도 있으므로 지난번 구독을 먼저 끊는다
@@ -100,8 +112,12 @@ namespace TeamOdd.Superpower
         {
             if (SkillBar != null)
                 SkillBar.Close();
+            // 정비를 마치면 스킬 쿨타임을 모두 초기화한다. 시작할 때 닫힌 채로 부르는 Close는 아직 인벤토리가 없어 건너뛴다
             if (inventory != null)
+            {
                 inventory.SkillSlotsChanged -= OnSkillSlotsChanged;
+                inventory.ResetAllCooldowns();
+            }
 
             gameObject.SetActive(false);
         }
@@ -314,13 +330,24 @@ namespace TeamOdd.Superpower
             if (skillSlot >= 0)
                 state += $" · 스킬 {skillSlot + 1}번";
 
-            // 능력치 칩은 오르는 스탯, 스킬 칩은 쿨타임과 스킬마다 다른 매개변수를 스킬이 직접 설명한다
-            string effect = def.ChipType == ChipType.Stat
-                ? $"능력치  {def.StatType} +{def.Value}"
-                : $"스킬  {def.SkillType} · 쿨타임 {def.Cooldown}초 · {info.Skill.Describe()}";
+            // 능력치 칩은 오르는 스탯, 스킬 칩은 쿨타임·스태미나 소모량과 스킬마다 다른 매개변수를 스킬이 직접 설명한다
+            string effect = def switch
+            {
+                StatChipDef stat => $"능력치  {stat.StatType} +{stat.Value}",
+                SkillChipDef skill => $"스킬({GetCategoryLabel(skill.Category)})  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · 스태미나 {skill.Cost} · {info.Skill.Describe()}",
+                _ => "",
+            };
 
             infoText.text = $"[{def.ID}] {def.Name} - {def.Description}  |  {state}\n{effect}\n{notice ?? GetSummary()}";
         }
+
+        private static string GetCategoryLabel(SkillCategory category) => category switch
+        {
+            SkillCategory.Attack => "공격",
+            SkillCategory.Defense => "방어",
+            SkillCategory.Utility => "유틸",
+            _ => "",
+        };
 
         private string GetSummary()
         {
