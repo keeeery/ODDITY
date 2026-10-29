@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using DG.Tweening;
+using NUnit.Framework.Constraints;
 using Study.Utilities;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
@@ -18,6 +19,7 @@ namespace TeamOdd.Player
         private static readonly int Rolling = Animator.StringToHash("Rolling");
         private static readonly int Hit = Animator.StringToHash("Hit");
         private static readonly int HitMotion = Animator.StringToHash("HitMotion");
+        private static readonly int HitDir = Animator.StringToHash("HitDir");
         private static readonly int WakeUp = Animator.StringToHash("WakeUp");
         private static readonly int Dead = Animator.StringToHash("Dead");
 
@@ -870,6 +872,15 @@ namespace TeamOdd.Player
                 motionIndex = push.HasMovement ? 2 : 0;
             }
             
+            Vector3 toAttacker = attackerPosition - transform.position;
+            toAttacker.y = 0f;
+            
+            float hitDir = Vector3.Dot(toAttacker, transform.forward) >= 0f ? 0f : 1f;
+
+            if (toAttacker.sqrMagnitude < 0.0001f) hitDir = 0f;
+            
+            animator.SetFloat(HitDir, hitDir);
+            
             // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
             animator.SetInteger(HitMotion, motionIndex);
             animator.SetTrigger(Hit);
@@ -894,11 +905,6 @@ namespace TeamOdd.Player
 
             if (reaction == HitReaction.Knockdown)
             {
-                Vector3 toAttacker = attackerPosition - transform.position;
-                toAttacker.y = 0f;
-                if (toAttacker.sqrMagnitude > 0.0001f)
-                    transform.rotation = Quaternion.LookRotation(toAttacker);
-                
                 float elapsed = 0f;
                 while (elapsed < WakeUpTime)
                 {
