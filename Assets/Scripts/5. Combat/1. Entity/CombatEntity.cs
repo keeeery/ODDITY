@@ -68,7 +68,8 @@ namespace TeamOdd.Combat
         protected void OnDeath()
         {
             // 임시용
-            Destroy(gameObject);
+            Player.Player.Instance.PlayerController.DeathAnimation();
+            //Destroy(gameObject);
             Debug.Log($"{gameObject.name} is dead!");
         }
     }
