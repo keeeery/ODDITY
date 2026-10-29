@@ -204,8 +204,8 @@ namespace TeamOdd.Superpower
 
             controller.enabled = rewinding == false;
 
-            player.IsMoveLocked = rewinding;
-            player.ControllerActive(); // 다음 프레임을 기다리지 않고 바로 PlayerController를 끈다
+            // 커서 잠금에 맞춰 PlayerController를 켜고 끄는 일은 UIManager가 맡는다. 되감는 동안만 바로 끄고, 끝나면 UIManager와 같은 기준(커서가 잠겨 있으면 켬)으로 되돌린다
+            player.PlayerController.enabled = rewinding == false && Cursor.lockState == CursorLockMode.Locked;
         }
     }
 }

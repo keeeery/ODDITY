@@ -9,8 +9,15 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/9. Mission/NextStage.unity
+    path: Assets/Scenes/9. Mission/2. Fight with bos.unity
     guid: 10403d61392e2c247a0efda8730fbd06
+  - enabled: 1
+    path: Assets/Scenes/10. Build/1. Fisrt Week/1. Get mission.unity
+    guid: 6731a012437ab904b833028d2e88e992
+  - enabled: 1
+    path: Assets/Scenes/10. Build/1. Fisrt Week/2. Fight with boss.unity
+    guid: 5bc8fcabf75f31745b907b961a5672e1
   m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 0080f10fa8f3d7645883ffa7f095ef2d, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

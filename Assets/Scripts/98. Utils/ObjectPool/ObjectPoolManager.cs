@@ -15,13 +15,17 @@ public class ObjectPoolManager : MonoBehaviour
         [SerializeField] private string key;
         [FormerlySerializedAs("Prefab")]
         [SerializeField] private GameObject prefab;
+        [Tooltip("풀 생성 시 미리 확보할 개수. 0이면 기존 설정과 같이 Expand Size를 사용합니다.")]
+        [SerializeField, Min(0)] private int initialSize;
         [FormerlySerializedAs("ExpandSize")]
+        [Tooltip("풀이 소진되면 즉시 추가 생성할 개수. 0이면 1개를 생성합니다.")]
         [SerializeField] private byte expandSize;
         [FormerlySerializedAs("Parent")]
         [SerializeField] private Transform parent;
 
         public string Key => key;
         public GameObject Prefab => prefab;
+        public int InitialSize => initialSize;
         public byte ExpandSize => expandSize;
         public Transform Parent => parent;
     }
@@ -34,20 +38,20 @@ public class ObjectPoolManager : MonoBehaviour
         private readonly int expandSize;
         private readonly string key;
 
-        public ObjectPool(GameObject prefab, Transform parent, int expandSize, string key)
+        public ObjectPool(GameObject prefab, Transform parent, int initialSize, int expandSize, string key)
         {
             this.prefab = prefab;
             this.parent = parent;
             this.expandSize = Mathf.Max(1, expandSize);
             this.key = key;
-            Expand();
+            Expand(initialSize > 0 ? initialSize : this.expandSize);
         }
 
-        private void Expand()
+        private void Expand(int count)
         {
-            for (int i = 0; i < expandSize; i++)
+            for (int i = 0; i < count; i++)
             {
-                var instance = Instantiate(prefab, parent).GetComponent<IObjectPoolItem>();
+                IObjectPoolItem instance = Instantiate(prefab, parent).GetComponent<IObjectPoolItem>();
                 instance.Key = key;
                 Return(instance);
             }
@@ -55,7 +59,7 @@ public class ObjectPoolManager : MonoBehaviour
 
         public IObjectPoolItem Get()
         {
-            if (pool.Count == 0) Expand();
+            if (pool.Count == 0) Expand(expandSize);
             return pool.Pop();
         }
 
@@ -113,7 +117,7 @@ public class ObjectPoolManager : MonoBehaviour
         }
 
         Transform poolParent = data.Parent == null ? transform : data.Parent;
-        objectPoolDic.Add(data.Key, new ObjectPool(data.Prefab, poolParent, data.ExpandSize, data.Key));
+        objectPoolDic.Add(data.Key, new ObjectPool(data.Prefab, poolParent, data.InitialSize, data.ExpandSize, data.Key));
     }
 
     public IObjectPoolItem GetObjectOrNull(string key)

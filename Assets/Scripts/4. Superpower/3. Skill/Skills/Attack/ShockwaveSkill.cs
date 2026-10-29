@@ -53,7 +53,7 @@ namespace TeamOdd.Superpower
             if (hitTargets.Contains(target)) return;
 
             hitTargets.Add(target);
-            DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(owner.transform.position), collider, HitReaction.Stagger);
+            DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(owner.transform.position), collider, HitReaction.Knockback);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, target, info));
         }
 

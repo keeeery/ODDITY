@@ -52,7 +52,7 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float spawnCheckRadius = 0.6f;
 
         [Title("Timing")]
-        // 투하 시작: Roar 애니메이션의 OnRoarDrop 신호, 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 투하 시작: Roar 애니메이션의 OnRoarDrop 신호, 종료: OnAttackEnded 신호(BossMeleePattern이 Idle로 전환)
         [Tooltip("모든 오브젝트를 나누어 투하하는 데 걸리는 시간(초)")]
         [SerializeField, Min(0f)] private float dropDuration = 1f;
         [Tooltip("켜면 OnRoarDrop 신호를 받는 순간까지 대상 위치를 따라갈지 여부")]
@@ -65,8 +65,10 @@ namespace TeamOdd.Boss
         [Title("Hit")]
         [SerializeField, Min(0)] private int largeDamage = 20;
         [SerializeField, Min(0)] private int mediumDamage = 10;
-        [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-        [SerializeField] private HitReaction reaction = HitReaction.Stagger;
+        [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+        [SerializeField] private HitReaction reaction = HitReaction.Knockback;
+        [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 오브젝트가 떨어진 지점")]
+        [SerializeField] private HitPush push = HitPush.Create(1.5f, 0f, 0.4f, HitPush.DirectionMode.FromHitCenter);
 
         [Title("Telegraph")]
         [Tooltip("착지 지점 표시 반경에 곱할 배율, 1이면 오브젝트의 수평 크기와 같다. 피격 판정도 이 범위를 사용한다.")]
@@ -140,6 +142,9 @@ namespace TeamOdd.Boss
             if (TryPickDropPosition(out Vector3 position, out Vector3 ground) == false) return;
 
             WallFragment fragment = fragmentSpawner.SpawnFragment(size, position, Random.rotation);
+            if (fragment == null) return;
+            if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject)) psychokinesisObject.MarkSpawnedByBoss();
+
             Rigidbody body = fragment.GetComponent<Rigidbody>();
             body.linearVelocity = Vector3.down * initialFallSpeed;
             body.angularVelocity = Random.onUnitSphere * spinSpeed;
@@ -178,7 +183,7 @@ namespace TeamOdd.Boss
             if (fragment.isActiveAndEnabled == false) yield break;
             if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) yield break;
 
-            TryHit(shape, pose, damage, reaction);
+            TryHit(shape, pose, damage, reaction, push);
         }
 
         // 초기 낙하 속도와 중력만으로 height만큼 떨어지는 시간(공기 저항 무시)

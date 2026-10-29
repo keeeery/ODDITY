@@ -38,7 +38,8 @@ namespace TeamOdd.Boss
             }
             
             // 멈춰서 도는 대신 각도가 클수록 느리게 걸으면서 빠르게 회전
-            float angle = root.SignedAngleToTarget;
+            // 장애물이 가로막으면 대상 대신 돌아갈 경로의 다음 꺾임점을 향함
+            float angle = root.SignedAngleToSteer;
             float turnRatio = Mathf.InverseLerp(slowStartAngle, slowEndAngle, Mathf.Abs(angle));
 
             root.RotateYaw(angle, Mathf.Lerp(rotateSpeed, maxRotateSpeed, turnRatio) * Clock.LocalDeltaTime);
@@ -48,21 +49,20 @@ namespace TeamOdd.Boss
             chaseSpeed *= Mathf.Lerp(1f, minSpeedRatio, turnRatio);
 
             Vector3 velocity = root.transform.forward * chaseSpeed;
-            Body.linearVelocity = velocity;
+            Movement.Move(velocity * Clock.LocalDeltaTime);
         }
 
-        protected override void OnExit()
-        {
-            Body.linearVelocity = Vector3.zero;
-        }
+        protected override void OnExit() { }
 
         private bool ShouldStopChase()
         {
             BossMeleePattern intent = root.Intent;
 
-            if (intent == null) return true;
             if (root.CanKeepMovingToTarget == false) return true;
             if (Clock.LocalTime - enterTime >= rethinkInterval) return true;
+
+            // 고를 패턴이 없어 가려진 대상을 찾아가는 중이면 보이는 순간 다시 판단
+            if (intent == null) return root.HasLineOfSight;
 
             return intent.IsDistanceInRange;
         }

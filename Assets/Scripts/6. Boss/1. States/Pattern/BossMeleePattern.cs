@@ -15,7 +15,8 @@ namespace TeamOdd.Boss
     // - 하위 클래스는 OnPatternEnter/OnPatternExit/OnPatternAnimEventOccurs로 패턴별 동작을 구현
 
     // 회전 추적: trackDuration 동안 대상 쪽으로 회전, OnTrackEnd 신호나 고정 예고가 뜨면 멈춤
-    // 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+    // 종료: OnAttackEnded 신호를 받으면 Idle로 전환
+    // - 여러 애니메이션을 이어 쓰는 패턴은 CanEndByAnimation으로 중간 신호를 무시하고, 무시한 신호는 OnPatternAnimEventOccurs로 받음
 
     // 근접 타격(hits): 범위 예고는 OnHitWarn 신호, 타격 시점은 OnHit 신호(둘 다 매개변수는 hits 인덱스, 비어 있으면 0)
     // - OnClawWarn/OnClawHit 신호는 인덱스 0의 OnHitWarn/OnHit으로 취급
@@ -35,8 +36,10 @@ namespace TeamOdd.Boss
             [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), OnHitWarn에서 OnHit까지의 시간에 맞춘다.")]
             [Min(0f)] public float warnDuration = 0.5f;
             [Min(0)] public int damage = 10;
-            [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-            public HitReaction reaction = HitReaction.Stagger;
+            [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+            public HitReaction reaction = HitReaction.Knockback;
+            [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 거리와 높이가 0이면 제자리에서 피격 모션만 재생한다.")]
+            public HitPush push = HitPush.Create(2f, 0f, 0.6f);
             [Tooltip("켜면 예고 순간 범위를 고정하고 보스 회전 추적도 멈춘다. 루트 모션으로 이동하며 때리는 공격에 사용한다.")]
             public bool lockOnWarn;
             [Tooltip("예고부터 타격까지 루트 모션으로 보스가 이동하는 거리(m), x는 오른쪽, y는 앞쪽. 고정할 범위를 이만큼 옮겨 둔다.")]
@@ -54,6 +57,7 @@ namespace TeamOdd.Boss
         [field: SerializeField] public float Weight { get; private set; }
         [field: SerializeField] public bool IsUrgent { get; private set; } // 우선 처리 여부
         [field: SerializeField] public bool CanApproach { get; private set; } // 범위 밖일 경우 근접하여 사용할지 여부
+        [SerializeField] private bool requiresLineOfSight = true; // 장애물에 가려 대상이 안 보이면 고르지 않음, 장애물을 무시하고 쓰는 패턴은 끔
 
         [Title("Animation")]
         [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
@@ -80,10 +84,19 @@ namespace TeamOdd.Boss
         private Pose[] lockedPoses;
         private bool[] isLocked;
 
-        public virtual bool CanUse => Clock.LocalTime >= readyTime;
+        // 시야는 고르는 시점에만 봄, 공격이 시작된 뒤 대상이 숨어도 범위 안이면 맞음
+        public virtual bool CanUse => Clock.LocalTime >= readyTime && IsSightClear;
+
+        public bool IsSightClear => requiresLineOfSight == false || root.HasLineOfSight;
+
+        // 패턴이 끝난 뒤 Idle이 실제로 적용할 후딜, 끝난 방식에 따라 후딜을 바꾸는 패턴이 재정의
+        public virtual float AppliedRecovery => Recovery;
 
         // 근접 타격 신호를 쓰지 않는 패턴(투척, 투하, 충격파)은 false로 두어 인스펙터에서 타격 목록을 숨김
         protected virtual bool UsesMeleeHits => true;
+
+        // false면 OnAttackEnded 신호로 끝내지 않음, 중간 애니메이션의 종료 신호를 패턴이 직접 처리할 때 사용
+        protected virtual bool CanEndByAnimation => true;
         
         public bool IsTooClose => root.DistanceToTarget < MinDistance;
         public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance;
@@ -150,6 +163,12 @@ namespace TeamOdd.Boss
 
         private void OnOccursAnimEvent(string name, string param)
         {
+            if (string.Equals(name, "OnAttackEnded") && CanEndByAnimation)
+            {
+                StateMachine.ChangeState(typeof(BossIdleState));
+                return;
+            }
+
             if (string.Equals(name, "OnTrackEnd"))
             {
                 trackEndTime = 0f;
@@ -214,8 +233,8 @@ namespace TeamOdd.Boss
             MeleeHit hit = hits[index];
             Pose pose = isLocked[index] ? lockedPoses[index] : GetHitPose(hit, Vector2.zero);
             isLocked[index] = false;
-
-            TryHit(hit.shape, pose, hit.damage, hit.reaction);
+            
+            TryHit(hit.shape, pose, hit.damage, hit.reaction, hit.push);
 
             // 예고 없이 타격했으면 타격 순간에만 범위를 보여 줌
             AttackTelegraph resolved = hitTelegraphs[index] != null ? hitTelegraphs[index] : root.ShowTelegraph(hit.shape, pose, 0f);
@@ -224,16 +243,28 @@ namespace TeamOdd.Boss
         }
 
         // 대상 몸통 반경만큼 범위를 넓혀 판정, 대상이 범위 끝에 걸쳐 있어도 맞음
-        protected bool TryHit(TelegraphShape shape, Pose pose, int damage, HitReaction reaction)
+        // 밀어내는 방향의 판정 중심은 범위 기준 위치(pose.position)
+        protected bool TryHit(TelegraphShape shape, Pose pose, int damage, HitReaction reaction, HitPush push)
         {
             if (shape.Contains(pose, Target.position, targetRadius) == false) return false;
 
-            SendDamage(damage, reaction, Target.position);
+            ApplyHit(pose.position, damage, reaction, push, Target.position);
             return true;
         }
 
+        // 무적(구르기, 기상 직후)이 아니면 피격 반응과 피해를 함께 전달, hitCenter는 넉백 방향을 FromHitCenter로 정할 때 기준점
+        protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint)
+        {
+            Player.PlayerController player = Player.Player.Instance.PlayerController;
+            if (player.IsInvincible) return;
+
+            player.ApplyHitReaction(reaction, push.GetDirection(root.transform, hitCenter, Target.position), push,
+                root.transform.position);
+            SendDamage(damage, reaction, hitPoint);
+        }
+
         // 피해를 받을 수 있는 대상일 때만 전달, 보낸 쪽은 보스 전용 피격 처리(ICombatable)를 정리할 때까지 비워 둠
-        // 반응은 피해 정보에 담아 보내고, 경직/다운 처리는 피격 대상이 담당
+        // 반응은 피해 정보에 담아 보내고, 넉백/넉다운 처리는 피격 대상이 담당
         protected void SendDamage(int damage, HitReaction reaction, Vector3 hitPoint)
         {
             Debug.Log($"[{GetType().Name}] 피격, 피해 {damage}, 반응 {reaction}", this);

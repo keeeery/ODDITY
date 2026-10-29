@@ -7,6 +7,7 @@ namespace TeamOdd.UI
     // 그림자, 테두리, 배경 트랙, 채움을 사각형(모서리 반경 조절 가능)으로 그리는 게이지 바
     // 미니맵 마커와 같이 가장자리를 부드럽게 처리해 벡터 이미지처럼 보이게 한다.
     // 값이 줄면 줄어든 구간을 잔상으로 잠시 남겼다가 따라 줄여서, 받은 피해량이 한눈에 보이게 한다.
+    // 차오름을 켜면 값이 늘 때 바로 채우지 않고 DOTween으로 차오르게 한다.
     [RequireComponent(typeof(CanvasRenderer))]
     public class VectorBar : MaskableGraphic
     {
@@ -42,6 +43,12 @@ namespace TeamOdd.UI
         // 잔상이 줄어드는 속도(초당 전체 대비 비율)
         [SerializeField, Min(0.01f)] private float trailSpeed = 0.6f;
 
+        [Header("Rise")]
+        [SerializeField] private bool useRise;
+        // 차오르는 속도(초당 전체 대비 비율)
+        [SerializeField, Min(0.01f)] private float riseSpeed = 1.2f;
+        [SerializeField] private Ease riseEase = Ease.OutCubic;
+
         [Header("Hit Flash")]
         // Flash() 호출 시 채움이 번쩍이고 바가 좌우로 흔들린다.
         [SerializeField] private Color flashColor = new(1f, 0.95f, 0.88f, 0.8f);
@@ -55,21 +62,52 @@ namespace TeamOdd.UI
         private readonly VectorShape shape = new();
         private float trailAmount = 1f;
         private float trailHoldUntil;
+        private Tween trailTween;
+        private float targetAmount = 1f; // 차오르는 중이면 fillAmount는 여기까지 따라간다.
+        private Tweener riseTween;
         private float flashAlpha;
         private Vector3 shakeOffset;
 
+        public bool UseTrail
+        {
+            get => useTrail;
+            set { useTrail = value; trailAmount = Mathf.Max(trailAmount, fillAmount); SetVerticesDirty(); }
+        }
+
+        public Color TrailColor
+        {
+            get => trailColor;
+            set { trailColor = value; SetVerticesDirty(); }
+        }
+
+        public bool UseRise
+        {
+            get => useRise;
+            set => useRise = value;
+        }
+
         public float FillAmount
         {
-            get => fillAmount;
+            get => targetAmount;
             set
             {
                 float clamped = Mathf.Clamp01(value);
-                if (Mathf.Approximately(fillAmount, clamped)) return;
+                if (Mathf.Approximately(targetAmount, clamped)) return;
+                targetAmount = clamped;
+
+                // 보이는 값보다 늘면 차오르게 하고, 줄면 차오르기를 멈추고 바로 줄인다.
+                if (clamped > fillAmount && useRise && Application.isPlaying && isActiveAndEnabled)
+                {
+                    Rise();
+                    return;
+                }
+                riseTween?.Pause();
 
                 // 줄어들면 잔상을 남기고 대기 시간을 다시 잡고, 늘어나면 잔상도 함께 올린다.
                 if (clamped < fillAmount) trailHoldUntil = Time.time + trailDelay;
                 fillAmount = clamped;
                 if (useTrail == false || trailAmount < fillAmount) trailAmount = fillAmount;
+                UpdateTrail();
                 SetVerticesDirty();
             }
         }
@@ -77,7 +115,11 @@ namespace TeamOdd.UI
         // 잔상 없이 바로 맞춘다. 대상이 바뀌는 경우처럼 줄어든 것이 피해가 아닐 때 쓴다.
         public void SetFillImmediate(float amount)
         {
+            trailTween?.Kill();
+            trailTween = null;
+            riseTween?.Pause();
             fillAmount = Mathf.Clamp01(amount);
+            targetAmount = fillAmount;
             trailAmount = fillAmount;
             SetVerticesDirty();
         }
@@ -100,6 +142,10 @@ namespace TeamOdd.UI
         protected override void OnDisable()
         {
             DOTween.Kill(this);
+            trailTween?.Kill();
+            trailTween = null;
+            riseTween?.Kill();
+            fillAmount = targetAmount; // 꺼질 때 차오르던 값은 끝값으로 맞춤
             flashAlpha = 0f;
             shakeOffset = Vector3.zero;
             base.OnDisable();
@@ -109,14 +155,44 @@ namespace TeamOdd.UI
         {
             base.OnEnable();
             trailAmount = fillAmount;
+            targetAmount = fillAmount;
         }
 
-        private void Update()
+        // 지금 위치에서 새 끝값으로 차오름, 자연 회복처럼 매 프레임 조금씩 늘어도 트윈을 새로 만들지 않고 다시 씀
+        private void Rise()
         {
-            if (Application.isPlaying == false || trailAmount <= fillAmount || Time.time < trailHoldUntil) return;
+            float duration = (targetAmount - fillAmount) / riseSpeed;
+            if (riseTween != null)
+            {
+                riseTween.ChangeEndValue(targetAmount, duration, true).Restart();
+                return;
+            }
 
-            trailAmount = Mathf.MoveTowards(trailAmount, fillAmount, trailSpeed * Time.deltaTime);
+            riseTween = DOTween.To(() => fillAmount, SetRisingFill, targetAmount, duration)
+                .SetEase(riseEase).SetAutoKill(false).OnKill(() => riseTween = null);
+        }
+
+        // 잔상이 채움 아래로 내려가 있으면 함께 올림
+        private void SetRisingFill(float amount)
+        {
+            fillAmount = amount;
+            if (trailAmount < fillAmount) trailAmount = fillAmount;
             SetVerticesDirty();
+        }
+
+        private void UpdateTrail()
+        {
+            trailTween?.Kill();
+            trailTween = null;
+            if (Application.isPlaying == false || isActiveAndEnabled == false ||
+                useTrail == false || trailAmount <= fillAmount) return;
+
+            float duration = (trailAmount - fillAmount) / trailSpeed;
+            // Flash()가 같은 컴포넌트의 연출을 종료해도 잔상은 계속 진행한다.
+            trailTween = DOTween.To(() => trailAmount, value => trailAmount = value, fillAmount, duration)
+                .SetDelay(Mathf.Max(0f, trailHoldUntil - Time.time))
+                .SetEase(Ease.Linear).OnUpdate(SetVerticesDirty).OnComplete(SetVerticesDirty)
+                .OnKill(() => trailTween = null);
         }
 
 #if UNITY_EDITOR
@@ -130,6 +206,7 @@ namespace TeamOdd.UI
         {
             base.OnValidate();
             trailAmount = fillAmount;
+            targetAmount = fillAmount;
         }
 #endif
 

@@ -6,59 +6,46 @@ using UnityEngine.Rendering.Universal;
 
 namespace TeamOdd.TimeControl
 {
-    // 시간 정지된 오브젝트(TimeFreezable.OverlayTargets)의 메시 위에 파란 반투명 막을 한 번 더 그리는 렌더러 기능
-    // 원래 머티리얼은 건드리지 않고, 투명 오브젝트까지 그린 뒤 같은 메시를 TimeFreezeOverlay 셰이더로 덧그린다.
-    // 막은 오브젝트 높이를 따라 아래에서 위로 덮이고 위에서 아래로 걷히므로,
-    // 오브젝트마다 다른 진행도와 높이 범위(렌더러 바운드를 합친 것)를 그리기 전에 전역 값으로 넘긴다.
+    // 시간 정지된 오브젝트(TimeFreezable.OverlayTargets)의 메시 위에 홀로그램 막을 덧그리는 렌더러 기능
+    // 오브젝트마다 진행도·높이 범위·글리치 세기를 전역 값으로 넘긴다.
     public sealed class TimeFreezeOverlayFeature : ScriptableRendererFeature
     {
-        [SerializeField] private Shader overlayShader;
-        [SerializeField] private Color color = new(0.225f, 0.45f, 1f, 0.275f);
-        [Tooltip("가장자리(실루엣) 쪽 색, 알파가 높을수록 윤곽이 진해진다.")]
-        [SerializeField] private Color rimColor = new(0.425f, 0.65f, 1f, 0.775f);
-        [SerializeField, Range(0.5f, 8f)] private float rimPower = 2.5f;
-        [Tooltip("막이 씌워지는 경계선의 밝은 띠 색")]
-        [SerializeField] private Color edgeColor = new(0.675f, 0.8f, 1f, 0.925f);
-        [Tooltip("경계선 띠의 두께(m)")]
-        [SerializeField, Min(0.001f)] private float edgeWidth = 0.15f;
+        [Tooltip("TeamOdd/Time Freeze Hologram 셰이더 머티리얼, 스캔라인·프레넬·경계선 띠·정지 글리치 세기는 머티리얼에서 조정한다.")]
+        [SerializeField] private Material overlayMaterial;
 
-        private Material material;
+        // 막을 그리지 않을 카메라(미니맵 등), DrawRenderer는 컬링 마스크를 무시하므로 따로 걸러야 한다.
+        private static readonly HashSet<Camera> excludedCameras = new();
+
         private OverlayPass pass;
+
+        public static void ExcludeCamera(Camera camera) => excludedCameras.Add(camera);
+
+        public static void IncludeCamera(Camera camera) => excludedCameras.Remove(camera);
 
         public override void Create()
         {
-            CoreUtils.Destroy(material);
-            if (overlayShader == null) return;
-
-            material = CoreUtils.CreateEngineMaterial(overlayShader);
-            material.SetColor("_BaseColor", color);
-            material.SetColor("_RimColor", rimColor);
-            material.SetFloat("_RimPower", rimPower);
-            material.SetColor("_EdgeColor", edgeColor);
-            material.SetFloat("_EdgeWidth", edgeWidth);
-            pass = new OverlayPass(material);
+            pass = new OverlayPass();
         }
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (material == null || TimeFreezable.OverlayTargets.Count == 0) return;
+            if (overlayMaterial == null || TimeFreezable.OverlayTargets.Count == 0) return;
 
-            CameraType cameraType = renderingData.cameraData.camera.cameraType;
-            if (cameraType != CameraType.Game && cameraType != CameraType.SceneView) return;
+            Camera camera = renderingData.cameraData.camera;
+            if (camera.cameraType != CameraType.Game && camera.cameraType != CameraType.SceneView) return;
+            if (excludedCameras.Contains(camera)) return;
 
+            pass.Material = overlayMaterial;
             renderer.EnqueuePass(pass);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            CoreUtils.Destroy(material);
         }
 
         private sealed class OverlayPass : ScriptableRenderPass
         {
             private static readonly int ProgressId = Shader.PropertyToID("_TimeFreezeOverlayProgress");
             private static readonly int BoundsId = Shader.PropertyToID("_TimeFreezeOverlayBounds");
-            private readonly Material material;
+            private static readonly int GlitchId = Shader.PropertyToID("_TimeFreezeOverlayGlitch");
+
+            public Material Material;
 
             private struct DrawItem
             {
@@ -72,6 +59,7 @@ namespace TeamOdd.TimeControl
                 public int First;
                 public int Count;
                 public float Progress;
+                public float Glitch;
                 public Vector4 Bounds;
             }
 
@@ -82,9 +70,8 @@ namespace TeamOdd.TimeControl
                 public readonly List<DrawGroup> Groups = new();
             }
 
-            public OverlayPass(Material material)
+            public OverlayPass()
             {
-                this.material = material;
                 renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
             }
 
@@ -93,14 +80,14 @@ namespace TeamOdd.TimeControl
                 UniversalResourceData resources = frameData.Get<UniversalResourceData>();
 
                 using IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass("Time freeze overlay", out PassData data);
-                data.Material = material;
+                data.Material = Material;
                 data.Items.Clear();
                 data.Groups.Clear();
                 Collect(data.Items, data.Groups);
 
                 builder.SetRenderAttachment(resources.activeColorTexture, 0, AccessFlags.Write);
                 builder.SetRenderAttachmentDepth(resources.activeDepthTexture, AccessFlags.Read);
-                // 오브젝트마다 진행도와 높이 범위를 전역 값으로 바꿔 가며 그림
+                // 오브젝트마다 전역 값을 바꿔 가며 그림
                 builder.AllowGlobalStateModification(true);
                 builder.SetRenderFunc(static (PassData data, RasterGraphContext context) =>
                 {
@@ -108,6 +95,7 @@ namespace TeamOdd.TimeControl
                     {
                         context.cmd.SetGlobalFloat(ProgressId, group.Progress);
                         context.cmd.SetGlobalVector(BoundsId, group.Bounds);
+                        context.cmd.SetGlobalFloat(GlitchId, group.Glitch);
 
                         for (int itemIndex = group.First; itemIndex < group.First + group.Count; itemIndex++)
                         {
@@ -152,6 +140,7 @@ namespace TeamOdd.TimeControl
                         First = first,
                         Count = items.Count - first,
                         Progress = target.OverlayProgress,
+                        Glitch = target.OverlayGlitch,
                         Bounds = new Vector4(minY, maxY, 0f, 0f),
                     });
                 }

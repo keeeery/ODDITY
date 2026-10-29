@@ -26,10 +26,8 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: 0}
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures:
-  - {fileID: 2147300000}
-  - {fileID: 2147300001}
-  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000
+  m_RendererFeatures: []
+  m_RendererFeatureMap: 
   m_UseNativeRenderPass: 1
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
@@ -47,12 +45,12 @@ MonoBehaviour:
     failOperation: 0
     zFailOperation: 0
   m_ShadowTransparentReceive: 0
-  m_RenderingMode: 0
+  m_RenderingMode: 2
   m_DepthPrimingMode: 0
   m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
---- !u!114 &2147300000
+--- !u!114 &1002035807535710140
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,27 +59,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d193e5166bde4698985ac2e1ae54ee13, type: 3}
-  m_Name: Psychokinesis Screen Outline
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisOutlineFeature
+  m_Script: {fileID: 11500000, guid: a0ec52cecc795714f93f274c2e71e87b, type: 3}
+  m_Name: GlobalVolumeFeature
+  m_EditorClassIdentifier: 
   m_Active: 1
-  outlineShader: {fileID: 4800000, guid: ea085362044c41b0ae7b7fc54426dacd, type: 3}
---- !u!114 &2147300001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a678dff47bff4060b93b6c4e7098ea06, type: 3}
-  m_Name: Time Freeze Overlay
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.TimeControl.TimeFreezeOverlayFeature
-  m_Active: 1
-  overlayShader: {fileID: 4800000, guid: e43f52eea3b849e38299edd06106fb72, type: 3}
-  color: {r: 0.225, g: 0.45, b: 1, a: 0.275}
-  rimColor: {r: 0.425, g: 0.65, b: 1, a: 0.775}
-  rimPower: 2.5
-  edgeColor: {r: 0.675, g: 0.8, b: 1, a: 0.925}
-  edgeWidth: 0.15
+  _baseProfile: {fileID: 11400000, guid: f2d4d916a6612574cad220d125febbf2, type: 2}

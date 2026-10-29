@@ -16,9 +16,6 @@ namespace TeamOdd.Player
 
         public float Stamina => stamina;
 
-        // true인 동안 이동 입력을 받지 않는다 (시간 역행으로 되감는 중)
-        public bool IsMoveLocked { get; set; }
-
         // 최대 스태미나 = 기본값(PlayerStats 에셋) + 증강칩 보너스. 칩을 끼우고 빼면 바로 바뀌므로 쓸 때마다 읽는다
         public float MaxStamina => combatEntity.CurrentStats.Get(StatType.MaxStamina);
 
@@ -30,6 +27,8 @@ namespace TeamOdd.Player
         public PlayerController PlayerController;
         
         private AnimStateEventListener eventListener;
+
+        private bool isManuallyLocked = false;
         
         private void Awake()
         {
@@ -50,17 +49,8 @@ namespace TeamOdd.Player
         private void Update()
         {
             // 칩을 빼서 최대치가 줄면 회복할 때 새 최대치로 맞춰진다
-            if (Time.time >= lastConsumeTime + staminaRegenDelay)
+            if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)
                 stamina = Mathf.Min(MaxStamina, stamina + staminaRegenRate * Time.deltaTime);
-            
-            if (SimpleInput.GetKeyDown(Key.Escape))
-                LockCursor(false);
-            else if (Cursor.lockState != CursorLockMode.Locked &&
-                     (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left) ||
-                      SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
-                LockCursor(true);
-
-            ControllerActive();
         }
 
         private void OnEnable()
@@ -77,17 +67,25 @@ namespace TeamOdd.Player
         
         private void HandleRollRequested()
         {
-            if (stamina < 100f) return;
+            if (stamina < PlayerController.NeedRollStamina) return;
 
-            ConsumeStamina(100f);
+            ConsumeStamina(PlayerController.NeedRollStamina);
             PlayerController.InputRolling();
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
         { 
-            if (eventName == "EndRolling")
+            switch (eventName)
             {
-                PlayerController.EndRoll();
+                case "EndRolling":
+                    PlayerController.EndRoll();
+                    break;
+                case "EndHit":
+                    PlayerController.EndHitAnimation();
+                    break;    
+                case "WakeUp":
+                    PlayerController.CanWakeUp = true;
+                    break;
             }
         }
 
@@ -101,20 +99,6 @@ namespace TeamOdd.Player
         public void SetStamina(float value)
         {
             stamina = Mathf.Clamp(value, 0f, MaxStamina);
-        }
-
-        public void ControllerActive()
-        {
-            bool cursorLocked = Cursor.lockState == CursorLockMode.Locked;
-
-            PlayerController.enabled = cursorLocked && IsMoveLocked == false;
-            CameraController.enabled = cursorLocked;
-        }
-        
-        public void LockCursor(bool locked)
-        {
-            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = locked == false;
         }
     }
 }

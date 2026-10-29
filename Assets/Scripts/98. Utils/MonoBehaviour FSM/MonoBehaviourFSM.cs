@@ -59,6 +59,13 @@ namespace FantasyGarden.FSM
             currentState.SetActive(true);
         }
 
+        // 예약된 상태를 비우고 기본 상태부터 다시 시작
+        public virtual void Restart()
+        {
+            ReservedState = null;
+            ChangeState(defaultStateType, true);
+        }
+
         public void ReserveState(Type state) => ReservedState = stateMap[state];
 
         public void ReserveState(MonoBehaviourState state)

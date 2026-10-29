@@ -30,7 +30,7 @@ namespace TeamOdd.Boss
         protected override void OnEnter()
         {
             // 공격을 끝내고 Idle로 진입 시에만 후딜 적용
-            thinkTime = Clock.LocalTime + (executed != null ? executed.Recovery : 0f);
+            thinkTime = Clock.LocalTime + (executed != null ? executed.AppliedRecovery : 0f);
             executed = null;
         }
 
@@ -42,9 +42,12 @@ namespace TeamOdd.Boss
 
         protected override void OnExit() { }
 
+        // 끊긴 패턴의 후딜을 다시 시작한 Idle에 적용하지 않음
+        public override void ResetMemory() => executed = null;
+
         private void Think()
         {
-            if (TryFollowHop()) return;
+            if (TryFollowUp()) return;
 
             if (IsIntentValid() == false) root.ClearIntent();
 
@@ -60,6 +63,13 @@ namespace TeamOdd.Boss
 
             if (intent == null)
             {
+                // 시야가 필요한 패턴이 모두 빠져 고를 게 없으면 제자리에 서 있지 않고 장애물을 돌아가 대상을 찾음
+                if (root.HasLineOfSight == false)
+                {
+                    ChangeState(CanMove() ? typeof(BossChaseState) : typeof(BossTurnState));
+                    return;
+                }
+
                 if (Mathf.Abs(root.SignedAngleToTarget) > faceHalfAngle)
                 {
                     ChangeState(typeof(BossTurnState));
@@ -79,10 +89,7 @@ namespace TeamOdd.Boss
                 return;
             }
 
-            // 이미 추적 중이었다면 더 넓은 각도까지 멈추지 않고 계속 추적
-            bool canMove = isChasing ? root.CanKeepMovingToTarget : root.CanMoveToTarget;
-
-            if (intent.IsDistanceInRange || canMove == false)
+            if (intent.IsDistanceInRange || CanMove() == false)
             {
                 ChangeState(typeof(BossTurnState));
                 return;
@@ -91,13 +98,17 @@ namespace TeamOdd.Boss
             ChangeState(typeof(BossChaseState));
         }
 
-        // 점프로 자리를 잡고 돌아왔으면 골라 둔 공격을 바로 실행, 사거리를 벗어났으면 평소처럼 다시 판단
-        private bool TryFollowHop()
-        {
-            if (hop == null) return false;
+        // 이미 추적 중이었다면 더 넓은 각도까지 멈추지 않고 계속 추적
+        private bool CanMove() => isChasing ? root.CanKeepMovingToTarget : root.CanMoveToTarget;
 
-            BossMeleePattern follow = hop.TakeFollow();
+        // 점프로 자리를 잡고 돌아왔거나(Hop) 앞 패턴이 연계 공격을 남겼으면(포효 등) 골라 둔 공격을 바로 실행
+        // 사거리를 벗어났으면 평소처럼 다시 판단, 장애물에 가려졌으면 시야가 필요한 공격은 쓰지 않음
+        private bool TryFollowUp()
+        {
+            BossMeleePattern follow = hop != null ? hop.TakeFollow() : null;
+            if (follow == null) follow = root.TakeFollowUp();
             if (follow == null || follow.IsInRange == false) return false;
+            if (follow.IsSightClear == false) return false;
 
             executed = follow;
             ChangeState(follow.GetType());

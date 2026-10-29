@@ -23,7 +23,7 @@ namespace TeamOdd.Boss
         [SerializeField] private Transform throwOrigin;
 
         [Title("Timing")]
-        // 오브젝트 등장: OnThrowPrepare 신호, 투척: OnThrow 신호(둘 다 GetHitHeavy 애니메이션), 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 오브젝트 등장: OnThrowPrepare 신호, 투척: OnThrow 신호(둘 다 GetHitHeavy 애니메이션), 종료: OnAttackEnded 신호(BossMeleePattern이 Idle로 전환)
         // 경로 예고: OnThrowWarn 신호, 없으면 OnThrowPrepare 신호에서 시작
         [Tooltip("투척 후 보스와의 충돌을 계속 무시하는 시간(초)")]
         [SerializeField, Min(0f)] private float ownerIgnoreDuration = 0.3f;
@@ -42,8 +42,10 @@ namespace TeamOdd.Boss
 
         [Title("Hit")]
         [SerializeField, Min(0)] private int damage = 20;
-        [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-        [SerializeField] private HitReaction reaction = HitReaction.Stagger;
+        [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+        [SerializeField] private HitReaction reaction = HitReaction.Knockback;
+        [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 날아온 오브젝트의 위치")]
+        [SerializeField] private HitPush push = HitPush.Create(3f, 0f, 0.5f, HitPush.DirectionMode.FromHitCenter);
         [Tooltip("오브젝트 박스 바깥으로 더할 판정 여유(m), 대상 몸에 부딪혀 튕겨도 겹침이 잡히도록 한다.")]
         [SerializeField, Min(0f)] private float hitPadding = 0.3f;
         [Tooltip("이 속도(m/s)보다 느려지면 판정을 끝낸다. 떨어져 구르는 오브젝트에는 맞지 않는다.")]
@@ -116,6 +118,8 @@ namespace TeamOdd.Boss
             }
 
             if (name != "OnThrow") return;
+            // 생성에 실패했거나 OnThrowPrepare 없이 신호가 오면 던질 오브젝트가 없음
+            if (heldBody == null) return;
 
             float flightTime = Throw();
             // 패턴이 끝나 이 오브젝트가 비활성화돼도 비행 중 판정은 이어지도록 보스에서 실행
@@ -207,7 +211,7 @@ namespace TeamOdd.Boss
                 if (TryFindTargetOverlap(box, out Collider targetCollider) == false) continue;
 
                 Vector3 hitPoint = targetCollider.ClosestPoint(body.worldCenterOfMass);
-                SendDamage(damage, reaction, hitPoint);
+                ApplyHit(body.worldCenterOfMass, damage, reaction, push, hitPoint);
 
                 // 플레이어 투척이 보스에 맞았을 때처럼 맞은 자리에서 파편화
                 if (psychokinesisObject != null) psychokinesisObject.ShatterAt(hitPoint);
@@ -245,6 +249,7 @@ namespace TeamOdd.Boss
         private void Spawn()
         {
             WallFragment fragment = fragmentSpawner.SpawnFragment(FragmentSize.Large, Origin.position, Random.rotation);
+            if (fragment == null) return;
 
             heldBody = fragment.GetComponent<Rigidbody>();
             heldBody.isKinematic = true;

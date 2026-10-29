@@ -1,13 +1,15 @@
 using System;
 using Study.Utilities;
+using TeamOdd.Superpower;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace TeamOdd.Mission
 {
     public class MissionNPC : MonoBehaviour
     {
-        [SerializeField] private GameObject missionUI;
+        [SerializeField] private GameObject popupUI;
         [SerializeField] private  float distance;
         [SerializeField] private Player.Player player;
 
@@ -22,9 +24,21 @@ namespace TeamOdd.Mission
             {
                 if (SimpleInput.GetKeyDown(Key.F))
                 {
-                    missionUI.SetActive(true);
-                    player.LockCursor(false);
-                    player.ControllerActive();
+                    bool isClose = popupUI.activeSelf == false;
+                    
+                    if(popupUI.TryGetComponent(out AugmentationChipPanel panel))
+                        panel.IsActivePanel(isClose, player.GetComponent<AugmentationChipInventory>());
+                    else popupUI.SetActive(isClose);
+                    
+                    UIManager.Instance.LockCursor(isClose == false, isClose);
+                }
+                else if (SimpleInput.GetKeyDown(Key.Escape))
+                {
+                    if(popupUI.TryGetComponent(out AugmentationChipPanel panel))
+                        panel.Close();
+                    else popupUI.SetActive(false);
+                    
+                    UIManager.Instance.LockCursor(true);
                 }
             }
         }

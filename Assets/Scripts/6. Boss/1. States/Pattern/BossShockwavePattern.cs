@@ -1,12 +1,9 @@
 using System;
-using DG.Tweening;
 using FantasyGarden.FSM;
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using TeamOdd.Combat;
-using TeamOdd.Psychokinesis;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace TeamOdd.Boss
 {
@@ -23,14 +20,16 @@ namespace TeamOdd.Boss
             [Tooltip("충격파가 터질 중심, 높이는 무시하고 이 지점 아래 바닥에서 터진다.")]
             public Transform origin;
             [Min(0)] public int damage = 10;
-            [Tooltip("피격 대상에게 줄 반응, 실제 경직/다운 처리는 피격 대상 쪽에서 담당")]
-            public HitReaction reaction = HitReaction.Stagger;
+            [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
+            public HitReaction reaction = HitReaction.Knockback;
+            [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 충격파가 터진 지점")]
+            public HitPush push = HitPush.Create(3f, 0f, 0.6f, HitPush.DirectionMode.FromHitCenter);
             [Min(0f)] public float radius = 10f;
         }
 
         [Title("Waves")]
         // 범위 예고: OnShockwaveWarn 신호, 충격 발생: OnShockwave 신호(둘 다 매개변수는 waves 인덱스, 비어 있으면 0)
-        // 종료: OnAttackEnded 신호(BossMonster가 Idle로 전환)
+        // 종료: OnAttackEnded 신호(BossMeleePattern이 Idle로 전환)
         // 예고 신호가 없으면 터지는 순간의 위치로 판정하고 범위는 터질 때만 잠깐 표시
         [SerializeField] private Wave[] waves;
 
@@ -120,9 +119,9 @@ namespace TeamOdd.Boss
             TelegraphShape shape = GetShape(wave);
             isWarned[index] = false;
 
-            TryHit(shape, pose, wave.damage, wave.reaction);
+            TryHit(shape, pose, wave.damage, wave.reaction, wave.push);
 
-            LiftFragments(pose, shape);
+            BossFragmentLift.LiftInRange(fragmentSpawner, shape, pose, liftHeight, liftDuration);
 
             // 예고 없이 터졌으면 터지는 순간에만 범위를 보여 줌
             AttackTelegraph telegraph = telegraphs[index] != null ? telegraphs[index] : root.ShowTelegraph(shape, pose, 0f);
@@ -147,33 +146,6 @@ namespace TeamOdd.Boss
             }
 
             return height;
-        }
-
-        // 떠오르는 동안 물리와 부딪히지 않도록 kinematic으로 띄우고, 다 떠오르면 되돌려 중력으로 떨어뜨림
-        // 크기별 풀(Large/Medium/Small)의 부모 아래에서 활성화된 오브젝트를 찾음
-        // 플레이어가 들고 있거나 보스가 띄워 둔(kinematic) 오브젝트는 건드리지 않음
-        private void LiftFragments(Pose pose, TelegraphShape shape)
-        {
-            if (fragmentSpawner == null) return;
-
-            foreach (Transform poolParent in fragmentSpawner.FragmentPoolParents)
-            {
-                if (poolParent == null) continue;
-                foreach (Rigidbody body in poolParent.GetComponentsInChildren<Rigidbody>())
-                    Lift(body, pose, shape);
-            }
-        }
-
-        private void Lift(Rigidbody body, Pose pose, TelegraphShape shape)
-        {
-            if (body.isKinematic || shape.Contains(pose, body.position) == false) return;
-            if (body.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) return;
-
-            body.isKinematic = true;
-            body.DOMoveY(body.position.y + Random.Range(liftHeight.x, liftHeight.y), Random.Range(liftDuration.x, liftDuration.y))
-                .SetEase(Ease.OutQuad)
-                .SetLink(body.gameObject)
-                .OnKill(() => body.isKinematic = false);
         }
 
 #if UNITY_EDITOR

@@ -52,6 +52,8 @@ namespace Jay
             if (instance == null)
             {
                 instance = this as T;
+
+                transform.SetParent(null);
                 DontDestroyOnLoad(gameObject);
 
                 OnInitialize();

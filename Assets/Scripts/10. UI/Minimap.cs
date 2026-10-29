@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using TeamOdd.Boss;
+using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.TimeControl;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -53,6 +55,12 @@ namespace TeamOdd.UI
         [SerializeField, Min(1f)] private float cameraHeight = 50f;
         // 플레이어 아래로 어디까지 그릴지
         [SerializeField, Min(1f)] private float cameraDepthBelow = 50f;
+
+        [Header("Current Floor")]
+        [Tooltip("접지면 위로 표시할 높이(m). 위층·천장보다 낮게, 현재 층의 경사면보다 높게 설정합니다.")]
+        [SerializeField, Min(0.01f)] private float floorHeightAbove = 1f;
+        [Tooltip("접지면 아래로 표시할 깊이(m). 아래층 바닥이 포함되지 않도록 설정합니다.")]
+        [SerializeField, Min(0.01f)] private float floorDepthBelow = 0.5f;
 
         [Header("Dot Size")]
         [SerializeField, Min(0f)] private float playerDotSize = 20f;
@@ -110,6 +118,21 @@ namespace TeamOdd.UI
         private Material wallMaterial;
         private MinimapWallPass wallPass;
 
+        private readonly List<Vector2> objectPositions = new();
+        private bool markerStateValid;
+        private Vector2 lastPlayerPosition;
+        private float lastMapYaw;
+        private float lastFacingAngle;
+        private bool lastBossVisible;
+        private Vector2 lastBossPosition;
+        private bool groundWasEnabled;
+        private bool groundSuspended;
+        private float playerFacingAngle;
+
+        private CharacterController playerBody;
+        private bool hasFloorHeight;
+        private float floorHeight;
+
         private float mapYaw;
         private Vector2 mapCenter;
         private float mapRadius;
@@ -129,10 +152,12 @@ namespace TeamOdd.UI
             if (wallLayers == 0) wallLayers = LayerMask.GetMask("Wall");
             if (wallShader == null) wallShader = Shader.Find(WallShaderName);
 
+            if (player != null) playerBody = player.GetComponent<CharacterController>();
             CreateMapCamera();
             CreateWallPass();
             if (ground == null) ground = CreateGround();
             ground.Texture = mapTexture;
+            RefreshMapCamera();
         }
 
         protected override void OnDestroy()
@@ -140,7 +165,12 @@ namespace TeamOdd.UI
             base.OnDestroy();
             RenderPipelineManager.beginCameraRendering -= EnqueueWallPass;
             if (wallMaterial != null) Destroy(wallMaterial);
-            if (mapCamera != null) Destroy(mapCamera.gameObject);
+            if (mapCamera != null)
+            {
+                TimeFreezeOverlayFeature.IncludeCamera(mapCamera);
+                HitFlashFeature.IncludeCamera(mapCamera);
+                Destroy(mapCamera.gameObject);
+            }
             if (mapTexture != null)
             {
                 mapTexture.Release();
@@ -148,13 +178,87 @@ namespace TeamOdd.UI
             }
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            markerStateValid = false;
+            if (Application.isPlaying == false) return;
+
+            if (groundSuspended && ground != null) ground.enabled = groundWasEnabled;
+            groundSuspended = false;
+            RefreshMapCamera();
+        }
+
+        protected override void OnDisable()
+        {
+            if (mapCamera != null) mapCamera.enabled = false;
+            if (Application.isPlaying && ground != null)
+            {
+                groundWasEnabled = ground.enabled;
+                groundSuspended = true;
+                ground.enabled = false;
+            }
+            base.OnDisable();
+        }
+
         private void LateUpdate()
         {
             if (Application.isPlaying == false || player == null) return;
 
+            RefreshMapCamera();
+            float facingYaw = player.PlayerController != null
+                ? player.PlayerController.MinimapFacingYaw : player.transform.eulerAngles.y;
+            playerFacingAngle = Mathf.DeltaAngle(mapYaw, facingYaw);
+            if (UpdateMarkerState()) SetVerticesDirty();
+        }
+
+        private void RefreshMapCamera()
+        {
+            if (mapCamera == null || player == null) return;
+
             mapYaw = viewCamera != null ? viewCamera.eulerAngles.y : player.transform.eulerAngles.y;
+            UpdateFloorHeight();
             UpdateMapCamera();
-            SetVerticesDirty();
+            mapCamera.enabled = isActiveAndEnabled;
+        }
+
+        private bool UpdateMarkerState()
+        {
+            Vector3 position = player.transform.position;
+            Vector2 playerPosition = new Vector2(position.x, position.z);
+            bool bossVisible = boss != null && boss.isActiveAndEnabled;
+            Vector3 bossWorldPosition = bossVisible ? boss.transform.position : Vector3.zero;
+            Vector2 bossPosition = new Vector2(bossWorldPosition.x, bossWorldPosition.z);
+            IReadOnlyList<PsychokinesisObject> objects = PsychokinesisObject.ActiveObjects;
+            bool changed = markerStateValid == false || lastPlayerPosition.Equals(playerPosition) == false ||
+                lastMapYaw.Equals(mapYaw) == false || lastFacingAngle.Equals(playerFacingAngle) == false ||
+                lastBossVisible != bossVisible || (bossVisible && lastBossPosition.Equals(bossPosition) == false) ||
+                objectPositions.Count != objects.Count;
+
+            for (int index = 0; index < objects.Count; index++)
+            {
+                Vector3 objectPosition = objects[index].transform.position;
+                Vector2 horizontalPosition = new Vector2(objectPosition.x, objectPosition.z);
+                if (index >= objectPositions.Count)
+                {
+                    objectPositions.Add(horizontalPosition);
+                    continue;
+                }
+                if (objectPositions[index].Equals(horizontalPosition)) continue;
+
+                objectPositions[index] = horizontalPosition;
+                changed = true;
+            }
+            if (objectPositions.Count > objects.Count)
+                objectPositions.RemoveRange(objects.Count, objectPositions.Count - objects.Count);
+
+            markerStateValid = true;
+            lastPlayerPosition = playerPosition;
+            lastMapYaw = mapYaw;
+            lastFacingAngle = playerFacingAngle;
+            lastBossVisible = bossVisible;
+            lastBossPosition = bossPosition;
+            return changed;
         }
 
 #if UNITY_EDITOR
@@ -185,6 +289,10 @@ namespace TeamOdd.UI
             mapCameraData = mapCamera.GetUniversalAdditionalCameraData();
             mapCameraData.renderPostProcessing = false;
             mapCameraData.renderShadows = false;
+
+            // 시간 정지 막과 피격 번쩍임은 미니맵에 그리지 않는다.
+            TimeFreezeOverlayFeature.ExcludeCamera(mapCamera);
+            HitFlashFeature.ExcludeCamera(mapCamera);
         }
 
         private void CreateWallPass()
@@ -216,11 +324,32 @@ namespace TeamOdd.UI
             if (wallMaterial != null) wallMaterial.SetColor(wallColorId, backgroundColor);
 
             mapCamera.orthographicSize = worldRadius;
-            mapCamera.nearClipPlane = 0.1f;
-            mapCamera.farClipPlane = cameraHeight + cameraDepthBelow;
+            mapCamera.nearClipPlane = Mathf.Max(0.1f, cameraHeight - floorHeightAbove);
+            mapCamera.farClipPlane = Mathf.Max(mapCamera.nearClipPlane + 0.01f,
+                cameraHeight + Mathf.Min(cameraDepthBelow, floorDepthBelow));
+            Vector3 cameraPosition = player.transform.position;
+            cameraPosition.y = floorHeight + cameraHeight;
             mapCamera.transform.SetPositionAndRotation(
-                player.transform.position + Vector3.up * cameraHeight,
+                cameraPosition,
                 Quaternion.Euler(90f, mapYaw, 0f));
+        }
+
+        private void UpdateFloorHeight()
+        {
+            // 공중에서는 이전 층을 유지해 점프만으로 표시 층이 바뀌지 않게 한다.
+            if (hasFloorHeight && playerBody != null && playerBody.isGrounded == false) return;
+
+            Vector3 origin = playerBody != null ? playerBody.bounds.center : player.transform.position + Vector3.up;
+            float distance = playerBody != null ? playerBody.bounds.extents.y + 0.5f : 1.5f;
+            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, distance, groundLayers, QueryTriggerInteraction.Ignore))
+            {
+                floorHeight = hit.point.y;
+                hasFloorHeight = true;
+            }
+            else if (hasFloorHeight == false)
+            {
+                floorHeight = playerBody != null ? playerBody.bounds.min.y : player.transform.position.y;
+            }
         }
 
         // 바닥이 점 아래에 그려지도록 같은 크기의 형제 오브젝트로 바로 앞 순서에 둔다.
@@ -281,8 +410,9 @@ namespace TeamOdd.UI
             if (boss != null && boss.isActiveAndEnabled)
                 AddMarker(vh, boss.transform.position, bossDotSize * 0.5f, bossColor, showBossOffscreen);
 
-            // 맵은 카메라 기준으로 돌고, 플레이어 점의 끝은 플레이어 프리팹이 바라보는 방향을 가리킨다.
-            float facingAngle = Mathf.DeltaAngle(mapYaw, player.transform.eulerAngles.y);
+            // 홀딩 자세를 위한 몸 회전은 제외하고 조준 방향을 표시한다.
+            float facingAngle = Application.isPlaying ? playerFacingAngle
+                : Mathf.DeltaAngle(mapYaw, player.transform.eulerAngles.y);
             shape.SetPointedCircle(mapCenter, playerDotSize * 0.5f, playerTipLength, facingAngle, CircleSegments);
             AddBadge(vh, mapCenter, playerColor);
         }

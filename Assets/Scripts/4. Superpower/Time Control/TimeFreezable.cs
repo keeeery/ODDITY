@@ -18,7 +18,7 @@ namespace TeamOdd.TimeControl
     /// 전체 정지에 배율(timeScale)을 주면 멈추지 않고 그 배율로 느리게 흐름(감속). 정지는 배율 0인 감속과 같음
     /// - 감속 중에는 Animator 속도와 DOTween에 배율을 곱하고, Rigidbody는 속도에 배율을, 중력에 배율의 제곱을 곱해 같은 궤적을 느리게 그림
     /// - LocalTime도 배율만큼 느리게 흐름
-    /// 멈춰 있는 동안 메시 위에 파란 반투명 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
+    /// 멈춰 있는 동안 메시 위에 파란 홀로그램 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TimeFreezable : MonoBehaviour
@@ -36,6 +36,8 @@ namespace TeamOdd.TimeControl
         [SerializeField, Min(0.01f)] private float overlayCoverDuration = 0.3f;
         [Tooltip("풀릴 때 막이 머리끝에서 발밑까지 걷히는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f)] private float overlayUncoverDuration = 0.4f;
+        [Tooltip("멈추는 순간 막에 글리치가 일었다가 잦아드는 시간(초), 정지가 이어지는 동안은 잔잔하게 둔다.")]
+        [SerializeField, Min(0.01f)] private float overlayGlitchDuration = 0.35f;
 
         private struct BodyState
         {
@@ -90,6 +92,18 @@ namespace TeamOdd.TimeControl
         // 덮일 때는 빠르게 올라오다 머리끝에서, 걷힐 때는 빠르게 내려가다 발밑에서 감속(cubic ease-out)
         public float OverlayProgress => isOverlayCovering ? 1f - Cube(1f - overlayProgress) : Cube(overlayProgress);
         public IReadOnlyList<Renderer> OverlayRenderers => overlayRenderers;
+
+        // 막의 글리치 세기(0~1), 멈춘 순간에만 1에서 줄어듦
+        public float OverlayGlitch
+        {
+            get
+            {
+                if (IsFrozen == false) return 0f;
+
+                float remain = 1f - Mathf.Clamp01((Time.time - pauseStartTime) / overlayGlitchDuration);
+                return remain * remain;
+            }
+        }
 
         // 개별 정지가 우선이고, 전체 정지는 예외가 아닐 때만 받음
         private float TargetTimeScale => freezeCount > 0 ? 0f
