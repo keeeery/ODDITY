@@ -4805,8 +4805,6 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggy
   maxGroggy: 100
-  regenDelay: 5
-  regenRate: 8
 --- !u!1 &1745366428219609773
 GameObject:
   m_ObjectHideFlags: 0

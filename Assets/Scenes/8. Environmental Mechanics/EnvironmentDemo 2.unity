@@ -54291,10 +54291,6 @@ PrefabInstance:
       propertyPath: maxGroggy
       value: 1200
       objectReference: {fileID: 0}
-    - target: {fileID: 1485420945810282984, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
-      propertyPath: regenRate
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1639146330187405594, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].damage
       value: 14
@@ -69329,10 +69325,6 @@ PrefabInstance:
     - target: {fileID: 2779756049810924992, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: maxGroggy
       value: 700
-      objectReference: {fileID: 0}
-    - target: {fileID: 2779756049810924992, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
-      propertyPath: regenRate
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: hits.Array.data[0].damage
