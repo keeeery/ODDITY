@@ -46,7 +46,10 @@ namespace TeamOdd.Boss
         // 시간 정지 스킬이 보스를 멈출 때 쓰는 시계, 프리팹에 없으면 Awake에서 붙임
         public TimeFreezable Clock { get; private set; }
 
-        public float DistanceToTarget => transform.FlatDistanceTo(Target);
+        // 대상이 죽으면 Target은 그대로 두고(거리·각도 계산이 계속 쓰므로) 새 판단만 멈춤
+        public bool IsTargetDead => Player.Player.Instance.PlayerController.IsDead;
+
+        public float DistanceToTarget =>transform.FlatDistanceTo(Target);
         public float SignedAngleToTarget => Mathf.DeltaAngle(Movement.Rotation.eulerAngles.y, transform.FlatRotationTo(Target).eulerAngles.y);
 
         // 걸어서 대상에게 갈 때 지금 향해야 할 지점, 장애물이 가로막으면 대상 대신 경로의 다음 꺾임점
@@ -84,8 +87,6 @@ namespace TeamOdd.Boss
 
         private void Update()
         {
-            if (Player.Player.Instance.PlayerController.IsDead) Target = null;
-            
             Animator.SetFloat(BossAnimParams.DISTANCE_TO_TARGET, DistanceToTarget);
         }
 

@@ -37,6 +37,7 @@ namespace TeamOdd.Boss
         protected override void OnUpdate()
         {
             if (Clock.LocalTime < thinkTime) return;
+            if (root.IsTargetDead) return;
             Think();
         }
 
