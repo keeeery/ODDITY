@@ -105,6 +105,17 @@ namespace TeamOdd.Superpower
             }
         }
 
+        // 장착 여부와 상관없이 모든 스킬 칩의 쿨타임을 끝낸다
+        // 칩은 정비소에서만 바꾸므로 정비를 마칠 때(패널을 닫을 때) 부른다. 해제해 둔 칩도 멈춘 쿨타임을 들고 나가지 않게 한다
+        public void ResetAllCooldowns()
+        {
+            foreach (OwnedChip chip in chips)
+            {
+                if (chip.Skill != null)
+                    chip.Skill.ResetCooldown();
+            }
+        }
+
         // 칩이 들어 있는 스킬 슬롯 번호. 없으면 -1
         public int GetSkillSlot(OwnedChip chip) => Array.IndexOf(skillSlots, chip);
 

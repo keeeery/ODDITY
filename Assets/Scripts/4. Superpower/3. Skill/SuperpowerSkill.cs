@@ -59,6 +59,12 @@ namespace TeamOdd.Superpower
             remainingCooldown = Mathf.Max(0f, remainingCooldown - deltaTime);
         }
 
+        // 쿨타임을 바로 끝낸다. 정비를 마칠 때 인벤토리가 부른다
+        public void ResetCooldown()
+        {
+            remainingCooldown = 0f;
+        }
+
         // 발동 키를 뗐을 때 SkillCaster가 부른다. 누르고 있는 동안 계속되는 스킬(채널링)만 오버라이드한다
         public virtual void Release() { }
 
