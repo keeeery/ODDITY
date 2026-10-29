@@ -20,6 +20,7 @@ namespace TeamOdd.Superpower
         private static readonly List<OwnedChip> chips = new();
         private static readonly OwnedChip[] skillSlots = new OwnedChip[SkillSlotCount]; // 빈 슬롯은 null
         private CombatEntity owner;
+        private SkillCaster skillCaster;
 
         public IReadOnlyList<OwnedChip> Chips => chips;
         public IReadOnlyList<OwnedChip> SkillSlots => skillSlots;
@@ -33,6 +34,9 @@ namespace TeamOdd.Superpower
         private void Awake()
         {
             owner = GetComponent<CombatEntity>();
+            skillCaster = GetComponent<SkillCaster>();
+            foreach (OwnedChip chip in chips)
+                if (chip.Skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
         }
 
         // 장착된 스킬 칩만 쿨타임이 돈다. 해제해 둔 칩은 해제한 순간의 쿨타임에서 멈춰 있다
@@ -48,10 +52,13 @@ namespace TeamOdd.Superpower
 
         // cells는 칩을 주는 쪽이 ChipShapeLibrary.Roll로 정한 모양
         // 스킬 칩이면 칩마다 스킬을 새로 만들어 넣는다
-        public void Add(AugmentationChipDef def, Vector2Int[] cells)
+        public OwnedChip Add(AugmentationChipDef def, Vector2Int[] cells)
         {
             SuperpowerSkill skill = def is SkillChipDef skillDef ? SkillFactory.Create(skillDef) : null;
-            chips.Add(new OwnedChip(def, cells, skill));
+            if (skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
+            OwnedChip chip = new OwnedChip(def, cells, skill);
+            chips.Add(chip);
+            return chip;
         }
 
         // 스킬 칩은 빈 스킬 슬롯이 있어야 장착할 수 있다

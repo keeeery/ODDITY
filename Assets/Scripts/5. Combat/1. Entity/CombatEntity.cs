@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Sirenix.OdinInspector;
 
 namespace TeamOdd.Combat
@@ -10,6 +11,9 @@ namespace TeamOdd.Combat
 
         [field: Title("Settings")]
         [field: SerializeField, Required] public CombatStats Stats { get; private set; }
+
+        [Tooltip("씬에서 사용할 최대 체력, 0이면 Stats의 값을 사용한다.")]
+        [SerializeField, Min(0)] private int maxHpOverride;
 
         // 기본값(Stats) + 증강칩 등 런타임 보너스. 전투 계산은 이 값을 읽는다
         public RuntimeStats CurrentStats { get; private set; }
@@ -27,9 +31,16 @@ namespace TeamOdd.Combat
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
 
+        // 사망 연출을 맡는 쪽(보스 사망 상태 등)이 끄면 죽어도 오브젝트를 바로 지우지 않는다.
+        public bool DestroyOnDeath { get; set; } = true;
+
+        // 체력이 0이 된 순간 한 번
+        public event Action Died;
+
         protected virtual void Awake()
         {
             CurrentStats = new RuntimeStats(Stats);
+            if (maxHpOverride > 0) CurrentStats.Add(StatType.MaxHp, maxHpOverride - Stats.MaxHp);
             CurrentStats.Changed += OnStatsChanged;
             hp = CurrentStats.MaxHp;
             prevMaxHp = CurrentStats.MaxHp;
@@ -98,9 +109,11 @@ namespace TeamOdd.Combat
 
         protected void OnDeath()
         {
-            // 임시용
-            Destroy(gameObject);
             Debug.Log($"{gameObject.name} is dead!");
+            Died?.Invoke();
+
+            // 임시용
+            if (DestroyOnDeath) Destroy(gameObject);
         }
     }
 }

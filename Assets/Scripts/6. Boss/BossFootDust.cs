@@ -128,12 +128,13 @@ namespace TeamOdd.Boss
             return hasChargingParameter && boss.Animator.GetBool(BossAnimParams.IS_CHARGING);
         }
 
-        // 애니메이션 이벤트 없이 무거운 몸이 땅에 닿는 순간(무력화로 주저앉음 등)에 쓰는 쪽이 부름
-        public void PlayLanding() => Land();
+        // 애니메이션 이벤트 없이 무거운 몸이 땅에 닿는 순간(무력화로 주저앉음, 사망 등)에 쓰는 쪽이 부름
+        // amount는 먼지·파편 수 배율, 충격파는 그 절반만큼 넓어짐
+        public void PlayLanding(float amount = 1f) => Land(amount);
 
         private void HandleAnimEvent(string eventName, string parameter)
         {
-            if (string.Equals(eventName, "OnJumpLand") || string.Equals(eventName, "OnHopLand")) Land();
+            if (string.Equals(eventName, "OnJumpLand") || string.Equals(eventName, "OnHopLand")) Land(1f);
         }
 
         private void HandleFrozenChanged(bool frozen)
@@ -142,7 +143,7 @@ namespace TeamOdd.Boss
         }
 
         // 두 발에서 고리 모양으로 퍼지고, 두 발 사이에서 큰 먼지가 피어오름
-        private void Land()
+        private void Land(float amount)
         {
             GroundDust system = GetDust();
             if (system == null) return;
@@ -154,7 +155,7 @@ namespace TeamOdd.Boss
             {
                 if (foot == null || TryFindGround(foot.position, out RaycastHit hit) == false) continue;
 
-                system.EmitRing(hit.point + hit.normal * 0.2f, hit.normal, landingCountPerFoot, landingRadius,
+                system.EmitRing(hit.point + hit.normal * 0.2f, hit.normal, Scale(landingCountPerFoot, amount), landingRadius,
                     landingSpeed, landingRise, landingSize, landingLifetime, landingOpacity);
                 centerSum += hit.point;
                 grounded++;
@@ -163,10 +164,11 @@ namespace TeamOdd.Boss
             if (grounded == 0) return;
 
             Vector3 center = centerSum / grounded;
-            if (shockwaveDiameter > 0f) system.EmitShockwave(center, shockwaveDiameter, shockwaveLifetime, shockwaveOpacity);
-            system.EmitDebris(center + Vector3.up * 0.1f, Vector3.up, debrisCount, debrisSpeed, debrisSize, debrisLifetime);
+            float shockwaveScale = 1f + (amount - 1f) * 0.5f;
+            if (shockwaveDiameter > 0f) system.EmitShockwave(center, shockwaveDiameter * shockwaveScale, shockwaveLifetime * shockwaveScale, shockwaveOpacity);
+            system.EmitDebris(center + Vector3.up * 0.1f, Vector3.up, Scale(debrisCount, amount), debrisSpeed, debrisSize, debrisLifetime);
 
-            for (int index = 0; index < landingCenterCount; index++)
+            for (int index = 0; index < Scale(landingCenterCount, amount); index++)
             {
                 Vector3 velocity = Vector3.up * UnityEngine.Random.Range(0.8f, 1.8f) + UnityEngine.Random.insideUnitSphere * 1.2f;
                 system.Emit(center + Vector3.up * 0.4f, velocity, UnityEngine.Random.Range(landingSize.y, landingSize.y * 1.4f),
@@ -174,7 +176,7 @@ namespace TeamOdd.Boss
             }
 
             // 뒤늦게 천천히 떠올라 착지 자리에 한동안 걸려 있는 먼지
-            for (int index = 0; index < hazeCount; index++)
+            for (int index = 0; index < Scale(hazeCount, amount); index++)
             {
                 Vector2 offset = UnityEngine.Random.insideUnitCircle * 1.5f;
                 Vector3 velocity = Vector3.up * UnityEngine.Random.Range(0.3f, 0.7f) + new Vector3(offset.x, 0f, offset.y) * 0.8f;
@@ -182,6 +184,8 @@ namespace TeamOdd.Boss
                     UnityEngine.Random.Range(hazeLifetime.x, hazeLifetime.y), hazeOpacity);
             }
         }
+
+        private static int Scale(int count, float amount) => Mathf.RoundToInt(count * Mathf.Max(0f, amount));
 
         // 디딘 발 뒤쪽으로 낮게 차올라 돌진 경로에 먼지가 남음
         private void KickUp(Vector3 moveDirection)

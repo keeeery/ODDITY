@@ -122,10 +122,11 @@ namespace TeamOdd.UI
             PsychokinesisObject held = psychokinesis != null ? psychokinesis.HeldObject : null;
             PsychokinesisObject focused = PsychokinesisObject.OutlinedObject;
             bool showRing = held == null && focused != null && focused.IsFocusAvailable;
-            bool hasEnemy = held == null && psychokinesis != null && psychokinesis.HasAttackTarget;
+            bool canAttack = psychokinesis != null && psychokinesis.CanNormalAttack;
+            bool hasEnemy = canAttack && psychokinesis.HasAttackTarget;
 
             float blend = 1f - Mathf.Exp(-transitionSpeed * Time.deltaTime);
-            enemyBlend = Mathf.Lerp(enemyBlend, hasEnemy ? 1f : 0f, blend);
+            enemyBlend = canAttack ? Mathf.Lerp(enemyBlend, hasEnemy ? 1f : 0f, blend) : 0f;
             currentRingRadius = Mathf.Lerp(currentRingRadius, showRing ? ringRadius : hiddenRadius, blend);
             ringAlpha = Mathf.Lerp(ringAlpha, showRing ? 1f : 0f, blend);
 

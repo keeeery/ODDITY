@@ -6,8 +6,9 @@ using UnityEngine.Rendering.Universal;
 
 namespace TeamOdd.TimeControl
 {
-    // 시간 정지된 오브젝트(TimeFreezable.OverlayTargets)의 메시 위에 홀로그램 막을 덧그리는 렌더러 기능
+    // 시간 정지 막이 덮이거나 걷히는 중인 오브젝트(TimeFreezable.OverlayTargets)의 메시 위에 홀로그램 막을 덧그리는 렌더러 기능
     // 오브젝트마다 진행도·높이 범위·글리치 세기를 전역 값으로 넘긴다.
+    // 다 덮인 뒤에는 TimeFreezable이 렌더러의 머티리얼을 같은 머티리얼(HologramMaterial)로 교체한다.
     public sealed class TimeFreezeOverlayFeature : ScriptableRendererFeature
     {
         [Tooltip("TeamOdd/Time Freeze Hologram 셰이더 머티리얼, 스캔라인·프레넬·경계선 띠·정지 글리치 세기는 머티리얼에서 조정한다.")]
@@ -18,6 +19,9 @@ namespace TeamOdd.TimeControl
 
         private OverlayPass pass;
 
+        // 다 덮인 오브젝트의 머티리얼을 교체할 때 쓰는 막 머티리얼, 기능이 없으면 null
+        public static Material HologramMaterial { get; private set; }
+
         public static void ExcludeCamera(Camera camera) => excludedCameras.Add(camera);
 
         public static void IncludeCamera(Camera camera) => excludedCameras.Remove(camera);
@@ -25,6 +29,12 @@ namespace TeamOdd.TimeControl
         public override void Create()
         {
             pass = new OverlayPass();
+            HologramMaterial = overlayMaterial;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (HologramMaterial == overlayMaterial) HologramMaterial = null;
         }
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
