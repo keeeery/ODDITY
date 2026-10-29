@@ -59,7 +59,7 @@ namespace TeamOdd.Superpower
 
             // 커서가 풀리거나 피격·행동 잠금으로 스킬을 쓸 수 없으면 채널링도 멈춘다
             if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked
-                || (playerController != null && (playerController.isHit || playerController.IsActionLocked)))
+                || (playerController != null && (playerController.IsHit || playerController.IsActionLocked)))
             {
                 for (int i = 0; i < count; i++)
                     Release(i);
@@ -93,7 +93,7 @@ namespace TeamOdd.Superpower
                 return;
 
             // 피격 중이거나 다른 스킬(염동 내려찍기 등)을 시전하는 동안은 쓰지 않는다.
-            if (playerController != null && (playerController.isHit || playerController.IsActionLocked))
+            if (playerController != null && (playerController.IsHit || playerController.IsActionLocked))
                 return;
 
             OwnedChip chip = inventory.SkillSlots[slot];

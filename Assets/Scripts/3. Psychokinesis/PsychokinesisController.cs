@@ -116,7 +116,7 @@ namespace TeamOdd.Psychokinesis
 
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
         private bool IsActionLocked => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsActionLocked;
-        private bool IsHit => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.isHit;
+        private bool IsHit => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsHit;
 
         public bool CanNormalAttack => heldObject == null && IsHit == false && IsActionLocked == false;
 
@@ -199,7 +199,8 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
-            bool rightHeld = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool rightHeld = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right) &&
+                             Player.Player.Instance.PlayerController.IsHit == false;
 
             if (rightHeld == false) releaseRequested = true;
             else if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right))

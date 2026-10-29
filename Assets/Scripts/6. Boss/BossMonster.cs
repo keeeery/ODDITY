@@ -84,6 +84,8 @@ namespace TeamOdd.Boss
 
         private void Update()
         {
+            if (Player.Player.Instance.PlayerController.IsDead) Target = null;
+            
             Animator.SetFloat(BossAnimParams.DISTANCE_TO_TARGET, DistanceToTarget);
         }
 

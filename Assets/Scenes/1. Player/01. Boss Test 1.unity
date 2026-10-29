@@ -854,7 +854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 378036316848615790, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 378036316848615790, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].push.height
@@ -878,7 +878,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 588864280852202731, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 588864280852202731, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].push.height
@@ -1074,7 +1074,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3645352601674145374, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3645352601674145374, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].push.height
@@ -1122,7 +1122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4091713680808868829, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4091713680808868829, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].push.height
@@ -1146,7 +1146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4377086415526891515, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4377086415526891515, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].push.height
@@ -1362,7 +1362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5374203458365668163, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].reaction
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5374203458365668163, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].push.height
@@ -1415,6 +1415,10 @@ PrefabInstance:
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_Name
       value: Perderos
+      objectReference: {fileID: 0}
+    - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: waves.Array.data[0].reaction
@@ -1607,6 +1611,7 @@ MonoBehaviour:
   maxPitch: 70
   minYaw: -40
   maxYaw: 70
+  focusTurnSpeed: 8
   collisionMask:
     serializedVersion: 2
     m_Bits: 656
