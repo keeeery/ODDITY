@@ -10,6 +10,7 @@ namespace TeamOdd.Superpower
         PsychoRapidFire,
         PsychoTempest,
         PsychoOrb,
+        PsychoBeam,
 
         // 방어
         Heal,

@@ -82,7 +82,11 @@ namespace TeamOdd.Player
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
-        
+
+        // true인 동안 걷기·달리기로 움직이지 않는다. 구르기는 된다 (염동 투사처럼 누르고 있는 스킬을 쓰는 중)
+        // 입력 방향은 계속 읽어 두므로 구를 때는 누르고 있는 방향으로 구른다
+        public bool IsMoveBlocked { get; set; }
+
         public event Action OnRollRequested;
 
         private void Awake()
@@ -137,6 +141,13 @@ namespace TeamOdd.Player
 
             Vector3 moveVector = (right * moveX) + (forward * moveZ);
 
+            // 중력은 그대로 받도록 수평 이동만 없앤다
+            if (IsMoveBlocked)
+            {
+                moveVector = Vector3.zero;
+                IsSprinting = false;
+            }
+
             // 기본 중력 처리
             if (IsGrounded && velocity.y < 0)
             {
@@ -166,8 +177,8 @@ namespace TeamOdd.Player
         {
             Vector2 inputRaw = SimpleInput.GetMoveAxisRaw();
 
-            bool isMove = inputRaw != Vector2.zero;
-            bool isRun = SimpleInput.GetKey(Key.LeftShift);
+            bool isMove = inputRaw != Vector2.zero && IsMoveBlocked == false;
+            bool isRun = SimpleInput.GetKey(Key.LeftShift) && IsMoveBlocked == false;
             
             animator.SetBool(Walk, isMove);
             animator.SetBool(Run, isRun);

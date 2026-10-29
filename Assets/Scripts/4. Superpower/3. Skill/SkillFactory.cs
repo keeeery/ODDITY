@@ -28,6 +28,7 @@ namespace TeamOdd.Superpower
                 SkillType.PsychoRapidFire => new PsychoRapidFireSkill(name, cooldown, p.GetFloat("Radius"), p.GetInt("Count"), p.GetFloat("Interval"), p.GetFloat("Speed")),
                 SkillType.PsychoTempest => new PsychoTempestSkill(name, cooldown, p.GetFloat("Duration"), p.GetInt("DPS"), p.GetFloat("TrackSpeed"), p.GetFloat("Radius"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoTempest>()),
                 SkillType.PsychoOrb => new PsychoOrbSkill(name, cooldown, p.GetFloat("Speed"), p.GetFloat("SlowSpeed"), p.GetFloat("Range"), p.GetFloat("Radius"), p.GetInt("DPS"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoOrb>()),
+                SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("DPS"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoBeam>()),
 
                 // 방어
                 SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),

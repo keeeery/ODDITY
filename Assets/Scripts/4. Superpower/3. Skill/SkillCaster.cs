@@ -39,16 +39,35 @@ namespace TeamOdd.Superpower
 
         private void Update()
         {
-            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked)
-                return;
-
             int count = Mathf.Min(SlotKeys.Length, AugmentationChipInventory.SkillSlotCount);
+
+            // 커서가 풀리면 키를 뗀 것을 알 수 없으므로 누르고 있던 스킬을 모두 멈춘다
+            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked)
+            {
+                for (int i = 0; i < count; i++)
+                    Release(i);
+                return;
+            }
+
             for (int i = 0; i < count; i++)
             {
                 // Key.None은 Keyboard.current[]에서 예외가 나므로 비워 둔 키는 건너뛴다
-                if (SlotKeys[i] != Key.None && SimpleInput.GetKeyDown(SlotKeys[i]))
+                if (SlotKeys[i] == Key.None)
+                    continue;
+
+                if (SimpleInput.GetKeyDown(SlotKeys[i]))
                     Use(i);
+                else if (SimpleInput.GetKeyUp(SlotKeys[i]))
+                    Release(i);
             }
+        }
+
+        // 누르고 있는 동안 계속되는 스킬(채널링)을 멈춘다. 그런 스킬이 아니면 아무 일도 없다
+        private void Release(int slot)
+        {
+            OwnedChip chip = inventory.SkillSlots[slot];
+            if (chip != null)
+                chip.Skill.Release();
         }
 
         private void Use(int slot)

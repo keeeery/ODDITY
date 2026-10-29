@@ -59,6 +59,9 @@ namespace TeamOdd.Superpower
             remainingCooldown = Mathf.Max(0f, remainingCooldown - deltaTime);
         }
 
+        // 발동 키를 뗐을 때 SkillCaster가 부른다. 누르고 있는 동안 계속되는 스킬(채널링)만 오버라이드한다
+        public virtual void Release() { }
+
         // 이 스킬이 받은 매개변수를 사람이 읽을 수 있게. 패널 정보 텍스트에 쓴다
         public abstract string Describe();
 
