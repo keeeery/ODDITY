@@ -6,7 +6,7 @@ namespace TeamOdd.Superpower
     /// <summary>
     /// 게임 화면의 스킬 바 (읽기 전용). 1~5번 슬롯의 칩 이름과 남은 쿨타임을 보여준다.
     /// Screen Space - Overlay 캔버스 아래 빈 오브젝트에 붙이고 앵커를 원하는 곳(예: 아래 가운데)에 둔다. 크기는 슬롯 수에 맞춰 여기서 정한다.
-    /// 증강칩 패널(AugmentationChipDemo) 아래에 두면 패널이 닫힐 때 같이 꺼지므로 패널 밖에 둔다.
+    /// 증강칩 패널(Augmentation Chip Panel) 아래에 두면 패널이 닫힐 때 같이 꺼지므로 패널 밖에 둔다.
     /// 순서 변경은 증강칩 패널의 스킬 슬롯 줄에서 하고, 이쪽은 인벤토리의 SkillSlotsChanged를 받아 다시 그리기만 한다.
     /// </summary>
     public class SkillBarHUD : MonoBehaviour
