@@ -16,7 +16,7 @@ namespace TeamOdd.Superpower
     {
         // 런타임에 AddComponent로 붙이므로 인스펙터 값 대신 상수로 둔다
         private static readonly Color OutlineColor = Color.white;
-        private const float OutlineThickness = 3f;
+        private const float OutlineThickness = 9f;
 
         private readonly List<RectTransform> units = new();
         private RectTransform outlineRoot;
@@ -81,7 +81,7 @@ namespace TeamOdd.Superpower
 
             Text text = label.gameObject.AddComponent<Text>();
             text.font = font;
-            text.fontSize = 12;
+            text.fontSize = 36;
             text.alignment = TextAnchor.MiddleCenter;
             text.color = Color.black;
             text.text = def.Name;
