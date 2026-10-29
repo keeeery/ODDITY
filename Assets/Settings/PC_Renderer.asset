@@ -37,7 +37,8 @@ MonoBehaviour:
   - {fileID: 2147300000}
   - {fileID: 2147300001}
   - {fileID: 7833122117494664109}
-  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000ad6b866f10d7b46c
+  - {fileID: 3125712369764644863}
+  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000ad6b866f10d7b46cffb7ddedd6c2602b
   m_UseNativeRenderPass: 1
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
@@ -123,3 +124,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.TimeControl.TimeFreezeOverlayFeature
   m_Active: 1
   overlayMaterial: {fileID: 2100000, guid: 0174bc2066b44e0c98033fd0f8ec1998, type: 2}
+--- !u!114 &3125712369764644863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e50f1acf58df047398100f890c870707, type: 3}
+  m_Name: Screen Glitch
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.ScreenGlitchFeature
+  m_Active: 1
+  shader: {fileID: 4800000, guid: 8249045ea2bde479585ca22e5dd96706, type: 3}
