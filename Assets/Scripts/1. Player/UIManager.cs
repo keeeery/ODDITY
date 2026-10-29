@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 
 namespace TeamOdd
 {
+    [DefaultExecutionOrder(-100)]
     public class UIManager : SingletonBase<UIManager>
     {
         private PlayerController playerController;
@@ -47,13 +48,24 @@ namespace TeamOdd
         
         public void LockCursor(bool locked, bool isManuallyLock = false)
         {
+            // 보상창이 싱글톤을 처음 생성한 프레임에는 Start가 아직 호출되지 않을 수 있다.
+            if (playerController == null || cameraController == null)
+            {
+                Player.Player player = Player.Player.Instance;
+                if (player != null)
+                {
+                    playerController = player.PlayerController;
+                    cameraController = player.CameraController;
+                }
+            }
+
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = locked == false;
 
             isManuallyLocked = isManuallyLock;
 
-            playerController.enabled = locked;
-            cameraController.enabled = locked;
+            if (playerController != null) playerController.enabled = locked;
+            if (cameraController != null) cameraController.enabled = locked;
         }
     }   
 }

@@ -38,6 +38,8 @@ namespace TeamOdd.Player
             PlayerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
             combatEntity = GetComponent<CombatEntity>();
+            // 사망 연출은 PlayerController가 맡으므로 죽어도 오브젝트를 지우지 않는다
+            combatEntity.DestroyOnDeath = false;
         }
 
         // CurrentStats는 CombatEntity.Awake에서 만들어지므로 처음 채우는 건 Start에서 한다
@@ -57,12 +59,14 @@ namespace TeamOdd.Player
         {
             PlayerController.OnRollRequested += HandleRollRequested;
             eventListener.OnOccursAnimStateEvent += HandleAnimStateEvent;
+            combatEntity.Died += PlayerController.DeathAnimation;
         }
 
         private void OnDisable()
         {
             PlayerController.OnRollRequested -= HandleRollRequested;
             eventListener.OnOccursAnimStateEvent -= HandleAnimStateEvent;
+            combatEntity.Died -= PlayerController.DeathAnimation;
         }
         
         private void HandleRollRequested()

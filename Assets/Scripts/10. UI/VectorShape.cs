@@ -87,7 +87,8 @@ namespace TeamOdd.UI
         }
 
         // 도형을 expand만큼 바깥으로 넓혀서 채우고, 가장자리 feather 폭은 투명해지도록 그림
-        public void Fill(VertexHelper vh, Vector2 center, float expand, float feather, Color32 fillColor)
+        // 텍스처를 쓰는 Graphic이면 모든 정점이 uv 한 점의 색을 쓴다.
+        public void Fill(VertexHelper vh, Vector2 center, float expand, float feather, Color32 fillColor, Vector2 uv = default)
         {
             int count = points.Count;
             if (count < 3) return;
@@ -99,14 +100,14 @@ namespace TeamOdd.UI
             float orientation = GetSignedArea() >= 0f ? 1f : -1f;
 
             int startIndex = vh.currentVertCount;
-            vh.AddVert(center, fillColor, Vector2.zero);
+            vh.AddVert(center, fillColor, uv);
 
             for (int index = 0; index < count; index++)
             {
                 Vector2 point = points[index];
                 Vector2 normal = GetMiterNormal(index, orientation);
-                vh.AddVert(point + normal * inner, fillColor, Vector2.zero);
-                vh.AddVert(point + normal * outer, clear, Vector2.zero);
+                vh.AddVert(point + normal * inner, fillColor, uv);
+                vh.AddVert(point + normal * outer, clear, uv);
             }
 
             for (int index = 0; index < count; index++)

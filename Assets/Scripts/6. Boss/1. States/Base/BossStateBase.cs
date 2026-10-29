@@ -35,5 +35,15 @@ namespace TeamOdd.Boss
 
         // 상태머신을 처음부터 다시 시작할 때 불림(무력화 회복 등), 다음 판단에 넘기려고 들고 있던 값을 비움
         public virtual void ResetMemory() { }
+
+        // 끊긴 상태가 켜 둔 트리거·플래그가 뒤늦게 발동하지 않도록 모두 지움, 하던 일을 즉시 끊고 들어오는 상태(그로기·사망)가 씀
+        protected void ResetAnimatorParameters()
+        {
+            foreach (AnimatorControllerParameter parameter in Animator.parameters)
+            {
+                if (parameter.type == AnimatorControllerParameterType.Trigger) Animator.ResetTrigger(parameter.nameHash);
+                else if (parameter.type == AnimatorControllerParameterType.Bool) Animator.SetBool(parameter.nameHash, false);
+            }
+        }
     }
 }

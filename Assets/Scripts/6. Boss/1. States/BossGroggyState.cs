@@ -216,14 +216,5 @@ namespace TeamOdd.Boss
             Player.Player player = Player.Player.Instance;
             if (player != null && player.CameraController != null) player.CameraController.AddTrauma(trauma, shakeFadeTime);
         }
-
-        private void ResetAnimatorParameters()
-        {
-            foreach (AnimatorControllerParameter parameter in Animator.parameters)
-            {
-                if (parameter.type == AnimatorControllerParameterType.Trigger) Animator.ResetTrigger(parameter.nameHash);
-                else if (parameter.type == AnimatorControllerParameterType.Bool) Animator.SetBool(parameter.nameHash, false);
-            }
-        }
     }
 }

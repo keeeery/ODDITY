@@ -1,5 +1,6 @@
 // Knife/Hologram Shader Unlit(ASE, URP)의 Forward 패스를 복사한 시간 정지 막, TimeFreezeOverlayFeature가 그린다.
-// 추가: 높이 기준 쓸어 올리기(전역 진행도·높이 범위), 경계선 띠, 정지 순간 글리치(_TimeFreezeOverlayGlitch).
+// 추가: 높이 기준 쓸어 올리기(전역 진행도·높이 범위), 정지 순간 글리치(_TimeFreezeOverlayGlitch).
+// 쓸어 올리기는 Knife Mask Feature의 상자 마스크와 같은 식으로, 쓸어 올린 높이 위를 덮는 무한히 넓은 상자 안은 숨기고 경계 폭에 걸쳐 부드럽게 드러낸다.
 Shader "TeamOdd/Time Freeze Hologram"
 {
 	Properties
@@ -81,7 +82,7 @@ Shader "TeamOdd/Time Freeze Hologram"
 		_Alpha("Alpha", Range( 0 , 1)) = 1
 		[Header(Time Freeze)]
 		[HDR]_EdgeColor("Edge Color", Color) = (0.8,0.95,2,0.9)
-		_EdgeWidth("Edge Width (m)", Float) = 0.15
+		_EdgeWidth("Edge Width (m)", Float) = 0.6
 		_FreezeGlitchAmount("Freeze Glitch Amount", Range( 0 , 1)) = 0.35
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
@@ -749,11 +750,12 @@ Shader "TeamOdd/Time Freeze Hologram"
 						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
 					#endif
 				#endif
-				// 진행도 0/1에서 막이 완전히 없거나 다 덮이도록 띠 폭만큼 여유를 둠
+				// 상자 마스크: 상자(쓸어 올린 높이 위) 안은 0, 상자 밖으로 경계 폭만큼 멀어지면 1, 가로로는 무한히 넓어 높이만 따짐
+				// 진행도 0에서 하나도 안 보이고 1에서 꼭대기까지 다 보이도록 위쪽에 경계 폭만큼 여유를 둠
 				float edgeWidth = max( _EdgeWidth, 0.001 );
-				float sweepHeight = lerp( _TimeFreezeOverlayBounds.x - edgeWidth, _TimeFreezeOverlayBounds.y + edgeWidth, _TimeFreezeOverlayProgress );
-				float covered = sweepHeight - WorldPosition.y;
-				clip( covered );
+				float sweepHeight = lerp( _TimeFreezeOverlayBounds.x, _TimeFreezeOverlayBounds.y + edgeWidth, _TimeFreezeOverlayProgress );
+				float sweepMask = saturate( ( sweepHeight - WorldPosition.y ) / edgeWidth );
+				clip( sweepMask - 0.001 );
 
 				float3 objToWorld161 = mul( GetObjectToWorldMatrix(), float4( float3( 0,0,0 ), 1 ) ).xyz;
 				float C_ZERO287 = 0.0;
@@ -1001,10 +1003,10 @@ Shader "TeamOdd/Time Freeze Hologram"
 				float3 Color = temp_output_504_0.xyz;
 				float Alpha = (temp_output_504_0).w;
 
-				// 경계선 띠
-				float edge = 1.0 - saturate( covered / edgeWidth );
-				Color = lerp( Color, _EdgeColor.rgb, edge );
-				Alpha = max( Alpha, _EdgeColor.a * edge );
+				// 경계 쪽은 경계 색으로 물들며 옅어짐
+				float edge = 1.0 - sweepMask;
+				Color = lerp( Color, _EdgeColor.rgb, edge * _EdgeColor.a );
+				Alpha *= sweepMask;
 
 				// 정지 순간 깜빡임
 				float freezeflicker = lerp( 1.0, clampResult175, saturate( _TimeFreezeOverlayGlitch * _FreezeGlitchAmount * 2.0 ) );

@@ -38,6 +38,13 @@ namespace TeamOdd.Arena
         [SerializeField] private ObjectPoolManager.ObjectPoolData smallFragmentPool;
         [SerializeField] private ObjectPoolManager.ObjectPoolData metalShardPool;
 
+        [Header("Fragment Mass Override")]
+        [Tooltip("이 씬에서 생성하는 콘크리트 파편에 등급별 고정 질량을 적용한다.")]
+        [SerializeField] private bool overrideFragmentMass;
+        [SerializeField, Min(0.01f)] private float smallFragmentMass = 1.5f;
+        [SerializeField, Min(0.01f)] private float mediumFragmentMass = 4.5f;
+        [SerializeField, Min(0.01f)] private float largeFragmentMass = 9f;
+
         [Header("Spawn")]
         [SerializeField, Min(0f)] private float spawnRadius = 1.8f;
         [SerializeField] private Vector2 launchSpeed = new Vector2(4f, 8f);
@@ -125,7 +132,7 @@ namespace TeamOdd.Arena
         [FormerlySerializedAs("largeFragmentScale")]
         [Tooltip("생성할 파편의 가장 긴 축 길이 범위(m)")]
         [SerializeField] private Vector2 largeFragmentDiameter = new Vector2(1.024f, 1.1733334f);
-        [SerializeField, Min(0.01f)] private float fragmentDensity = 5f;
+        [SerializeField, Min(0.01f)] private float fragmentDensity = 5f; // 금속 연출 파편의 밀도
 
         [ContextMenu("Generate Fragment Prefabs (10 Large, 20 Medium, 5 Small)")]
         private void GenerateFragmentPrefabs()
@@ -137,9 +144,9 @@ namespace TeamOdd.Arena
             }
 
             UnityEditor.Undo.RecordObject(this, "Assign generated fragment prefabs");
-            largeFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 10, largeFragmentDiameter, fragmentDensity, "Large");
-            mediumFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 20, mediumFragmentDiameter, fragmentDensity, "Medium");
-            smallVisualFragmentPrefabs = WallFragmentPrefabGenerator.Generate<Rigidbody>(fragmentTemplate, 5, smallFragmentDiameter, fragmentDensity, "Small", true);
+            largeFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 10, largeFragmentDiameter, fragmentDensity, "Large", fixedMass: largeFragmentMass);
+            mediumFragmentPrefabs = WallFragmentPrefabGenerator.Generate<PsychokinesisObject>(fragmentTemplate, 20, mediumFragmentDiameter, fragmentDensity, "Medium", fixedMass: mediumFragmentMass);
+            smallVisualFragmentPrefabs = WallFragmentPrefabGenerator.Generate<Rigidbody>(fragmentTemplate, 5, smallFragmentDiameter, fragmentDensity, "Small", true, fixedMass: smallFragmentMass);
             AssignPoolPrefabs();
             UnityEditor.EditorUtility.SetDirty(this);
             UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
@@ -252,13 +259,21 @@ namespace TeamOdd.Arena
             _ => smallFragmentPool
         };
 
-        private static WallFragment SpawnVariant(Component prefab, ObjectPoolManager.ObjectPoolData pool, Vector3 position, Quaternion rotation)
+        private WallFragment SpawnVariant(Component prefab, ObjectPoolManager.ObjectPoolData pool, Vector3 position, Quaternion rotation)
         {
             WallFragment fragment = (WallFragment)ObjectPoolManager.Instance.GetObjectOrNull(pool.Key);
 
             if (fragment == null) return null;
 
             fragment.ApplyVariant(prefab);
+            if (overrideFragmentMass && pool != metalShardPool)
+            {
+                float mass = pool == largeFragmentPool ? largeFragmentMass
+                    : pool == mediumFragmentPool ? mediumFragmentMass : smallFragmentMass;
+                Rigidbody body = fragment.GetComponent<Rigidbody>();
+                body.mass = Mathf.Max(0.01f, mass);
+                body.ResetInertiaTensor();
+            }
             fragment.transform.SetPositionAndRotation(position, rotation);
             fragment.gameObject.SetActive(true);
             return fragment;

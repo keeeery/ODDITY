@@ -329,6 +329,7 @@ namespace TeamOdd.Boss
 
             Animator.SetBool(BossAnimParams.IS_CHARGING, false);
             Animator.SetTrigger(BossAnimParams.JUMP_SMASH);
+            jump.Warn(chargeDir);
         }
 
         private void FinishWithoutJumpSmash()

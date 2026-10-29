@@ -64,8 +64,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.0562499, y: 0.9047737, z: 0.94186974}
-  m_Center: {x: 0.039242476, y: 0.063149616, z: -0.003045082}
+  m_Size: {x: 1.154978, y: 0.9893433, z: 1.0299067}
+  m_Center: {x: 0.042910486, y: 0.069052234, z: -0.003329724}
 --- !u!23 &9189612000656199687
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -123,7 +123,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4378478403700699080}
   serializedVersion: 5
-  m_Mass: 1.8636892
+  m_Mass: 4.5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -162,6 +162,9 @@ MonoBehaviour:
   holdArrivalDistance: 0.4
   holdArrivalSpeed: 1
   throwDamageScale: 1
+  groggyScale: 1
+  bossPushSpeed: 4
+  debrisMaterial: {fileID: 0}
   targetPoint: {fileID: 0}
   ikWeight: 0.5
 --- !u!114 &8930177835207232749

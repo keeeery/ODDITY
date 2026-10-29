@@ -69,6 +69,8 @@ namespace TeamOdd.Boss
         [SerializeField] private HitReaction reaction = HitReaction.Knockback;
         [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 오브젝트가 떨어진 지점")]
         [SerializeField] private HitPush push = HitPush.Create(1.5f, 0f, 0.4f, HitPush.DirectionMode.FromHitCenter);
+        [Tooltip("플레이어와 착지 범위가 겹치면 파편화한다. 회피 무적 중에도 물체는 사라진다.")]
+        [SerializeField] private bool shatterOnPlayerHit;
 
         [Title("Telegraph")]
         [Tooltip("착지 지점 표시 반경에 곱할 배율, 1이면 오브젝트의 수평 크기와 같다. 피격 판정도 이 범위를 사용한다.")]
@@ -183,7 +185,8 @@ namespace TeamOdd.Boss
             if (fragment.isActiveAndEnabled == false) yield break;
             if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject) && psychokinesisObject.IsHeld) yield break;
 
-            TryHit(shape, pose, damage, reaction, push);
+            if (TryHit(shape, pose, damage, reaction, push) && shatterOnPlayerHit && psychokinesisObject != null)
+                psychokinesisObject.ShatterAt(Target.position);
         }
 
         // 초기 낙하 속도와 중력만으로 height만큼 떨어지는 시간(공기 저항 무시)

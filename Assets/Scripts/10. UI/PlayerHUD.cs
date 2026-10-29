@@ -26,9 +26,9 @@ namespace TeamOdd.UI
         [SerializeField, Min(0.01f)] private float cameraShakeDuration = 0.35f;
 
         [Header("Hit Stop")]
-        // 피격 시 월드 전체가 멈추는 시간(초). 일반 피격은 거의 느껴지지 않을 정도로 짧게.
-        [SerializeField, Min(0f)] private float hitStopNormal = 0.04f;
-        [SerializeField, Min(0f)] private float hitStopHeavy = 0.1f;
+        // 피격 시 히트스탑 시간(초). 일반 피격은 히트스탑 없음, 0이면 쓰지 않음.
+        [SerializeField, Min(0f)] private float hitStopNormal = 0f;
+        [SerializeField, Min(0f)] private float hitStopHeavy = 0.06f;
 
         private CombatManager combatManager;
 

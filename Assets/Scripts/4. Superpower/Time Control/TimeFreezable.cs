@@ -18,7 +18,9 @@ namespace TeamOdd.TimeControl
     /// 전체 정지에 배율(timeScale)을 주면 멈추지 않고 그 배율로 느리게 흐름(감속). 정지는 배율 0인 감속과 같음
     /// - 감속 중에는 Animator 속도와 DOTween에 배율을 곱하고, Rigidbody는 속도에 배율을, 중력에 배율의 제곱을 곱해 같은 궤적을 느리게 그림
     /// - LocalTime도 배율만큼 느리게 흐름
-    /// 멈춰 있는 동안 메시 위에 파란 홀로그램 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
+    /// 멈추면 메시가 파란 홀로그램으로 바뀜
+    /// - 덮이고 걷히는 동안은 TimeFreezeOverlayFeature가 원래 메시 위에 막을 덧그려 쓸어 올리고 내림
+    /// - 다 덮이면 렌더러의 머티리얼을 홀로그램으로 교체해서 원래 메시는 그리지 않고, 풀리는 순간 원래 머티리얼로 되돌린 뒤 막이 걷힘
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TimeFreezable : MonoBehaviour
@@ -46,6 +48,10 @@ namespace TeamOdd.TimeControl
             public Vector3 AngularVelocity;
         }
 
+        private static readonly int OverlayProgressId = Shader.PropertyToID("_TimeFreezeOverlayProgress");
+        private static readonly int OverlayBoundsId = Shader.PropertyToID("_TimeFreezeOverlayBounds");
+        private static readonly int OverlayGlitchId = Shader.PropertyToID("_TimeFreezeOverlayGlitch");
+
         private static readonly List<TimeFreezable> enabledFreezables = new();
         private static readonly List<TimeFreezable> overlayTargets = new();
         private static readonly List<float> worldTimeScales = new(); // 걸려 있는 전체 정지들의 배율, 0이면 정지
@@ -55,6 +61,8 @@ namespace TeamOdd.TimeControl
         private MeshFilter[] overlayMeshFilters; // MeshRenderer의 메시, 풀에서 꺼낼 때 메시가 바뀔 수 있어 그릴 때마다 읽음
         private float overlayProgress;   // 시간에 따라 일정하게 진행하는 값, 보이는 높이는 여기에 이징을 걸어서 씀
         private bool isOverlayCovering;  // 덮이는 중(true)인지 걷히는 중(false)인지
+        private Material[][] originalMaterials; // 홀로그램으로 교체하기 전 렌더러별 머티리얼, 교체 중이 아니면 null
+        private MaterialPropertyBlock replaceProperties;
 
         private int freezeCount;
         private bool isWorldExempt;
@@ -70,7 +78,8 @@ namespace TeamOdd.TimeControl
         // 여러 전체 정지가 겹치면 가장 느린 배율을 따름
         private static float WorldTimeScale => worldTimeScales.Min();
 
-        // 시간 정지 막이 조금이라도 덮여 있는 오브젝트, TimeFreezeOverlayFeature가 매 프레임 읽어 그림
+        // 시간 정지 막이 덮이거나 걷히는 중인 오브젝트, TimeFreezeOverlayFeature가 매 프레임 읽어 덧그림
+        // 다 덮여 홀로그램으로 교체된 오브젝트는 빠짐
         public static IReadOnlyList<TimeFreezable> OverlayTargets => overlayTargets;
 
         // 전체 정지가 시작되거나(true) 끝날 때(false). 화면 효과 등을 붙일 때 사용
@@ -125,6 +134,16 @@ namespace TeamOdd.TimeControl
         // 정지 중에도 막이 덮이고 걷혀야 하므로 LocalDeltaTime이 아닌 Time.deltaTime으로 진행
         private void Update()
         {
+            UpdateOverlay();
+
+            // 다 덮였으면 홀로그램으로 교체, 풀리면 걷히기 전에 바로 되돌림
+            bool replaces = IsFrozen && overlayProgress >= 1f && TimeFreezeOverlayFeature.HologramMaterial != null;
+            if (replaces != IsReplaced) SetReplaced(replaces);
+            if (IsReplaced) UpdateReplaceProperties();
+        }
+
+        private void UpdateOverlay()
+        {
             // 덮이다 말고 걷히는 등 방향이 바뀌면, 보이는 높이가 튀지 않도록 새 곡선에서 같은 높이가 나오는 지점부터 이어감
             if (isOverlayCovering != IsFrozen)
             {
@@ -178,6 +197,7 @@ namespace TeamOdd.TimeControl
         {
             enabledFreezables.Remove(this);
             if (appliedTimeScale != 1f) Apply(1f);
+            SetReplaced(false);
             SetOverlayProgress(0f);
         }
 
@@ -234,6 +254,19 @@ namespace TeamOdd.TimeControl
 
             int index = Array.IndexOf(bodies, body);
             return index >= 0 ? bodyStates[index].IsKinematic : body.isKinematic;
+        }
+
+        // 멈춘 동안 kinematic으로 고정한 몸체가 풀린 뒤에도 kinematic으로 남게 함(쓰러져 충돌을 없앤 보스 등)
+        public void KeepKinematicAfterUnfreeze(Rigidbody body)
+        {
+            if (IsFrozen == false) return;
+
+            int index = Array.IndexOf(bodies, body);
+            if (index < 0) return;
+
+            bodyStates[index].IsKinematic = true;
+            bodyStates[index].LinearVelocity = Vector3.zero;
+            bodyStates[index].AngularVelocity = Vector3.zero;
         }
 
         // 풀릴 때 멈추기 전 속도로 되돌리지 않고 멈춘 자리에서 정지한 채 다시 시작하게 함
@@ -302,14 +335,72 @@ namespace TeamOdd.TimeControl
         private static float Cube(float value) => value * value * value;
         private static float CubeRoot(float value) => Mathf.Pow(Mathf.Max(0f, value), 1f / 3f);
 
-        // 막이 덮이기 시작하면 그릴 목록에 넣고, 다 걷히면 뺌
+        private bool IsReplaced => originalMaterials != null;
+
+        // 막이 덮이기 시작하면 덧그릴 목록에 넣고, 다 걷히거나 홀로그램으로 교체되면 뺌
         private void SetOverlayProgress(float progress)
         {
-            bool wasVisible = overlayProgress > 0f;
             overlayProgress = progress;
+            RefreshOverlayTarget();
+        }
 
-            if (wasVisible == false && progress > 0f) overlayTargets.Add(this);
-            else if (wasVisible && progress <= 0f) overlayTargets.Remove(this);
+        private void RefreshOverlayTarget()
+        {
+            bool draws = overlayProgress > 0f && IsReplaced == false;
+            bool listed = overlayTargets.Contains(this);
+
+            if (draws && listed == false) overlayTargets.Add(this);
+            else if (draws == false && listed) overlayTargets.Remove(this);
+        }
+
+        // 렌더러의 머티리얼 칸을 모두 홀로그램으로 바꾸거나 기억해 둔 원래 머티리얼로 되돌림
+        private void SetReplaced(bool replaced)
+        {
+            if (replaced == IsReplaced) return;
+
+            if (replaced)
+            {
+                replaceProperties ??= new MaterialPropertyBlock();
+                originalMaterials = new Material[overlayRenderers.Length][];
+
+                for (int index = 0; index < overlayRenderers.Length; index++)
+                {
+                    Renderer target = overlayRenderers[index];
+                    if (target == null) continue;
+
+                    originalMaterials[index] = target.sharedMaterials;
+                    Material[] holograms = new Material[originalMaterials[index].Length];
+                    Array.Fill(holograms, TimeFreezeOverlayFeature.HologramMaterial);
+                    target.sharedMaterials = holograms;
+                }
+            }
+            else
+            {
+                for (int index = 0; index < overlayRenderers.Length; index++)
+                {
+                    Renderer target = overlayRenderers[index];
+                    if (target == null || originalMaterials[index] == null) continue;
+
+                    target.sharedMaterials = originalMaterials[index];
+                    target.SetPropertyBlock(null);
+                }
+
+                originalMaterials = null;
+            }
+
+            RefreshOverlayTarget();
+        }
+
+        // 교체된 홀로그램은 막 렌더러 기능을 거치지 않으므로 전역 값 대신 렌더러마다 값을 넘김
+        // 다 덮인 상태라 높이 범위는 넉넉히 주고, 글리치는 잦아드는 동안 매 프레임 갱신
+        private void UpdateReplaceProperties()
+        {
+            replaceProperties.SetFloat(OverlayProgressId, 1f);
+            replaceProperties.SetVector(OverlayBoundsId, new Vector4(-100000f, 100000f, 0f, 0f));
+            replaceProperties.SetFloat(OverlayGlitchId, OverlayGlitch);
+
+            foreach (Renderer target in overlayRenderers)
+                if (target != null) target.SetPropertyBlock(replaceProperties);
         }
 
         private static void RefreshAll()
