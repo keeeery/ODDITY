@@ -20,7 +20,8 @@ namespace TeamOdd.Player
         private static readonly int HitDir = Animator.StringToHash("HitDir");
         private static readonly int WakeUp = Animator.StringToHash("WakeUp");
         private static readonly int Dead = Animator.StringToHash("Dead");
-        private static readonly int IdleState = Animator.StringToHash("Unarmed-Idle");
+        private static readonly int KnockdownState = Animator.StringToHash("Knockdown Blend Tree");
+        private const float UpperLayerFadeDuration = 0.25f; // 대기 자세로 돌아갈 때 들기·조준 상체 레이어를 내리는 시간
 
         [Header("이동")]
         [SerializeField] private float walkSpeed = 4f;
@@ -111,8 +112,14 @@ namespace TeamOdd.Player
         public float InvincibleTime; 
         // 피격 모션 끝 신호(EndHit)가 상태 전환 등으로 오지 않아도 행동 불가로 묶이지 않도록 기다리는 최대 시간(초)
         [SerializeField, Min(0.1f)] private float maxHitAnimationWait = 3f;
-        public bool IsHit;
+        // 넉백·넉다운 등 피격 반응 중이거나 죽은 뒤, 이동·공격·염동력·스킬 쪽이 이 값을 보고 행동을 막는다.
+        public bool IsHit
+        {
+            get => isHit || isDead;
+            set => isHit = value;
+        }
         public bool CanWakeUp;
+        private bool isHit;
         private bool hitAnimationEnded;
 
         private bool isDead = false;
@@ -147,6 +154,7 @@ namespace TeamOdd.Player
         private float attackStartTime = float.NegativeInfinity;
         private float attackPushAtStart;
         private Sequence attackSequence;
+        private Tween upperLayerFade;
         private float attackPull; // 0: 평소, 1: 손을 당겨 모음
         private float attackPush; // 0: 평소, 1: 앞으로 다 뻗음
 
@@ -225,6 +233,8 @@ namespace TeamOdd.Player
 
         private void Update()
         {
+            // 조작이 돌아오면 상체 레이어는 다시 매 프레임 여기서 정한다
+            upperLayerFade?.Kill();
             float relativeScale = SlowMotion.PlayerRelativeScale;
             ApplyAnimatorTimeScale(relativeScale);
             if (attackSequence != null) attackSequence.timeScale = relativeScale;
@@ -642,7 +652,8 @@ namespace TeamOdd.Player
 
         public void SetActionLocked(bool locked) => IsActionLocked = locked;
 
-        // 보상창처럼 조작을 멈추는 화면이 뜰 때 걷기·달리기·구르기를 끊고 대기 자세로 돌림
+        // 보상창처럼 조작을 멈추는 화면이 뜰 때 걷기·달리기 입력을 끊어, 재생 중인 동작(구르기·피격 등)이 끝나면
+        // 애니메이터의 전환을 따라 자연스럽게 대기 자세로 돌아가게 함. 강제로 대기 상태로 넘기지 않는다.
         // 피격·공격 정리는 컴포넌트가 꺼질 때(OnDisable) 하므로, 조작을 끈 뒤에 부르면 남는 동작이 없다.
         public void EnterIdle()
         {
@@ -658,13 +669,20 @@ namespace TeamOdd.Player
             animator.SetBool(Run, false);
             animator.ResetTrigger(Rolling);
             animator.ResetTrigger(Hit);
-            animator.SetLayerWeight(1, 0f);
+
+            // 들기·조준 상체 레이어는 끊지 않고 서서히 내린다
+            upperLayerFade?.Kill();
+            upperLayerFade = DOTween.To(() => animator.GetLayerWeight(1), weight => animator.SetLayerWeight(1, weight), 0f, UpperLayerFadeDuration)
+                .SetTarget(this);
 
             if (TryGetComponent(out CombatEntity entity) && entity.IsDead) return;
-            animator.CrossFadeInFixedTime(IdleState, 0.2f, 0);
+
+            // 넉다운 중이면 기상 신호를 주던 피격 코루틴이 꺼졌으므로 여기서 일으킨다
+            bool knockedDown = animator.GetCurrentAnimatorStateInfo(0).shortNameHash == KnockdownState
+                               || animator.GetNextAnimatorStateInfo(0).shortNameHash == KnockdownState;
+            if (knockedDown) animator.SetTrigger(WakeUp);
         }
 
-        // 다른 곳(시간 정지 등)이 바꾼 animator.speed는 살리고 플레이어 슬로모션 배율만 바꿔 곱함
         private void ApplyAnimatorTimeScale(float scale)
         {
             if (animator == null || Mathf.Approximately(scale, appliedAnimatorTimeScale)) return;

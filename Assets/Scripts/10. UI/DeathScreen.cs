@@ -1,9 +1,9 @@
+using System;
+using System.Collections;
 using DG.Tweening;
 using TeamOdd.Combat;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,43 +11,79 @@ using UnityEditor;
 
 namespace TeamOdd.UI
 {
-    // 플레이어가 죽으면 화면이 흑백으로 바래며 어두워지고, 가운데에 "YOU DIED" 가 서서히 떠오르는 연출
-    // - 흑백·어둡게: 코드로 만든 Global Volume (TimeReverseEffect 와 같은 방식)
-    // - 글자: 자식 MessageGroup(CanvasGroup)의 alpha
+    // 플레이어가 죽으면 신호가 끊기듯 화면이 꺼지고 "작전 실패"와 정비소 이동 카운트다운을 띄우는 연출
+    // 히트스탑·슬로모션 → 채도가 빠지고 가장자리가 어두워짐 → 사망 애니메이션이 거의 끝나면 화면 전체와 HUD가 강하게 지직거리다 HUD가 사라짐
+    // → 화면이 가로 선으로 접혔다가 점으로 꺼짐 → 검은 화면에 띠가 선에서 열리며 문구가 짧게 지직거리며 켜짐 → 카운트다운
+    // - 화면 전체 효과: ScreenGlitch(PC_Renderer의 Screen Glitch 렌더러 기능)
+    // - 띠·문구: 보상 화면과 같은 부품(UILineReveal·UIGlitch·UIStaggerReveal)을 세기만 다르게 쓴다.
     // UI Canvas 아래 빈 오브젝트에 붙이고, 컴포넌트 우클릭 → "1. Build Death Screen UI" 로 자식 UI 를 만든다.
+    // 입력 잠금은 PlayerController.DeathAnimation이 맡는다. 연출은 실제 시간 기준이다.
     [RequireComponent(typeof(RectTransform))]
     public class DeathScreen : MonoBehaviour
     {
         [Header("References")]
         // 비워두면 Player 싱글톤에서 찾는다
         [SerializeField] private CombatEntity playerEntity;
-        [SerializeField] private CanvasGroup messageGroup;
+        [SerializeField] private GameObject panelRoot;
+        [SerializeField] private UILineReveal bandReveal;
+        [SerializeField] private UIGlitch bandGlitch;
+        [SerializeField] private UIStaggerReveal bandContent;
         [SerializeField] private TMP_Text messageText;
+        [SerializeField] private TMP_Text countdownText;
+        // 사망 순간 함께 지직거리다 사라질 HUD, 빌드할 때 부모 캔버스에 붙여 연결한다
+        [SerializeField] private UIGlitch hudGlitch;
 
         [Header("Message")]
-        [SerializeField] private string message = "YOU DIED";
-        [SerializeField] private Color messageColor = new(0.62f, 0.07f, 0.07f, 1f);
-        // 빌드할 때 글자에 적용할 폰트, 비워두면 TMP 기본 폰트
+        [SerializeField] private string message = "작전 실패";
+        // {0}에 남은 초가 들어간다
+        [SerializeField] private string countdownFormat = "{0}초 뒤 정비소로 이동합니다.";
+        [SerializeField] private string movingMessage = "정비소로 이동합니다.";
+        // 빌드할 때 글자에 적용할 폰트, 비워두면 NotoSansKR-Regular SDF
         [SerializeField] private TMP_FontAsset font;
 
-        [Header("Gray Out")]
-        // 채도 (-100이면 완전 흑백)
-        [SerializeField, Range(-100f, 0f)] private float saturation = -100f;
-        // 노출 (음수일수록 어두움)
-        [SerializeField, Range(-3f, 0f)] private float postExposure = -0.8f;
+        [Header("Impact")]
+        [SerializeField, Min(0f)] private float hitStopDuration = 0.12f;
+        [SerializeField, Range(0.01f, 1f)] private float slowScale = 0.3f;
+        [SerializeField, Min(0f)] private float slowHold = 0.6f;
+        [SerializeField, Min(0f)] private float slowRecover = 0.4f;
 
-        [Header("Timing (초, 시간 정지에도 흐름)")]
-        // 죽은 뒤 회색으로 바래기 시작할 때까지
-        [SerializeField, Min(0f)] private float grayDelay = 1f;
-        [SerializeField, Min(0.01f)] private float grayDuration = 1.5f;
-        // 회색으로 바래기 시작한 뒤 글자가 떠오르기 시작할 때까지
-        [SerializeField, Min(0f)] private float messageDelay = 1f;
-        [SerializeField, Min(0.01f)] private float messageDuration = 1.5f;
+        [Header("Signal Lost (초, 시간 정지에도 흐름)")]
+        // 채도가 빠지고 가장자리가 어두워지는 시간
+        [SerializeField, Min(0.01f)] private float drainDuration = 1.2f;
+        [SerializeField, Range(0f, 1f)] private float vignette = 0.8f;
+        // 사망 애니메이션이 이만큼(0~1) 재생되면 화면 전체 글리치를 시작한다. 글리치·접힘 동안 쓰러지는 끝부분이 이어진다
+        [SerializeField, Range(0f, 1f)] private float animationProgressToContinue = 0.7f;
+        // 위 진행도에 닿은 뒤 글리치가 시작될 때까지
+        [SerializeField, Min(0f)] private float afterAnimationDelay = 0f;
+        // 사망 애니메이션을 찾지 못하거나 끝나지 않을 때 이 시간이 지나면 그냥 진행
+        [SerializeField, Min(0f)] private float maxAnimationWait = 6f;
+        [SerializeField, Min(0.01f)] private float glitchDuration = 0.5f;
+        // 화면이 가로 선으로 접히는 시간
+        [SerializeField, Min(0.01f)] private float foldDuration = 0.35f;
+        // 선이 점으로 줄어드는 시간
+        [SerializeField, Min(0.01f)] private float shrinkDuration = 0.25f;
+        [SerializeField, Min(0.01f)] private float dotFadeDuration = 0.3f;
 
-        private Volume volume;
-        private Sequence sequence;
+        [Header("Message Timing")]
+        // 화면이 접히기 시작한 뒤 문구 띠가 열리기 시작할 때까지 (0이면 꺼지는 연출과 동시에)
+        [SerializeField, Min(0f)] private float messageDelay = 0f;
+        [SerializeField, Min(0.01f)] private float messageGlitchDuration = 0.35f;
+        [SerializeField, Range(0f, 1f)] private float messageGlitchStrength = 0.6f;
+        [SerializeField, Min(1)] private int countdownSeconds = 5;
+        // 이동 문구를 보여 준 뒤 넘어가기까지
+        [SerializeField, Min(0f)] private float movingHold = 1f;
+
+        private static readonly int DeadState = Animator.StringToHash("Dead");
+
+        private Animator playerAnimator;
+        private Graphic blackout;            // 패널의 검은 배경, 화면이 다 꺼진 뒤에만 불투명하게 둔다
+        private Sequence drain;              // 채도·가장자리, 사망 순간부터
+        private Sequence sequence;           // 사망 애니메이션이 끝난 뒤의 화면 꺼짐·문구
+        private Coroutine waitRoutine;
         private bool isShowing;              // 연출이 켜져 있는지
-        private bool prevPostProcessing;     // 연출을 켜기 전 카메라의 Post Processing 설정
+
+        // 카운트다운이 끝나 정비소로 넘어갈 때. 씬 이동은 아직 연결하지 않아 지금은 화면만 닫는다
+        public event Action Finished;
 
         private void Awake()
         {
@@ -55,9 +91,12 @@ namespace TeamOdd.UI
             Stretch((RectTransform)transform);
             transform.SetAsLastSibling();
 
-            volume = CreateVolume();
             if (messageText != null) messageText.text = message;
-            SetMessageAlpha(0f);
+            if (panelRoot != null)
+            {
+                panelRoot.TryGetComponent(out blackout);
+                panelRoot.SetActive(false);
+            }
         }
 
         // Player 는 Instance 로 처음 불릴 때 찾아지므로 구독은 Start 에서 한다
@@ -71,79 +110,169 @@ namespace TeamOdd.UI
             }
 
             playerEntity.Died += HandleDied;
+            playerAnimator = playerEntity.GetComponentInChildren<Animator>();
         }
 
         private void OnDestroy()
         {
             if (playerEntity != null) playerEntity.Died -= HandleDied;
 
+            drain?.Kill();
             sequence?.Kill();
-            if (isShowing) SetPostProcessing(prevPostProcessing);
-            if (volume != null) Destroy(volume.gameObject);
+            if (isShowing) ScreenGlitch.Clear();
         }
 
         private void HandleDied()
         {
             if (isShowing) return;
+            if (panelRoot == null || bandReveal == null || countdownText == null)
+            {
+                Debug.LogError($"[{nameof(DeathScreen)}] 자식 UI 가 연결되지 않았습니다. '1. Build Death Screen UI' 를 실행하세요.", this);
+                return;
+            }
 
             isShowing = true;
-            prevPostProcessing = SetPostProcessing(true);
+            // 누를 버튼이 없으므로 커서는 숨긴 채 둔다 (조작 잠금은 PlayerController.DeathAnimation 이 먼저 한다)
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            HitStop.Request(hitStopDuration);
+            SlowMotion.Play(slowScale, slowHold, slowRecover);
 
             sequence?.Kill();
-            sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true)
-                .AppendInterval(grayDelay)
-                .Append(DOTween.To(() => volume.weight, value => volume.weight = value, 1f, grayDuration)
-                    .SetEase(Ease.InOutSine))
-                .Insert(grayDelay + messageDelay,
-                    DOTween.To(GetMessageAlpha, SetMessageAlpha, 1f, messageDuration).SetEase(Ease.InSine));
+            ScreenGlitch.Clear();
+            panelRoot.SetActive(false);
+
+            drain?.Kill();
+            drain = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+            drain.Insert(0f, DOTween.To(() => ScreenGlitch.Desaturate, value => ScreenGlitch.Desaturate = value, 1f, drainDuration)
+                .SetEase(Ease.OutQuad));
+            drain.Insert(0f, DOTween.To(() => ScreenGlitch.Vignette, value => ScreenGlitch.Vignette = value, vignette, drainDuration)
+                .SetEase(Ease.OutQuad));
+
+            // 쓰러지는 모습을 대부분 보여 준 뒤에 화면을 끈다
+            waitRoutine = StartCoroutine(WaitDeathAnimation());
         }
 
-        private float GetMessageAlpha() => messageGroup != null ? messageGroup.alpha : 0f;
-
-        private void SetMessageAlpha(float alpha)
+        private IEnumerator WaitDeathAnimation()
         {
-            if (messageGroup != null) messageGroup.alpha = alpha;
+            float giveUpTime = Time.unscaledTime + maxAnimationWait;
+            bool entered = false;
+            while (Time.unscaledTime < giveUpTime && playerAnimator != null)
+            {
+                AnimatorStateInfo state = playerAnimator.GetCurrentAnimatorStateInfo(0);
+                bool inDead = state.shortNameHash == DeadState && playerAnimator.IsInTransition(0) == false;
+                if (inDead) entered = true;
+                // 사망 상태는 나가는 전환이 없으므로 끝까지 재생되면 마지막 자세로 멈춰 있다
+                if (entered && (inDead == false || state.normalizedTime >= animationProgressToContinue)) break;
+                yield return null;
+            }
+
+            waitRoutine = null;
+            BeginSignalLost();
         }
 
-        // 카메라의 Post Processing을 켜거나 끄고 원래 값을 돌려준다. 꺼져 있으면 Volume이 보이지 않는다
-        private static bool SetPostProcessing(bool on)
+        // 화면 전체 글리치 → 선으로 접힘 → 점으로 꺼짐 → 문구 띠 → 카운트다운
+        private void BeginSignalLost()
         {
-            if (Camera.main == null) return false;
+            float glitchStart = afterAnimationDelay;
+            float glitchEnd = glitchStart + glitchDuration;
+            float foldEnd = glitchEnd + foldDuration;
+            float shrinkEnd = foldEnd + shrinkDuration;
+            float offTime = shrinkEnd + dotFadeDuration;
+            float messageTime = glitchEnd + messageDelay;
+            float contentTime = messageTime + bandReveal.OpenDuration;
 
-            UniversalAdditionalCameraData cameraData = Camera.main.GetUniversalAdditionalCameraData();
-            bool prev = cameraData.renderPostProcessing;
-            cameraData.renderPostProcessing = on;
-            return prev;
+            sequence?.Kill();
+            sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+
+            // 글리치는 점점 세지다가 화면이 접히기 시작할 때 끊긴다
+            sequence.Insert(glitchStart, DOTween.To(() => ScreenGlitch.Glitch, value => ScreenGlitch.Glitch = value, 1f, glitchDuration)
+                .SetEase(Ease.InQuad));
+            if (hudGlitch != null) sequence.InsertCallback(glitchStart, () => hudGlitch.Play(glitchDuration, 1f, true));
+            sequence.InsertCallback(glitchEnd, () => ScreenGlitch.Glitch = 0f);
+
+            sequence.Insert(glitchEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 1f, foldDuration).SetEase(Ease.InCubic));
+            sequence.Insert(foldEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 2f, shrinkDuration).SetEase(Ease.InCubic));
+            sequence.Insert(shrinkEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 3f, dotFadeDuration).SetEase(Ease.OutQuad));
+
+            // 화면이 접히는 동안 문구 띠가 같은 가운데 선에서 열린다. 배경은 꺼지는 화면이 보이도록 투명하게 둔다
+            sequence.InsertCallback(messageTime, () =>
+            {
+                SetBlackoutAlpha(0f);
+                panelRoot.SetActive(true);
+                if (bandContent != null) bandContent.HideAll();
+                bandReveal.Open();
+            });
+            // 다 꺼진 뒤에는 검은 배경으로 덮고 화면 효과를 걷어 둔다
+            sequence.InsertCallback(offTime, () =>
+            {
+                SetBlackoutAlpha(1f);
+                drain?.Kill();
+                ScreenGlitch.Clear();
+            });
+            sequence.InsertCallback(contentTime, () =>
+            {
+                countdownText.text = string.Format(countdownFormat, countdownSeconds);
+                if (bandContent != null) bandContent.Play();
+                if (bandGlitch != null) bandGlitch.Play(messageGlitchDuration, messageGlitchStrength);
+            });
+
+            for (int second = 1; second < countdownSeconds; second++)
+            {
+                int remaining = countdownSeconds - second;
+                sequence.InsertCallback(contentTime + second, () => countdownText.text = string.Format(countdownFormat, remaining));
+            }
+            sequence.InsertCallback(contentTime + countdownSeconds, () => countdownText.text = movingMessage);
+            sequence.InsertCallback(contentTime + countdownSeconds + movingHold, Finish);
         }
 
-        // 흑백 + 어둡게 효과를 담은 Global Volume. weight 0으로 두었다가 죽으면 올린다
-        private Volume CreateVolume()
+        // 화면과 효과를 걷는다. 플레이어는 죽은 채이므로 조작은 계속 막아 둔다
+        public void Close()
         {
-            VolumeProfile profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            ColorAdjustments colorAdjustments = profile.Add<ColorAdjustments>();
-            colorAdjustments.saturation.Override(saturation);
-            colorAdjustments.postExposure.Override(postExposure);
+            drain?.Kill();
+            sequence?.Kill();
+            sequence = null;
+            if (waitRoutine != null) StopCoroutine(waitRoutine);
+            waitRoutine = null;
+            ScreenGlitch.Clear();
+            if (hudGlitch != null) hudGlitch.Stop();
+            if (bandGlitch != null) bandGlitch.Stop();
+            SetBlackoutAlpha(1f);
+            if (panelRoot != null) panelRoot.SetActive(false);
+            if (isShowing == false) return;
 
-            // UI 오브젝트 아래에 두면 레이어가 섞이므로 씬 루트에 둔다
-            GameObject volumeObject = new GameObject("DeathScreenVolume");
-
-            Volume created = volumeObject.AddComponent<Volume>();
-            created.isGlobal = true;
-            created.priority = 100f; // 씬의 다른 Volume보다 위에서 섞이도록
-            created.weight = 0f;
-            created.sharedProfile = profile;
-            return created;
+            isShowing = false;
+            if (SlowMotion.IsSlowed) SlowMotion.Resume();
         }
+
+        private void Finish()
+        {
+            Close();
+            Finished?.Invoke();
+        }
+
+        private void SetBlackoutAlpha(float alpha)
+        {
+            if (blackout == null) return;
+            Color color = blackout.color;
+            color.a = alpha;
+            blackout.color = color;
+        }
+
+        private static void SetPowerOff(float value) => ScreenGlitch.PowerOff = value;
 
 #if UNITY_EDITOR
-        private const string MessageGroupName = "MessageGroup";
+        private const string PanelName = "Panel";
+        private static readonly Color HighlightColor = new(0.93f, 0.91f, 0.87f, 0.9f);
+        private static readonly Color TextColor = new(0.847f, 0.824f, 0.769f, 1f);
 
         [ContextMenu("1. Build Death Screen UI")]
         private void BuildUI()
         {
-            if (transform.Find(MessageGroupName) != null)
+            if (transform.Find(PanelName) != null)
             {
-                Debug.LogWarning($"[{nameof(DeathScreen)}] '{MessageGroupName}' 이(가) 이미 있습니다. 먼저 '2. Clear Death Screen UI' 를 실행하세요.", this);
+                Debug.LogWarning($"[{nameof(DeathScreen)}] '{PanelName}' 이(가) 이미 있습니다. 먼저 '2. Clear Death Screen UI' 를 실행하세요.", this);
                 return;
             }
 
@@ -153,43 +282,87 @@ namespace TeamOdd.UI
             Stretch(self);
             self.SetAsLastSibling();
 
-            // 글자 묶음 (처음엔 투명)
-            GameObject group = NewUI(MessageGroupName, transform);
-            Stretch((RectTransform)group.transform);
-            CanvasGroup canvasGroup = group.AddComponent<CanvasGroup>();
-            canvasGroup.alpha = 0f;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
+            // HUD를 사라지게 하는 캔버스 그룹의 영향을 받지 않고, 보상 화면보다 위에 그린다
+            if (TryGetComponent(out CanvasGroup selfGroup) == false) selfGroup = Undo.AddComponent<CanvasGroup>(gameObject);
+            selfGroup.ignoreParentGroups = true;
+            selfGroup.blocksRaycasts = false;
+            if (TryGetComponent(out Canvas selfCanvas) == false) selfCanvas = Undo.AddComponent<Canvas>(gameObject);
+            selfCanvas.overrideSorting = true;
+            selfCanvas.sortingOrder = 300;
 
-            // 글자 뒤 가로 띠
-            GameObject band = NewUI("MessageBand", group.transform);
-            SetRect((RectTransform)band.transform,
+            // 처음엔 꺼 둔 검은 화면
+            GameObject panel = NewUI(PanelName, transform);
+            Stretch((RectTransform)panel.transform);
+            Image blackout = panel.AddComponent<Image>();
+            blackout.color = Color.black;
+            blackout.raycastTarget = false;
+
+            // 선에서 펼쳐지는 문구 띠
+            GameObject reveal = NewUI("BandReveal", panel.transform);
+            SetRect((RectTransform)reveal.transform,
                 new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(0f, 200f));
-            Image bandImage = band.AddComponent<Image>();
-            bandImage.color = new Color(0f, 0f, 0f, 0.55f);
-            bandImage.raycastTarget = false;
+                Vector2.zero, new Vector2(0f, 140f));
+            reveal.AddComponent<RectMask2D>();
+            UILineReveal lineReveal = reveal.AddComponent<UILineReveal>();
+            // 꺼진 화면 뒤라 보상 화면보다 천천히 연다
+            SetValue(lineReveal, "lineDuration", 0.35f);
+            SetValue(lineReveal, "openDuration", 0.45f);
+            SetValue(lineReveal, "lineFadeDuration", 0.35f);
 
-            // 가운데 글자
-            GameObject textObject = NewUI("MessageText", group.transform);
-            SetRect((RectTransform)textObject.transform,
-                new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(0f, 200f));
-            TextMeshProUGUI text = textObject.AddComponent<TextMeshProUGUI>();
-            if (font != null) text.font = font;
-            text.text = message;
-            text.fontSize = 110f;
-            text.characterSpacing = 8f;
-            text.alignment = TextAlignmentOptions.Center;
-            text.color = messageColor;
-            text.textWrappingMode = TextWrappingModes.NoWrap;
-            text.raycastTarget = false;
+            GameObject band = NewUI("Band", reveal.transform);
+            Stretch((RectTransform)band.transform);
+            band.AddComponent<VectorPanel>().raycastTarget = false;
+            band.AddComponent<CanvasGroup>();
+            UIGlitch glitch = band.AddComponent<UIGlitch>();
+            UIStaggerReveal content = band.AddComponent<UIStaggerReveal>();
+            // 제목이 자리 잡은 뒤 안내 문구가 켜지도록 간격을 둔다
+            SetValue(content, "interval", 0.25f);
+            SetValue(content, "flashDuration", 0.5f);
 
-            Undo.RegisterCreatedObjectUndo(group, "Build Death Screen UI");
+            TMP_FontAsset textFont = font != null ? font : FindDefaultFont();
+            TMP_Text title = NewText("MessageText", band.transform, textFont, message, 32f, TextColor,
+                new Vector2(0f, 18f), new Vector2(1000f, 50f));
+            Color subColor = TextColor;
+            subColor.a = 0.55f;
+            TMP_Text countdown = NewText("CountdownText", band.transform, textFont, string.Format(countdownFormat, countdownSeconds), 18f, subColor,
+                new Vector2(0f, -26f), new Vector2(1000f, 30f));
+
+            // 띠가 열리기 전 가운데 1px 선, 마스크에 가려지지 않게 띠 밖에 둔다
+            GameObject line = NewUI("BandLine", panel.transform);
+            ((RectTransform)line.transform).sizeDelta = new Vector2(0f, 1f);
+            Image lineImage = line.AddComponent<Image>();
+            lineImage.color = HighlightColor;
+            lineImage.raycastTarget = false;
+
+            SetReference(lineReveal, "line", lineImage);
+            SetReferences(glitch, "splitGraphics", title);
+
+            // 부모 캔버스(HUD)의 다른 자식들을 함께 지직거리게 한다
+            UIGlitch hud = null;
+            Canvas parentCanvas = transform.parent != null ? transform.parent.GetComponentInParent<Canvas>() : null;
+            if (parentCanvas != null)
+            {
+                GameObject hudObject = parentCanvas.gameObject;
+                if (hudObject.TryGetComponent(out CanvasGroup hudGroup) == false) hudGroup = Undo.AddComponent<CanvasGroup>(hudObject);
+                if (hudObject.TryGetComponent(out hud) == false) hud = Undo.AddComponent<UIGlitch>(hudObject);
+                System.Collections.Generic.List<UnityEngine.Object> targets = new();
+                foreach (Transform child in parentCanvas.transform)
+                    if (child != transform) targets.Add(child);
+                SetReference(hud, "group", hudGroup);
+                SetReferences(hud, "targets", targets.ToArray());
+            }
+
+            panel.SetActive(false);
+            Undo.RegisterCreatedObjectUndo(panel, "Build Death Screen UI");
 
             Undo.RecordObject(this, "Build Death Screen UI");
-            messageGroup = canvasGroup;
-            messageText = text;
+            panelRoot = panel;
+            bandReveal = lineReveal;
+            bandGlitch = glitch;
+            bandContent = content;
+            messageText = title;
+            countdownText = countdown;
+            hudGlitch = hud;
             EditorUtility.SetDirty(this);
 
             Debug.Log($"[{nameof(DeathScreen)}] 사망 화면 UI 생성 완료.", this);
@@ -198,20 +371,24 @@ namespace TeamOdd.UI
         [ContextMenu("2. Clear Death Screen UI")]
         private void ClearUI()
         {
-            Transform group = transform.Find(MessageGroupName);
-            if (group == null)
+            Transform panel = transform.Find(PanelName);
+            if (panel == null)
             {
-                Debug.Log($"[{nameof(DeathScreen)}] 삭제할 '{MessageGroupName}' 이(가) 없습니다.", this);
+                Debug.Log($"[{nameof(DeathScreen)}] 삭제할 '{PanelName}' 이(가) 없습니다.", this);
                 return;
             }
 
-            Undo.DestroyObjectImmediate(group.gameObject);
+            Undo.DestroyObjectImmediate(panel.gameObject);
             Undo.RecordObject(this, "Clear Death Screen UI");
-            messageGroup = null;
+            panelRoot = null;
+            bandReveal = null;
+            bandGlitch = null;
+            bandContent = null;
             messageText = null;
+            countdownText = null;
             EditorUtility.SetDirty(this);
 
-            Debug.Log($"[{nameof(DeathScreen)}] '{MessageGroupName}' 삭제.", this);
+            Debug.Log($"[{nameof(DeathScreen)}] '{PanelName}' 삭제.", this);
         }
 
         private static GameObject NewUI(string name, Transform parent)
@@ -222,6 +399,54 @@ namespace TeamOdd.UI
             return go;
         }
 
+        private static TMP_Text NewText(string name, Transform parent, TMP_FontAsset textFont, string text, float size, Color color,
+            Vector2 anchoredPosition, Vector2 sizeDelta)
+        {
+            GameObject go = NewUI(name, parent);
+            SetRect((RectTransform)go.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                anchoredPosition, sizeDelta);
+            TextMeshProUGUI label = go.AddComponent<TextMeshProUGUI>();
+            if (textFont != null) label.font = textFont;
+            label.text = text;
+            label.fontSize = size;
+            label.fontStyle = FontStyles.Normal;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = color;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.raycastTarget = false;
+            return label;
+        }
+
+        private static TMP_FontAsset FindDefaultFont()
+        {
+            foreach (string guid in AssetDatabase.FindAssets("NotoSansKR-Regular SDF t:TMP_FontAsset"))
+                return AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath(guid));
+            return null;
+        }
+
+        private static void SetReference(UnityEngine.Object target, string field, UnityEngine.Object value)
+        {
+            SerializedObject serialized = new(target);
+            serialized.FindProperty(field).objectReferenceValue = value;
+            serialized.ApplyModifiedProperties();
+        }
+
+        private static void SetValue(UnityEngine.Object target, string field, float value)
+        {
+            SerializedObject serialized = new(target);
+            serialized.FindProperty(field).floatValue = value;
+            serialized.ApplyModifiedProperties();
+        }
+
+        private static void SetReferences(UnityEngine.Object target, string field, params UnityEngine.Object[] values)
+        {
+            SerializedObject serialized = new(target);
+            SerializedProperty property = serialized.FindProperty(field);
+            property.arraySize = values.Length;
+            for (int i = 0; i < values.Length; i++)
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            serialized.ApplyModifiedProperties();
+        }
 #endif
 
         private static void Stretch(RectTransform rect)
