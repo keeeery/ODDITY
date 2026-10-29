@@ -694,6 +694,14 @@ namespace TeamOdd.Player
         // 기본 공격은 같은 팔 IK로 조준 방향을 향해 당겼다가 뻗음
         private void UpdateHoldArmIK()
         {
+            if (isHit)
+            {
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0f);
+                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0f);
+                animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, 0f);
+                return;
+            }
+
             // 같은 프레임 안에 대상이 사라졌으면(보스 제거 등) 놓은 것처럼 서서히 해제
             if (isHolding == false || TryGetArmTarget(out Vector3 armTarget) == false)
             {
@@ -868,6 +876,12 @@ namespace TeamOdd.Player
                 velocity.y = Mathf.Min(velocity.y, 0f);
                 if (psychokinesisController != null) psychokinesisController.InterruptForHit();
                 heldObject = null;
+                // 피격 중에는 홀딩 갱신도 멈추므로 보간을 기다리지 않고 IK 상태를 즉시 비운다.
+                externalHoldTarget = null;
+                isHolding = false;
+                isRestoringFacing = false;
+                ikBlend = 0f;
+                throwPrepareBlend = 0f;
                 animator.SetLayerWeight(1, 0f);
                 hitAnimationEnded = false;
                 // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
