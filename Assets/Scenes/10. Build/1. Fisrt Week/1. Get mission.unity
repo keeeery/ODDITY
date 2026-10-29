@@ -539,6 +539,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -3635,7 +3638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38f40c56780204e488d116c48d65e6fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionNPC
-  missionUI: {fileID: 346190480}
+  popupUI: {fileID: 346190480}
   distance: 2
   player: {fileID: 0}
 --- !u!65 &790270730
@@ -4643,6 +4646,8 @@ MonoBehaviour:
   textureSize: 256
   cameraHeight: 50
   cameraDepthBelow: 50
+  floorHeightAbove: 1
+  floorDepthBelow: 0.5
   playerDotSize: 10
   playerTipLength: 1.7
   bossDotSize: 14
@@ -4710,11 +4715,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipToggle
   panel: {fileID: 0}
   inventory: {fileID: 1640213443}
-  disableWhileOpen:
-  - {fileID: 939539098}
-  - {fileID: 1640213439}
-  - {fileID: 1405247493}
-  - {fileID: 21484292}
 --- !u!114 &969837227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4727,7 +4727,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6516d4b29e9746d292f6ca2ca5e2e5ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.PsychokinesisTestHealthUI
-  enemies: []
 --- !u!4 &969837228
 Transform:
   m_ObjectHideFlags: 0
@@ -5158,6 +5157,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -7009,6 +7011,8 @@ MonoBehaviour:
   bossName: 
   hpBar: {fileID: 42429408}
   groggyBar: {fileID: 1005598919}
+  smoothGroggyBar: 1
+  trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
 --- !u!225 &1440440750
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7162,6 +7166,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -7520,6 +7527,7 @@ MonoBehaviour:
   combatEntity: {fileID: 0}
   hpBar: {fileID: 1454838380}
   staminaBar: {fileID: 1867992519}
+  hpTrailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
   damageVignette: {fileID: 1412142376}
   cameraShakeTrauma: 0.6
   cameraShakeDuration: 0.35
@@ -8985,6 +8993,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4

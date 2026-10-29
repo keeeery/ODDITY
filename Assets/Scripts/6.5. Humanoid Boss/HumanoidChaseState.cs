@@ -24,7 +24,6 @@ namespace TeamOdd
         [SerializeField] private float fastRunLoopSpeed = 14f;
 
         [Title("Variant")]
-        [Tooltip("추적을 시작할 때 B 클립을 고를 확률")]
         [SerializeField, Range(0f, 1f)] private float variantBChance = 0.5f;
 
         protected override void OnEnter()

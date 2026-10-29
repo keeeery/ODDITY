@@ -190,7 +190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_LocalRotation.x
@@ -198,7 +198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_LocalRotation.z
@@ -210,7 +210,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -227,6 +227,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       propertyPath: m_Controller
@@ -285,6 +289,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8266805579512474681}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8467648070795315583}
   m_SourcePrefab: {fileID: 100100000, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
 --- !u!4 &530434551 stripped
 Transform:
@@ -312,7 +319,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
+  m_AnimatePhysics: 1
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -551,7 +558,9 @@ GameObject:
   - component: {fileID: 1450211960}
   - component: {fileID: 1450211959}
   - component: {fileID: 1450211958}
-  m_Layer: 0
+  - component: {fileID: 1450211963}
+  - component: {fileID: 1450211962}
+  m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -652,6 +661,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1450211962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450211957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: f2652fae
+--- !u!114 &1450211963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450211957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: -1372625422
+  m_CollectObjects: 2
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 640
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 1
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 7d0d980526c804a4ca583e6f4193e194, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &1785115619
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,8 +964,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35888b942cfa45b98da5ecbf786318de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidDiagonalSlashI
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 12
+  <MinDistance>k__BackingField: 4.5
+  <MaxDistance>k__BackingField: 11.5
   minAngle: -30
   maxAngle: 30
   cooldown: 4
@@ -914,7 +975,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: 1115633409
   useRootMotion: 1
-  trackDuration: 0.61
+  trackDuration: 0.65
   trackSpeed: 150
   <Recovery>k__BackingField: 0.6
   hits: []
@@ -948,7 +1009,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidSpinSweep
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 6
+  <MaxDistance>k__BackingField: 3.5
   minAngle: -180
   maxAngle: 180
   cooldown: 6
@@ -1119,8 +1180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6caa3d36f4e346e6a55390174ac7ba81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidDashSlashB
-  <MinDistance>k__BackingField: 11
-  <MaxDistance>k__BackingField: 22
+  <MinDistance>k__BackingField: 4.5
+  <MaxDistance>k__BackingField: 7.5
   minAngle: -20
   maxAngle: 20
   cooldown: 8
@@ -1159,8 +1220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73e461c9dd404ea9b6e565cba6d1a695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidThrust
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 9
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 4.75
   minAngle: -15
   maxAngle: 15
   cooldown: 5
@@ -1170,7 +1231,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: 1212518212
   useRootMotion: 1
-  trackDuration: 0.3
+  trackDuration: 0.35
   trackSpeed: 150
   <Recovery>k__BackingField: 0.3
   hits: []
@@ -1205,8 +1266,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c805a5e906274e10820b44b5ef96a505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidTackleUpper
-  <MinDistance>k__BackingField: 8
-  <MaxDistance>k__BackingField: 16
+  <MinDistance>k__BackingField: 2.5
+  <MaxDistance>k__BackingField: 8.25
   minAngle: -30
   maxAngle: 30
   cooldown: 6
@@ -1334,8 +1395,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6f8f7232e443cca49bd4e76efd498b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidDashSlashA
-  <MinDistance>k__BackingField: 11
-  <MaxDistance>k__BackingField: 22
+  <MinDistance>k__BackingField: 5
+  <MaxDistance>k__BackingField: 8.5
   minAngle: -20
   maxAngle: 20
   cooldown: 8
@@ -1345,7 +1406,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: 1158871993
   useRootMotion: 1
-  trackDuration: 0.33
+  trackDuration: 0.4
   trackSpeed: 120
   <Recovery>k__BackingField: 0.8
   hits: []
@@ -1793,10 +1854,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d916220124b1d92908f22f9ed798d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidCombo4A
-  <MinDistance>k__BackingField: 4
-  <MaxDistance>k__BackingField: 12
-  minAngle: -40
-  maxAngle: 40
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 3
+  minAngle: -35
+  maxAngle: 35
   cooldown: 7
   <Weight>k__BackingField: 0.6
   <IsUrgent>k__BackingField: 0
@@ -1804,7 +1865,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: -681069039
   useRootMotion: 1
-  trackDuration: 1.7
+  trackDuration: 1.65
   trackSpeed: 120
   <Recovery>k__BackingField: 1
   hits: []
@@ -1904,8 +1965,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87c1cc757d0a4493b022380b28fb0824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidRiseSmash
-  <MinDistance>k__BackingField: 4
-  <MaxDistance>k__BackingField: 9
+  <MinDistance>k__BackingField: 2.75
+  <MaxDistance>k__BackingField: 4.5
   minAngle: -30
   maxAngle: 30
   cooldown: 8
@@ -1915,7 +1976,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: -892278593
   useRootMotion: 1
-  trackDuration: 0.87
+  trackDuration: 0.85
   trackSpeed: 120
   <Recovery>k__BackingField: 0.8
   hits: []
@@ -1933,18 +1994,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81adaa1b9796463eb83975b26f56ddd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidDiagonalSlashA
-  <MinDistance>k__BackingField: 5
-  <MaxDistance>k__BackingField: 12
+  <MinDistance>k__BackingField: 4.5
+  <MaxDistance>k__BackingField: 11.5
   minAngle: -30
   maxAngle: 30
-  cooldown: 4
+  cooldown: 10
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
   trigger: 1285865267
   useRootMotion: 1
-  trackDuration: 0.45
+  trackDuration: 0.5
   trackSpeed: 150
   <Recovery>k__BackingField: 0.6
   hits: []
@@ -1974,8 +2035,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197bd0f09fef487bb4b2c55f3081666d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidCombo4B
-  <MinDistance>k__BackingField: 4
-  <MaxDistance>k__BackingField: 12
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 4.75
   minAngle: -40
   maxAngle: 40
   cooldown: 7
@@ -1985,7 +2046,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: 1315891115
   useRootMotion: 1
-  trackDuration: 1.9
+  trackDuration: 2
   trackSpeed: 120
   <Recovery>k__BackingField: 1
   hits: []
@@ -2047,9 +2108,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidLeftTurnSlash
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 7
+  <MaxDistance>k__BackingField: 3.25
   minAngle: -150
-  maxAngle: -45
+  maxAngle: 60
   cooldown: 4
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
@@ -2124,8 +2185,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d20dd322e741c5ac6f43cb68a05e66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidJumpSmashF
-  <MinDistance>k__BackingField: 12
-  <MaxDistance>k__BackingField: 22
+  <MinDistance>k__BackingField: 10
+  <MaxDistance>k__BackingField: 20
   minAngle: -30
   maxAngle: 30
   cooldown: 10
@@ -2143,7 +2204,7 @@ MonoBehaviour:
   showRangeWhenInactive: 1
   jump:
     airDuration: 0.63
-    maxJumpDistance: 20
+    maxJumpDistance: 25
     homingSpeed: 6
     impactOffset: 2.5
     radius: 5
@@ -2171,8 +2232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidRightTurnSlash
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 7
-  minAngle: 45
+  <MaxDistance>k__BackingField: 3.25
+  minAngle: -60
   maxAngle: 150
   cooldown: 4
   <Weight>k__BackingField: 1
@@ -2201,8 +2262,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39a24f8a15fe4bb0a84157c4f9cc1fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidJumpSmashJ
-  <MinDistance>k__BackingField: 12
-  <MaxDistance>k__BackingField: 22
+  <MinDistance>k__BackingField: 10
+  <MaxDistance>k__BackingField: 20
   minAngle: -30
   maxAngle: 30
   cooldown: 10
@@ -2220,7 +2281,7 @@ MonoBehaviour:
   showRangeWhenInactive: 1
   jump:
     airDuration: 0.63
-    maxJumpDistance: 20
+    maxJumpDistance: 25
     homingSpeed: 6
     impactOffset: 2.5
     radius: 5
@@ -2588,7 +2649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidSlash
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 6.5
+  <MaxDistance>k__BackingField: 3
   minAngle: -35
   maxAngle: 35
   cooldown: 2
@@ -2598,7 +2659,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: 130959345
   useRootMotion: 0
-  trackDuration: 0.6
+  trackDuration: 0.25
   trackSpeed: 180
   <Recovery>k__BackingField: 0.5
   hits: []
@@ -2617,7 +2678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidCombo3
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 7
+  <MaxDistance>k__BackingField: 3
   minAngle: -40
   maxAngle: 40
   cooldown: 5
@@ -2627,7 +2688,7 @@ MonoBehaviour:
   requiresLineOfSight: 1
   trigger: -76932571
   useRootMotion: 0
-  trackDuration: 1.1
+  trackDuration: 0.3
   trackSpeed: 150
   <Recovery>k__BackingField: 1
   hits: []
@@ -2649,7 +2710,7 @@ MonoBehaviour:
   <Animator>k__BackingField: {fileID: 530434553}
   <Body>k__BackingField: {fileID: 7273577093236855322}
   <Movement>k__BackingField: {fileID: 5583115746354114122}
-  <Pathfinder>k__BackingField: {fileID: 0}
+  <Pathfinder>k__BackingField: {fileID: 8467648070795315583}
   <AnimEventListener>k__BackingField: {fileID: 4841263071535645570}
   <Target>k__BackingField: {fileID: 0}
   sightHalfAngle: 30
@@ -2660,6 +2721,7 @@ MonoBehaviour:
   eyeHeight: 3
   moveHalfAngle: 45
   keepMoveHalfAngle: 90
+  motionSpeed: 0.8
   telegraphPoolKey: AttackTelegraph
 --- !u!1 &7728014151461246986
 GameObject:
@@ -2871,6 +2933,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9672f209e38a4141bd3c978221ad4790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitboxRegistrar
+--- !u!114 &8467648070795315583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530434552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50a64d75eff34a54a79efb039308b49c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossPathfinder
+  agentTypeName: Boss
+  repathInterval: 0.25
+  repathDistance: 1
+  cornerReachDistance: 1.5
+  sampleDistance: 6
+  wallClearance: 2
+  avoidWeight: 1
 --- !u!1 &8564893896967790706
 GameObject:
   m_ObjectHideFlags: 0

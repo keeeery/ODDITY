@@ -27,7 +27,8 @@ namespace TeamOdd.Boss
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float eyeHeight = 3f; // 보스 위치에서 시야 판정 시작점까지의 높이
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float moveHalfAngle = 45f;
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float keepMoveHalfAngle = 90f; // 이미 이동 중일 때 계속 이동할 수 있는 각도
-
+        [SerializeField, TabGroup("Settings/Type", "Motion")] private float motionSpeed = 1f;
+        
         [Title("States")]
         [ShowInInspector, ReadOnly] public float IntentStartTime { get; private set; }
         [ShowInInspector, ReadOnly] public BossMeleePattern Intent { get; private set; }
@@ -80,6 +81,7 @@ namespace TeamOdd.Boss
             Target = Player.Player.Instance.transform;
             Target.TryGetComponent(out targetCollider);
             base.Awake();
+            Animator.speed = motionSpeed;
         }
 
         private void Update()
