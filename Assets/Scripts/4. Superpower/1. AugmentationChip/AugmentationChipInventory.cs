@@ -17,8 +17,8 @@ namespace TeamOdd.Superpower
         // 스킬 칩은 이 개수까지만 장착한다. 슬롯 번호(0부터)가 곧 발동 키 순서다
         public const int SkillSlotCount = 5;
 
-        private readonly List<OwnedChip> chips = new();
-        private readonly OwnedChip[] skillSlots = new OwnedChip[SkillSlotCount]; // 빈 슬롯은 null
+        private static readonly List<OwnedChip> chips = new();
+        private static readonly OwnedChip[] skillSlots = new OwnedChip[SkillSlotCount]; // 빈 슬롯은 null
         private CombatEntity owner;
 
         public IReadOnlyList<OwnedChip> Chips => chips;
