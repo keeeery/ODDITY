@@ -40,7 +40,10 @@ namespace TeamOdd.Superpower
         private void Update()
         {
             foreach (OwnedChip chip in skillSlots)
-                chip?.Skill.Tick(Time.deltaTime);
+            {
+                if (chip != null)
+                    chip.Skill.Tick(Time.deltaTime);
+            }
         }
 
         // cells는 칩을 주는 쪽이 ChipShapeLibrary.Roll로 정한 모양
