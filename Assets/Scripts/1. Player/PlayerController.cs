@@ -228,6 +228,10 @@ namespace TeamOdd.Player
             float relativeScale = SlowMotion.PlayerRelativeScale;
             ApplyAnimatorTimeScale(relativeScale);
             if (attackSequence != null) attackSequence.timeScale = relativeScale;
+
+            // 죽은 뒤에도 슬로모션 배율은 애니메이터에 계속 적용하고, 이동·입력은 처리하지 않는다.
+            if (isDead) return;
+
             playerTime += PlayerDeltaTime;
             earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - PlayerDeltaTime);
             
@@ -338,6 +342,7 @@ namespace TeamOdd.Player
         public void DeathAnimation()
         {
             animator.SetTrigger(Dead);
+            UIManager.Instance.LockCursor(false, true);
             isDead = true;
         }
         
