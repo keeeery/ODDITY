@@ -218,6 +218,8 @@ namespace TeamOdd.Player
 
         private void Update()
         {
+            if(isDead) return;
+            
             earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - Time.deltaTime);
             
             if (IsHit) return;
@@ -327,6 +329,7 @@ namespace TeamOdd.Player
         public void DeathAnimation()
         {
             animator.SetTrigger(Dead);
+            UIManager.Instance.LockCursor(false, true);
             isDead = true;
         }
         

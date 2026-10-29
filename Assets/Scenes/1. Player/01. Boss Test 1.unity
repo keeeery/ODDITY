@@ -586,6 +586,10 @@ PrefabInstance:
       propertyPath: maxStamina
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: CameraController
+      value: 
+      objectReference: {fileID: 1516192323}
     - target: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Name
       value: Player
@@ -656,7 +660,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: NeedRollStamina
-      value: 40
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: MaxEarlyWakeUpCooldown

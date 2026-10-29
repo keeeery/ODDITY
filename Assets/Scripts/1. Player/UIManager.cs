@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 
 namespace TeamOdd
 {
+    [DefaultExecutionOrder(-100)]
     public class UIManager : SingletonBase<UIManager>
     {
         private PlayerController playerController;
