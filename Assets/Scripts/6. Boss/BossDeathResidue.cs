@@ -38,6 +38,10 @@ namespace TeamOdd.Boss
 
         private bool IsPlaying => Time.time - startTime < duration;
 
+        // 방출이 끝나도 이미 나온 입자가 모두 사라질 때까지 연출은 진행 중이다.
+        public bool IsEffectPlaying => isActiveAndEnabled && particles != null
+            && (IsPlaying || particles.particleCount > 0);
+
         private void Awake()
         {
             // 루트 캡슐·트리거는 몸 표면이 아니고, 오목한 MeshCollider는 ClosestPoint를 못 써서 뺌

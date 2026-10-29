@@ -67,6 +67,8 @@ namespace TeamOdd.CameraMove
         private Transform focusTarget;     // 지정되면 마우스 대신 이 대상이 화면 중앙에 오도록 시점을 돌림
         private Vector3 lastBasePosition;  // 지난 프레임의 흔들림 전 카메라 위치, 대상을 볼 각도 계산에 씀
 
+        public bool IsCinematicPlaying => fovPunchSequence != null || pullBackSequence != null;
+
         // 대상을 화면 중앙에 두는 고정 시점을 켬
         public void BeginFocus(Transform focus) => focusTarget = focus;
 
@@ -211,8 +213,8 @@ namespace TeamOdd.CameraMove
             else
             {
                 // 스킬 시전으로 행동이 잠긴 동안은 마우스로 시점을 돌리지 않음
-                // 마우스 이동량은 시간 배율과 무관하므로 슬로모션 중에는 그 배율만큼 직접 느리게 돌림
-                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.Scale);
+                // 마우스 이동량은 시간 배율과 무관하므로 슬로모션 중에는 플레이어 배율만큼 직접 느리게 돌림
+                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.PlayerScale);
 
                 yaw += delta.x * mouseSensitivity;
                 pitch -= delta.y * mouseSensitivity;

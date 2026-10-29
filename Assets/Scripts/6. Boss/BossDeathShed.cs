@@ -53,6 +53,8 @@ namespace TeamOdd.Boss
         private float elapsed;
         private bool hasHiddenSource;
 
+        public bool IsPlaying => isActiveAndEnabled && shell != null;
+
         private void Awake()
         {
             if (meshes == null || meshes.Length == 0)

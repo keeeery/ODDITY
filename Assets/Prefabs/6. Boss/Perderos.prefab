@@ -771,6 +771,7 @@ MonoBehaviour:
   slowTimeScale: 0.1
   slowHoldDuration: 0.85
   slowRecoverDuration: 1.5
+  playerSlowScale: 0.35
   flashDuration: 0.5
   shakeTrauma: 0.55
   shakeFadeTime: 0.6

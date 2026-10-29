@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using TeamOdd.Combat;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace TeamOdd.Boss
     //   카메라 FOV도 순간 좁혔다가 슬로모션이 풀리는 동안 함께 되돌림(줌 펀치), 맞은 자리의 큰 충격·입자는 BossHitFeedback이 맡음
     // - 쓰러짐: 땅에 닿는 클립 위치를 지나면 그로기보다 많은 흙먼지와 큰 흔들림, 몸에서 염동 빛 입자(BossDeathResidue)가 피어오르고 카메라가 천천히 물러남
     //   잠시 뒤 같은 모습의 홀로그램(BossDeathShed)으로 바뀌어 제자리에서 흩어짐
-    // - 누움: 다 쓰러진 자세로 멈추고 상태머신은 더 진행하지 않음
+    // - 누움: 다 쓰러진 자세로 멈추고 상태머신은 더 진행하지 않음, 홀로그램까지 다 사라지면 완료(Completed)를 알림(보상 등)
     // 클립 구간은 보스마다 다르므로 인스펙터 값으로 맞춘다. 사망한 보스는 CombatEntity가 바로 지우지 않도록 막는다.
     public class BossDeathState : BossStateBase
     {
@@ -35,6 +36,8 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float slowHoldDuration = 0.85f;
         [Tooltip("원래 속도로 돌아오는 시간(실제 초)")]
         [SerializeField, Min(0f)] private float slowRecoverDuration = 1.5f;
+        [Tooltip("월드가 돌아오는 동안 플레이어·카메라 회전이 돌아오는 배율(0~1), 보상창이 뜰 때까지 이 배율로 남는다. 1이면 월드와 함께 원래 속도로 돌아온다.")]
+        [SerializeField, Range(0.01f, 1f)] private float playerSlowScale = 0.35f;
         [Tooltip("죽는 순간 윤곽이 번쩍이는 시간(초)")]
         [SerializeField, Min(0f)] private float flashDuration = 0.5f;
         [Tooltip("죽는 순간 카메라 흔들림 세기(0~1)")]
@@ -74,6 +77,9 @@ namespace TeamOdd.Boss
         private bool hasImpacted;
         private bool hasShed;
         private float impactClockTime;
+
+        public bool HasCompleted { get; private set; }
+        public event Action Completed;
 
         public override void Initialize(FantasyGarden.FSM.MonoBehaviourFSM stateMachine)
         {
@@ -120,8 +126,17 @@ namespace TeamOdd.Boss
             float clipTime = Mathf.Lerp(startTime, endTime, progress);
             Animator.SetFloat(BossAnimParams.GROGGY_TIME, clipTime);
 
-            if (hasImpacted == false && clipTime >= impactTime) PlayImpact();
+            if (hasImpacted == false && (clipTime >= impactTime || progress >= 1f)) PlayImpact();
             if (hasImpacted && hasShed == false && Clock.LocalTime - impactClockTime >= shedDelay) PlayShed();
+            if (hasShed && HasCompleted == false && (shed == null || shed.IsPlaying == false)) Complete();
+        }
+
+        private void Complete()
+        {
+            HasCompleted = true;
+            // 받는 쪽(보상창)이 없으면 느린 채로 남은 플레이어를 여기서 풀어 줌
+            if (Completed != null) Completed.Invoke();
+            else SlowMotion.Resume();
         }
 
         protected override void OnExit() { }
@@ -136,7 +151,8 @@ namespace TeamOdd.Boss
         private void PlayFinishingBlow()
         {
             HitStop.Request(hitStopDuration);
-            SlowMotion.Play(slowTimeScale, slowHoldDuration, slowRecoverDuration);
+            // 월드는 커밋 때처럼 원래 속도로 돌아오고, 플레이어·카메라 회전은 같은 곡선으로 일부만 돌아와 보상창이 뜰 때까지 남김
+            SlowMotion.Play(slowTimeScale, slowHoldDuration, slowRecoverDuration, playerSlowScale);
             if (flash != null) flash.Play(flashDuration);
             ShakeCamera(shakeTrauma, shakeFadeTime);
             PunchZoom();

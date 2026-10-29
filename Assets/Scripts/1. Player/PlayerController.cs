@@ -19,6 +19,7 @@ namespace TeamOdd.Player
         private static readonly int HitMotion = Animator.StringToHash("HitMotion");
         private static readonly int WakeUp = Animator.StringToHash("WakeUp");
         private static readonly int Dead = Animator.StringToHash("Dead");
+        private static readonly int IdleState = Animator.StringToHash("Unarmed-Idle");
 
         [Header("이동")]
         [SerializeField] private float walkSpeed = 4f;
@@ -151,7 +152,7 @@ namespace TeamOdd.Player
             heldObject != null ? heldObject.transform : null;
 
         // 기본 공격 직후, 들고 있는 물체가 없어도 조준 방향으로 팔을 뻗는 동안
-        private bool IsAttackStance => Time.time < attackStartTime + attackStanceDuration;
+        private bool IsAttackStance => playerTime < attackStartTime + attackStanceDuration;
 
         private Transform[] leftFingers;
         private Quaternion[] leftFingerRestRotations;
@@ -176,6 +177,11 @@ namespace TeamOdd.Player
         public bool IsMoveBlocked { get; set; }
 
         public event Action OnRollRequested;
+
+        // 월드 시간에 플레이어 슬로모션 배율을 곱한 프레임 시간, 마무리 일격 뒤 월드가 돌아와도 플레이어는 느린 채로 남는다.
+        private static float PlayerDeltaTime => Time.deltaTime * SlowMotion.PlayerRelativeScale;
+        private float appliedAnimatorTimeScale = 1f; // 지금 animator.speed에 곱해 둔 플레이어 배율
+        private float playerTime; // 플레이어 배율로 흐르는 시계, 공격 자세·무적처럼 시간을 재는 곳에 Time.time 대신 씀
 
         private void Awake()
         {
@@ -202,6 +208,7 @@ namespace TeamOdd.Player
 
         private void OnDisable()
         {
+            ApplyAnimatorTimeScale(1f);
             StopAttackMotion();
             if (hitRoutine != null)
             {
@@ -214,7 +221,11 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - Time.deltaTime);
+            float relativeScale = SlowMotion.PlayerRelativeScale;
+            ApplyAnimatorTimeScale(relativeScale);
+            if (attackSequence != null) attackSequence.timeScale = relativeScale;
+            playerTime += PlayerDeltaTime;
+            earlyWakeUpCooldown = Mathf.Max(0f, earlyWakeUpCooldown - PlayerDeltaTime);
             
             if (isHit) return;
 
@@ -244,7 +255,7 @@ namespace TeamOdd.Player
             float speed = canRun ? runSpeed : walkSpeed;
 
             if (IsSprinting)
-                Player.Instance.ConsumeStamina(NeedRunStamina * Time.deltaTime);
+                Player.Instance.ConsumeStamina(NeedRunStamina * PlayerDeltaTime);
 
             Vector2 inputRaw = ReadMoveInput();
             
@@ -277,7 +288,7 @@ namespace TeamOdd.Player
             }
             else
             {
-                velocity.y += gravity * Time.deltaTime;
+                velocity.y += gravity * PlayerDeltaTime;
             }
 
             Vector3 totalMove = (moveVector * (speed * appliedPushSpeedRatio)) + new Vector3(0, velocity.y, 0);
@@ -286,7 +297,7 @@ namespace TeamOdd.Player
             totalMove += slideOffDirection * slideOffSpeed;
             slideOffDirection = Vector3.zero;
 
-            controller.Move(totalMove * Time.deltaTime);
+            controller.Move(totalMove * PlayerDeltaTime);
 
             bool isMove = inputRaw != Vector2.zero;
 
@@ -300,7 +311,7 @@ namespace TeamOdd.Player
                         ? Quaternion.LookRotation(Vector3.forward)
                         : Quaternion.LookRotation(moveVector);
                 transform.rotation =
-                    Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+                    Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * PlayerDeltaTime);
             }
         }
 
@@ -375,7 +386,7 @@ namespace TeamOdd.Player
 
             Vector3 horizontal = rollDir * GetSpeedAt(normalizedTime);
             Vector3 rollMove = horizontal + new Vector3(0, gravity, 0);
-            controller.Move(rollMove * Time.deltaTime);
+            controller.Move(rollMove * PlayerDeltaTime);
         }
 
         // Roll 상태 진행도에서의 속도(m/s)
@@ -453,7 +464,7 @@ namespace TeamOdd.Player
             if (Vector3.Dot(body.linearVelocity, pushDir) >= playerSpeed) return;
 
             // 프레임레이트와 무관하도록 힘 * deltaTime을 충격량으로 전달
-            body.AddForceAtPosition(pushDir * (pushForce * Time.deltaTime), hit.point, ForceMode.Impulse);
+            body.AddForceAtPosition(pushDir * (pushForce * PlayerDeltaTime), hit.point, ForceMode.Impulse);
         }
 
         // 보스 몸 윗면을 밟았으면 몸 중심에서 바깥쪽을 미끄러질 방향으로 정함
@@ -529,7 +540,7 @@ namespace TeamOdd.Player
             if (escapeDirection == Vector3.zero) escapeDirection = FindEscapeDirection(center, offset, radius, bodyCenter);
             if (escapeDirection == Vector3.zero) return;
 
-            Vector3 step = escapeDirection * (bodyEscapeSpeed * Time.deltaTime);
+            Vector3 step = escapeDirection * (bodyEscapeSpeed * PlayerDeltaTime);
             Vector3 before = transform.position;
             controller.Move(step);
 
@@ -617,6 +628,37 @@ namespace TeamOdd.Player
 
         public void SetActionLocked(bool locked) => IsActionLocked = locked;
 
+        // 보상창처럼 조작을 멈추는 화면이 뜰 때 걷기·달리기·구르기를 끊고 대기 자세로 돌림
+        // 피격·공격 정리는 컴포넌트가 꺼질 때(OnDisable) 하므로, 조작을 끈 뒤에 부르면 남는 동작이 없다.
+        public void EnterIdle()
+        {
+            if (animator == null) return;
+
+            ApplyAnimatorTimeScale(1f);
+            moveX = 0f;
+            moveZ = 0f;
+            IsSprinting = false;
+            if (IsRolling) EndRoll();
+
+            animator.SetBool(Walk, false);
+            animator.SetBool(Run, false);
+            animator.ResetTrigger(Rolling);
+            animator.ResetTrigger(Hit);
+            animator.SetLayerWeight(1, 0f);
+
+            if (TryGetComponent(out CombatEntity entity) && entity.IsDead) return;
+            animator.CrossFadeInFixedTime(IdleState, 0.2f, 0);
+        }
+
+        // 다른 곳(시간 정지 등)이 바꾼 animator.speed는 살리고 플레이어 슬로모션 배율만 바꿔 곱함
+        private void ApplyAnimatorTimeScale(float scale)
+        {
+            if (animator == null || Mathf.Approximately(scale, appliedAnimatorTimeScale)) return;
+
+            animator.speed = animator.speed / appliedAnimatorTimeScale * scale;
+            appliedAnimatorTimeScale = scale;
+        }
+
         // 다른 스킬이 그사이 대상을 바꿨으면 그쪽을 유지
         public void EndExternalHold(Transform target)
         {
@@ -635,7 +677,7 @@ namespace TeamOdd.Player
             rotateTowardMove = defaultRotateTowardMove && aiming == false;
 
             float aimYaw = Camera.main.transform.eulerAngles.y;
-            float t = 1f - Mathf.Exp(-holdTurnSpeed * Time.deltaTime);
+            float t = 1f - Mathf.Exp(-holdTurnSpeed * PlayerDeltaTime);
 
             // 구르면 공격 자세도 끊음
             if (IsRolling) StopAttackMotion();
@@ -677,7 +719,7 @@ namespace TeamOdd.Player
 
             // 공격은 한 번 누르자마자 팔이 올라와야 하므로 더 빠르게 블렌드
             if (HoldTarget != null) ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
-            else ikBlend = Mathf.Lerp(ikBlend, attackIkWeight, 1f - Mathf.Exp(-attackBlendSpeed * Time.deltaTime));
+            else ikBlend = Mathf.Lerp(ikBlend, attackIkWeight, 1f - Mathf.Exp(-attackBlendSpeed * PlayerDeltaTime));
 
             bool preparingThrow = heldObject != null &&
                 externalHoldTarget == null && SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
@@ -819,13 +861,14 @@ namespace TeamOdd.Player
         {
             attackSequence?.Kill();
             attackPushAtStart = attackPush;
-            attackStartTime = Time.time;
+            attackStartTime = playerTime;
             attackPull = 0f;
             attackSequence = DOTween.Sequence()
                 .Append(DOTween.To(() => 0f, SetAttackWindup, 1f, attackWindup).SetEase(Ease.Linear))
                 .Append(DOTween.To(() => 0f, SetAttackThrust, 1f, attackThrust).SetEase(Ease.OutCubic))
                 .Append(DOTween.To(() => 0f, SetAttackRecovery, 1f, attackRecover).SetEase(Ease.Linear))
                 .OnKill(() => attackSequence = null);
+            attackSequence.timeScale = SlowMotion.PlayerRelativeScale;
             return attackWindup + attackThrust * attackReleasePoint;
         }
 
@@ -924,7 +967,7 @@ namespace TeamOdd.Player
 
                     while (t < 1f)
                     {
-                        float step = Mathf.Min(Time.deltaTime / push.duration, 1f - t);
+                        float step = Mathf.Min(PlayerDeltaTime / push.duration, 1f - t);
                         t += step;
                         // 가운데(t = 0.5)에서 최고 높이 height에 닿는 포물선
                         float y = 4f * push.height * t * (1f - t);
@@ -953,7 +996,7 @@ namespace TeamOdd.Player
                             break;
                         }
                         MoveDuringHit(Vector3.zero);
-                        elapsed += Time.deltaTime;
+                        elapsed += PlayerDeltaTime;
                         yield return null;
                     }
 
@@ -961,14 +1004,13 @@ namespace TeamOdd.Player
 
                     // 무적은 기상 시작부터 InvincibleTime 동안, 기상 모션이 먼저 끝나면 무적인 채로 행동 가능
                     IsInvincible = true;
-                    float invincibleEndTime = Time.time + InvincibleTime;
+                    float invincibleEndTime = playerTime + InvincibleTime;
 
                     yield return WaitHitAnimationEnd();
                     FinishHitReaction();
                     hasFinishedReaction = true;
 
-                    float remaining = invincibleEndTime - Time.time;
-                    if (remaining > 0f) yield return new WaitForSeconds(remaining);
+                    while (playerTime < invincibleEndTime) yield return null;
                     IsInvincible = false;
                     yield break;
                 }
@@ -994,11 +1036,11 @@ namespace TeamOdd.Player
             }
             else
             {
-                velocity.y = IsGrounded && velocity.y < 0f ? -2f : velocity.y + gravity * Time.deltaTime;
-                displacement.y += velocity.y * Time.deltaTime;
+                velocity.y = IsGrounded && velocity.y < 0f ? -2f : velocity.y + gravity * PlayerDeltaTime;
+                displacement.y += velocity.y * PlayerDeltaTime;
             }
 
-            displacement += slideOffDirection * (slideOffSpeed * Time.deltaTime);
+            displacement += slideOffDirection * (slideOffSpeed * PlayerDeltaTime);
             slideOffDirection = Vector3.zero;
             controller.Move(displacement);
         }
@@ -1017,7 +1059,7 @@ namespace TeamOdd.Player
             while (hitAnimationEnded == false && elapsed < maxHitAnimationWait)
             {
                 MoveDuringHit(Vector3.zero);
-                elapsed += Time.deltaTime;
+                elapsed += PlayerDeltaTime;
                 yield return null;
             }
         }
@@ -1028,7 +1070,7 @@ namespace TeamOdd.Player
         {
             const float AXIS_SPEED = 3f;
             if (target != 0f && current * target < 0f) current = 0f;
-            return Mathf.MoveTowards(current, target, AXIS_SPEED * Time.deltaTime);
+            return Mathf.MoveTowards(current, target, AXIS_SPEED * PlayerDeltaTime);
         }
 
         // 애니메이션 클립(Run_N 등)에 포함된 애니메이션 이벤트 수신용. 없으면 "has no receiver" 에러가 발생합니다.
