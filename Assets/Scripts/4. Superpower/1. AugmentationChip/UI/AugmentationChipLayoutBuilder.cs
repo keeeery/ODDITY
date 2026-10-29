@@ -206,7 +206,7 @@ namespace TeamOdd.Superpower
             LayoutScrollView(new Vector2(innerWidth, size.y - scrollTop - trayInnerPadding));
         }
 
-        // 필터 토글이 없으면 트레이 아래에 만들고 ChipTrayView에 연결한다. 처음엔 모두 켜 둔다
+        // 필터 토글이 없으면 트레이 아래에 만들고 ChipTrayView에 연결한다. 처음엔 모두 꺼 둔다 (꺼져 있으면 모든 칩을 보여준다)
         //   Filter_공격 (Toggle) > Background (체크 상자) > Checkmark
         //                        > Label
         private void EnsureFilterToggles()
@@ -247,7 +247,7 @@ namespace TeamOdd.Superpower
                 Toggle toggle = toggleRect.gameObject.AddComponent<Toggle>();
                 toggle.targetGraphic = background;
                 toggle.graphic = check;
-                toggle.isOn = true;
+                toggle.isOn = false;
 
                 SerializedProperty element = togglesProperty.GetArrayElementAtIndex(i);
                 element.FindPropertyRelative("filter").enumValueIndex = (int)Filters[i];

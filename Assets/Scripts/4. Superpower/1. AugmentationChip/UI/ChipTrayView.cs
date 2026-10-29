@@ -11,7 +11,8 @@ namespace TeamOdd.Superpower
     public enum ChipFilter { Attack, Defense, Utility, Stat }
 
     /// <summary>
-    /// 보유 칩 트레이. 장착되지 않은 칩 중 필터 토글이 켜진 묶음만 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
+    /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
+    /// 필터 토글은 모두 꺼진 채 시작하고 그때는 모든 칩을 보여준다. 하나라도 켜면 켜진 묶음의 칩만 보여준다.
     /// 트레이 크기와 필터 토글/정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
     /// </summary>
     public class ChipTrayView : MonoBehaviour
@@ -62,9 +63,13 @@ namespace TeamOdd.Superpower
                 sortButton.button.onClick.AddListener(() => OnClickSort(key));
             }
 
+            // 필터는 모두 꺼진 채(모든 칩 보기) 시작한다. 프리팹에 켜진 채 저장돼 있어도 여기서 끈다
             // 토글을 켜고 끌 때마다 보이는 칩을 다시 배치한다
             foreach (FilterToggle filterToggle in filterToggles)
+            {
+                filterToggle.toggle.isOn = false;
                 filterToggle.toggle.onValueChanged.AddListener(OnFilterChanged);
+            }
 
             RefreshSortLabels();
         }
@@ -81,7 +86,7 @@ namespace TeamOdd.Superpower
         public void Clear() => chips.Clear();
 
         // 트레이에 남아있는 칩을 정렬해서 왼쪽부터 채우고, 폭을 넘으면 다음 줄로 내린다
-        // 필터가 꺼진 묶음의 칩은 트레이 목록에 남겨 둔 채 숨긴다
+        // 필터에 걸러진 칩은 트레이 목록에 남겨 둔 채 숨긴다
         public void Layout()
         {
             chips.Sort(Compare);
@@ -128,17 +133,24 @@ namespace TeamOdd.Superpower
 
         private void OnFilterChanged(bool isOn) => Layout();
 
-        // 칩이 속한 묶음의 토글이 켜져 있는지. 그 묶음의 토글이 없으면 보여준다
+        // 켜진 토글이 하나도 없으면 필터가 없는 것과 같으므로 모든 칩을 보여준다
+        // 하나라도 켜져 있으면 켜진 묶음의 칩만 보여준다
         private bool IsShown(AugmentationChipDef def)
         {
             ChipFilter filter = GetFilter(def);
+            bool anyOn = false;
+            bool ownOn = false;
             foreach (FilterToggle filterToggle in filterToggles)
             {
+                if (filterToggle.toggle.isOn == false)
+                    continue;
+
+                anyOn = true;
                 if (filterToggle.filter == filter)
-                    return filterToggle.toggle.isOn;
+                    ownOn = true;
             }
 
-            return true;
+            return anyOn == false || ownOn;
         }
 
         private static ChipFilter GetFilter(AugmentationChipDef def)
