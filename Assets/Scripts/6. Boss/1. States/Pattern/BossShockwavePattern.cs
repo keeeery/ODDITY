@@ -12,7 +12,7 @@ namespace TeamOdd.Boss
     // 범위 안의 염동력 오브젝트는 위로 살짝 떠올랐다가 중력으로 떨어짐
     // 사거리 밖이면 근접 패턴처럼 예약 후 추격
     // OnShockwaveWarn 신호에서 터질 위치를 고정하고 바닥에 범위를 예고, OnShockwave 신호에서 고정한 위치로 판정
-    public sealed class BossShockwavePattern : BossMeleePattern
+    public class BossShockwavePattern : BossMeleePattern
     {
         [Serializable]
         private class Wave

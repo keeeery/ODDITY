@@ -165,7 +165,7 @@ namespace TeamOdd.Boss
         {
             if (string.Equals(name, "OnAttackEnded") && CanEndByAnimation)
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
                 return;
             }
 

@@ -33,7 +33,7 @@ namespace TeamOdd.Boss
         {
             if (ShouldStopChase())
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
                 return;
             }
             

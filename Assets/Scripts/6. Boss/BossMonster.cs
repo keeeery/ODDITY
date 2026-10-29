@@ -1,4 +1,6 @@
-﻿using TeamOdd.Player;
+﻿using System;
+using System.Collections.Generic;
+using TeamOdd.Player;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using FantasyGarden.FSM;
@@ -39,6 +41,9 @@ namespace TeamOdd.Boss
         [SerializeField] private string telegraphPoolKey = "AttackTelegraph";
 
         private bool isTelegraphPoolMissing;
+
+        // 부르는 타입 → 실제로 붙어 있는 상태 타입
+        private readonly Dictionary<Type, Type> stateTypes = new();
 
         private Collider targetCollider;
         private bool hasLineOfSight = false;
@@ -84,6 +89,7 @@ namespace TeamOdd.Boss
             Target = Player.Player.Instance.transform;
             Target.TryGetComponent(out targetCollider);
             base.Awake();
+            MapStateTypes();
             Animator.speed = motionSpeed;
         }
 
@@ -102,7 +108,22 @@ namespace TeamOdd.Boss
         }
 
         #region PUBLIC_METHODS
-        
+
+        // 페이즈 전환 등으로 보스 전체 동작 빠르기를 바꿈
+        // 시간 정지·감속이 기억해 둔 속도로 풀 때 되돌아가므로 정상 시간(Clock.TimeScale 1)일 때 호출
+        public void SetMotionSpeed(float speed)
+        {
+            motionSpeed = speed;
+            Animator.speed = speed;
+        }
+
+        // 공용 FSM은 실제 타입으로만 상태를 찾으므로, 부모 타입으로 불러도 상속한 상태(HumanoidIdleState 등)로 바꿔 넘김
+        public void ChangeBossState(Type nextState, bool ignoreReservedState = false)
+        {
+            Type stateType = stateTypes.TryGetValue(nextState, out Type mapped) ? mapped : nextState;
+            ChangeState(stateType, ignoreReservedState);
+        }
+
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
         public bool IsTargetInSight() => IsTargetInRange(sightRange) && Mathf.Abs(SignedAngleToTarget) <= sightHalfAngle;
         
@@ -165,6 +186,21 @@ namespace TeamOdd.Boss
         }
 
         #endregion
+
+        // 실제 타입을 먼저 다 넣고, 그 타입의 상태가 따로 없을 때만 부모 타입을 상속한 상태에 연결 (페르데로스처럼 부모 상태가 직접 있으면 그대로)
+        private void MapStateTypes()
+        {
+            BossStateBase[] states = GetComponentsInChildren<BossStateBase>(true);
+
+            foreach (BossStateBase state in states)
+                stateTypes[state.GetType()] = state.GetType();
+
+            foreach (BossStateBase state in states)
+            {
+                for (Type type = state.GetType().BaseType; type != typeof(BossStateBase); type = type.BaseType)
+                    stateTypes.TryAdd(type, state.GetType());
+            }
+        }
 
         private float SignedAngleTo(Vector3 point)
         {

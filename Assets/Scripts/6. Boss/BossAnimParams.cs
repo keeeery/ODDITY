@@ -44,6 +44,14 @@ namespace TeamOdd.Boss
 
         // HUMANOID FLOAT
         public static readonly int VARIANT = Animator.StringToHash("variant"); // 같은 동작의 A/B 클립 중 무엇을 쓸지 (0: A, 1: B)
+        public static readonly int MOVE_X = Animator.StringToHash("moveX");
+        public static readonly int MOVE_Y = Animator.StringToHash("moveY");
+        public static readonly int START_ANGLE = Animator.StringToHash("startAngle"); // 돌면서 출발할 각도, 0이면 정면 출발
+
+        // HUMANOID BOOL
+        public static readonly int IS_STRAFING = Animator.StringToHash("isStrafing");
+        public static readonly int IS_GUARDING = Animator.StringToHash("isGuarding");
+        public static readonly int USE_REVENGE_STAND_UP = Animator.StringToHash("useRevengeStandUp"); // 그로기 기상을 반격 모션으로
 
         // HUMANOID TRIGGER
         public static readonly int SLASH = Animator.StringToHash("slash");
@@ -61,5 +69,16 @@ namespace TeamOdd.Boss
         public static readonly int JUMP_SMASH_J = Animator.StringToHash("jumpSmashJ");
         public static readonly int SPIN_SWEEP = Animator.StringToHash("spinSweep");
         public static readonly int RISE_SMASH = Animator.StringToHash("riseSmash");
+        public static readonly int GUARD = Animator.StringToHash("guard");
+        public static readonly int GUARD_ACCEPT = Animator.StringToHash("guardAccept");
+        public static readonly int DEFLECT_SLASH = Animator.StringToHash("deflectSlash");
+        public static readonly int DODGE_LEFT = Animator.StringToHash("dodgeLeft");
+        public static readonly int DODGE_RIGHT = Animator.StringToHash("dodgeRight");
+        public static readonly int TACKLE_COMBO = Animator.StringToHash("tackleCombo");
+        public static readonly int COMBO_7 = Animator.StringToHash("combo7");
+        public static readonly int HEAVY_SLASH = Animator.StringToHash("heavySlash");
+        public static readonly int RISE_SPIN_SMASH = Animator.StringToHash("riseSpinSmash");
+        public static readonly int PHASE_SHIFT = Animator.StringToHash("phaseShift");
+        public static readonly int DIMENSION_SLASH = Animator.StringToHash("dimensionSlash");
     }
 }
