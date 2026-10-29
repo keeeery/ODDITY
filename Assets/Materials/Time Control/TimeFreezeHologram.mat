@@ -12,13 +12,16 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _COLORGLITCHFEATURE_ON
   - _FRESNELFEATURE_ON
   - _GRAINFEATURE_ON
   - _LINE1FEATURE_ON
   - _LINE2FEATURE_ON
   - _LINEBOTHFEATURE_ON
+  - _LINEGLITCHFEATURE_ON
   - _POSITIONFEATURE_Y
   - _POSITIONSPACEFEATURE_WORLD
+  - _RANDOMGLITCHFEATURE_ON
   - _SOFTINTERSECTION1FEATURE_OFF
   - _SOFTINTERSECTION2FEATURE_OFF
   m_InvalidKeywords: []
@@ -61,8 +64,8 @@ Material:
     - _Alpha: 1
     - _AlphaMaskAffect: 0.5
     - _AlphaMaskFeature: 0
-    - _ColorGlitchAffect: 0.5
-    - _ColorGlitchFeature: 0
+    - _ColorGlitchAffect: 0.3
+    - _ColorGlitchFeature: 1
     - _CullMode: 2
     - _DissolveFeature: 0
     - _DissolveHide: -1
@@ -88,10 +91,10 @@ Material:
     - _Line2InvertedThickness: 0.255
     - _Line2Speed: -0.6
     - _LineBothFeature: 1
-    - _LineGlitchFeature: 0
+    - _LineGlitchFeature: 1
     - _LineGlitchFrequency: 0.2
     - _LineGlitchHardness: 5
-    - _LineGlitchInvertedThickness: 0.825
+    - _LineGlitchInvertedThickness: 0.848
     - _LineGlitchSpeed: -0.26
     - _MaskFalloff: 0
     - _MaskFeature: 0
@@ -105,9 +108,9 @@ Material:
     - _PositionSpaceFeature: 0
     - _QueueControl: -1
     - _QueueOffset: 0
-    - _RandomGlitchAmount: 0.089
+    - _RandomGlitchAmount: 0.122
     - _RandomGlitchConstant: 0
-    - _RandomGlitchFeature: 0
+    - _RandomGlitchFeature: 1
     - _RandomGlitchTiling: 2.83
     - _RandomOffset: 0
     - _SoftIntersection1Feature: 0
@@ -126,6 +129,6 @@ Material:
     - _MainColor: {r: 0.620945, g: 1.420074, b: 3.953349, a: 0.12}
     - _MaskCenter: {r: 0, g: 0, b: 0, a: 0}
     - _MaskSize: {r: 0, g: 0, b: 0, a: 0}
-    - _RandomGlitchOffset: {r: -0.3, g: 0, b: 0, a: 0}
+    - _RandomGlitchOffset: {r: -0.5, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
