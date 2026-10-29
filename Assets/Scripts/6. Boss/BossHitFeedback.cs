@@ -6,6 +6,7 @@ using UnityEngine;
 namespace TeamOdd.Boss
 {
     // 보스 피격 연출: 모든 피격은 윤곽 번쩍임, 중간 피격부터 충격·점광원·입자와 히트스탑, 강한 피격은 더 큰 충격과 카메라 흔들림도 더함
+    // 숨을 끊는 피격(마무리 일격)은 가장 큰 충격과 많은 입자를 슬로모션 배율대로 느리게 퍼뜨림, 히트스탑·번쩍임·흔들림은 사망 상태가 맡음
     // 루트 캡슐 기준 맞은 지점은 허공일 수 있어, 충격은 부위 콜라이더 표면으로 옮겨서 터뜨린다.
     [DisallowMultipleComponent]
     public sealed class BossHitFeedback : MonoBehaviour
@@ -35,6 +36,30 @@ namespace TeamOdd.Boss
         [SerializeField, Min(1f)] private float strongDebrisCountMultiplier = 2f;
         [Tooltip("강한 피격의 입자 속도 배율, 높일수록 더 멀리 퍼진다.")]
         [SerializeField, Min(1f)] private float strongDebrisSpeedMultiplier = 1.2f;
+
+        [Title("Finishing Hit")]
+        [Tooltip("마무리 일격의 충격 크기 배율, 중간 피격의 Impact Size 기준")]
+        [SerializeField, Min(1f)] private float finishImpactSizeMultiplier = 3.8f;
+        [Tooltip("마무리 일격의 입자 수 배율, Debris Count 기준")]
+        [SerializeField, Min(1f)] private float finishDebrisCountMultiplier = 10f;
+        [Tooltip("마무리 일격의 입자 속도 배율, 슬로모션으로 느려지므로 강한 피격보다 멀리 퍼지게")]
+        [SerializeField, Min(1f)] private float finishDebrisSpeedMultiplier = 1.7f;
+        [Tooltip("마무리 일격의 입자 크기 배율, Debris Size 기준")]
+        [SerializeField, Min(1f)] private float finishDebrisSizeMultiplier = 2.5f;
+        [Tooltip("마무리 일격의 입자가 남아 있는 시간 배율, Debris Lifetime 기준(게임 초라 슬로모션 중에는 더 길게 보인다)")]
+        [SerializeField, Min(1f)] private float finishDebrisLifetimeMultiplier = 4f;
+        [Tooltip("마무리 일격의 충격이 터졌다가 사라지는 시간(게임 초), 슬로모션 중에는 실제로 더 길게 보인다.")]
+        [SerializeField, Min(0.05f)] private float finishImpactDuration = 1f;
+        [Tooltip("마무리 일격 충격의 가로/세로 비율, 1보다 크면 가로로 긴 타원이 되어 둥근 해처럼 보이지 않는다.")]
+        [SerializeField, Range(1f, 3f)] private float finishImpactAspect = 1.8f;
+        [Tooltip("마무리 일격 입자가 화면 위로 퍼지는 비율(0~1), 가로(1) 기준으로 작을수록 덜 퍼진다.")]
+        [SerializeField, Range(0f, 1f)] private float finishDebrisUpSpread = 0.65f;
+        [Tooltip("마무리 일격 입자가 화면 아래로 퍼지는 비율(0~1), 가로(1) 기준으로 작을수록 덜 퍼진다.")]
+        [SerializeField, Range(0f, 1f)] private float finishDebrisDownSpread = 0.45f;
+        [Tooltip("마무리 일격 충격을 화면 가로에서 무작위로 기울이는 최대 각도(도), 작을수록 늘 가로로 눕는다.")]
+        [SerializeField, Range(0f, 180f)] private float finishImpactRollRange = 8f;
+
+        [Title("Impact")]
         [Tooltip("TeamOdd/Hit Impact 셰이더 머티리얼, 빛줄기 굵기·베기 섬광 세기·타원 정도·몸에 가려지는 정도는 머티리얼에서 조정한다.")]
         [SerializeField] private Material impactMaterial;
         [Tooltip("중간 피격의 충격 크기(m), 빛줄기가 뻗는 지름, 강한 피격은 배율을 곱한다.")]
@@ -82,6 +107,7 @@ namespace TeamOdd.Boss
         private Collider[] bodyParts;
         private HitImpact[] impacts;
         private HitImpact[] strongImpacts;
+        private HitImpact finishImpact;
         private int nextImpact;
         private int nextStrongImpact;
 
@@ -109,6 +135,7 @@ namespace TeamOdd.Boss
 
             DestroyImpacts(impacts);
             DestroyImpacts(strongImpacts);
+            if (finishImpact != null) Destroy(finishImpact.gameObject);
         }
 
         private static void DestroyImpacts(HitImpact[] impacts)
@@ -121,6 +148,12 @@ namespace TeamOdd.Boss
         private void HandleDamageExecuted(DamageEvent damageEvent, int receivedDamage)
         {
             if (receivedDamage <= 0 || self == null || ReferenceEquals(damageEvent.Receiver, self) == false) return;
+
+            if (self is CombatEntity { IsDead: true })
+            {
+                PlayFinishImpact(SnapToBody(damageEvent.Info.HitPoint));
+                return;
+            }
 
             flash.Play(flashDuration);
             if (receivedDamage >= strongHitDamage || damageEvent.Info.Reaction == HitReaction.Knockdown)
@@ -164,6 +197,26 @@ namespace TeamOdd.Boss
 
             float size = isStrong ? impactSize * strongImpactSizeMultiplier : impactSize;
             impact.Play(position, size, impactDuration, impactTowardCamera, impactRollRange);
+        }
+
+        // 한 번뿐이라 풀 없이 처음 쓸 때 하나만 만듦
+        private void PlayFinishImpact(Vector3 position)
+        {
+            if (impactMaterial == null) return;
+
+            float size = impactSize * finishImpactSizeMultiplier;
+            if (finishImpact == null)
+            {
+                finishImpact = HitImpact.Create(impactMaterial, $"{name} Finish Impact");
+                finishImpact.SetUnscaledTime(false);
+                finishImpact.SetShape(finishImpactAspect, finishDebrisUpSpread, finishDebrisDownSpread);
+                finishImpact.SetLight(impactLightColor, impactLightIntensity * 1.5f, impactLightRange * 1.5f);
+                finishImpact.SetDebris(debrisMaterial, Mathf.RoundToInt(debrisCount * finishDebrisCountMultiplier),
+                    debrisSpeed * finishDebrisSpeedMultiplier, debrisLifetime * finishDebrisLifetimeMultiplier,
+                    debrisSize * finishDebrisSizeMultiplier, size * debrisSpawnRadius, debrisTipColor);
+            }
+
+            finishImpact.Play(position, size, finishImpactDuration, impactTowardCamera, finishImpactRollRange);
         }
 
         private HitImpact[] CreateImpacts(bool isStrong)

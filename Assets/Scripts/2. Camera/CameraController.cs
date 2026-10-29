@@ -48,6 +48,13 @@ namespace TeamOdd.CameraMove
         [Tooltip("기본 trauma 감쇠 속도(초당). 지속 시간을 따로 주면 그 값이 우선")]
         [SerializeField, Min(0f)] private float traumaDecay = 1.7f;
 
+        private Camera viewCamera;
+        private float baseFov;
+        private float fovPunch;        // 기본 FOV에서 좁힌 각도(도)
+        private Sequence fovPunchSequence;
+        private float extraDistance;   // 연출로 더 물러난 거리(m)
+        private Sequence pullBackSequence;
+
         private float trauma;          // 0~1
         private float currentDecay;
         private float noiseTime;
@@ -66,6 +73,18 @@ namespace TeamOdd.CameraMove
         public void EndFocus(Transform focus)
         {
             if (focusTarget == focus) focusTarget = null;
+        }
+
+        private void Awake()
+        {
+            viewCamera = GetComponentInChildren<Camera>();
+            if (viewCamera != null) baseFov = viewCamera.fieldOfView;
+        }
+
+        private void OnDestroy()
+        {
+            fovPunchSequence?.Kill();
+            pullBackSequence?.Kill();
         }
 
         private void Start()
@@ -95,6 +114,32 @@ namespace TeamOdd.CameraMove
         {
             trauma = Mathf.Clamp01(trauma + amount);
             currentDecay = fadeTime > 0f ? trauma / fadeTime : traumaDecay;
+        }
+
+        // FOV를 amount(도)만큼 zoomIn 동안 좁혀 hold 동안 머문 뒤 release 동안 되돌림, 시간은 실제 초라 히트스탑·슬로모션과 무관
+        // 새 요청은 진행 중인 줌을 이어받아 지금 각도에서 다시 시작
+        public void PunchFov(float amount, float zoomIn, float hold, float release)
+        {
+            if (viewCamera == null) return;
+
+            fovPunchSequence?.Kill();
+            fovPunchSequence = DOTween.Sequence().SetUpdate(true).SetTarget(this)
+                .Append(DOTween.To(() => fovPunch, value => fovPunch = value, amount, zoomIn).SetEase(Ease.OutCubic))
+                .AppendInterval(hold)
+                .Append(DOTween.To(() => fovPunch, value => fovPunch = value, 0f, release).SetEase(Ease.InOutSine))
+                .OnKill(() => fovPunchSequence = null);
+        }
+
+        // 카메라를 amount(m)만큼 pullOut 동안 천천히 더 물렸다가 hold 뒤 release 동안 되돌림(보스 사망 여운 등), 시간은 실제 초
+        // 벽 충돌은 평소처럼 적용되고, 새 요청은 지금 거리에서 다시 시작
+        public void PullBack(float amount, float pullOut, float hold, float release)
+        {
+            pullBackSequence?.Kill();
+            pullBackSequence = DOTween.Sequence().SetUpdate(true).SetTarget(this)
+                .Append(DOTween.To(() => extraDistance, value => extraDistance = value, amount, pullOut).SetEase(Ease.InOutSine))
+                .AppendInterval(hold)
+                .Append(DOTween.To(() => extraDistance, value => extraDistance = value, 0f, release).SetEase(Ease.InOutSine))
+                .OnKill(() => pullBackSequence = null);
         }
 
         // 기존 호출 호환용: strength 크기를 maxShakePosition 대비 trauma로 바꾼다. vibrato/elasticity는 사용하지 않음
@@ -149,6 +194,8 @@ namespace TeamOdd.CameraMove
 
             transform.position = basePosition + shake;
             transform.rotation *= rotOffset;
+
+            if (viewCamera != null) viewCamera.fieldOfView = baseFov - fovPunch;
         }
 
         private void UpdateRotation()
@@ -200,7 +247,7 @@ namespace TeamOdd.CameraMove
             // 프레임 독립 감쇠: FPS와 관계없이 같은 속도로 수렴합니다.
             float t = 1f - Mathf.Exp(-speed * Time.deltaTime);
             currentOffset = Vector3.Lerp(currentOffset, targetOffset, t);
-            currentDistance = Mathf.Lerp(currentDistance, targetDistance, t);
+            currentDistance = Mathf.Lerp(currentDistance, targetDistance + extraDistance, t);
             
             Vector3 pivot = target.transform.position + currentOffset;
             // 피벗에서 회전 방향의 뒤쪽(distance)으로 물러난 곳이 카메라가 있고 싶은 위치 입니다.

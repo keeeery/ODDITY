@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Sirenix.OdinInspector;
 
 namespace TeamOdd.Combat
@@ -23,6 +24,12 @@ namespace TeamOdd.Combat
         public int Hp => hp;
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
+
+        // 사망 연출을 맡는 쪽(보스 사망 상태 등)이 끄면 죽어도 오브젝트를 바로 지우지 않는다.
+        public bool DestroyOnDeath { get; set; } = true;
+
+        // 체력이 0이 된 순간 한 번
+        public event Action Died;
 
         protected virtual void Awake()
         {
@@ -71,9 +78,11 @@ namespace TeamOdd.Combat
 
         protected void OnDeath()
         {
-            // 임시용
-            Destroy(gameObject);
             Debug.Log($"{gameObject.name} is dead!");
+            Died?.Invoke();
+
+            // 임시용
+            if (DestroyOnDeath) Destroy(gameObject);
         }
     }
 }

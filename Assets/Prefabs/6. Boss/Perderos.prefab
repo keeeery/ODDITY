@@ -211,6 +211,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -970897688
   useRootMotion: 1
   trackDuration: 1.17
@@ -225,12 +226,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: 0.75, y: 4.3}
     warnDuration: 0.55
-    damage: 10
+    damage: 14
     reaction: 1
     push:
-      distance: 0
+      distance: 0.5
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -289,6 +290,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 540397994
   useRootMotion: 0
   trackDuration: 0
@@ -303,13 +305,13 @@ MonoBehaviour:
       length: 0
     offset: {x: 0, y: 7.3}
     warnDuration: 0.69
-    damage: 15
+    damage: 21
     reaction: 1
     push:
-      distance: 2.3
+      distance: 1.5
       height: 0
-      duration: 0.6
-      direction: 0
+      duration: 0.25
+      direction: 1
       angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
@@ -601,6 +603,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -1842980855
   useRootMotion: 0
   trackDuration: 1
@@ -633,14 +636,19 @@ MonoBehaviour:
     homingSpeed: 6
     impactOffset: 6.3
     radius: 5
-    damage: 25
+    damage: 35
     reaction: 2
     push:
-      distance: 5
-      height: 0.5
-      duration: 0.6
+      distance: 2.5
+      height: 0.4
+      duration: 0.4
       direction: 1
       angleOffset: 0
+    warnLeadTime: 0.2
+    impactFadeDuration: 0.3
+    liftRadius: 10
+    liftHeight: {x: 0.3, y: 1}
+    liftDuration: {x: 0.15, y: 0.3}
 --- !u!1 &433655993077558519
 GameObject:
   m_ObjectHideFlags: 0
@@ -710,6 +718,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c4ee147a7ea4f59b80861a4d224ad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossShatterCollider
+--- !u!1 &538806170798691881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8447378269184949773}
+  - component: {fileID: 1899323422591475053}
+  m_Layer: 6
+  m_Name: Death
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8447378269184949773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538806170798691881}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1899323422591475053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538806170798691881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af14639d5cb24301b9738b3a5a2d56f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathState
+  crossFadeDuration: 0.15
+  startTime: 0
+  endTime: 0.976
+  playDuration: 2.76
+  impactTime: 0.782
+  hitStopDuration: 0.15
+  slowTimeScale: 0.1
+  slowHoldDuration: 0.85
+  slowRecoverDuration: 1.5
+  flashDuration: 0.5
+  shakeTrauma: 0.55
+  shakeFadeTime: 0.6
+  zoomFov: 7
+  zoomInDuration: 0.1
+  dustAmount: 1.5
+  impactShakeTrauma: 0.8
+  impactShakeFadeTime: 1
+  shedDelay: 0.35
+  pullBackDistance: 1.5
+  pullBackDuration: 2.5
+  pullBackHold: 2
+  pullBackRelease: 1.5
 --- !u!1 &571707755603245690
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,6 +867,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 737642192
   useRootMotion: 0
   trackDuration: 1.17
@@ -807,12 +882,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: 0.75, y: 4.3}
     warnDuration: 0.55
-    damage: 10
+    damage: 14
     reaction: 1
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -902,6 +977,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 1628729824
   useRootMotion: 0
   trackDuration: 0
@@ -921,12 +997,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   hitRadius: 5
-  chargeDamage: 20
+  chargeDamage: 21
   chargeReaction: 2
   chargePush:
-    distance: 5
-    height: 0.5
-    duration: 0.6
+    distance: 2
+    height: 0
+    duration: 0.25
     direction: 0
     angleOffset: 0
   wallMask:
@@ -934,25 +1010,33 @@ MonoBehaviour:
     m_Bits: 128
   headOnAngle: 60
   stunDuration: 3
+  stunRecoverTime: 0.6
   fragmentSpawner: {fileID: 0}
   fragmentSideGapRatio: 0.4
   fragmentShatterGrace: 0.5
   pathFadeDuration: 0.3
   useJumpSmash: 1
+  useFinishSmash: 0
+  finishSmashTrackDuration: 0.4
   jump:
     airDuration: 0.6
     maxJumpDistance: 30
     homingSpeed: 6
     impactOffset: 6.3
     radius: 5
-    damage: 25
+    damage: 35
     reaction: 2
     push:
-      distance: 5
-      height: 0.5
-      duration: 0.6
+      distance: 2.5
+      height: 0.4
+      duration: 0.4
       direction: 1
       angleOffset: 0
+    warnLeadTime: 0.2
+    impactFadeDuration: 0.3
+    liftRadius: 10
+    liftHeight: {x: 0.3, y: 1}
+    liftDuration: {x: 0.15, y: 0.3}
 --- !u!1 &946175710364733286
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,6 +1525,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -1812146055
   useRootMotion: 0
   trackDuration: 1.17
@@ -1455,18 +1540,75 @@ MonoBehaviour:
       length: 4.2
     offset: {x: -0.55, y: 4.3}
     warnDuration: 0.55
-    damage: 10
+    damage: 14
     reaction: 1
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
+--- !u!1 &1745366428219609773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 260387257319410559}
+  - component: {fileID: 4183337194616130227}
+  m_Layer: 6
+  m_Name: Groggy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &260387257319410559
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745366428219609773}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3613847894739870803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4183337194616130227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745366428219609773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60283914ff0084556a5ad564bb727a03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggyState
+  duration: 6
+  crossFadeDuration: 0.25
+  fallStartTime: 0.745
+  lieTime: 0.976
+  fallDuration: 0.65
+  impactAt: 0.16
+  impactShakeTrauma: 0.3
+  getUpDuration: 1.8
+  getUpEndTime: 0.265
+  hitStopDuration: 0.12
+  flashDuration: 0.3
+  shakeTrauma: 0.45
+  shakeFadeTime: 0.5
 --- !u!1 &1749531850625552294
 GameObject:
   m_ObjectHideFlags: 0
@@ -1638,6 +1780,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 1452908429
   useRootMotion: 0
   trackDuration: 0
@@ -1652,13 +1795,13 @@ MonoBehaviour:
       length: 0
     offset: {x: 0, y: 7.3}
     warnDuration: 0.69
-    damage: 15
+    damage: 21
     reaction: 1
     push:
-      distance: 2.3
+      distance: 1.5
       height: 0
-      duration: 0.6
-      direction: 0
+      duration: 0.25
+      direction: 1
       angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
@@ -1962,6 +2105,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -1920930122
   useRootMotion: 1
   trackDuration: 1.17
@@ -1976,12 +2120,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: -0.55, y: 4.3}
     warnDuration: 0.55
-    damage: 10
+    damage: 14
     reaction: 1
     push:
-      distance: 0
+      distance: 0.5
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -2041,6 +2185,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 1335050551
   useRootMotion: 0
   trackDuration: 0.5
@@ -2075,8 +2220,14 @@ MonoBehaviour:
   aimHeight: 1
   compensateGravity: 1
   throwSpinSpeed: 3
-  damage: 20
-  reaction: 1
+  damage: 18
+  reaction: 0
+  push:
+    distance: 0
+    height: 0
+    duration: 0.2
+    direction: 1
+    angleOffset: 0
   hitPadding: 0.3
   minHitSpeed: 5
   maxHitDuration: 2
@@ -2136,6 +2287,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -1083039596
   useRootMotion: 0
   trackDuration: 1.5
@@ -2150,12 +2302,12 @@ MonoBehaviour:
       length: 0
     offset: {x: 0, y: 6.3}
     warnDuration: 0.69
-    damage: 10
-    reaction: 2
+    damage: 21
+    reaction: 1
     push:
-      distance: 2.3
+      distance: 1.5
       height: 0
-      duration: 0.6
+      duration: 0.25
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -2363,6 +2515,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.75
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 1320152918
   useRootMotion: 0
   trackDuration: 1.83
@@ -2377,12 +2530,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: 0.75, y: 4.3}
     warnDuration: 0.57
-    damage: 10
-    reaction: 1
+    damage: 14
+    reaction: 0
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -2395,12 +2548,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: -0.55, y: 4.3}
     warnDuration: 0.62
-    damage: 10
+    damage: 14
     reaction: 1
     push:
-      distance: 0
+      distance: 1
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -2719,6 +2872,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.75
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 109528201
   useRootMotion: 1
   trackDuration: 2
@@ -2733,12 +2887,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: -0.55, y: 4.3}
     warnDuration: 0.56
-    damage: 10
-    reaction: 1
+    damage: 14
+    reaction: 0
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -2751,12 +2905,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: 0.75, y: 4.3}
     warnDuration: 0.8
-    damage: 10
+    damage: 14
     reaction: 1
     push:
-      distance: 0
+      distance: 1
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -3265,12 +3419,13 @@ GameObject:
   - component: {fileID: 5367694399455952834}
   - component: {fileID: 2060557559859707615}
   - component: {fileID: 1029256413371103868}
-  - component: {fileID: 8667812356367704661}
   - component: {fileID: 5758417875896292843}
   - component: {fileID: 6715741266338130458}
   - component: {fileID: 1485420945810282984}
   - component: {fileID: 6039558344453004052}
   - component: {fileID: 7447088127514536648}
+  - component: {fileID: 5146294276049356439}
+  - component: {fileID: 5585251523130210030}
   m_Layer: 6
   m_Name: Perderos
   m_TagString: Untagged
@@ -3392,7 +3547,7 @@ MonoBehaviour:
   wallMask:
     serializedVersion: 2
     m_Bits: 128
-  wallRadius: 5
+  wallRadius: 4.8
   castHeight: 0.5
 --- !u!114 &7391046285517320164
 MonoBehaviour:
@@ -3411,6 +3566,8 @@ MonoBehaviour:
   repathDistance: 1
   cornerReachDistance: 1.5
   sampleDistance: 6
+  wallClearance: 2
+  avoidWeight: 1
 --- !u!114 &6313832497312916263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3437,6 +3594,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.SampleCombatMonster
   <Collider>k__BackingField: {fileID: 4042777697495299232}
   <Stats>k__BackingField: {fileID: 11400000, guid: d8025811fade4e0c9ec1c3ec0a378901, type: 2}
+  maxHpOverride: 100
 --- !u!114 &2060557559859707615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3462,7 +3620,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitFeedback
   flashDuration: 0.12
-  strongHitDamage: 60
+  mediumHitDamage: 40
+  mediumHitStop: 0.03
+  strongHitDamage: 100
+  strongHitStop: 0.07
+  strongShakeTrauma: 0.45
+  strongShakeFadeTime: 0.3
+  strongImpactSizeMultiplier: 1.5
+  strongDebrisCountMultiplier: 2
+  strongDebrisSpeedMultiplier: 1.2
+  finishImpactSizeMultiplier: 3.8
+  finishDebrisCountMultiplier: 10
+  finishDebrisSpeedMultiplier: 1.7
+  finishDebrisSizeMultiplier: 2.5
+  finishDebrisLifetimeMultiplier: 4
+  finishImpactDuration: 1
+  finishImpactAspect: 1.8
+  finishDebrisUpSpread: 0.65
+  finishDebrisDownSpread: 0.45
+  finishImpactRollRange: 8
   impactMaterial: {fileID: 2100000, guid: a3289664271548d28330e282e8fea8a4, type: 2}
   impactSize: 3
   impactDuration: 0.3
@@ -3480,19 +3656,6 @@ MonoBehaviour:
   debrisSize: 0.08
   debrisSpawnRadius: 0.15
   debrisTipColor: {r: 0.6, g: 0.9, b: 1, a: 1}
---- !u!114 &8667812356367704661
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6508351681074504637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d8f0fc115c1047bdb939d384a08f485, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossPsychokinesisPatternTester
-  boss: {fileID: 1861756219444596382}
 --- !u!114 &5758417875896292843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3539,6 +3702,153 @@ MonoBehaviour:
   chargeOpacity: 0.7
   chargeShockwaveDiameter: 2.6
   chargeDebrisCount: 3
+--- !u!114 &6715741266338130458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9fe392e6152f433aa289e5cce0a7694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzy
+  bones: []
+  phaseLagPerBone: 25
+  sway:
+    fadeInDuration: 0.8
+    fadeOutDuration: 0.5
+  spineAngle: 3
+  neckAngle: 9
+  headAngle: 8
+  yawSwayAngle: 10
+  circleFrequency: 0.55
+  yawSwayFrequency: 0.23
+  irregularity: 0.35
+  slump:
+    fadeInDuration: 0.6
+    fadeOutDuration: 0.8
+  droopAngle: {x: 0, y: 0, z: 0}
+  heaveAngle: {x: 0.8, y: 2.5, z: 2}
+  heaveFrequency: 0.75
+  pinnedLimbs: []
+  trembleAngle: 0.4
+  trembleFrequency: 9
+--- !u!114 &1485420945810282984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d04f04c88ad426ba7e96b729ba4db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggy
+  maxGroggy: 1200
+--- !u!114 &6039558344453004052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e7249c70a7104ff1a456cc339cd3f86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzyStars
+  starMaterial: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+  head: {fileID: 0}
+  count: 4
+  size: 0.45
+  thickness: 0.22
+  color: {r: 1, g: 0.9, b: 0.55, a: 1}
+  opacity: 0.75
+  height: 1.2
+  radius: 1.1
+  speed: 110
+  tilt: 15
+  bob: 0.12
+  twinkleFrequency: 1.6
+  twinkleDepth: 0.5
+  weightRange: {x: 0.35, y: 0.9}
+--- !u!114 &7447088127514536648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df4da7ae2241745159a2f555cde3cee4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzyBreath
+  breathMaterial: {fileID: 2100000, guid: 2179120debb674221bf54e03bf74e679, type: 2}
+  mouth: {fileID: 7424337981487024006}
+  mouthOffset: {x: 0, y: 0.05, z: 0.2}
+  mouthWidth: 0.25
+  downAngle: 10
+  splayAngle: 10
+  syncWithHeave: 1
+  breathInterval: {x: 1.1, y: 1.6}
+  exhaleDuration: 0.35
+  weightThreshold: 0.2
+  puffsPerNostril: 4
+  puffSpeed: {x: 2.5, y: 4}
+  puffSpread: 0.3
+  puffSize: {x: 0.25, y: 0.45}
+  puffLifetime: {x: 0.8, y: 1.3}
+  puffOpacity: 0.35
+  snortCountScale: 2.5
+  snortSpeedScale: 1.6
+  snortSizeScale: 1.3
+--- !u!114 &5146294276049356439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23aa062bfc9040baab66fd0739973828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathResidue
+  material: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+  color: {r: 0.45, g: 0.85, b: 1, a: 1}
+  tipColor: {r: 0.55, g: 0.4, b: 1, a: 1}
+  duration: 6
+  startRate: 45
+  riseSpeed: {x: 0.6, y: 1.6}
+  spread: 0.35
+  size: {x: 0.05, y: 0.12}
+  lifetime: {x: 1.4, y: 2.4}
+--- !u!114 &5585251523130210030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6508351681074504637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cfd5623cfc34bc8bfafa7f247523aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathShed
+  material: {fileID: 2100000, guid: cf857a154dca4fb2babb9d49dd4c6725, type: 2}
+  meshes: []
+  opacity: 0.45
+  duration: 1.8
+  fadeInDuration: 0.2
+  riseHeight: 0.9
+  endScale: 0.97
+  dissolveStart: 0.35
+  wipeStart: 0.25
+  wipeSoftness: 0.6
 --- !u!1 &6514804415617949282
 GameObject:
   m_ObjectHideFlags: 0
@@ -3643,6 +3953,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -234574752
   useRootMotion: 1
   trackDuration: 1.5
@@ -3657,12 +3968,12 @@ MonoBehaviour:
       length: 0
     offset: {x: 0, y: 7.3}
     warnDuration: 0.69
-    damage: 10
-    reaction: 2
+    damage: 21
+    reaction: 1
     push:
-      distance: 2.3
+      distance: 1.5
       height: 0
-      duration: 0.6
+      duration: 0.25
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -3721,6 +4032,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -2047656717
   useRootMotion: 0
   trackDuration: 3
@@ -3735,12 +4047,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: 0.75, y: 4.3}
     warnDuration: 0.54
-    damage: 10
-    reaction: 1
+    damage: 14
+    reaction: 0
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -3753,12 +4065,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: -0.55, y: 4.3}
     warnDuration: 0.6
-    damage: 10
-    reaction: 1
+    damage: 14
+    reaction: 0
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -3771,12 +4083,12 @@ MonoBehaviour:
       length: 0
     offset: {x: 0, y: 7.3}
     warnDuration: 0.93
-    damage: 10
+    damage: 21
     reaction: 1
     push:
-      distance: 2.3
+      distance: 1.5
       height: 0
-      duration: 0.6
+      duration: 0.25
       direction: 0
       angleOffset: 0
     lockOnWarn: 0
@@ -3835,6 +4147,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
+  requiresLineOfSight: 1
   trigger: -904583807
   useRootMotion: 0
   trackDuration: 0
@@ -3863,12 +4176,12 @@ MonoBehaviour:
   showRangeWhenInactive: 1
   waves:
   - origin: {fileID: 200775759416838399}
-    damage: 10
-    reaction: 1
+    damage: 21
+    reaction: 2
     push:
-      distance: 20
-      height: 0
-      duration: 0.6
+      distance: 0
+      height: 0.3
+      duration: 0.4
       direction: 1
       angleOffset: 0
     radius: 20
@@ -3979,6 +4292,7 @@ Transform:
   - {fileID: 770699486715204046}
   - {fileID: 1033639488534488116}
   - {fileID: 260387257319410559}
+  - {fileID: 8447378269184949773}
   m_Father: {fileID: 2502556648975515432}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7411618435033107499
@@ -4213,6 +4527,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: 1628729824
   useRootMotion: 0
   trackDuration: 0
@@ -4259,9 +4574,16 @@ MonoBehaviour:
   trackTargetUntilDrop: 1
   initialFallSpeed: 0
   spinSpeed: 4
-  largeDamage: 20
-  mediumDamage: 10
-  reaction: 1
+  largeDamage: 25
+  mediumDamage: 18
+  reaction: 0
+  push:
+    distance: 0
+    height: 0
+    duration: 0.2
+    direction: 1
+    angleOffset: 0
+  shatterOnPlayerHit: 1
   markerRadiusScale: 1
   telegraphFadeDuration: 0.3
 --- !u!1 &8366446798375009193
@@ -4350,6 +4672,7 @@ MonoBehaviour:
   <Weight>k__BackingField: 0.5
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
+  requiresLineOfSight: 1
   trigger: -619602676
   useRootMotion: 1
   trackDuration: 3.17
@@ -4364,12 +4687,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: -0.55, y: 4.3}
     warnDuration: 0.54
-    damage: 10
-    reaction: 1
+    damage: 14
+    reaction: 0
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -4382,12 +4705,12 @@ MonoBehaviour:
       length: 4.2
     offset: {x: 0.75, y: 4.3}
     warnDuration: 0.76
-    damage: 10
-    reaction: 1
+    damage: 14
+    reaction: 0
     push:
       distance: 0
       height: 0
-      duration: 0.6
+      duration: 0.2
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -4400,12 +4723,12 @@ MonoBehaviour:
       length: 0
     offset: {x: 0, y: 7.3}
     warnDuration: 0.95
-    damage: 10
+    damage: 21
     reaction: 1
     push:
-      distance: 2.3
+      distance: 1.5
       height: 0
-      duration: 0.6
+      duration: 0.25
       direction: 0
       angleOffset: 0
     lockOnWarn: 1
@@ -4582,7 +4905,7 @@ Transform:
   m_GameObject: {fileID: 8938257918934168802}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071067, y: 0.00000004741519, z: 0.000000047415206, w: 0.70710695}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4701,164 +5024,3 @@ Transform:
   - {fileID: 7124790788724213446}
   m_Father: {fileID: 5040556369064083961}
   m_LocalEulerAnglesHint: {x: 49.64443, y: -80.81012, z: -55.523266}
---- !u!114 &6715741266338130458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6508351681074504637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9fe392e6152f433aa289e5cce0a7694, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzy
-  bones: []
-  phaseLagPerBone: 25
-  sway:
-    fadeInDuration: 0.8
-    fadeOutDuration: 0.5
-  spineAngle: 3
-  neckAngle: 9
-  headAngle: 8
-  yawSwayAngle: 10
-  circleFrequency: 0.55
-  yawSwayFrequency: 0.23
-  irregularity: 0.35
-  slump:
-    fadeInDuration: 0.6
-    fadeOutDuration: 0.8
-  droopAngle: {x: 0, y: 0, z: 0}
-  heaveAngle: {x: 0.8, y: 2.5, z: 2}
-  heaveFrequency: 0.75
-  pinnedLimbs: []
-  trembleAngle: 0.4
-  trembleFrequency: 9
---- !u!114 &6039558344453004052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6508351681074504637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e7249c70a7104ff1a456cc339cd3f86, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzyStars
-  starMaterial: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
-  head: {fileID: 0}
-  count: 4
-  size: 0.45
-  thickness: 0.22
-  color: {r: 1, g: 0.9, b: 0.55, a: 1}
-  opacity: 0.75
-  height: 1.2
-  radius: 1.1
-  speed: 110
-  tilt: 15
-  bob: 0.12
-  twinkleFrequency: 1.6
-  twinkleDepth: 0.5
-  weightRange: {x: 0.35, y: 0.9}
---- !u!114 &7447088127514536648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6508351681074504637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df4da7ae2241745159a2f555cde3cee4, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDizzyBreath
-  breathMaterial: {fileID: 2100000, guid: 2179120debb674221bf54e03bf74e679, type: 2}
-  mouth: {fileID: 0}
-  mouthOffset: {x: 0, y: 0.05, z: 0.2}
-  mouthWidth: 0.25
-  downAngle: 10
-  splayAngle: 10
-  syncWithHeave: 1
-  breathInterval: {x: 1.1, y: 1.6}
-  exhaleDuration: 0.35
-  weightThreshold: 0.2
-  puffsPerNostril: 4
-  puffSpeed: {x: 2.5, y: 4}
-  puffSpread: 0.3
-  puffSize: {x: 0.25, y: 0.45}
-  puffLifetime: {x: 0.8, y: 1.3}
-  puffOpacity: 0.35
-  snortCountScale: 2.5
-  snortSpeedScale: 1.6
-  snortSizeScale: 1.3
---- !u!114 &1485420945810282984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6508351681074504637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d04f04c88ad426ba7e96b729ba4db8, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggy
-  maxGroggy: 100
---- !u!1 &1745366428219609773
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 260387257319410559}
-  - component: {fileID: 4183337194616130227}
-  m_Layer: 6
-  m_Name: Groggy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &260387257319410559
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1745366428219609773}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3613847894739870803}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4183337194616130227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1745366428219609773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60283914ff0084556a5ad564bb727a03, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggyState
-  duration: 6
-  crossFadeDuration: 0.25
-  fallStartTime: 0.745
-  lieTime: 0.976
-  fallDuration: 0.65
-  impactAt: 0.16
-  impactShakeTrauma: 0.3
-  getUpDuration: 1.8
-  getUpEndTime: 0.265
-  hitStopDuration: 0.12
-  flashDuration: 0.3
-  shakeTrauma: 0.45
-  shakeFadeTime: 0.5

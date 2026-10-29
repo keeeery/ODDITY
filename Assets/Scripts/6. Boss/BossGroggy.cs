@@ -54,11 +54,12 @@ namespace TeamOdd.Boss
 
         #endregion
 
-        // 실제로 피해가 들어간 경우만 깎음, 죽어서 피해가 0이면 무너지지 않음
+        // 실제로 피해가 들어간 경우만 깎음, 죽어서 피해가 0이거나 이번 피해로 죽었으면(사망 연출이 끊기지 않도록) 무너지지 않음
         private void HandleDamage(DamageEvent damageEvent, int receivedDamage)
         {
             if (ReferenceEquals(damageEvent.Receiver, self) == false) return;
             if (IsBroken || receivedDamage <= 0 || damageEvent.Info.Groggy <= 0) return;
+            if (self is CombatEntity { IsDead: true }) return;
 
             Current = Mathf.Max(0, Current - damageEvent.Info.Groggy);
 
