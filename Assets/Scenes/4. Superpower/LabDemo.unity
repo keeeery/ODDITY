@@ -5262,9 +5262,9 @@ MonoBehaviour:
   panel: {fileID: 0}
   inventory: {fileID: 1573827754}
   disableWhileOpen:
-  - {fileID: 1573827751}
   - {fileID: 1573827750}
   - {fileID: 1982781881}
+  - {fileID: 1573827751}
 --- !u!1001 &2147000040
 PrefabInstance:
   m_ObjectHideFlags: 0
