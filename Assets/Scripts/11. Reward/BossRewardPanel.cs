@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TeamOdd.Combat;
 using TeamOdd.Superpower;
+using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ namespace TeamOdd.Reward
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private RewardIconView[] icons;
         [SerializeField] private Button closeButton;
+        [SerializeField] private TooltipView tooltip;
 
         private UIManager uiManager;
         public bool IsOpen { get; private set; }
@@ -30,6 +32,7 @@ namespace TeamOdd.Reward
 
         public void Open(IReadOnlyList<OwnedChip> rewards)
         {
+            if (tooltip != null) tooltip.Hide();
             if (panelRoot == null || icons == null || closeButton == null)
             {
                 Debug.LogError("[BossRewardPanel] 씬의 Panel Root, Icons, Close Button을 연결해 주세요.", this);
@@ -57,6 +60,7 @@ namespace TeamOdd.Reward
 
         public void Close()
         {
+            if (tooltip != null) tooltip.Hide();
             if (panelRoot != null) panelRoot.SetActive(false);
             if (IsOpen == false) return;
 
