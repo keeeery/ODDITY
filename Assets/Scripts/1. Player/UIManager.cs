@@ -1,3 +1,4 @@
+using System;
 using Jay;
 using Study.Utilities;
 using TeamOdd.CameraMove;
@@ -16,8 +17,13 @@ namespace TeamOdd
         
         [SerializeField] private GameObject missionUI;
         [SerializeField] private GameObject skillUI;
-        
         [SerializeField] private GameObject battleUI;
+
+        private void Start()
+        {
+            playerController = Player.Player.Instance.PlayerController;
+            cameraController = Player.Player.Instance.CameraController;
+        }
 
         private void Update()
         {
@@ -34,7 +40,9 @@ namespace TeamOdd
 
         public void BattleUIActive(bool active)
         {
-            battleUI.SetActive(active);
+            // 씬에 UIManager 를 배치하지 않으면 자동 생성되어 battleUI 가 비어 있다.
+            if (battleUI != null)
+                battleUI.SetActive(active);
         }
         
         public void LockCursor(bool locked, bool isManuallyLock = false)

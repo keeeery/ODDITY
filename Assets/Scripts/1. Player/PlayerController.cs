@@ -238,6 +238,7 @@ namespace TeamOdd.Player
             moveZ = SmoothAxis(moveZ, inputRaw.y);
 
             if (moveReference == null) moveReference = Camera.main.transform;
+            if (moveReference == null) moveReference = Player.Instance.CameraController.transform;
 
             Transform reference = moveReference;
 

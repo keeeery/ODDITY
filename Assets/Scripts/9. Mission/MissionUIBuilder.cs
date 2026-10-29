@@ -1,7 +1,9 @@
 using TMPro;
 using UnityEngine;
 #if UNITY_EDITOR
+using TeamOdd.Mission;
 using UnityEditor;
+using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -21,6 +23,20 @@ namespace Study.Utilities
 #if UNITY_EDITOR
         private const string RootName = "Mission UI";
         private static readonly Vector2 ReferenceResolution = new Vector2(3840f, 2160f);
+
+        // Stage Move UI 와 연결할 씬 오브젝트 · 에셋
+        private const string MissionUIName = "Mission UI";
+        private const string QuestListUIName = "Quest List UI";
+        private const string StageMoveRootName = "Stage Move UI";
+        private const string StageMoveNPCName = "Stage Move NPC";
+        private const string QuestRowPrefabPath = "Assets/Prefabs/9. Mission/Quest 1.prefab";
+        private const float StageMoveUIScale = 0.65f;   // 씬의 Mission UI · Quest List UI 와 같은 비율
+
+        // 이동 실패 팝업
+        private const float MoveFailPopupWidth = 1440f;
+        private const float MoveFailPopupHeight = 860f;
+        private const float PopupButtonWidth = 500f;
+        private const float PopupButtonHeight = 150f;
 
         // 상단 바
         private const float TitleBarHeight = 240f;
@@ -136,11 +152,11 @@ namespace Study.Utilities
             Undo.RegisterCreatedObjectUndo(canvas.gameObject, "Build Mission UI");
 
             Transform window = CreateJournalWindow(canvas);
-            CreateTitleBar(window);
+            CreateTitleBar(window, "Journal");
 
             Transform page = CreateMissionPage(window);
             CreateQuestList(page);
-            CreateDetailPanel(page);
+            CreateDetailPanel(page, DetailTitle, DetailDescription, "Accept", out _, out _, out _, out _);
 
             EditorSceneManager.MarkSceneDirty(gameObject.scene);
             Debug.Log($"[MissionUIBuilder] '{RootName}' 생성 완료.", canvas);
@@ -190,12 +206,106 @@ namespace Study.Utilities
                     Undo.DestroyObjectImmediate(old.gameObject);
             }
 
-            CreateDescriptionArea(detail, out GameObject scrollView, out GameObject acceptButton);
+            CreateDescriptionArea(detail, DetailDescription, "Accept", out GameObject scrollView, out GameObject acceptButton, out _);
             Undo.RegisterCreatedObjectUndo(scrollView, "Add Description Scroll");
             Undo.RegisterCreatedObjectUndo(acceptButton, "Add Accept Button");
 
             EditorSceneManager.MarkSceneDirty(gameObject.scene);
             Debug.Log("[MissionUIBuilder] 설명 스크롤 · 수락 버튼 추가 완료.", detail);
+        }
+
+        // 수락한 미션을 골라 해당 미션 씬으로 이동하는 창을 만들고,
+        // Quest List UI · Mission UI · Stage Move NPC 와 연결한다. 이미 있으면 지우고 다시 만든다.
+        [ContextMenu("4. Build Stage Move UI")]
+        private void BuildStageMoveUI()
+        {
+            MissionUI missionUI = FindSceneComponent<MissionUI>(MissionUIName);
+            if (missionUI == null)
+            {
+                Debug.LogWarning($"[MissionUIBuilder] MissionUI 가 붙은 '{MissionUIName}' 을(를) 찾을 수 없습니다.", this);
+                return;
+            }
+
+            Transform canvas = missionUI.transform.parent;
+            Transform questListUI = canvas.Find(QuestListUIName);
+            if (questListUI == null)
+            {
+                Debug.LogWarning($"[MissionUIBuilder] '{canvas.name}' 아래에서 '{QuestListUIName}' 을(를) 찾을 수 없습니다.", this);
+                return;
+            }
+
+            MissionListUI missionListUI = ConnectQuestList(questListUI);
+            if (missionListUI == null)
+                return;
+
+            SetReference(missionUI, "missionListUI", missionListUI);
+
+            Transform old = canvas.Find(StageMoveRootName);
+            if (old != null)
+                Undo.DestroyObjectImmediate(old.gameObject);
+
+            GameObject stageMoveUI = CreateStageMoveUI(canvas, missionListUI);
+            Undo.RegisterCreatedObjectUndo(stageMoveUI, "Build Stage Move UI");
+
+            MissionNPC stageMoveNPC = FindSceneComponent<MissionNPC>(StageMoveNPCName);
+            if (stageMoveNPC != null)
+                SetReference(stageMoveNPC, "popupUI", stageMoveUI);
+            else
+                Debug.LogWarning($"[MissionUIBuilder] '{StageMoveNPCName}' 이(가) 없어 popupUI 를 연결하지 못했습니다.", this);
+
+            EditorSceneManager.MarkSceneDirty(gameObject.scene);
+            Debug.Log($"[MissionUIBuilder] '{StageMoveRootName}' 생성 · 연결 완료.", stageMoveUI);
+        }
+
+        // Quest List UI 에 MissionListUI 를 붙이고 목록 · 개수 텍스트 · 행 프리팹을 연결한다.
+        private MissionListUI ConnectQuestList(Transform questListUI)
+        {
+            Transform content = questListUI.Find("QuestScrollView/Viewport/Content");
+            Transform countText = questListUI.Find("QuestListHeader/QuestCountText");
+            GameObject rowPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(QuestRowPrefabPath);
+
+            if (content == null || countText == null || rowPrefab == null)
+            {
+                Debug.LogWarning("[MissionUIBuilder] Quest List UI 연결 실패. " +
+                                 $"Content: {content != null}, QuestCountText: {countText != null}, " +
+                                 $"'{QuestRowPrefabPath}': {rowPrefab != null}", this);
+                return null;
+            }
+
+            if (questListUI.TryGetComponent(out MissionListUI missionListUI) == false)
+                missionListUI = Undo.AddComponent<MissionListUI>(questListUI.gameObject);
+
+            SetReference(missionListUI, "questContent", content);
+            SetReference(missionListUI, "questRowPrefab", rowPrefab);
+            SetReference(missionListUI, "questCountText", countText.GetComponent<TMP_Text>());
+            return missionListUI;
+        }
+
+        // 같은 씬에서 이름이 일치하는 컴포넌트를 찾는다. (비활성 오브젝트 포함)
+        private T FindSceneComponent<T>(string objectName) where T : Component
+        {
+            foreach (T component in Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (component.name == objectName && component.gameObject.scene == gameObject.scene)
+                    return component;
+            }
+
+            return null;
+        }
+
+        // private [SerializeField] 필드에 참조를 넣는다. (Undo 기록됨)
+        private void SetReference(Object target, string propertyName, Object value)
+        {
+            SerializedObject serialized = new SerializedObject(target);
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            if (property == null)
+            {
+                Debug.LogWarning($"[MissionUIBuilder] {target.GetType().Name} 에 '{propertyName}' 필드가 없습니다.", target);
+                return;
+            }
+
+            property.objectReferenceValue = value;
+            serialized.ApplyModifiedProperties();
         }
 
         private GameObject FindRoot()
@@ -252,7 +362,7 @@ namespace Study.Utilities
             return window.transform;
         }
 
-        private void CreateTitleBar(Transform window)
+        private Button CreateTitleBar(Transform window, string titleLabel)
         {
             // 상단 가로 띠: 본문과 구분되도록 남색 + 아래쪽 금색 구분선
             GameObject titleBar = NewPanel("TitleBar", window, Vector2.zero);
@@ -268,15 +378,15 @@ namespace Study.Utilities
                 new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f),
                 Vector2.zero, new Vector2(0f, TitleDividerHeight));
 
-            TMP_Text title = NewText("TitleText", titleBar.transform, "Journal", 96f, TextAlignmentOptions.Center);
+            TMP_Text title = NewText("TitleText", titleBar.transform, titleLabel, 96f, TextAlignmentOptions.Center);
             title.fontStyle = FontStyles.Bold;
             title.color = TitleTextColor;
             Stretch(title.rectTransform, 0f);
 
-            CreateExitButton(titleBar.transform);
+            return CreateExitButton(titleBar.transform);
         }
 
-        private void CreateExitButton(Transform titleBar)
+        private Button CreateExitButton(Transform titleBar)
         {
             // 우측 상단 나가기 버튼
             Button exit = NewButton("ExitButton", titleBar, "Exit", out TMP_Text label);
@@ -289,6 +399,7 @@ namespace Study.Utilities
             label.fontSize = 52f;
             label.fontStyle = FontStyles.Bold;
             label.color = Color.white;
+            return exit;
         }
 
         // 상단 바 아래 영역을 꽉 채움
@@ -320,7 +431,8 @@ namespace Study.Utilities
 
             CreateQuestTabBar(listPanel.transform);
             CreateQuestListHeader(listPanel.transform);
-            Transform content = CreateQuestScrollView(listPanel.transform);
+            Transform content = CreateQuestScrollView(listPanel.transform,
+                ListPadding + QuestTabHeight + QuestListHeaderHeight + 12f, ListPadding);
 
             // 분류별 목록. 시안처럼 '직업'은 접힌 상태, '메인'은 펼친 상태로 시작한다.
             GameObject jobItems = CreateQuestCategory("Job", content, "직업", JobQuests, false);
@@ -385,16 +497,15 @@ namespace Study.Utilities
                 new Vector2(-40f, 0f), new Vector2(-40f, 0f));
         }
 
-        private Transform CreateQuestScrollView(Transform listPanel)
+        // top: 패널 위쪽에서 스크롤 영역이 시작하는 거리 (목록 헤더 아래 ~ 패널 하단)
+        // padding: 좌 · 우 · 아래 여백
+        private Transform CreateQuestScrollView(Transform listPanel, float top, float padding)
         {
-            // 목록 헤더 아래 ~ 패널 하단
-            float top = ListPadding + QuestTabHeight + QuestListHeaderHeight + 12f;
-
             GameObject scrollView = NewUI("QuestScrollView", listPanel);
             SetRect(scrollView.GetComponent<RectTransform>(),
                 Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
-                new Vector2(0f, (ListPadding - top) * 0.5f),
-                new Vector2(-ListPadding * 2f, -(top + ListPadding)));
+                new Vector2(0f, (padding - top) * 0.5f),
+                new Vector2(-padding * 2f, -(top + padding)));
 
             ScrollRect scrollRect = scrollView.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
@@ -529,7 +640,8 @@ namespace Study.Utilities
 
         #region Detail Panel (우측)
 
-        private void CreateDetailPanel(Transform page)
+        private void CreateDetailPanel(Transform page, string titleLabel, string descriptionLabel, string buttonLabel,
+            out TMP_Text titleText, out Image illustrationImage, out TMP_Text descriptionText, out Button actionButton)
         {
             // 우측 상세 패널: 좌측 목록 옆 남은 공간을 채운다.
             float left = QuestListWidth + PanelGap;
@@ -549,10 +661,11 @@ namespace Study.Utilities
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 Vector2.zero, new Vector2(0f, titleHeight));
 
-            TMP_Text title = NewText("DetailTitleText", titleBar.transform, DetailTitle, 88f, TextAlignmentOptions.Center);
+            TMP_Text title = NewText("DetailTitleText", titleBar.transform, titleLabel, 88f, TextAlignmentOptions.Center);
             title.fontStyle = FontStyles.Bold;
             title.color = Color.white;
             Stretch(title.rectTransform, 0f);
+            titleText = title;
 
             // 삽화 (스프라이트 대신 색상 블록)
             const float illustrationTop = titleHeight + 40f;
@@ -565,11 +678,15 @@ namespace Study.Utilities
             SetRect(illustration.GetComponent<RectTransform>(),
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 new Vector2(0f, -illustrationTop), new Vector2(-80f, illustrationHeight));
+            illustrationImage = illustration.GetComponent<Image>();
 
-            CreateDescriptionArea(detail.transform, out _, out _);
+            CreateDescriptionArea(detail.transform, descriptionLabel, buttonLabel,
+                out _, out GameObject button, out descriptionText);
+            actionButton = button.GetComponent<Button>();
         }
 
-        private void CreateDescriptionArea(Transform detail, out GameObject scrollView, out GameObject acceptButton)
+        private void CreateDescriptionArea(Transform detail, string descriptionLabel, string buttonLabel,
+            out GameObject scrollView, out GameObject acceptButton, out TMP_Text descriptionText)
         {
             // 설명 영역 (삽화 아래 ~ 수락 버튼 위). 상단 위치는 CreateDetailPanel 의 제목 띠 · 삽화 배치와 맞춘다.
             const float descriptionTop = 180f + 40f + 860f + 60f;
@@ -594,7 +711,7 @@ namespace Study.Utilities
             Stretch(viewport.GetComponent<RectTransform>(), 0f);
 
             // 설명 텍스트 = 스크롤 Content. 글 길이에 맞춰 높이가 늘어난다.
-            TMP_Text description = NewText("DescriptionText", viewport.transform, DetailDescription, 64f, TextAlignmentOptions.TopLeft);
+            TMP_Text description = NewText("DescriptionText", viewport.transform, descriptionLabel, 64f, TextAlignmentOptions.TopLeft);
             description.color = MainTextColor;
             description.richText = true;
             description.lineSpacing = 10f;
@@ -617,7 +734,7 @@ namespace Study.Utilities
             scrollRect.verticalScrollbarSpacing = 20f;
 
             // 미션 수락 버튼 (패널 하단 중앙)
-            Button accept = NewButton("AcceptButton", detail, "Accept", out TMP_Text label);
+            Button accept = NewButton("AcceptButton", detail, buttonLabel, out TMP_Text label);
             accept.GetComponent<Image>().color = AcceptButtonColor;
             AddFrame(accept.gameObject, FrameGold, 4f);
             SetRect(accept.GetComponent<RectTransform>(),
@@ -629,6 +746,148 @@ namespace Study.Utilities
             label.color = Color.white;
 
             acceptButton = accept.gameObject;
+            descriptionText = description;
+        }
+
+        #endregion
+
+        #region Stage Move UI
+
+        // Mission UI 와 같은 구성: 화면을 덮는 창 + 상단 바 + 좌측 목록 / 우측 상세
+        private GameObject CreateStageMoveUI(Transform canvas, MissionListUI missionListUI)
+        {
+            GameObject root = NewUI(StageMoveRootName, canvas);
+            Stretch(root.GetComponent<RectTransform>(), 0f);
+            root.transform.localScale = Vector3.one * StageMoveUIScale;
+
+            Transform window = CreateJournalWindow(root.transform);
+            window.name = "StageMoveWindow";
+            Button exitButton = CreateTitleBar(window, "Stage Move");
+
+            Transform page = CreateMissionPage(window);
+            Transform content = CreateStageMissionList(page, out GameObject emptyText);
+            Button rowTemplate = CreateStageMissionRow(content);
+
+            CreateDetailPanel(page, "-", string.Empty, "Move",
+                out TMP_Text bossName, out Image bossImage, out TMP_Text description, out Button moveButton);
+            moveButton.name = "MoveButton";
+
+            GameObject moveFailUI = CreateMoveFailPopup(root.transform, out Button failConfirmButton);
+
+            StageMoveUI stageMoveUI = root.AddComponent<StageMoveUI>();
+            SetReference(stageMoveUI, "missionListUI", missionListUI);
+            SetReference(stageMoveUI, "missionContent", content);
+            SetReference(stageMoveUI, "missionRowTemplate", rowTemplate);
+            SetReference(stageMoveUI, "emptyText", emptyText);
+            SetReference(stageMoveUI, "bossName", bossName);
+            SetReference(stageMoveUI, "bossImage", bossImage);
+            SetReference(stageMoveUI, "missionDescription", description);
+            SetReference(stageMoveUI, "moveButton", moveButton);
+            SetReference(stageMoveUI, "moveFailUI", moveFailUI);
+
+            UnityEventTools.AddPersistentListener(exitButton.onClick, stageMoveUI.CloseUI);
+            UnityEventTools.AddPersistentListener(moveButton.onClick, stageMoveUI.MoveToStage);
+            UnityEventTools.AddBoolPersistentListener(failConfirmButton.onClick, moveFailUI.SetActive, false);
+
+            moveFailUI.SetActive(false);
+            root.SetActive(false);
+            return root;
+        }
+
+        // 좌측 수락 미션 목록. 씬의 Quest List UI 처럼 헤더 아래를 스크롤 목록이 여백 없이 채운다.
+        private Transform CreateStageMissionList(Transform page, out GameObject emptyText)
+        {
+            GameObject listPanel = NewPanel("MissionListPanel", page, Vector2.zero);
+            listPanel.GetComponent<Image>().color = QuestListBackground;
+            AddFrame(listPanel, FrameGold, 4f);
+            SetRect(listPanel.GetComponent<RectTransform>(),
+                new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f),
+                Vector2.zero, new Vector2(QuestListWidth, 0f));
+
+            GameObject header = NewPanel("MissionListHeader", listPanel.transform, Vector2.zero);
+            header.GetComponent<Image>().color = QuestListHeaderColor;
+            AddFrame(header, QuestListHeaderBorder, 3f);
+            SetRect(header.GetComponent<RectTransform>(),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                Vector2.zero, new Vector2(0f, QuestListHeaderHeight));
+
+            TMP_Text title = NewText("MissionListTitleText", header.transform, "수락한 미션", 64f, TextAlignmentOptions.MidlineLeft);
+            title.fontStyle = FontStyles.Bold;
+            title.color = Color.white;
+            SetRect(title.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0f, 0.5f),
+                new Vector2(40f, 0f), new Vector2(-80f, 0f));
+
+            Transform content = CreateQuestScrollView(listPanel.transform, QuestListHeaderHeight, 0f);
+
+            // 수락한 미션이 없을 때 목록 자리에 표시
+            TMP_Text empty = NewText("EmptyText", listPanel.transform, "수락한 미션이 없습니다", 56f, TextAlignmentOptions.Center);
+            empty.color = SubTextColor;
+            SetRect(empty.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
+                new Vector2(0f, -QuestListHeaderHeight * 0.5f), new Vector2(0f, -QuestListHeaderHeight));
+            emptyText = empty.gameObject;
+
+            return content;
+        }
+
+        // 미션 행 원본. StageMoveUI 가 수락한 미션 수만큼 복제해서 쓰고, 원본은 숨긴다.
+        private Button CreateStageMissionRow(Transform content)
+        {
+            GameObject row = NewPanel("MissionRowTemplate", content, Vector2.zero);
+            row.GetComponent<Image>().color = QuestRowColor;
+            AddFrame(row, QuestRowBorder, 2f);
+            row.AddComponent<LayoutElement>().preferredHeight = QuestRowHeight;
+
+            Button button = row.AddComponent<Button>();
+            button.targetGraphic = row.GetComponent<Image>();
+
+            TMP_Text text = NewText("QuestNameText", row.transform, "Quest Name", 54f, TextAlignmentOptions.MidlineLeft);
+            text.color = Color.white;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            SetRect(text.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0f, 0.5f),
+                new Vector2(24f, 0f), new Vector2(-48f, 0f));
+
+            return button;
+        }
+
+        // 이동할 씬이 없는 미션을 골랐을 때 띄우는 팝업 (Mission UI 의 ClickFail UI 와 같은 구성)
+        private GameObject CreateMoveFailPopup(Transform root, out Button confirmButton)
+        {
+            GameObject popup = NewPanel("MoveFail UI", root, Vector2.zero);
+            popup.GetComponent<Image>().color = DetailTitleBarColor;
+            AddFrame(popup, FrameGold, 4f);
+            SetRect(popup.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(MoveFailPopupWidth, MoveFailPopupHeight));
+
+            TMP_Text title = NewText("MoveFail Title Text", popup.transform, "이동 불가", 80f, TextAlignmentOptions.Center);
+            title.fontStyle = FontStyles.Bold;
+            title.color = TitleTextColor;
+            SetRect(title.rectTransform,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -60f), new Vector2(-80f, 140f));
+
+            TMP_Text description = NewText("MoveFail Description Text", popup.transform,
+                "아직 이동할 수 있는 스테이지가 없는 미션입니다", 64f, TextAlignmentOptions.Center);
+            SetRect(description.rectTransform,
+                Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),
+                new Vector2(0f, 40f), new Vector2(-120f, -480f));
+
+            confirmButton = NewButton("ConfirmButton", popup.transform, "OK", out TMP_Text label);
+            confirmButton.GetComponent<Image>().color = AcceptButtonColor;
+            AddFrame(confirmButton.gameObject, FrameGold, 4f);
+            SetRect(confirmButton.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(0f, 120f), new Vector2(PopupButtonWidth, PopupButtonHeight));
+
+            label.fontSize = 72f;
+            label.fontStyle = FontStyles.Bold;
+            label.color = Color.white;
+
+            return popup;
         }
 
         #endregion

@@ -1424,7 +1424,11 @@ PrefabInstance:
       propertyPath: waves.Array.data[0].push.distance
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6715741266338130458, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+    - {fileID: 1485420945810282984, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+    - {fileID: 6039558344453004052, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+    - {fileID: 7447088127514536648, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1835,7 +1839,12 @@ PrefabInstance:
       propertyPath: waves.Array.data[0].reaction
       value: 2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4131325009642158294, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+    - {fileID: 3374236431281579078, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+    - {fileID: 2779756049810924992, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+    - {fileID: 1806004382529604527, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+    - {fileID: 7161079441656988280, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

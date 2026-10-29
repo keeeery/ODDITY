@@ -15602,6 +15602,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -19657,6 +19660,7 @@ MonoBehaviour:
   combatEntity: {fileID: 2205336347470601075}
   hpBar: {fileID: 1144892260}
   staminaBar: {fileID: 1218552551}
+  hpTrailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
   damageVignette: {fileID: 905123404}
   cameraShakeTrauma: 0.6
   cameraShakeDuration: 0.35
@@ -35070,6 +35074,8 @@ MonoBehaviour:
   bossName: 
   hpBar: {fileID: 420760886}
   groggyBar: {fileID: 1544739492}
+  smoothGroggyBar: 1
+  trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
 --- !u!225 &916268417
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -44287,6 +44293,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -48130,6 +48139,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -62508,6 +62520,9 @@ MonoBehaviour:
   trailColor: {r: 0.79, g: 0.64, b: 0.29, a: 1}
   trailDelay: 0.6
   trailSpeed: 0.6
+  useRise: 0
+  riseSpeed: 1.2
+  riseEase: 9
   flashColor: {r: 1, g: 0.95, b: 0.88, a: 0.8}
   flashDuration: 0.2
   shakeDistance: 4
@@ -74957,6 +74972,10 @@ PrefabInstance:
       propertyPath: <Collider>k__BackingField
       value: 
       objectReference: {fileID: 677289072525654882}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: NeedRollStamina
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -84916,11 +84935,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipToggle
   panel: {fileID: 0}
   inventory: {fileID: 2205336347470601080}
-  disableWhileOpen:
-  - {fileID: 2205336347470601074}
-  - {fileID: 1902345672}
-  - {fileID: 1982781881}
-  - {fileID: 747568469}
 --- !u!114 &2147100001
 MonoBehaviour:
   m_ObjectHideFlags: 0
