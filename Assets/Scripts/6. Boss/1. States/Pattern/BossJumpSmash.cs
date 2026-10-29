@@ -16,6 +16,8 @@ namespace TeamOdd.Boss
             jump.Initialize(root);
         }
 
+        protected override void OnPatternEnter() => jump.Warn();
+
         protected override void OnUpdate()
         {
             base.OnUpdate();

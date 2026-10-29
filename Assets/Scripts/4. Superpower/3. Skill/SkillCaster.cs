@@ -1,5 +1,6 @@
 using Study.Utilities;
 using TeamOdd.Combat;
+using TeamOdd.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,6 +20,20 @@ namespace TeamOdd.Superpower
         private AugmentationChipInventory inventory;
         private CombatEntity owner;
         private Player.Player player; // 스킬을 쓸 때 스태미나를 줄인다
+        private PlayerController playerController;
+
+        [Header("Psycho Slam Override")]
+        [Tooltip("이 플레이어의 내려찍기에 씬 전용 피해·무력화 값을 사용한다.")]
+        [SerializeField] private bool overridePsychoSlamDamage;
+        [SerializeField, Min(1)] private int psychoSlamDamage = 120;
+        [SerializeField, Min(0)] private int psychoSlamGroggy = 60;
+
+        public void ApplyPsychoSlamDamageOverride(ref int damage, ref int groggy)
+        {
+            if (overridePsychoSlamDamage == false) return;
+            damage = psychoSlamDamage;
+            groggy = psychoSlamGroggy;
+        }
 
         // 슬롯 UI에 쓸 키 이름 ("1", "Q" 등 키보드 배열에 맞는 이름). 키가 없으면 빈 문자열
         public static string GetKeyLabel(int slot)
@@ -34,6 +49,7 @@ namespace TeamOdd.Superpower
         {
             inventory = GetComponent<AugmentationChipInventory>();
             owner = GetComponent<CombatEntity>();
+            playerController = GetComponent<PlayerController>();
             player = GetComponent<Player.Player>();
         }
 
@@ -41,8 +57,9 @@ namespace TeamOdd.Superpower
         {
             int count = Mathf.Min(SlotKeys.Length, AugmentationChipInventory.SkillSlotCount);
 
-            // 커서가 풀리면 키를 뗀 것을 알 수 없으므로 누르고 있던 스킬을 모두 멈춘다
-            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked)
+            // 커서가 풀리거나 피격·행동 잠금으로 스킬을 쓸 수 없으면 채널링도 멈춘다
+            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked
+                || (playerController != null && (playerController.isHit || playerController.IsActionLocked)))
             {
                 for (int i = 0; i < count; i++)
                     Release(i);
@@ -73,6 +90,10 @@ namespace TeamOdd.Superpower
         private void Use(int slot)
         {
             if (owner != null && owner.IsDead)
+                return;
+
+            // 피격 중이거나 다른 스킬(염동 내려찍기 등)을 시전하는 동안은 쓰지 않는다.
+            if (playerController != null && (playerController.isHit || playerController.IsActionLocked))
                 return;
 
             OwnedChip chip = inventory.SkillSlots[slot];

@@ -3,13 +3,32 @@ using UnityEngine;
 
 namespace TeamOdd.Combat
 {
-    // 월드 전체를 잠깐 멈추는 히트스탑. 새로 요청하면 진행 중인 정지를 끊고 새 시간으로 대체한다.
+    // 월드 전체를 잠깐 멈추는 히트스탑. 연속 요청은 남은 시간과 긴 쪽으로 합치고, 종료 직후에는 무시한다.
+    // 멈춤이 끝나면 BaseTimeScale로 돌아가므로, 슬로모션처럼 평소 시간 배율을 바꾸는 쪽은 Time.timeScale 대신 BaseTimeScale을 바꾼다.
     public class HitStop : MonoBehaviour
     {
+        private const float StopTimeScale = 0f; // 0이면 완전 정지
+        private const float RequestCooldown = 0.1f; // 종료 후 새 요청을 무시하는 시간(초)
+
         private static HitStop instance;
+        private static float baseTimeScale = 1f;
 
         private Coroutine routine;
-        private float savedTimeScale = 1f;
+        private float stopEndTime;
+        private float nextRequestTime;
+
+        public static bool IsStopping => instance != null && instance.routine != null;
+
+        // 멈춰 있지 않을 때의 시간 배율, 멈춘 중에 바꾸면 멈춤이 끝난 뒤에 적용된다.
+        public static float BaseTimeScale
+        {
+            get => baseTimeScale;
+            set
+            {
+                baseTimeScale = Mathf.Max(0f, value);
+                if (IsStopping == false) Time.timeScale = baseTimeScale;
+            }
+        }
 
         public static void Request(float duration)
         {
@@ -17,7 +36,7 @@ namespace TeamOdd.Combat
 
             if (instance == null)
             {
-                var go = new GameObject("HitStop") { hideFlags = HideFlags.HideAndDontSave };
+                GameObject go = new GameObject("HitStop") { hideFlags = HideFlags.HideAndDontSave };
                 instance = go.AddComponent<HitStop>();
             }
             instance.Begin(duration);
@@ -25,16 +44,23 @@ namespace TeamOdd.Combat
 
         private void Begin(float duration)
         {
-            if (routine != null) StopCoroutine(routine);
-            else savedTimeScale = Time.timeScale; // 정지 중이 아닐 때만 원래 값을 저장
+            float now = Time.unscaledTime;
+            if (routine != null)
+            {
+                stopEndTime = Mathf.Max(stopEndTime, now + duration);
+                return;
+            }
 
-            Time.timeScale = 0f;
-            routine = StartCoroutine(Release(duration));
+            if (now < nextRequestTime) return;
+
+            stopEndTime = now + duration;
+            Time.timeScale = StopTimeScale;
+            routine = StartCoroutine(Release());
         }
 
-        private IEnumerator Release(float duration)
+        private IEnumerator Release()
         {
-            yield return new WaitForSecondsRealtime(duration);
+            while (Time.unscaledTime < stopEndTime) yield return null;
             Restore();
         }
 
@@ -42,9 +68,18 @@ namespace TeamOdd.Combat
         {
             if (routine == null) return;
             routine = null;
-            Time.timeScale = savedTimeScale;
+            Time.timeScale = baseTimeScale;
+            nextRequestTime = Time.unscaledTime + RequestCooldown;
         }
 
-        private void OnDisable() => Restore();
+        // 도메인 리로드 없이 플레이할 때를 위한 초기화
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => baseTimeScale = 1f;
+
+        private void OnDisable()
+        {
+            if (routine != null) StopCoroutine(routine);
+            Restore();
+        }
     }
 }

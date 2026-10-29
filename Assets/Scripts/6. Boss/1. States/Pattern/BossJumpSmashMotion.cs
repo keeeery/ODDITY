@@ -8,7 +8,7 @@ namespace TeamOdd.Boss
 {
     // 대상 쪽으로 뛰어올라 내려찍는 동작, BossJumpSmash와 돌진 패턴(BossChargePattern)이 함께 씀
     // 클립이 제자리 모션이라 높이는 애니메이션에 맡기고 수평 이동만 직접 처리
-    // 사용하는 쪽이 애니메이션 신호에 맞춰 Begin(OnJumpStart) → Lock(OnJumpLock) → Land(OnJumpLand)를 부르고, 매 프레임 Update를 부름
+    // 사용하는 쪽이 준비 시작에 Warn → 애니메이션 신호에 맞춰 Begin(OnJumpStart) → Lock(OnJumpLock) → Land(OnJumpLand)를 부르고, 매 프레임 Update를 부름
     [Serializable]
     public class BossJumpSmashMotion
     {
@@ -25,6 +25,10 @@ namespace TeamOdd.Boss
         [Tooltip("피격 대상을 밀어내는 거리·높이·시간과 방향, 판정 중심은 착지 충격 지점")]
         [SerializeField] private HitPush push = HitPush.Create(4f, 0.5f, 0.6f, HitPush.DirectionMode.FromHitCenter);
 
+        [Title("Telegraph")]
+        [SerializeField, Min(0f)] private float warnLeadTime = 0.2f; // Warn 호출부터 OnJumpStart까지의 대략적인 시간(초)
+        [SerializeField, Min(0.01f)] private float impactFadeDuration = 0.3f; // 착지 후 충격 범위 표시가 사라지는 시간(초)
+
         [Title("Lift")]
         [Tooltip("착지 지점 기준으로 염동력 오브젝트를 띄울 반경(m), 피해 범위(radius)와 따로 정한다.")]
         [SerializeField, Min(0f)] private float liftRadius = 10f;
@@ -35,12 +39,16 @@ namespace TeamOdd.Boss
 
         private BossMonster root;
         private WallFragmentSpawner fragmentSpawner;
+        private AttackTelegraph impactTelegraph;
 
+        private bool isWarning;
         private bool isJumping;
         private bool isHoming;
         private float jumpStartTime;
         private Vector3 jumpStart;
         private Vector3 aimPoint; // 충격 중심이 떨어질 지점
+        private Vector3 fixedJumpDirection;
+        private float fixedJumpDistance;
 
         public TelegraphShape ImpactShape => TelegraphShape.Circle(radius);
         public int Damage => damage;
@@ -54,27 +62,63 @@ namespace TeamOdd.Boss
             fragmentSpawner = UnityEngine.Object.FindAnyObjectByType<WallFragmentSpawner>();
         }
 
+        public void Warn() => Warn(Vector3.zero);
+
+        // 방향을 넘기면 준비부터 착지까지 그 방향으로만 뛰고 대상을 추적하지 않는다.
+        public void Warn(Vector3 direction)
+        {
+            Stop();
+
+            direction.y = 0f;
+            fixedJumpDirection = direction.normalized;
+            jumpStart = root.Movement.Position;
+            Vector3 targetPoint = new Vector3(root.Target.position.x, jumpStart.y, root.Target.position.z);
+            fixedJumpDistance = Mathf.Min(Vector3.Distance(jumpStart, targetPoint), maxJumpDistance);
+            aimPoint = GetInitialAimPoint();
+            isWarning = true;
+
+            impactTelegraph = root.ShowTelegraph(ImpactShape, GetWarningPose(), warnLeadTime + airDuration);
+        }
+
         public void Begin()
         {
             jumpStart = root.Movement.Position;
-            aimPoint = ClampAim(new Vector3(root.Target.position.x, jumpStart.y, root.Target.position.z));
+            aimPoint = GetInitialAimPoint();
             jumpStartTime = root.Clock.LocalTime;
 
+            isWarning = false;
             isJumping = true;
-            isHoming = true;
+            isHoming = fixedJumpDirection == Vector3.zero;
+            FaceJumpDirection();
+
+            if (impactTelegraph == null) impactTelegraph = root.ShowTelegraph(ImpactShape, GetWarningPose(), airDuration);
+            else impactTelegraph.SetPlacement(ImpactShape, GetWarningPose());
         }
 
         public void Lock() => isHoming = false;
 
         public void Update()
         {
-            if (isJumping == false) return;
+            if (isJumping == false)
+            {
+                if (isWarning)
+                {
+                    jumpStart = root.Movement.Position;
+                    aimPoint = GetInitialAimPoint();
+                    if (impactTelegraph != null) impactTelegraph.SetPlacement(ImpactShape, GetWarningPose());
+                }
+
+                return;
+            }
 
             if (isHoming)
             {
                 Vector3 targetPoint = new Vector3(root.Target.position.x, jumpStart.y, root.Target.position.z);
                 aimPoint = ClampAim(Vector3.MoveTowards(aimPoint, targetPoint, homingSpeed * root.Clock.LocalDeltaTime));
+                FaceJumpDirection();
             }
+
+            if (impactTelegraph != null) impactTelegraph.SetPlacement(ImpactShape, GetWarningPose());
 
             // 남은 체공 시간 안에 착지 지점에 닿도록 수평 속도를 맞춤
             float remainTime = Mathf.Max(airDuration - (root.Clock.LocalTime - jumpStartTime), root.Clock.LocalDeltaTime);
@@ -86,19 +130,48 @@ namespace TeamOdd.Boss
         // 벽에 막혀 덜 갔어도 실제 착지한 위치 기준
         public Pose Land()
         {
+            // 충돌 처리 전의 대기 이동량을 빼고, 실제 착지 위치와 몸 방향에 맞춘다.
+            root.Movement.Teleport(root.Body.position, root.Body.rotation);
+            Vector3 center = root.Body.position + TelegraphShape.FlatForward(root.Body.rotation) * impactOffset;
+            Pose pose = new Pose(center, Quaternion.identity);
+            if (impactTelegraph != null)
+            {
+                impactTelegraph.SetPlacement(ImpactShape, pose);
+                impactTelegraph.Resolve(impactFadeDuration);
+                impactTelegraph = null;
+            }
+
             Stop();
 
-            Vector3 center = root.Movement.Position + GetJumpDirection() * impactOffset;
-            Pose pose = new Pose(center, Quaternion.identity);
             BossFragmentLift.LiftInRange(fragmentSpawner, TelegraphShape.Circle(liftRadius), pose, liftHeight, liftDuration);
             return pose;
         }
 
         public void Stop()
         {
+            isWarning = false;
             isJumping = false;
             isHoming = false;
+            fixedJumpDirection = Vector3.zero;
+            fixedJumpDistance = 0f;
+
+            if (impactTelegraph == null) return;
+            impactTelegraph.Cancel();
+            impactTelegraph = null;
         }
+
+        private void FaceJumpDirection()
+        {
+            float yaw = Quaternion.LookRotation(GetJumpDirection()).eulerAngles.y;
+            root.Movement.Rotate(Mathf.DeltaAngle(root.Movement.Rotation.eulerAngles.y, yaw));
+        }
+
+        private Vector3 GetInitialAimPoint() => fixedJumpDirection != Vector3.zero
+            ? jumpStart + fixedJumpDirection * fixedJumpDistance
+            : ClampAim(new Vector3(root.Target.position.x, jumpStart.y, root.Target.position.z));
+
+        // 대상이 impactOffset보다 가까우면 제자리에서 내려찍으므로 예고도 실제 예정 중심에 둔다.
+        private Pose GetWarningPose() => new Pose(GetLandingPosition() + GetJumpDirection() * impactOffset, Quaternion.identity);
 
         // 충격 중심이 aimPoint에 오도록 impactOffset만큼 앞에서 멈춤, 대상이 너무 가까우면 제자리
         private Vector3 GetLandingPosition()
@@ -109,6 +182,7 @@ namespace TeamOdd.Boss
 
         private Vector3 GetJumpDirection()
         {
+            if (fixedJumpDirection != Vector3.zero) return fixedJumpDirection;
             Vector3 direction = aimPoint - jumpStart;
             return direction.sqrMagnitude > 0.0001f ? direction.normalized : TelegraphShape.FlatForward(root.transform.rotation);
         }
@@ -125,7 +199,7 @@ namespace TeamOdd.Boss
             Color originalColor = UnityEditor.Handles.color;
 
             UnityEditor.Handles.color = isHoming ? Color.yellow : new Color(1f, 0.5f, 0f);
-            ImpactShape.DrawHandles(new Pose(aimPoint, Quaternion.identity));
+            ImpactShape.DrawHandles(GetWarningPose());
             UnityEditor.Handles.DrawLine(jumpStart, GetLandingPosition());
 
             UnityEditor.Handles.color = originalColor;

@@ -236,6 +236,19 @@ namespace TeamOdd.TimeControl
             return index >= 0 ? bodyStates[index].IsKinematic : body.isKinematic;
         }
 
+        // 멈춘 동안 kinematic으로 고정한 몸체가 풀린 뒤에도 kinematic으로 남게 함(쓰러져 충돌을 없앤 보스 등)
+        public void KeepKinematicAfterUnfreeze(Rigidbody body)
+        {
+            if (IsFrozen == false) return;
+
+            int index = Array.IndexOf(bodies, body);
+            if (index < 0) return;
+
+            bodyStates[index].IsKinematic = true;
+            bodyStates[index].LinearVelocity = Vector3.zero;
+            bodyStates[index].AngularVelocity = Vector3.zero;
+        }
+
         // 풀릴 때 멈추기 전 속도로 되돌리지 않고 멈춘 자리에서 정지한 채 다시 시작하게 함
         // 멈춘 동안 다른 곳으로 옮겨 놓은 경우(염동력으로 들었다 내려찍기 등) 원래 속도가 이어지면 어색하므로 풀기 전에 부른다
         public void DiscardSavedMotion()

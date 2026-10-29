@@ -4,11 +4,14 @@ using UnityEngine;
 namespace TeamOdd.Combat
 {
     // 강한 피격 지점의 흰색 충격 빌보드(Hit Impact 셰이더), 선택적으로 점광원과 흩날리는 입자를 함께 낸다.
-    // Create로 만들어 돌려 쓰고, 히트스톱 중에도 보이도록 unscaled 시간으로 진행한다.
+    // Create로 만들어 돌려 쓰고, 히트스톱 중에도 보이도록 unscaled 시간으로 진행한다. 슬로모션에 맞춰 느려져야 하면 SetUnscaledTime(false)
     public sealed class HitImpact : MonoBehaviour
     {
         private static readonly int ProgressId = Shader.PropertyToID("_Progress");
         private static readonly int SeedId = Shader.PropertyToID("_Seed");
+        private static readonly int AxisBiasId = Shader.PropertyToID("_AxisBias");
+        private static readonly int RayDensityId = Shader.PropertyToID("_RayDensity");
+        private static readonly int CoreSizeId = Shader.PropertyToID("_CoreSize");
 
         private MeshRenderer meshRenderer;
         private MaterialPropertyBlock properties;
@@ -20,6 +23,11 @@ namespace TeamOdd.Combat
         private float lightIntensity;
         private ParticleSystem debris;
         private int debrisCount;
+        private bool useUnscaledTime = true;
+        private float aspect = 1f; // 가로 길이 / 세로 길이
+        private float debrisUpSpread = 1f; // 입자가 화면 위로 퍼지는 비율
+        private float debrisDownSpread = 1f; // 입자가 화면 아래로 퍼지는 비율
+        private ParticleSystem.Particle[] debrisBuffer;
 
         public static HitImpact Create(Material material, string name)
         {
@@ -67,6 +75,7 @@ namespace TeamOdd.Combat
                 debris.transform.position = position;
                 debris.Play(true);
                 debris.Emit(debrisCount);
+                if (debrisUpSpread < 1f || debrisDownSpread < 1f) FlattenDebris(camera);
             }
 
             transform.position = position;
@@ -83,7 +92,7 @@ namespace TeamOdd.Combat
             FaceCamera();
             UpdateLight(0f);
             impactTween = DOTween.To(() => progress, SetProgress, 1f, Mathf.Max(seconds, 0.01f))
-                .SetEase(Ease.Linear).SetUpdate(UpdateType.Late, true).SetTarget(this)
+                .SetEase(Ease.Linear).SetUpdate(UpdateType.Late, useUnscaledTime).SetTarget(this)
                 .OnComplete(() => gameObject.SetActive(false)).OnKill(() => impactTween = null);
         }
 
@@ -111,6 +120,33 @@ namespace TeamOdd.Combat
             flashLight.range = range;
         }
 
+        // aspect: 충격의 가로/세로 비율(1이면 원래 모양), upSpread·downSpread: 입자가 화면 위·아래로 퍼지는 비율(1이면 고르게)
+        // 둥글게 사방으로 퍼져 해처럼 보이지 않도록 가로로 긴 타원으로 만들 때 씀
+        public void SetShape(float aspect, float upSpread, float downSpread)
+        {
+            this.aspect = Mathf.Max(aspect, 0.1f);
+            debrisUpSpread = Mathf.Clamp01(upSpread);
+            debrisDownSpread = Mathf.Clamp01(downSpread);
+        }
+
+        // 이 충격만 머티리얼 값을 바꿈, axisBias: 가로 줄기만 길게 하는 정도, rayDensity: 줄기 수, coreSize: 가운데 둥근 섬광 크기
+        public void SetLook(float axisBias, float rayDensity, float coreSize)
+        {
+            properties.SetFloat(AxisBiasId, axisBias);
+            properties.SetFloat(RayDensityId, rayDensity);
+            properties.SetFloat(CoreSizeId, coreSize);
+        }
+
+        // false면 히트스톱 동안 멈춰 있다가 슬로모션 배율대로 느리게 퍼짐(마무리 일격)
+        public void SetUnscaledTime(bool unscaled)
+        {
+            useUnscaledTime = unscaled;
+            if (debris == null) return;
+
+            ParticleSystem.MainModule main = debris.main;
+            main.useUnscaledTime = unscaled;
+        }
+
         // count가 0이거나 material이 없으면 입자를 쓰지 않음, speed·lifetime은 (최소, 최대)
         // 입자는 충격보다 오래 남으므로 사각형과 따로 둔다.
         public void SetDebris(Material material, int count, Vector2 speed, Vector2 lifetime, float particleSize, float spawnRadius, Color tipColor)
@@ -128,7 +164,7 @@ namespace TeamOdd.Combat
             main.playOnAwake = false;
             main.loop = false;
             main.duration = 1f;
-            main.useUnscaledTime = true;
+            main.useUnscaledTime = useUnscaledTime;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.startLifetime = new ParticleSystem.MinMaxCurve(lifetime.x, lifetime.y);
             main.startSpeed = new ParticleSystem.MinMaxCurve(speed.x, speed.y);
@@ -176,6 +212,29 @@ namespace TeamOdd.Combat
 
         #endregion
 
+        // 방금 뿜은 입자(맨 뒤에 붙음)의 위치와 속도를 화면 세로로 눌러 가로로 퍼지게 함, 위로 가는 입자와 아래로 가는 입자를 따로 누름
+        private void FlattenDebris(Camera camera)
+        {
+            if (camera == null) return;
+
+            if (debrisBuffer == null || debrisBuffer.Length < debris.main.maxParticles)
+                debrisBuffer = new ParticleSystem.Particle[debris.main.maxParticles];
+
+            int count = debris.GetParticles(debrisBuffer);
+            Vector3 up = camera.transform.up;
+            Vector3 center = debris.transform.position;
+            for (int index = Mathf.Max(0, count - debrisCount); index < count; index++)
+            {
+                bool goingUp = Vector3.Dot(debrisBuffer[index].velocity, up) > 0f;
+                float squash = 1f - (goingUp ? debrisUpSpread : debrisDownSpread);
+                Vector3 offset = debrisBuffer[index].position - center;
+                debrisBuffer[index].position -= up * (Vector3.Dot(offset, up) * squash);
+                debrisBuffer[index].velocity -= up * (Vector3.Dot(debrisBuffer[index].velocity, up) * squash);
+            }
+
+            debris.SetParticles(debrisBuffer, count);
+        }
+
         private void UpdateLight(float progress)
         {
             if (flashLight == null || lightIntensity <= 0f) return;
@@ -190,7 +249,7 @@ namespace TeamOdd.Combat
             if (camera == null) return;
 
             transform.rotation = camera.transform.rotation * Quaternion.Euler(0f, 0f, roll);
-            transform.localScale = Vector3.one * size;
+            transform.localScale = new Vector3(size * aspect, size, size);
         }
     }
 }
