@@ -131,24 +131,45 @@ namespace TeamOdd.Superpower
         }
 
         // 스탯/수치 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
-        // 스킬 칩의 StatType/Value는 쓰지 않는 기본값이라 그대로 비교하면 능력치 칩 사이에 섞인다
         private static int CompareType(AugmentationChipDef x, AugmentationChipDef y)
         {
-            int result = x.ChipType.CompareTo(y.ChipType);
+            int result = KindOrder(x).CompareTo(KindOrder(y));
             if (result != 0)
                 return result;
 
-            return x.ChipType == ChipType.Stat ? x.StatType.CompareTo(y.StatType) : x.SkillType.CompareTo(y.SkillType);
+            if (x is StatChipDef statX && y is StatChipDef statY)
+                return statX.StatType.CompareTo(statY.StatType);
+
+            // 스킬 칩은 공격/방어/유틸로 먼저 묶고, 같은 분류 안에서 스킬 종류 순
+            if (x is SkillChipDef skillX && y is SkillChipDef skillY)
+            {
+                result = skillX.Category.CompareTo(skillY.Category);
+                if (result != 0)
+                    return result;
+
+                return skillX.SkillType.CompareTo(skillY.SkillType);
+            }
+
+            return 0;
         }
 
         // 스킬 칩은 수치 대신 쿨타임으로 비교한다
         private static int CompareValue(AugmentationChipDef x, AugmentationChipDef y)
         {
-            int result = x.ChipType.CompareTo(y.ChipType);
+            int result = KindOrder(x).CompareTo(KindOrder(y));
             if (result != 0)
                 return result;
 
-            return x.ChipType == ChipType.Stat ? x.Value.CompareTo(y.Value) : x.Cooldown.CompareTo(y.Cooldown);
+            if (x is StatChipDef statX && y is StatChipDef statY)
+                return statX.Value.CompareTo(statY.Value);
+
+            if (x is SkillChipDef skillX && y is SkillChipDef skillY)
+                return skillX.Cooldown.CompareTo(skillY.Cooldown);
+
+            return 0;
         }
+
+        // 능력치 칩을 스킬 칩보다 앞에 둔다
+        private static int KindOrder(AugmentationChipDef def) => def is StatChipDef ? 0 : 1;
     }
 }

@@ -1,0 +1,30 @@
+namespace TeamOdd.Superpower
+{
+    // Duration초 전의 자리·체력·스태미나로 되돌아간다. 매개변수 1개: Duration(float)
+    // - 지나온 모습을 거꾸로 되짚으며 돌아간다 (되감는 동안 무적)
+    // - 기록이 Duration초보다 짧으면(막 되감은 직후 등) 가장 오래된 기록까지만 간다
+    // - 기록하고 되감는 일은 TimeReverseRecorder, 되감는 동안의 화면 효과는 TimeReverseEffect가 한다 (둘 다 플레이어 프리팹에 붙어 있다)
+    public class TimeReverseSkill : SuperpowerSkill
+    {
+        private readonly float duration; // 되돌아갈 시간 (초)
+
+        public TimeReverseSkill(string name, float cooldown, float duration) : base(name, cooldown)
+        {
+            this.duration = duration;
+        }
+
+        public override string Describe() => $"{duration}초 전으로 역행";
+
+        // 되감는 중이거나 되돌아갈 기록이 없으면 쓰지 않는다
+        protected override bool CanExecute(SkillContext context)
+        {
+            TimeReverseRecorder recorder = context.Caster.GetComponent<TimeReverseRecorder>();
+            return recorder.IsRewinding == false && recorder.HasHistory;
+        }
+
+        protected override void Execute(SkillContext context)
+        {
+            context.Caster.GetComponent<TimeReverseRecorder>().Rewind(duration);
+        }
+    }
+}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace TeamOdd.TimeControl
     /// - 풀리면 기억해 둔 값으로 되돌림
     /// - LocalTime은 멈춰 있는 동안 흐르지 않는 시계, 쿨타임·타이머를 Time.time 대신 이 값으로 재면 정지 시간만큼 자연스럽게 밀림
     /// 정지는 개별 정지(Freeze/Unfreeze)와 전체 정지(FreezeWorld/UnfreezeWorld) 두 갈래이고, 둘 다 횟수로 세므로 겹쳐 걸어도 안전
+    /// 전체 정지에 배율(timeScale)을 주면 멈추지 않고 그 배율로 느리게 흐름(감속). 정지는 배율 0인 감속과 같음
+    /// - 감속 중에는 Animator 속도와 DOTween에 배율을 곱하고, Rigidbody는 속도에 배율을, 중력에 배율의 제곱을 곱해 같은 궤적을 느리게 그림
+    /// - LocalTime도 배율만큼 느리게 흐름
     /// 멈춰 있는 동안 메시 위에 파란 홀로그램 막이 덮이도록 렌더러 목록과 막의 진하기를 들고 있고, 그리는 일은 TimeFreezeOverlayFeature가 맡음
     /// </summary>
     [DisallowMultipleComponent]
@@ -44,7 +48,7 @@ namespace TeamOdd.TimeControl
 
         private static readonly List<TimeFreezable> enabledFreezables = new();
         private static readonly List<TimeFreezable> overlayTargets = new();
-        private static int worldFreezeCount;
+        private static readonly List<float> worldTimeScales = new(); // 걸려 있는 전체 정지들의 배율, 0이면 정지
 
         private float[] animatorSpeeds;
         private BodyState[] bodyStates;
@@ -56,11 +60,15 @@ namespace TeamOdd.TimeControl
         private bool isWorldExempt;
         private bool clearsExemptOnWorldResume; // 전체 정지가 끝나면 예외를 풀지
 
-        private bool isApplied;      // 지금 실제로 멈춰 있는지
-        private float pausedDuration; // 지금까지 멈춰 있던 시간의 합
-        private float pauseStartTime;
+        private float appliedTimeScale = 1f; // 지금 실제로 적용된 배율, 0이면 멈춰 있음
+        private float pausedDuration; // 지금까지 멈추거나 느려져서 밀린 시간의 합
+        private float pauseStartTime; // 지금 배율이 적용되기 시작한 시각
 
-        public static bool IsWorldFrozen => worldFreezeCount > 0;
+        // 감속도 전체 정지의 한 종류라 감속 중에도 true
+        public static bool IsWorldFrozen => worldTimeScales.Count > 0;
+
+        // 여러 전체 정지가 겹치면 가장 느린 배율을 따름
+        private static float WorldTimeScale => worldTimeScales.Min();
 
         // 시간 정지 막이 조금이라도 덮여 있는 오브젝트, TimeFreezeOverlayFeature가 매 프레임 읽어 그림
         public static IReadOnlyList<TimeFreezable> OverlayTargets => overlayTargets;
@@ -71,12 +79,13 @@ namespace TeamOdd.TimeControl
         // 이 오브젝트가 멈추거나(true) 풀릴 때(false). 이펙트·사운드 등을 붙일 때 사용
         public event Action<bool> FrozenChanged;
 
-        [ShowInInspector, ReadOnly] public bool IsFrozen => isApplied;
+        [ShowInInspector, ReadOnly] public bool IsFrozen => appliedTimeScale == 0f;
+        [ShowInInspector, ReadOnly] public float TimeScale => appliedTimeScale;
 
-        // 멈춰 있는 동안 흐르지 않는 시계
-        public float LocalTime => (isApplied ? pauseStartTime : Time.time) - pausedDuration;
-        public float LocalDeltaTime => isApplied ? 0f : Time.deltaTime;
-        public float LocalFixedDeltaTime => isApplied ? 0f : Time.fixedDeltaTime;
+        // 멈춰 있는 동안 흐르지 않고, 느려져 있는 동안 배율만큼 느리게 흐르는 시계
+        public float LocalTime => Time.time - pausedDuration - (Time.time - pauseStartTime) * (1f - appliedTimeScale);
+        public float LocalDeltaTime => Time.deltaTime * appliedTimeScale;
+        public float LocalFixedDeltaTime => Time.fixedDeltaTime * appliedTimeScale;
 
         // 시간 정지 막이 덮인 정도(0~1), 0이면 없음, 1이면 오브젝트 전체를 덮음
         // 멈추면 아래에서 위로 덮이며 늘고, 풀리면 위에서 아래로 걷히며 줄어듦
@@ -89,14 +98,16 @@ namespace TeamOdd.TimeControl
         {
             get
             {
-                if (isApplied == false) return 0f;
+                if (IsFrozen == false) return 0f;
 
                 float remain = 1f - Mathf.Clamp01((Time.time - pauseStartTime) / overlayGlitchDuration);
                 return remain * remain;
             }
         }
 
-        private bool ShouldFreeze => freezeCount > 0 || (worldFreezeCount > 0 && isWorldExempt == false);
+        // 개별 정지가 우선이고, 전체 정지는 예외가 아닐 때만 받음
+        private float TargetTimeScale => freezeCount > 0 ? 0f
+            : worldTimeScales.Count > 0 && isWorldExempt == false ? WorldTimeScale : 1f;
 
         private void Awake()
         {
@@ -115,18 +126,31 @@ namespace TeamOdd.TimeControl
         private void Update()
         {
             // 덮이다 말고 걷히는 등 방향이 바뀌면, 보이는 높이가 튀지 않도록 새 곡선에서 같은 높이가 나오는 지점부터 이어감
-            if (isOverlayCovering != isApplied)
+            if (isOverlayCovering != IsFrozen)
             {
                 float shown = OverlayProgress;
-                isOverlayCovering = isApplied;
-                overlayProgress = isApplied ? 1f - CubeRoot(1f - shown) : CubeRoot(shown);
+                isOverlayCovering = IsFrozen;
+                overlayProgress = IsFrozen ? 1f - CubeRoot(1f - shown) : CubeRoot(shown);
             }
 
-            float target = isApplied ? 1f : 0f;
+            float target = IsFrozen ? 1f : 0f;
             if (Mathf.Approximately(overlayProgress, target)) return;
 
-            float duration = isApplied ? overlayCoverDuration : overlayUncoverDuration;
+            float duration = IsFrozen ? overlayCoverDuration : overlayUncoverDuration;
             SetOverlayProgress(Mathf.MoveTowards(overlayProgress, target, Time.deltaTime / duration));
+        }
+
+        // 감속 중에는 속도가 배율만큼 줄어 있으므로, 같은 궤적을 느리게 그리도록 중력도 배율의 제곱만큼만 받게 함
+        private void FixedUpdate()
+        {
+            if (IsFrozen || appliedTimeScale >= 1f) return;
+
+            Vector3 extraGravity = Physics.gravity * (appliedTimeScale * appliedTimeScale - 1f);
+            foreach (Rigidbody body in bodies)
+            {
+                if (body == null || body.isKinematic || body.useGravity == false) continue;
+                body.AddForce(extraGravity, ForceMode.Acceleration);
+            }
         }
 
         // 전체 정지 중에 새로 켜지는 오브젝트(플레이어 투척에 부서진 파편 등)는 생성 직후 속도를 받아야 하므로 정지가 끝날 때까지 멈추지 않음
@@ -153,7 +177,7 @@ namespace TeamOdd.TimeControl
         private void OnDisable()
         {
             enabledFreezables.Remove(this);
-            if (isApplied) Apply(false);
+            if (appliedTimeScale != 1f) Apply(1f);
             SetOverlayProgress(0f);
         }
 
@@ -206,10 +230,23 @@ namespace TeamOdd.TimeControl
         // 멈춰서 kinematic이 된 몸체라도 원래 kinematic이었는지를 돌려줌
         public bool IsKinematicIgnoringFreeze(Rigidbody body)
         {
-            if (isApplied == false) return body.isKinematic;
+            if (IsFrozen == false) return body.isKinematic;
 
             int index = Array.IndexOf(bodies, body);
             return index >= 0 ? bodyStates[index].IsKinematic : body.isKinematic;
+        }
+
+        // 멈춘 동안 kinematic으로 고정한 몸체가 풀린 뒤에도 kinematic으로 남게 함(쓰러져 충돌을 없앤 보스 등)
+        public void KeepKinematicAfterUnfreeze(Rigidbody body)
+        {
+            if (IsFrozen == false) return;
+
+            int index = Array.IndexOf(bodies, body);
+            if (index < 0) return;
+
+            bodyStates[index].IsKinematic = true;
+            bodyStates[index].LinearVelocity = Vector3.zero;
+            bodyStates[index].AngularVelocity = Vector3.zero;
         }
 
         // 풀릴 때 멈추기 전 속도로 되돌리지 않고 멈춘 자리에서 정지한 채 다시 시작하게 함
@@ -230,21 +267,26 @@ namespace TeamOdd.TimeControl
             while (LocalTime < endTime) yield return null;
         }
 
-        // 플레이어를 제외한 모든 TimeFreezable을 멈춤. UnfreezeWorld와 짝을 맞춰 부른다
-        public static void FreezeWorld()
+        // 플레이어를 제외한 모든 TimeFreezable을 멈춤. 같은 timeScale로 UnfreezeWorld와 짝을 맞춰 부른다
+        // timeScale을 0보다 크게 주면 멈추지 않고 그 배율로 느리게 흐름(0.5면 절반 빠르기)
+        public static void FreezeWorld(float timeScale = 0f)
         {
-            worldFreezeCount++;
+            worldTimeScales.Add(timeScale);
             RefreshAll();
 
-            if (worldFreezeCount == 1) WorldFrozenChanged?.Invoke(true);
+            if (worldTimeScales.Count == 1) WorldFrozenChanged?.Invoke(true);
         }
 
-        public static void UnfreezeWorld()
+        public static void UnfreezeWorld(float timeScale = 0f)
         {
-            if (worldFreezeCount == 0) return;
+            if (worldTimeScales.Remove(timeScale) == false) return;
 
-            worldFreezeCount--;
-            if (worldFreezeCount > 0) return;
+            // 다른 전체 정지가 남아 있으면 남은 것 중 가장 느린 배율로 맞춤
+            if (worldTimeScales.Count > 0)
+            {
+                RefreshAll();
+                return;
+            }
 
             foreach (TimeFreezable freezable in enabledFreezables)
             {
@@ -266,7 +308,7 @@ namespace TeamOdd.TimeControl
         {
             enabledFreezables.Clear();
             overlayTargets.Clear();
-            worldFreezeCount = 0;
+            worldTimeScales.Clear();
             WorldFrozenChanged = null;
         }
 
@@ -294,37 +336,42 @@ namespace TeamOdd.TimeControl
         {
             if (isActiveAndEnabled == false) return;
 
-            bool shouldFreeze = ShouldFreeze;
-            if (shouldFreeze != isApplied) Apply(shouldFreeze);
+            float timeScale = TargetTimeScale;
+            if (timeScale != appliedTimeScale) Apply(timeScale);
         }
 
-        private void Apply(bool frozen)
+        // timeScale이 1보다 작으면 그 배율로 느리게(0이면 멈춤), 1이면 원래대로 되돌림
+        private void Apply(float timeScale)
         {
-            if (frozen)
+            // 지금 배율로 흐르는 동안 밀린 시간을 쌓아 두고 새 배율로 다시 잼
+            pausedDuration += (Time.time - pauseStartTime) * (1f - appliedTimeScale);
+            pauseStartTime = Time.time;
+
+            bool wasFrozen = IsFrozen;
+            if (timeScale < 1f)
             {
-                pauseStartTime = Time.time;
-                FreezeAnimators();
-                FreezeBodies();
+                FreezeAnimators(timeScale);
+                FreezeBodies(timeScale);
             }
             else
             {
-                pausedDuration += Time.time - pauseStartTime;
                 RestoreAnimators();
                 RestoreBodies();
             }
 
-            isApplied = frozen;
-            FrozenChanged?.Invoke(frozen);
+            appliedTimeScale = timeScale;
+            if (wasFrozen != IsFrozen) FrozenChanged?.Invoke(IsFrozen);
         }
 
-        private void FreezeAnimators()
+        // 평소 빠르기일 때의 속도를 기억해 두고 거기에 배율을 곱함
+        private void FreezeAnimators(float timeScale)
         {
             for (int index = 0; index < animators.Length; index++)
             {
                 if (animators[index] == null) continue;
 
-                animatorSpeeds[index] = animators[index].speed;
-                animators[index].speed = 0f;
+                if (appliedTimeScale == 1f) animatorSpeeds[index] = animators[index].speed;
+                animators[index].speed = animatorSpeeds[index] * timeScale;
             }
         }
 
@@ -335,23 +382,49 @@ namespace TeamOdd.TimeControl
         }
 
         // 원래 kinematic이던 몸체도 다른 코드(DOTween 등)가 움직이지 못하도록 트윈은 함께 멈춤
-        private void FreezeBodies()
+        // 감속이면 kinematic으로 바꾸지 않고 평소 빠르기의 속도와 트윈에 배율을 곱함
+        private void FreezeBodies(float timeScale)
         {
             for (int index = 0; index < bodies.Length; index++)
             {
                 Rigidbody body = bodies[index];
                 if (body == null) continue;
 
-                bodyStates[index] = new BodyState
+                // 지금 속도를 평소 빠르기로 되돌려 기억, 이미 멈춰 있으면 멈출 때 기억한 값을 그대로 씀
+                if (IsFrozen == false)
                 {
-                    IsKinematic = body.isKinematic,
-                    LinearVelocity = body.isKinematic ? Vector3.zero : body.linearVelocity,
-                    AngularVelocity = body.isKinematic ? Vector3.zero : body.angularVelocity,
-                };
+                    bodyStates[index] = new BodyState
+                    {
+                        IsKinematic = body.isKinematic,
+                        LinearVelocity = body.isKinematic ? Vector3.zero : body.linearVelocity / appliedTimeScale,
+                        AngularVelocity = body.isKinematic ? Vector3.zero : body.angularVelocity / appliedTimeScale,
+                    };
+                }
 
-                body.isKinematic = true;
-                DOTween.Pause(body);
-                DOTween.Pause(body.transform);
+                if (timeScale == 0f)
+                {
+                    body.isKinematic = true;
+                    DOTween.Pause(body);
+                    DOTween.Pause(body.transform);
+                    continue;
+                }
+
+                BodyState state = bodyStates[index];
+                if (IsFrozen)
+                {
+                    body.isKinematic = state.IsKinematic;
+                    DOTween.Play(body);
+                    DOTween.Play(body.transform);
+                }
+
+                if (state.IsKinematic == false)
+                {
+                    body.linearVelocity = state.LinearVelocity * timeScale;
+                    body.angularVelocity = state.AngularVelocity * timeScale;
+                }
+
+                ScaleTweens(body, timeScale);
+                ScaleTweens(body.transform, timeScale);
             }
         }
 
@@ -362,18 +435,39 @@ namespace TeamOdd.TimeControl
                 Rigidbody body = bodies[index];
                 if (body == null) continue;
 
-                BodyState state = bodyStates[index];
-                body.isKinematic = state.IsKinematic;
-
-                if (state.IsKinematic == false)
+                if (IsFrozen)
                 {
-                    body.linearVelocity = state.LinearVelocity;
-                    body.angularVelocity = state.AngularVelocity;
+                    BodyState state = bodyStates[index];
+                    body.isKinematic = state.IsKinematic;
+
+                    if (state.IsKinematic == false)
+                    {
+                        body.linearVelocity = state.LinearVelocity;
+                        body.angularVelocity = state.AngularVelocity;
+                    }
+
+                    DOTween.Play(body);
+                    DOTween.Play(body.transform);
+                }
+                else if (body.isKinematic == false)
+                {
+                    // 감속에서 풀리면 지금 속도를 배율로 나눠 평소 빠르기로 되돌림
+                    body.linearVelocity /= appliedTimeScale;
+                    body.angularVelocity /= appliedTimeScale;
                 }
 
-                DOTween.Play(body);
-                DOTween.Play(body.transform);
+                ScaleTweens(body, 1f);
+                ScaleTweens(body.transform, 1f);
             }
+        }
+
+        private static void ScaleTweens(object target, float timeScale)
+        {
+            List<Tween> tweens = DOTween.TweensByTarget(target);
+            if (tweens == null) return;
+
+            foreach (Tween tween in tweens)
+                tween.timeScale = timeScale;
         }
     }
 }

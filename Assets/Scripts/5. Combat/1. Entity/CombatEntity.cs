@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Sirenix.OdinInspector;
 
 namespace TeamOdd.Combat
@@ -11,19 +12,35 @@ namespace TeamOdd.Combat
         [field: Title("Settings")]
         [field: SerializeField, Required] public CombatStats Stats { get; private set; }
 
+        [Tooltip("씬에서 사용할 최대 체력, 0이면 Stats의 값을 사용한다.")]
+        [SerializeField, Min(0)] private int maxHpOverride;
+
         // 기본값(Stats) + 증강칩 등 런타임 보너스. 전투 계산은 이 값을 읽는다
         public RuntimeStats CurrentStats { get; private set; }
 
         private int hp;
         private int prevMaxHp; // 최대 체력이 얼마나 바뀌었는지 알기 위해 보관
+        private int shield;          // 보호막이 남은 피해량 (보호막 스킬)
+        private float shieldEndTime; // 보호막이 사라지는 시각
 
         public int Hp => hp;
+        public int Shield => Time.time < shieldEndTime ? shield : 0;
+
+        // true인 동안 피해를 받지 않는다 (시간 역행으로 되감는 중)
+        public bool IsInvincible { get; set; }
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
+
+        // 사망 연출을 맡는 쪽(보스 사망 상태 등)이 끄면 죽어도 오브젝트를 바로 지우지 않는다.
+        public bool DestroyOnDeath { get; set; } = true;
+
+        // 체력이 0이 된 순간 한 번
+        public event Action Died;
 
         protected virtual void Awake()
         {
             CurrentStats = new RuntimeStats(Stats);
+            if (maxHpOverride > 0) CurrentStats.Add(StatType.MaxHp, maxHpOverride - Stats.MaxHp);
             CurrentStats.Changed += OnStatsChanged;
             hp = CurrentStats.MaxHp;
             prevMaxHp = CurrentStats.MaxHp;
@@ -43,10 +60,20 @@ namespace TeamOdd.Combat
 
         public virtual int TakeDamage(DamageEvent @event)
         {
-            if (IsDead) return 0;
-            
+            if (IsDead || IsInvincible) return 0;
+
             int dmg = Mathf.Max(1, @event.Info.Damage - CurrentStats.Def);
-            
+
+            // 보호막이 있으면 먼저 깎고 남은 만큼만 체력에서 뺀다
+            int absorbed = Mathf.Min(Shield, dmg);
+            shield -= absorbed;
+            dmg -= absorbed;
+            if (dmg == 0)
+            {
+                Debug.Log($"{gameObject.name}'s shield blocks {absorbed} damage!");
+                return 0;
+            }
+
             hp = Mathf.Max(0, hp - dmg);
             Debug.Log($"{gameObject.name} takes {dmg} damage!");
             
@@ -65,12 +92,28 @@ namespace TeamOdd.Combat
             return @event.HealAmount;
         }
 
+        // duration초 동안 피해를 amount까지 막는다. 이미 보호막이 있으면 새 보호막으로 바꾼다 (쌓이지 않음)
+        public void SetShield(int amount, float duration)
+        {
+            shield = amount;
+            shieldEndTime = Time.time + duration;
+        }
+
+        // 체력을 그 값으로 바로 맞춘다 (시간 역행으로 기록해 둔 체력으로 되돌릴 때). 죽어 있으면 바꾸지 않는다
+        public void SetHp(int value)
+        {
+            if (IsDead) return;
+
+            hp = Mathf.Clamp(value, 1, CurrentStats.MaxHp);
+        }
+
         protected void OnDeath()
         {
-            // 임시용
-            Player.Player.Instance.PlayerController.DeathAnimation();
-            //Destroy(gameObject);
             Debug.Log($"{gameObject.name} is dead!");
+            Died?.Invoke();
+
+            // 임시용
+            if (DestroyOnDeath) Destroy(gameObject);
         }
     }
 }

@@ -1,5 +1,6 @@
 using Study.Utilities;
 using TeamOdd.Combat;
+using TeamOdd.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,21 @@ namespace TeamOdd.Superpower
 
         private AugmentationChipInventory inventory;
         private CombatEntity owner;
+        private Player.Player player; // 스킬을 쓸 때 스태미나를 줄인다
+        private PlayerController playerController;
+
+        [Header("Psycho Slam Override")]
+        [Tooltip("이 플레이어의 내려찍기에 씬 전용 피해·무력화 값을 사용한다.")]
+        [SerializeField] private bool overridePsychoSlamDamage;
+        [SerializeField, Min(1)] private int psychoSlamDamage = 120;
+        [SerializeField, Min(0)] private int psychoSlamGroggy = 60;
+
+        public void ApplyPsychoSlamDamageOverride(ref int damage, ref int groggy)
+        {
+            if (overridePsychoSlamDamage == false) return;
+            damage = psychoSlamDamage;
+            groggy = psychoSlamGroggy;
+        }
 
         // 슬롯 UI에 쓸 키 이름 ("1", "Q" 등 키보드 배열에 맞는 이름). 키가 없으면 빈 문자열
         public static string GetKeyLabel(int slot)
@@ -33,25 +49,51 @@ namespace TeamOdd.Superpower
         {
             inventory = GetComponent<AugmentationChipInventory>();
             owner = GetComponent<CombatEntity>();
+            playerController = GetComponent<PlayerController>();
+            player = GetComponent<Player.Player>();
         }
 
         private void Update()
         {
-            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked)
-                return;
-
             int count = Mathf.Min(SlotKeys.Length, AugmentationChipInventory.SkillSlotCount);
+
+            // 커서가 풀리거나 피격·행동 잠금으로 스킬을 쓸 수 없으면 채널링도 멈춘다
+            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked
+                || (playerController != null && (playerController.IsHit || playerController.IsActionLocked)))
+            {
+                for (int i = 0; i < count; i++)
+                    Release(i);
+                return;
+            }
+
             for (int i = 0; i < count; i++)
             {
                 // Key.None은 Keyboard.current[]에서 예외가 나므로 비워 둔 키는 건너뛴다
-                if (SlotKeys[i] != Key.None && SimpleInput.GetKeyDown(SlotKeys[i]))
+                if (SlotKeys[i] == Key.None)
+                    continue;
+
+                if (SimpleInput.GetKeyDown(SlotKeys[i]))
                     Use(i);
+                else if (SimpleInput.GetKeyUp(SlotKeys[i]))
+                    Release(i);
             }
+        }
+
+        // 누르고 있는 동안 계속되는 스킬(채널링)을 멈춘다. 그런 스킬이 아니면 아무 일도 없다
+        private void Release(int slot)
+        {
+            OwnedChip chip = inventory.SkillSlots[slot];
+            if (chip != null)
+                chip.Skill.Release();
         }
 
         private void Use(int slot)
         {
             if (owner != null && owner.IsDead)
+                return;
+
+            // 피격 중이거나 다른 스킬(염동 내려찍기 등)을 시전하는 동안은 쓰지 않는다.
+            if (playerController != null && (playerController.IsHit || playerController.IsActionLocked))
                 return;
 
             OwnedChip chip = inventory.SkillSlots[slot];
@@ -61,8 +103,23 @@ namespace TeamOdd.Superpower
                 return;
             }
 
-            if (chip.Skill.TryUse(new SkillContext(transform, owner, GetAimDirection())) == false && chip.Skill.IsReady == false)
+            if (chip.Skill.IsReady == false)
+            {
                 Debug.Log($"[SkillCaster] {chip.Skill.Name} 쿨타임 {chip.Skill.RemainingCooldown:0.0}초 남음");
+                return;
+            }
+
+            // 슬롯에는 스킬 칩만 들어가므로 Def는 항상 SkillChipDef다
+            float cost = ((SkillChipDef)chip.Def).Cost;
+            if (player != null && player.Stamina < cost)
+            {
+                Debug.Log($"[SkillCaster] {chip.Skill.Name} 스태미나 부족 (필요 {cost}, 남은 양 {player.Stamina:0.0})");
+                return;
+            }
+
+            // 대상이 없는 등으로 스킬이 나가지 않았으면 스태미나도 쓰지 않는다
+            if (chip.Skill.TryUse(new SkillContext(transform, owner, GetAimDirection())) && player != null)
+                player.ConsumeStamina(cost);
         }
 
         // 카메라가 보는 방향을 수평으로 눕힌 것. 카메라가 없으면 플레이어 정면

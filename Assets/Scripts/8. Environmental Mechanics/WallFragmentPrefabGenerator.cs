@@ -13,8 +13,9 @@ namespace TeamOdd.Arena
         private const float MediumDeformationStrength = 1.25f;
         private const string OutputFolder = "Assets/Prefabs/8. Environmental Mechanics/GeneratedFragments";
 
+        // 크기는 범위 안에서 무작위로 정하고, fixedMass가 있으면 형태·크기와 무관하게 같은 질량을 쓴다.
         // shard면 둥근 돌덩이 대신 얇고 각진 금속 조각(UV 0~1)을 만든다.
-        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 diameterRange, float density, string group, bool visualOnly = false, bool shard = false) where T : Component
+        internal static T[] Generate<T>(PsychokinesisObject template, int count, Vector2 diameterRange, float density, string group, bool visualOnly = false, bool shard = false, float fixedMass = 0f) where T : Component
         {
             string folder = OutputFolder + "/" + group;
             Directory.CreateDirectory(folder);
@@ -29,7 +30,7 @@ namespace TeamOdd.Arena
             for (int index = 0; index < count; index++)
             {
                 string name = (group + "Object") + (index + 1).ToString("D2");
-                float diameter = Mathf.Lerp(minimumDiameter, maximumDiameter, (index + 0.5f) / count);
+                float diameter = Random.Range(minimumDiameter, maximumDiameter);
                 Mesh generated = shard
                     ? CreateShardMesh(diameter, index)
                     : CreateFragmentMesh(diameter, index + (group == "Large" ? 20 : 0), maxSubdivisions, deformationStrength);
@@ -59,7 +60,7 @@ namespace TeamOdd.Arena
                     BoxCollider collider = root.GetComponent<BoxCollider>();
                     collider.center = mesh.bounds.center;
                     collider.size = mesh.bounds.size;
-                    root.GetComponent<Rigidbody>().mass = Mathf.Max(0.1f, CalculateVolume(mesh) * density);
+                    root.GetComponent<Rigidbody>().mass = fixedMass > 0f ? fixedMass : Mathf.Max(0.1f, CalculateVolume(mesh) * density);
 
                     if (visualOnly)
                     {
