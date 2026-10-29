@@ -66,6 +66,8 @@ namespace TeamOdd.Boss
         [SerializeField, Range(0f, 1f)] private float finishRayDensity = 0.2f;
         [Tooltip("마무리 일격 가운데 둥근 섬광 크기, 머티리얼의 Core Size 대신 쓴다.")]
         [SerializeField, Range(0f, 0.5f)] private float finishCoreSize = 0.16f;
+        [Tooltip("마무리 일격의 입자가 뿜는 반지름 안을 채우는 정도(0~1), 0이면 둥근 테두리에서만 나오고 1이면 안쪽 곳곳에서 제각각 퍼진다.")]
+        [SerializeField, Range(0f, 1f)] private float finishDebrisSpawnFill = 0.85f;
 
         [Title("Impact")]
         [Tooltip("TeamOdd/Hit Impact 셰이더 머티리얼, 빛줄기 굵기·베기 섬광 세기·타원 정도·몸에 가려지는 정도는 머티리얼에서 조정한다.")]
@@ -222,7 +224,7 @@ namespace TeamOdd.Boss
                 finishImpact.SetLight(impactLightColor, impactLightIntensity * 1.5f, impactLightRange * 1.5f);
                 finishImpact.SetDebris(debrisMaterial, Mathf.RoundToInt(debrisCount * finishDebrisCountMultiplier),
                     debrisSpeed * finishDebrisSpeedMultiplier, debrisLifetime * finishDebrisLifetimeMultiplier,
-                    debrisSize * finishDebrisSizeMultiplier, size * debrisSpawnRadius, debrisTipColor);
+                    debrisSize * finishDebrisSizeMultiplier, size * debrisSpawnRadius, debrisTipColor, finishDebrisSpawnFill);
             }
 
             finishImpact.Play(position, size, finishImpactDuration, impactTowardCamera, finishImpactRollRange);

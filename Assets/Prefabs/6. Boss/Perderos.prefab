@@ -3644,6 +3644,7 @@ MonoBehaviour:
   finishAxisBias: 0.75
   finishRayDensity: 0.2
   finishCoreSize: 0.16
+  finishDebrisSpawnFill: 0.85
   impactMaterial: {fileID: 2100000, guid: a3289664271548d28330e282e8fea8a4, type: 2}
   impactSize: 3
   impactDuration: 0.3

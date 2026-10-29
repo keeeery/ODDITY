@@ -12,6 +12,11 @@ namespace TeamOdd.Combat
         private static readonly int AxisBiasId = Shader.PropertyToID("_AxisBias");
         private static readonly int RayDensityId = Shader.PropertyToID("_RayDensity");
         private static readonly int CoreSizeId = Shader.PropertyToID("_CoreSize");
+        private static readonly int StreakId = Shader.PropertyToID("_Streak");
+
+        // 입자를 빛줄기로 보이게 늘이는 정도, 크기에 곱하는 기본 길이와 속도에 곱하는 추가 길이
+        private const float DebrisLengthScale = 2.5f;
+        private const float DebrisVelocityScale = 0.08f;
 
         private MeshRenderer meshRenderer;
         private MaterialPropertyBlock properties;
@@ -148,8 +153,9 @@ namespace TeamOdd.Combat
         }
 
         // count가 0이거나 material이 없으면 입자를 쓰지 않음, speed·lifetime은 (최소, 최대)
+        // spawnFill: 뿜는 자리가 반지름 안을 채우는 정도(0이면 구 표면에서만 나와 둥근 테두리로 보임, 1이면 안쪽 어디서나 제각각)
         // 입자는 충격보다 오래 남으므로 사각형과 따로 둔다.
-        public void SetDebris(Material material, int count, Vector2 speed, Vector2 lifetime, float particleSize, float spawnRadius, Color tipColor)
+        public void SetDebris(Material material, int count, Vector2 speed, Vector2 lifetime, float particleSize, float spawnRadius, Color tipColor, float spawnFill = 0f)
         {
             debrisCount = material != null ? count : 0;
             if (debrisCount <= 0) return;
@@ -180,7 +186,7 @@ namespace TeamOdd.Combat
             shape.enabled = true;
             shape.shapeType = ParticleSystemShapeType.Sphere;
             shape.radius = Mathf.Max(spawnRadius, 0.01f);
-            shape.radiusThickness = 0f;
+            shape.radiusThickness = Mathf.Clamp01(spawnFill);
 
             ParticleSystem.LimitVelocityOverLifetimeModule drag = debris.limitVelocityOverLifetime;
             drag.enabled = true;
@@ -204,10 +210,16 @@ namespace TeamOdd.Combat
             ParticleSystemRenderer debrisRenderer = debris.GetComponent<ParticleSystemRenderer>();
             debrisRenderer.sharedMaterial = material;
             debrisRenderer.renderMode = ParticleSystemRenderMode.Stretch;
-            debrisRenderer.velocityScale = 0.06f;
-            debrisRenderer.lengthScale = 1.5f;
+            debrisRenderer.velocityScale = DebrisVelocityScale;
+            debrisRenderer.lengthScale = DebrisLengthScale;
             debrisRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             debrisRenderer.receiveShadows = false;
+
+            // 같은 머티리얼을 쓰는 사망 잔재는 다이아몬드로 두고, 피격 입자만 빛줄기로
+            var debrisProperties = new MaterialPropertyBlock();
+            debrisRenderer.GetPropertyBlock(debrisProperties);
+            debrisProperties.SetFloat(StreakId, 1f);
+            debrisRenderer.SetPropertyBlock(debrisProperties);
         }
 
         #endregion
