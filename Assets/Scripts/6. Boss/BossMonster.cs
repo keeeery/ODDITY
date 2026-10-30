@@ -42,6 +42,9 @@ namespace TeamOdd.Boss
 
         private bool isTelegraphPoolMissing;
 
+        // 이 보스의 예고 색, 비어 있으면 AttackTelegraph의 기본 색, 분신처럼 본체와 구분할 때 HumanoidClone이 정함
+        public Color? TelegraphColor { get; set; }
+
         // 부르는 타입 → 실제로 붙어 있는 상태 타입
         private readonly Dictionary<Type, Type> stateTypes = new();
 
@@ -137,6 +140,9 @@ namespace TeamOdd.Boss
         }
 
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
+
+        // 시간 정지·감속을 뺀 보스 동작 빠르기, 애니메이션 신호 사이의 실제 시간은 클립 시간 / MotionSpeed
+        public float MotionSpeed => motionSpeed;
         public bool IsTargetInSight() => IsTargetInRange(sightRange) && Mathf.Abs(SignedAngleToTarget) <= sightHalfAngle;
         
         public void SetIntent(BossMeleePattern intent)
@@ -193,7 +199,10 @@ namespace TeamOdd.Boss
                 return null;
             }
 
+            // 예고가 보스 몸 위에 그려지지 않도록 처음 띄울 때 몸 렌더러를 마스크에 등록
+            TelegraphMaskFeature.Add(gameObject);
             telegraph.Show(shape, origin, warnDuration, clock != null ? clock : Clock);
+            if (TelegraphColor.HasValue) telegraph.SetColor(TelegraphColor.Value);
             return telegraph;
         }
 
