@@ -66,8 +66,6 @@ namespace TeamOdd.Boss
         [SerializeField, Range(0f, 1f)] private float finishRayDensity = 0.2f;
         [Tooltip("마무리 일격 가운데 둥근 섬광 크기, 머티리얼의 Core Size 대신 쓴다.")]
         [SerializeField, Range(0f, 0.5f)] private float finishCoreSize = 0.16f;
-        [Tooltip("마무리 일격의 입자가 뿜는 반지름 안을 채우는 정도(0~1), 0이면 둥근 테두리에서만 나오고 1이면 안쪽 곳곳에서 제각각 퍼진다.")]
-        [SerializeField, Range(0f, 1f)] private float finishDebrisSpawnFill = 0.85f;
 
         [Title("Impact")]
         [Tooltip("TeamOdd/Hit Impact 셰이더 머티리얼, 빛줄기 굵기·베기 섬광 세기·타원 정도·몸에 가려지는 정도는 머티리얼에서 조정한다.")]
@@ -108,6 +106,8 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0.01f)] private float debrisSize = 0.08f;
         [Tooltip("입자가 시작하는 구의 반지름, 충격 크기(Impact Size)에 대한 비율. 클수록 충격 바깥쪽에서 시작한다.")]
         [SerializeField, Range(0f, 0.5f)] private float debrisSpawnRadius = 0.15f;
+        [Tooltip("입자가 뿜는 반지름 안을 채우는 정도(0~1), 0이면 둥근 테두리에서만 나오고 1이면 안쪽 곳곳에서 제각각 퍼진다.")]
+        [SerializeField, Range(0f, 1f)] private float debrisSpawnFill = 0.85f;
         [Tooltip("입자가 사라질 때 물드는 색, 충격 머티리얼의 Tip Color와 맞추면 자연스럽다.")]
         [SerializeField] private Color debrisTipColor = new(0.6f, 0.9f, 1f);
 
@@ -224,7 +224,7 @@ namespace TeamOdd.Boss
                 finishImpact.SetLight(impactLightColor, impactLightIntensity * 1.5f, impactLightRange * 1.5f);
                 finishImpact.SetDebris(debrisMaterial, Mathf.RoundToInt(debrisCount * finishDebrisCountMultiplier),
                     debrisSpeed * finishDebrisSpeedMultiplier, debrisLifetime * finishDebrisLifetimeMultiplier,
-                    debrisSize * finishDebrisSizeMultiplier, size * debrisSpawnRadius, debrisTipColor, finishDebrisSpawnFill);
+                    debrisSize * finishDebrisSizeMultiplier, size * debrisSpawnRadius, debrisTipColor, debrisSpawnFill);
             }
 
             finishImpact.Play(position, size, finishImpactDuration, impactTowardCamera, finishImpactRollRange);
@@ -240,7 +240,7 @@ namespace TeamOdd.Boss
             {
                 result[index] = HitImpact.Create(impactMaterial, $"{name} Hit Impact");
                 result[index].SetLight(impactLightColor, impactLightIntensity, impactLightRange);
-                result[index].SetDebris(debrisMaterial, count, speed, debrisLifetime, debrisSize, size * debrisSpawnRadius, debrisTipColor);
+                result[index].SetDebris(debrisMaterial, count, speed, debrisLifetime, debrisSize, size * debrisSpawnRadius, debrisTipColor, debrisSpawnFill);
             }
             return result;
         }

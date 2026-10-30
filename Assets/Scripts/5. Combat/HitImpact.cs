@@ -155,7 +155,7 @@ namespace TeamOdd.Combat
         // count가 0이거나 material이 없으면 입자를 쓰지 않음, speed·lifetime은 (최소, 최대)
         // spawnFill: 뿜는 자리가 반지름 안을 채우는 정도(0이면 구 표면에서만 나와 둥근 테두리로 보임, 1이면 안쪽 어디서나 제각각)
         // 입자는 충격보다 오래 남으므로 사각형과 따로 둔다.
-        public void SetDebris(Material material, int count, Vector2 speed, Vector2 lifetime, float particleSize, float spawnRadius, Color tipColor, float spawnFill = 0f)
+        public void SetDebris(Material material, int count, Vector2 speed, Vector2 lifetime, float particleSize, float spawnRadius, Color tipColor, float spawnFill)
         {
             debrisCount = material != null ? count : 0;
             if (debrisCount <= 0) return;
