@@ -666,6 +666,14 @@ PrefabInstance:
       propertyPath: MaxEarlyWakeUpCooldown
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: speedCurve.m_Curve.Array.data[0].time
+      value: -0.01962471
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: speedCurve.m_Curve.Array.data[0].value
+      value: 1.1420593
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1422,7 +1430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: waves.Array.data[0].reaction

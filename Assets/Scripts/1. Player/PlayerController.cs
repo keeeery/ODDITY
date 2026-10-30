@@ -41,7 +41,7 @@ namespace TeamOdd.Player
         [Header("구르기")]
         // 커브 Y = 1일 때 속도가 rollDistance / (Roll 길이 * moveEndTime), 실제 거리는 rollDistance * 커브 넓이
         [SerializeField] private float rollDistance = 4f;
-        [SerializeField, Range(0.05f, 1f)] private float moveEndTime = 0.7f; // 이 진행도 이후로는 이동하지 않음
+        [SerializeField, Range(0.05f, 1f)] private float moveEndTime = 0.8f; // 이 진행도 이후로는 이동하지 않음
         // X: Roll 진행도 0 ~ moveEndTime을 0~1로 늘린 값, Y: 속도 배율
         [SerializeField] private AnimationCurve speedCurve = new();
         [SerializeField] private string rollStateName = "Roll";
@@ -453,7 +453,7 @@ namespace TeamOdd.Player
 
         private void CheckRollInput()
         {
-            if (IsActionLocked || IsHit || SimpleInput.GetKeyDown(Key.Space) == false) return;
+            if (isUIClose == false || IsActionLocked || IsHit || SimpleInput.GetKeyDown(Key.Space) == false) return;
 
             OnRollRequested?.Invoke();
         }
@@ -954,7 +954,7 @@ namespace TeamOdd.Player
             heldObject = psychokinesisController.HeldObject;
 
             // 잡기 입력(우클릭) 중이거나 홀딩 중에는 이동 방향 회전 대신 여기서 몸 방향을 정함
-            bool aiming = HoldTarget != null || IsAttackStance || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool aiming = HoldTarget != null || IsAttackStance /*|| SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)*/;
             rotateTowardMove = defaultRotateTowardMove && aiming == false;
 
             float aimYaw = Camera.main.transform.eulerAngles.y;
