@@ -4896,6 +4896,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1254758826}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: playerStatus
       value: 
       objectReference: {fileID: 552869942}
@@ -4952,16 +4956,32 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Collider>k__BackingField
       value: 
       objectReference: {fileID: 552869943}
+    - target: {fileID: 5859343519902430467, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: animator
       value: 
       objectReference: {fileID: 552869944}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: heldObject
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7316520984417302651, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14970,7 +14990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: requiresLineOfSight
