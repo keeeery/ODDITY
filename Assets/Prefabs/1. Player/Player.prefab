@@ -575,7 +575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
-  chipIds: df070000e0070000e1070000e2070000e3070000
+  chipIds: 6109000062090000630900006409000065090000
   grantOnStart: 1
   grantKey: 102
   inventory: {fileID: 288158857127106202}

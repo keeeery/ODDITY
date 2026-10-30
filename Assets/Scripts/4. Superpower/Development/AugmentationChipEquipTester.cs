@@ -12,7 +12,7 @@ namespace TeamOdd.Superpower.Development
     public class AugmentationChipEquipTester : MonoBehaviour
     {
         [Tooltip("장착할 칩의 Id (AugmentationChip.tsv), 스킬 칩은 이 순서대로 빈 스킬 슬롯에 들어간다.")]
-        [SerializeField] private int[] chipIds = { 2006, 2007 };
+        [SerializeField] private int[] chipIds = { 2302, 2102 };
         [Tooltip("비어 있으면 같은 오브젝트에서 찾는다.")]
         [SerializeField] private AugmentationChipInventory inventory;
 

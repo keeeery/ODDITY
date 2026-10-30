@@ -87287,7 +87287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
-  chipIds: d6070000d7070000
+  chipIds: fe08000036080000
   grantOnStart: 1
   grantKey: 102
   inventory: {fileID: 2205336347470601080}
@@ -87303,7 +87303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f57aef2672441a68bdc748a3364b3b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipEquipTester
-  chipIds: d6070000d7070000
+  chipIds: fe08000036080000
   inventory: {fileID: 2205336347470601080}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
