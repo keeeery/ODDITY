@@ -68,8 +68,6 @@ namespace TeamOdd
 
             isManuallyLocked = isManuallyLock;
 
-            /*if (playerController != null) playerController.enabled = locked;
-            if (cameraController != null) cameraController.enabled = locked;*/
             isUIClose = locked;
         }
     }   

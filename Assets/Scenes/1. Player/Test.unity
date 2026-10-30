@@ -79191,7 +79191,7 @@ MonoBehaviour:
   sprintDistance: 0.5
   transitionSpeed: 10
   mouseSensitivity: 2
-  minPitch: -40
+  minPitch: -20
   maxPitch: 70
   minYaw: -40
   maxYaw: 70
