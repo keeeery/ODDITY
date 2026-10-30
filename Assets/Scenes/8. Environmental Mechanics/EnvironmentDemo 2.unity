@@ -36396,6 +36396,7 @@ MonoBehaviour:
   groggyBar: {fileID: 1544739492}
   smoothGroggyBar: 1
   trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
+  occlusionOutlineWidth: 2
 --- !u!225 &916268417
 CanvasGroup:
   m_ObjectHideFlags: 0
