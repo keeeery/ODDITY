@@ -112,12 +112,9 @@ namespace TeamOdd.Superpower
         {
             if (SkillBar != null)
                 SkillBar.Close();
-            // 정비를 마치면 스킬 쿨타임을 모두 초기화한다. 시작할 때 닫힌 채로 부르는 Close는 아직 인벤토리가 없어 건너뛴다
+            // 시작할 때 닫힌 채로 부르는 Close는 아직 인벤토리가 없어 건너뛴다
             if (inventory != null)
-            {
                 inventory.SkillSlotsChanged -= OnSkillSlotsChanged;
-                inventory.ResetAllCooldowns();
-            }
 
             gameObject.SetActive(false);
         }
@@ -346,6 +343,7 @@ namespace TeamOdd.Superpower
             SkillCategory.Attack => "공격",
             SkillCategory.Defense => "방어",
             SkillCategory.Utility => "유틸",
+            SkillCategory.Passive => "패시브",
             _ => "",
         };
 

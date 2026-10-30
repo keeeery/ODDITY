@@ -15,5 +15,5 @@ Id	Name	Description	CellCount	UnitSpriteKey	Category	SkillType	Cooldown	Cost	Par
 2015	두 번째 심장 칩	치명적인 피해를 입을 때마다 최대 체력의 30%로 부활합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	SecondHeart	999999	0	Amount=30
 2016	생명 착취 칩	적에게 피해를 입힐 때마다 최대 체력의 2%를 회복합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	LifeSteal	1	0	Amount=2
 2017	조건 반사 칩	피해를 받으려 할 때마다 자동으로 회피합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	ConditionedReflex	10	0
-2018	정당한 응보 칩	피해를 받을 때마다 공격력이 1% 증가합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	RightfulRevenge	1	0	Amount=1
-2019	아드레날린 과분비 칩	적에게 피해를 입힐 때마다 무작위 스킬 칩의 재사용 대기시간이 1초씩 줄어듭니다.	7	AugmentationChip/ChipUnit_Purple	Passive	AdrenalineHypersecretion	0.5	0	Amount=1
+2018	정당한 보복 칩	피해를 받을 때마다 공격력이 1% 증가합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	RightfulRevenge	1	0	Amount=1
+2019	아드레날린 과분비 칩	적에게 피해를 입힐 때마다 무작위 액티브 스킬 칩의 재사용 대기시간이 1초씩 줄어듭니다.	7	AugmentationChip/ChipUnit_Purple	Passive	AdrenalineHypersecretion	1	0	Amount=1

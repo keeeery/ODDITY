@@ -253,10 +253,15 @@ namespace TeamOdd.Boss
         }
 
         // 무적(구르기, 기상 직후)이 아니면 피격 반응과 피해를 함께 전달, hitCenter는 넉백 방향을 FromHitCenter로 정할 때 기준점
+        // 회피 패시브(조건 반사 칩)가 막으면 둘 다 보내지 않음. 피격 반응이 피해보다 먼저 들어가므로 반응 전에 물어봄
         protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint)
         {
             Player.PlayerController player = Player.Player.Instance.PlayerController;
             if (player.IsInvincible) return;
+
+            CombatEntity playerEntity = player.GetComponent<CombatEntity>();
+            DamageEvent incoming = new DamageEvent(null, playerEntity, new DamageInfo(damage, hitPoint, playerEntity.Collider, reaction));
+            if (playerEntity.Guard != null && playerEntity.Guard.BlockDamage(incoming)) return;
 
             player.ApplyHitReaction(reaction, push.GetDirection(root.transform, hitCenter, Target.position), push,
                 root.transform.position);

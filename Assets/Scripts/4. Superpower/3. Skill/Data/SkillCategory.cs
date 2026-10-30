@@ -7,5 +7,6 @@ namespace TeamOdd.Superpower
         Attack,  // 공격
         Defense, // 방어
         Utility, // 유틸
+        Passive, // 패시브 (키 대신 트리거로 발동)
     }
 }

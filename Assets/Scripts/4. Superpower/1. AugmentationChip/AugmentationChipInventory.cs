@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TeamOdd.Combat;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace TeamOdd.Superpower
 {
@@ -37,6 +38,17 @@ namespace TeamOdd.Superpower
             skillCaster = GetComponent<SkillCaster>();
             foreach (OwnedChip chip in chips)
                 if (chip.Skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
+        }
+
+        // 플레이어는 씬을 넘어 살아 있으므로 한 번 구독하면 모든 씬 전환을 듣는다
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
         // 장착된 스킬 칩만 쿨타임이 돈다. 해제해 둔 칩은 해제한 순간의 쿨타임에서 멈춰 있다
@@ -115,14 +127,19 @@ namespace TeamOdd.Superpower
             }
         }
 
-        // 장착 여부와 상관없이 모든 스킬 칩의 쿨타임을 끝낸다
-        // 칩은 정비소에서만 바꾸므로 정비를 마칠 때(패널을 닫을 때) 부른다. 해제해 둔 칩도 멈춘 쿨타임을 들고 나가지 않게 한다
-        public void ResetAllCooldowns()
+        // 마을에서 아레나로, 아레나에서 마을로 씬이 바뀔 때마다 부른다
+        // 장착 여부와 상관없이 모든 스킬 칩의 쿨타임을 끝내고, 패시브가 아레나에서 쌓은 효과를 지운다
+        // 해제해 둔 칩도 멈춘 쿨타임을 들고 다음 씬으로 가지 않게 한다
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             foreach (OwnedChip chip in chips)
             {
-                if (chip.Skill != null)
-                    chip.Skill.ResetCooldown();
+                if (chip.Skill == null)
+                    continue;
+
+                chip.Skill.ResetCooldown();
+                if (chip.Skill is PassiveSkill passive)
+                    passive.ResetStacks();
             }
         }
 

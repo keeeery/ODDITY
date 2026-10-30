@@ -8,7 +8,8 @@ namespace TeamOdd.Superpower
     public enum ChipSortKey { ID, Name, StatType, Value, Size }
 
     // 트레이에 보여줄 칩 묶음. 스킬 칩은 분류(SkillCategory)별, 능력치 칩은 하나로 묶는다
-    public enum ChipFilter { Attack, Defense, Utility, Stat }
+    // 프리팹에 번호로 저장되므로 새 값은 맨 뒤에 붙인다
+    public enum ChipFilter { Attack, Defense, Utility, Stat, Passive }
 
     /// <summary>
     /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
@@ -164,6 +165,7 @@ namespace TeamOdd.Superpower
                 SkillCategory.Attack => ChipFilter.Attack,
                 SkillCategory.Defense => ChipFilter.Defense,
                 SkillCategory.Utility => ChipFilter.Utility,
+                SkillCategory.Passive => ChipFilter.Passive,
                 _ => throw new ArgumentOutOfRangeException(nameof(def), skill.Category, "필터가 없는 스킬 분류입니다."),
             };
         }
@@ -207,7 +209,7 @@ namespace TeamOdd.Superpower
             if (x is StatChipDef statX && y is StatChipDef statY)
                 return statX.StatType.CompareTo(statY.StatType);
 
-            // 스킬 칩은 공격/방어/유틸로 먼저 묶고, 같은 분류 안에서 스킬 종류 순
+            // 스킬 칩은 공격/방어/유틸/패시브로 먼저 묶고, 같은 분류 안에서 스킬 종류 순
             if (x is SkillChipDef skillX && y is SkillChipDef skillY)
             {
                 result = skillX.Category.CompareTo(skillY.Category);
