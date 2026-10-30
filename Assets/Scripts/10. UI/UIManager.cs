@@ -5,6 +5,7 @@ using TeamOdd.CameraMove;
 using TeamOdd.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace TeamOdd
 {
@@ -19,6 +20,9 @@ namespace TeamOdd
         [SerializeField] private GameObject missionUI;
         [SerializeField] private GameObject skillUI;
         [SerializeField] private GameObject battleUI;
+        [SerializeField] private bool isUIClose = true;
+
+        public bool IsUIClose => isUIClose;
 
         private void Start()
         {
@@ -64,8 +68,9 @@ namespace TeamOdd
 
             isManuallyLocked = isManuallyLock;
 
-            if (playerController != null) playerController.enabled = locked;
-            if (cameraController != null) cameraController.enabled = locked;
+            /*if (playerController != null) playerController.enabled = locked;
+            if (cameraController != null) cameraController.enabled = locked;*/
+            isUIClose = locked;
         }
     }   
 }

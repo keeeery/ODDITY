@@ -179,7 +179,7 @@ namespace TeamOdd.CameraMove
 
         private void LateUpdate()
         {
-            if (target == null) return;
+            if (target == null || UIManager.Instance.IsUIClose == false) return;
 
             UpdateRotation();
             Vector3 basePosition = UpdatePosition();
