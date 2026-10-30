@@ -28,6 +28,10 @@ namespace TeamOdd.Combat
 
         // true인 동안 피해를 받지 않는다 (시간 역행으로 되감는 중)
         public bool IsInvincible { get; set; }
+
+        // 피해를 체력에 적용하기 전에 물어볼 곳. 없으면 null (지금은 플레이어의 패시브 칩 실행기만 넣는다)
+        public IDamageGuard Guard { get; set; }
+
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
 
@@ -61,6 +65,7 @@ namespace TeamOdd.Combat
         public virtual int TakeDamage(DamageEvent @event)
         {
             if (IsDead || IsInvincible) return 0;
+            if (Guard != null && Guard.BlockDamage(@event)) return 0;
 
             int dmg = Mathf.Max(1, @event.Info.Damage - CurrentStats.Def);
 
@@ -73,6 +78,9 @@ namespace TeamOdd.Combat
                 Debug.Log($"{gameObject.name}'s shield blocks {absorbed} damage!");
                 return 0;
             }
+
+            // 죽을 피해라도 Guard가 막으면 체력은 Guard가 맞춘 값 그대로 둔다
+            if (hp - dmg <= 0 && Guard != null && Guard.PreventDeath()) return dmg;
 
             hp = Mathf.Max(0, hp - dmg);
             Debug.Log($"{gameObject.name} takes {dmg} damage!");

@@ -1,0 +1,32 @@
+using System;
+using TeamOdd.Combat;
+
+namespace TeamOdd
+{
+    // 휴머노이드 보스의 피격 대상, 받은 피해로 체력이 바뀌면 알림 (페이즈 전환·체력 조건 패턴이 구독)
+    // 몬스터 레지스트리 등록은 SampleCombatMonster와 같음
+    public class HumanoidBossCombatEntity : CombatEntity
+    {
+        // (현재 체력, 최대 체력)
+        public event Action<int, int> OnHpChanged;
+
+        public float HpRatio => CurrentStats.MaxHp > 0 ? (float)Hp / CurrentStats.MaxHp : 0f;
+
+        // 가드·베기 반응 중에는 날아온 물체가 먼저 몸에 닿아도 피해를 받지 않음 (0을 돌려주면 물체도 부서지지 않고 통과)
+        public bool IsGuarding { get; set; }
+
+        private void OnEnable() => MonsterRegistry.RegisterMonster(Collider, this);
+
+        private void OnDisable() => MonsterRegistry.UnregisterMonster(Collider);
+
+        public override int TakeDamage(DamageEvent @event)
+        {
+            if (IsGuarding) return 0;
+
+            int damage = base.TakeDamage(@event);
+            if (damage > 0) OnHpChanged?.Invoke(Hp, CurrentStats.MaxHp);
+
+            return damage;
+        }
+    }
+}

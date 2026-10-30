@@ -260,6 +260,13 @@ namespace TeamOdd.Boss
                 else if (right == null && bone.name.EndsWith("R Foot")) right = bone;
             }
 
+            // 휴머노이드 보스는 뼈 이름 규칙이 달라 아바타의 발 뼈를 씀
+            if ((left == null || right == null) && TryGetComponent(out Animator animator) && animator.isHuman)
+            {
+                left = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                right = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+            }
+
             if (left == null || right == null)
                 Debug.LogWarning($"[{nameof(BossFootDust)}] {name}에서 발 뼈(L Foot·R Foot)를 찾지 못했습니다. Feet를 직접 지정하세요.", this);
 

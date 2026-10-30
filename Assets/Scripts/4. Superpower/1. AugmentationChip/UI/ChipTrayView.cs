@@ -5,11 +5,17 @@ using UnityEngine.UI;
 
 namespace TeamOdd.Superpower
 {
-    public enum ChipSortKey { ID, Name, StatType, Value, Size }
+    // 정렬 버튼의 기준. 프리팹에 번호로 저장되지만 버튼 구성과 순서는 Build Layout이 다시 맞춘다
+    public enum ChipSortKey { Recent, Type, Size, Name }
+
+    // 트레이에 보여줄 칩 묶음. 스킬 칩은 분류(SkillCategory)별, 능력치 칩은 하나로 묶는다
+    // 프리팹에 번호로 저장되므로 새 값은 맨 뒤에 붙인다
+    public enum ChipFilter { Attack, Defense, Utility, Stat, Passive }
 
     /// <summary>
     /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
-    /// 트레이 크기와 정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
+    /// 필터 토글은 모두 꺼진 채 시작하고 그때는 모든 칩을 보여준다. 하나라도 켜면 켜진 묶음의 칩만 보여준다.
+    /// 트레이 크기와 필터 토글/정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
     /// </summary>
     public class ChipTrayView : MonoBehaviour
     {
@@ -22,13 +28,22 @@ namespace TeamOdd.Superpower
             public string label;
         }
 
+        [Serializable]
+        private class FilterToggle
+        {
+            public ChipFilter filter;
+            public Toggle toggle;
+            public Text text;
+        }
+
         [SerializeField] private RectTransform content;
-        [SerializeField] private SortButton[] sortButtons;
+        [SerializeField] private FilterToggle[] filterToggles; // 빠진 필터는 Build Layout이 만든다
+        [SerializeField] private SortButton[] sortButtons; // 기준과 순서는 Build Layout이 맞춘다
         // content 안쪽 여백이자 칩 사이 간격
-        [SerializeField] private float chipSpacing = 12f;
+        [SerializeField] private float chipSpacing = 36f;
 
         private readonly List<ChipItemView> chips = new();
-        private ChipSortKey sortKey = ChipSortKey.ID;
+        private ChipSortKey sortKey = ChipSortKey.Recent; // 방금 얻은 칩을 찾기 쉽게 최신순으로 시작한다
         private bool sortAscending = true;
 
         public RectTransform Content => content;
@@ -38,6 +53,9 @@ namespace TeamOdd.Superpower
         public int SortButtonCount => sortButtons.Length;
         public RectTransform GetSortButtonRect(int index) => (RectTransform)sortButtons[index].button.transform;
         public RectTransform GetSortLabelRect(int index) => sortButtons[index].text.rectTransform;
+        public int FilterToggleCount => filterToggles.Length;
+        public Toggle GetFilterToggle(int index) => filterToggles[index].toggle;
+        public RectTransform GetFilterLabelRect(int index) => filterToggles[index].text.rectTransform;
 
         private void Awake()
         {
@@ -45,6 +63,14 @@ namespace TeamOdd.Superpower
             {
                 ChipSortKey key = sortButton.key;
                 sortButton.button.onClick.AddListener(() => OnClickSort(key));
+            }
+
+            // 필터는 모두 꺼진 채(모든 칩 보기) 시작한다. 프리팹에 켜진 채 저장돼 있어도 여기서 끈다
+            // 토글을 켜고 끌 때마다 보이는 칩을 다시 배치한다
+            foreach (FilterToggle filterToggle in filterToggles)
+            {
+                filterToggle.toggle.isOn = false;
+                filterToggle.toggle.onValueChanged.AddListener(OnFilterChanged);
             }
 
             RefreshSortLabels();
@@ -62,6 +88,7 @@ namespace TeamOdd.Superpower
         public void Clear() => chips.Clear();
 
         // 트레이에 남아있는 칩을 정렬해서 왼쪽부터 채우고, 폭을 넘으면 다음 줄로 내린다
+        // 필터에 걸러진 칩은 트레이 목록에 남겨 둔 채 숨긴다
         public void Layout()
         {
             chips.Sort(Compare);
@@ -71,6 +98,11 @@ namespace TeamOdd.Superpower
             float rowHeight = 0f;
             foreach (ChipItemView chip in chips)
             {
+                bool shown = IsShown(chip.Owned.Def);
+                chip.gameObject.SetActive(shown);
+                if (shown == false)
+                    continue;
+
                 float chipWidth = ChipGridMetrics.Length(chip.Width);
                 float chipHeight = ChipGridMetrics.Length(chip.Height);
 
@@ -101,6 +133,44 @@ namespace TeamOdd.Superpower
             Layout();
         }
 
+        private void OnFilterChanged(bool isOn) => Layout();
+
+        // 켜진 토글이 하나도 없으면 필터가 없는 것과 같으므로 모든 칩을 보여준다
+        // 하나라도 켜져 있으면 켜진 묶음의 칩만 보여준다
+        private bool IsShown(AugmentationChipDef def)
+        {
+            ChipFilter filter = GetFilter(def);
+            bool anyOn = false;
+            bool ownOn = false;
+            foreach (FilterToggle filterToggle in filterToggles)
+            {
+                if (filterToggle.toggle.isOn == false)
+                    continue;
+
+                anyOn = true;
+                if (filterToggle.filter == filter)
+                    ownOn = true;
+            }
+
+            return anyOn == false || ownOn;
+        }
+
+        private static ChipFilter GetFilter(AugmentationChipDef def)
+        {
+            if (def is StatChipDef)
+                return ChipFilter.Stat;
+
+            SkillChipDef skill = (SkillChipDef)def;
+            return skill.Category switch
+            {
+                SkillCategory.Attack => ChipFilter.Attack,
+                SkillCategory.Defense => ChipFilter.Defense,
+                SkillCategory.Utility => ChipFilter.Utility,
+                SkillCategory.Passive => ChipFilter.Passive,
+                _ => throw new ArgumentOutOfRangeException(nameof(def), skill.Category, "필터가 없는 스킬 분류입니다."),
+            };
+        }
+
         private void RefreshSortLabels()
         {
             foreach (SortButton sortButton in sortButtons)
@@ -116,10 +186,11 @@ namespace TeamOdd.Superpower
             AugmentationChipDef y = b.Owned.Def;
             int result = sortKey switch
             {
-                ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
-                ChipSortKey.StatType => CompareType(x, y),
-                ChipSortKey.Value => CompareValue(x, y),
+                // 최신순은 ▲(오름차순)일 때 나중에 얻은 칩이 앞에 온다
+                ChipSortKey.Recent => b.Owned.AcquiredOrder.CompareTo(a.Owned.AcquiredOrder),
+                ChipSortKey.Type => CompareType(x, y),
                 ChipSortKey.Size => x.CellCount.CompareTo(y.CellCount),
+                ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
                 _ => 0,
             };
 
@@ -130,7 +201,7 @@ namespace TeamOdd.Superpower
             return sortAscending ? result : -result;
         }
 
-        // 스탯/수치 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
+        // 종류 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
         private static int CompareType(AugmentationChipDef x, AugmentationChipDef y)
         {
             int result = KindOrder(x).CompareTo(KindOrder(y));
@@ -140,7 +211,7 @@ namespace TeamOdd.Superpower
             if (x is StatChipDef statX && y is StatChipDef statY)
                 return statX.StatType.CompareTo(statY.StatType);
 
-            // 스킬 칩은 공격/방어/유틸로 먼저 묶고, 같은 분류 안에서 스킬 종류 순
+            // 스킬 칩은 공격/방어/유틸/패시브로 먼저 묶고, 같은 분류 안에서 스킬 종류 순
             if (x is SkillChipDef skillX && y is SkillChipDef skillY)
             {
                 result = skillX.Category.CompareTo(skillY.Category);
@@ -149,22 +220,6 @@ namespace TeamOdd.Superpower
 
                 return skillX.SkillType.CompareTo(skillY.SkillType);
             }
-
-            return 0;
-        }
-
-        // 스킬 칩은 수치 대신 쿨타임으로 비교한다
-        private static int CompareValue(AugmentationChipDef x, AugmentationChipDef y)
-        {
-            int result = KindOrder(x).CompareTo(KindOrder(y));
-            if (result != 0)
-                return result;
-
-            if (x is StatChipDef statX && y is StatChipDef statY)
-                return statX.Value.CompareTo(statY.Value);
-
-            if (x is SkillChipDef skillX && y is SkillChipDef skillY)
-                return skillX.Cooldown.CompareTo(skillY.Cooldown);
 
             return 0;
         }

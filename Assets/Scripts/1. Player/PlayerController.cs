@@ -231,6 +231,8 @@ namespace TeamOdd.Player
         private static float PlayerDeltaTime => Time.deltaTime * SlowMotion.PlayerRelativeScale;
         private float appliedAnimatorTimeScale = 1f; // 지금 animator.speed에 곱해 둔 플레이어 배율
         private float playerTime; // 플레이어 배율로 흐르는 시계, 공격 자세·무적처럼 시간을 재는 곳에 Time.time 대신 씀
+        
+        private bool isUIClose => UIManager.Instance.IsUIClose;
 
         private void Awake()
         {
@@ -305,6 +307,8 @@ namespace TeamOdd.Player
             FaceSidestep();
             CheckRollInput();
 
+            Debug.Log("UI Close pc"+isUIClose);
+            
             heldObject = psychokinesisController.HeldObject;
             animator.SetLayerWeight(holdLayer, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
         }
@@ -320,7 +324,7 @@ namespace TeamOdd.Player
 
             Vector2 inputRaw = ReadMoveInput();
             
-            IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed);
+            IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed) && isUIClose;
 
             moveX = SmoothAxis(moveX, inputRaw.x);
             moveZ = SmoothAxis(moveZ, inputRaw.y);
@@ -357,14 +361,9 @@ namespace TeamOdd.Player
             totalMove += slideOffDirection * slideOffSpeed;
             slideOffDirection = Vector3.zero;
 
-            controller.Move(totalMove * PlayerDeltaTime);
+            if (isUIClose) controller.Move(totalMove * PlayerDeltaTime);
 
-            bool isMove = inputRaw != Vector2.zero;
-
-            animator.SetBool(Walk, isMove);
-            animator.SetBool(Run, IsSprinting);
-
-            if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
+            if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f && isUIClose)
             {
                 Quaternion targetRotation =
                     heldObject != null
@@ -386,7 +385,7 @@ namespace TeamOdd.Player
 
             // 걷기·달리기가 막혀 있으면 걷는 모션도 내지 않는다. 달리기는 막혀 있으면 IsSprinting이 이미 false
             // 보스 몸에서 비켜서는 동안은 미끄러져 보이지 않게 걷기 모션을 냄
-            bool isMove = (inputRaw != Vector2.zero && IsMoveBlocked == false) || sidestepDirection != Vector3.zero;
+            bool isMove = (inputRaw != Vector2.zero && IsMoveBlocked == false && isUIClose) || sidestepDirection != Vector3.zero;
             bool isRun = IsSprinting;
 
             animator.SetBool(Walk, isMove);

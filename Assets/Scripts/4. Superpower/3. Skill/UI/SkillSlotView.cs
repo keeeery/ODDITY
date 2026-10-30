@@ -14,6 +14,8 @@ namespace TeamOdd.Superpower
     {
         // 런타임에 AddComponent로 붙이므로 인스펙터 값 대신 상수로 둔다
         private const string FillSpritePath = "WhiteSquare"; // Filled 이미지는 스프라이트가 있어야 채워진다 (PlayerHUD와 같은 스프라이트)
+        // 여백과 글자 크기는 높이 BaseHeight 슬롯 기준이다. HUD 슬롯은 이 높이 그대로고, 증강칩 패널 슬롯은 더 커서 같은 비율로 키운다
+        private const float BaseHeight = 56f;
         private const float Padding = 6f;
         private static readonly Color BackgroundColor = new(0.12f, 0.13f, 0.16f, 0.9f);
         private static readonly Color HighlightColor = new(0.30f, 0.75f, 0.45f, 0.9f);
@@ -55,9 +57,12 @@ namespace TeamOdd.Superpower
             background.color = BackgroundColor;
             background.raycastTarget = interactive;
 
+            float scale = size.y / BaseHeight;
+            float padding = Padding * scale;
+
             // 아이콘은 슬롯 높이에 맞춘 정사각형으로 왼쪽에 둔다
-            float iconSize = size.y - Padding * 2f;
-            Vector2 iconPosition = new Vector2(Padding, -Padding);
+            float iconSize = size.y - padding * 2f;
+            Vector2 iconPosition = new Vector2(padding, -padding);
             icon = CreateImage("Icon", iconPosition, new Vector2(iconSize, iconSize));
 
             // 쿨타임은 아이콘 위를 어둡게 덮고 남은 비율만큼 위에서부터 줄어든다
@@ -68,14 +73,14 @@ namespace TeamOdd.Superpower
             cooldownFill.fillMethod = Image.FillMethod.Vertical;
             cooldownFill.fillOrigin = (int)Image.OriginVertical.Bottom;
 
-            cooldownText = CreateText("CooldownText", font, iconPosition, new Vector2(iconSize, iconSize), 16, TextAnchor.MiddleCenter);
-            Text keyLabel = CreateText("Key", font, new Vector2(Padding + 2f, -Padding), new Vector2(20f, 20f), 14, TextAnchor.UpperLeft);
+            cooldownText = CreateText("CooldownText", font, iconPosition, new Vector2(iconSize, iconSize), Mathf.RoundToInt(16 * scale), TextAnchor.MiddleCenter);
+            Text keyLabel = CreateText("Key", font, new Vector2(padding + 2f * scale, -padding), new Vector2(20f, 20f) * scale, Mathf.RoundToInt(14 * scale), TextAnchor.UpperLeft);
             keyLabel.text = SkillCaster.GetKeyLabel(Index);
             keyLabel.fontStyle = FontStyle.Bold;
 
             // 스킬 칩 아이콘은 지금 모두 같은 보라색 칸이라 아이콘 오른쪽에 칩 이름을 써야 구분된다
-            float nameX = Padding + iconSize + Padding;
-            nameLabel = CreateText("Name", font, new Vector2(nameX, -Padding), new Vector2(size.x - nameX - Padding, iconSize), 13, TextAnchor.MiddleLeft);
+            float nameX = padding + iconSize + padding;
+            nameLabel = CreateText("Name", font, new Vector2(nameX, -padding), new Vector2(size.x - nameX - padding, iconSize), Mathf.RoundToInt(13 * scale), TextAnchor.MiddleLeft);
         }
 
         // 슬롯에 든 칩을 그린다. null이면 빈 슬롯

@@ -36,19 +36,16 @@ namespace TeamOdd.Superpower
         private Vector2 dragOffset; // 드래그 중인 칩 위치 - 포인터 위치
         // 그리드에서 들어 올린 스킬 칩의 원래 슬롯. 그리드 안에서 자리만 옮기면 같은 번호로 돌려놓는다. 없으면 -1
         private int liftedSkillSlot = -1;
+        // 드래그 중인 칩을 그리드에서 들어 올렸는지. 드래그 중에 패널을 닫으면 원래 자리에 다시 장착한다
+        private bool liftedFromGrid;
         // 회전할 때 포인터 위치를 다시 읽기 위해 보관
         // PointerEventData는 입력 모듈이 버튼끼리 돌려쓰므로 이벤트 밖에서 읽으면 안 되고, 위치만 복사해 둔다
         private Vector2 pointerPosition;
 
         public bool IsOpen => gameObject.activeSelf;
 
-        // 칩이나 스킬 슬롯을 드래그 중인지. 이때 닫거나 오른쪽 클릭으로 장착을 바꾸면 들고 있는 것과 꼬인다
+        // 칩이나 스킬 슬롯을 드래그 중인지. 이때 오른쪽 클릭으로 장착을 바꾸면 들고 있는 것과 꼬인다
         public bool IsDragging => dragging != null || (SkillBar != null && SkillBar.IsDragging);
-
-        private void Awake()
-        {
-            Close();
-        }
 
         // 패널이 꺼진 채로 Close/Open이 먼저 불릴 수 있으므로 Awake에 기대지 않고 쓸 때 찾는다
         private SkillSlotBarView SkillBar
@@ -107,17 +104,15 @@ namespace TeamOdd.Superpower
             gameObject.SetActive(true);
         }
 
-        // 드래그 중에 닫으면 칩이 루트에 붙은 채 남으므로 여는 쪽이 IsDragging을 확인하고 부른다
+        // 드래그 중에 닫아도 된다. 들고 있던 칩과 그리드 미리보기는 CancelDrag가 정리한다
         public void Close()
         {
+            CancelDrag();
             if (SkillBar != null)
                 SkillBar.Close();
-            // 정비를 마치면 스킬 쿨타임을 모두 초기화한다. 시작할 때 닫힌 채로 부르는 Close는 아직 인벤토리가 없어 건너뛴다
+            // 시작할 때 닫힌 채로 부르는 Close는 아직 인벤토리가 없어 건너뛴다
             if (inventory != null)
-            {
                 inventory.SkillSlotsChanged -= OnSkillSlotsChanged;
-                inventory.ResetAllCooldowns();
-            }
 
             gameObject.SetActive(false);
         }
@@ -237,9 +232,10 @@ namespace TeamOdd.Superpower
             dragging = chip;
             pointerPosition = eventData.position;
             liftedSkillSlot = -1;
+            liftedFromGrid = chip.Owned.IsEquipped;
 
             // 그리드에서 들어올리면 장착 해제. 스킬 칩이면 해제하기 전에 번호를 기억해 둔다
-            if (chip.Owned.IsEquipped)
+            if (liftedFromGrid)
             {
                 liftedSkillSlot = inventory.GetSkillSlot(chip.Owned);
                 Unequip(chip);
@@ -269,6 +265,7 @@ namespace TeamOdd.Superpower
         private void OnEndDrag(ChipItemView chip, PointerEventData eventData)
         {
             dragging = null;
+            liftedFromGrid = false;
             grid.ClearPreview();
 
             // 그리드에 올리면 장착, 아니면 트레이로 돌아간다
@@ -306,6 +303,26 @@ namespace TeamOdd.Superpower
             dragOffset += delta;
 
             ShowPreview(chip);
+        }
+
+        // 패널이 꺼지면 OnEndDrag가 오지 않으므로 닫을 때 드래그를 여기서 정리한다
+        // 그리드 미리보기를 지우고, 그리드에서 들어 올린 칩은 원래 자리와 방향으로 다시 장착한다
+        // 칩 화면은 다음에 열 때 인벤토리 기준으로 다시 그리므로 장착 기록만 되돌리면 된다
+        private void CancelDrag()
+        {
+            if (dragging == null)
+                return;
+
+            grid.ClearPreview();
+            if (liftedFromGrid)
+            {
+                OwnedChip owned = dragging.Owned;
+                inventory.Equip(owned, owned.Origin, owned.Rotation, liftedSkillSlot);
+            }
+
+            dragging = null;
+            liftedFromGrid = false;
+            liftedSkillSlot = -1;
         }
 
         // 스킬 슬롯이 가득 차 장착할 수 없는 칩은 빈 자리 위에서도 놓을 수 없는 색으로 보여준다
@@ -346,6 +363,7 @@ namespace TeamOdd.Superpower
             SkillCategory.Attack => "공격",
             SkillCategory.Defense => "방어",
             SkillCategory.Utility => "유틸",
+            SkillCategory.Passive => "패시브",
             _ => "",
         };
 

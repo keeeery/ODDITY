@@ -145,7 +145,7 @@ namespace TeamOdd.Boss
         private void HandleDied()
         {
             StateMachine.ClearReservedState();
-            StateMachine.ChangeState(typeof(BossDeathState), true);
+            root.ChangeBossState(typeof(BossDeathState), true);
         }
 
         private void PlayFinishingBlow()

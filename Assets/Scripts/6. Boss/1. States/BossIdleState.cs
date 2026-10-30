@@ -30,8 +30,11 @@ namespace TeamOdd.Boss
         protected override void OnEnter()
         {
             // 공격을 끝내고 Idle로 진입 시에만 후딜 적용
-            thinkTime = Clock.LocalTime + (executed != null ? executed.AppliedRecovery : 0f);
+            float recovery = executed != null ? GetRecovery(executed) : 0f;
+            thinkTime = Clock.LocalTime + recovery;
             executed = null;
+
+            if (recovery > 0f) OnRecoveryStarted(recovery);
         }
 
         protected override void OnUpdate()
@@ -45,6 +48,21 @@ namespace TeamOdd.Boss
 
         // 끊긴 패턴의 후딜을 다시 시작한 Idle에 적용하지 않음
         public override void ResetMemory() => executed = null;
+
+        // 공격 후딜을 기다리기 시작할 때 불림, 후딜 동안 다른 행동(스트레이프 등)을 하는 보스가 재정의
+        protected virtual void OnRecoveryStarted(float recovery) { }
+
+        // 페이즈에 따라 후딜을 줄이는 보스가 재정의
+        protected virtual float GetRecovery(BossMeleePattern pattern) => pattern.AppliedRecovery;
+
+        // 페이즈가 바뀌어 고를 패턴 후보가 늘어날 때 사용
+        protected void AddMelees(BossMeleePattern[] added)
+        {
+            BossMeleePattern[] merged = new BossMeleePattern[melees.Length + added.Length];
+            melees.CopyTo(merged, 0);
+            added.CopyTo(merged, melees.Length);
+            melees = merged;
+        }
 
         private void Think()
         {
@@ -203,14 +221,15 @@ namespace TeamOdd.Boss
             return true;
         }
 
-        private void ChangeState(Type nextState)
+        // 다음 상태를 바꿔 들어가는 보스(돌면서 바로 출발 등)가 재정의
+        protected virtual void ChangeState(Type nextState)
         {
             isChasing = nextState == typeof(BossChaseState);
 
             if (isChasing == false)
                 Animator.SetBool(BossAnimParams.IS_CHASING, false);
             
-            StateMachine.ChangeState(nextState);
+            root.ChangeBossState(nextState);
         }
     }
 }

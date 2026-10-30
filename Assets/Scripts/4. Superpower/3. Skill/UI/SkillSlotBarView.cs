@@ -13,7 +13,7 @@ namespace TeamOdd.Superpower
     /// </summary>
     public class SkillSlotBarView : MonoBehaviour
     {
-        [SerializeField] private float slotGap = 8f;
+        [SerializeField] private float slotGap = 24f;
 
         private readonly List<SkillSlotView> slots = new();
         private AugmentationChipInventory inventory;

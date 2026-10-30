@@ -16,11 +16,15 @@ namespace TeamOdd.Superpower
     {
         // 런타임에 AddComponent로 붙이므로 인스펙터 값 대신 상수로 둔다
         private static readonly Color OutlineColor = Color.white;
-        private const float OutlineThickness = 3f;
+        private const float OutlineThickness = 9f;
+        private static readonly Color NewBadgeColor = new Color(1f, 0.8f, 0.1f);
+        private static readonly Vector2 NewBadgeSize = new Vector2(108f, 48f);
+        private static readonly Vector2 NewBadgeOffset = new Vector2(12f, -12f); // 첫 칸 좌상단에서 외곽선 안쪽으로
 
         private readonly List<RectTransform> units = new();
         private RectTransform outlineRoot;
         private RectTransform label;
+        private RectTransform newBadge; // 아직 확인하지 않은 칩에만 있다. 확인하면 지우고 null
 
         public OwnedChip Owned { get; private set; }
         public RectTransform Rect { get; private set; }
@@ -81,13 +85,50 @@ namespace TeamOdd.Superpower
 
             Text text = label.gameObject.AddComponent<Text>();
             text.font = font;
-            text.fontSize = 12;
+            text.fontSize = 36;
             text.alignment = TextAnchor.MiddleCenter;
             text.color = Color.black;
             text.text = def.Name;
             text.raycastTarget = false;
 
+            if (Owned.IsNew)
+                BuildNewBadge(font);
+
             RefreshShape();
+        }
+
+        // 첫 칸 좌상단에 노란 바탕의 "NEW" 표시를 붙인다
+        private void BuildNewBadge(Font font)
+        {
+            newBadge = CreateRect("NewBadge", transform);
+            newBadge.sizeDelta = NewBadgeSize;
+
+            Image background = newBadge.gameObject.AddComponent<Image>();
+            background.color = NewBadgeColor;
+            background.raycastTarget = false;
+
+            RectTransform textRect = CreateRect("Text", newBadge);
+            textRect.sizeDelta = NewBadgeSize;
+
+            Text text = textRect.gameObject.AddComponent<Text>();
+            text.font = font;
+            text.fontSize = 32;
+            text.fontStyle = FontStyle.Bold;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = Color.black;
+            text.text = "NEW";
+            text.raycastTarget = false;
+        }
+
+        // 마우스를 올리면 확인한 것으로 보고 NEW 표시를 지운다. 집거나 우클릭하기 전에도 항상 먼저 마우스가 올라간다
+        private void MarkSeen()
+        {
+            if (Owned.IsNew == false)
+                return;
+
+            Owned.IsNew = false;
+            Destroy(newBadge.gameObject);
+            newBadge = null;
         }
 
         // 시계 방향 90도 회전. (x, y) -> (Height-1-y, x)
@@ -135,11 +176,21 @@ namespace TeamOdd.Superpower
 
             label.anchoredPosition = ChipGridMetrics.CellPosition(Cells[0]);
             label.SetAsLastSibling();
+
+            if (newBadge != null)
+            {
+                newBadge.anchoredPosition = label.anchoredPosition + NewBadgeOffset;
+                newBadge.SetAsLastSibling();
+            }
         }
 
         #region Input
 
-        public void OnPointerEnter(PointerEventData eventData) => PointerEntered?.Invoke(this);
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            MarkSeen();
+            PointerEntered?.Invoke(this);
+        }
 
         public void OnPointerClick(PointerEventData eventData)
         {
