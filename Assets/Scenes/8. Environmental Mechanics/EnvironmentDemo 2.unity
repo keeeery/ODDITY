@@ -6424,6 +6424,17 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &166911776 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1899323422591475053, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+  m_PrefabInstance: {fileID: 1367701122}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af14639d5cb24301b9738b3a5a2d56f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathState
 --- !u!1001 &167063304
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36396,6 +36407,7 @@ MonoBehaviour:
   groggyBar: {fileID: 1544739492}
   smoothGroggyBar: 1
   trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
+  occlusionOutlineWidth: 2
 --- !u!225 &916268417
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -55994,9 +56006,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490b06a60ee48413e8bc3b7dcfe8425e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Reward.BossChipReward
-  deathState: {fileID: 0}
-  inventory: {fileID: 0}
-  rewardPanel: {fileID: 0}
+  deathState: {fileID: 166911776}
+  inventory: {fileID: 2205336347470601080}
+  rewardPanel: {fileID: 105640033}
   rules:
   - CellCount: 6
     Count: 1
@@ -70736,6 +70748,10 @@ PrefabInstance:
       propertyPath: fragmentSpawner
       value: 
       objectReference: {fileID: 1433546535}
+    - target: {fileID: 4391235115479835729, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: maxHpOverride
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 4806054930190537673, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: fragmentSpawner
       value: 
@@ -76167,13 +76183,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Augmentation Chip Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
-      propertyPath: m_AnchorMax.x
+    - target: {fileID: 1191858992388173251, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
       propertyPath: m_AnchorMin.y
@@ -77051,9 +77071,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2920962985299418174, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: maxHpOverride
-      value: 10
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Stats>k__BackingField

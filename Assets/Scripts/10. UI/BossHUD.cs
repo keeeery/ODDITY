@@ -29,7 +29,12 @@ namespace TeamOdd.UI
         [Tooltip("체력·무력화 바가 줄 때 남는 잔상 색, 바(VectorBar)의 설정보다 우선한다. 기본값은 보스 이름 텍스트와 같은 회백색")]
         [SerializeField] private Color trailColor = new(0.847f, 0.824f, 0.769f, 1f);
 
+        [Header("Occlusion Outline")]
+        [Tooltip("보스에 가려진 플레이어 외곽선 두께(픽셀), 색은 보스 이름 텍스트 색을 따른다.")]
+        [SerializeField, Range(1f, 8f)] private float occlusionOutlineWidth = 2f;
+
         private bool findsBoss;
+        private Player.Player player;
         private BossGroggy groggy;
 
         private CanvasGroup canvasGroup;
@@ -50,6 +55,16 @@ namespace TeamOdd.UI
             // 잔상 색도 씬마다 맞추지 않도록 두 바에 같이 적용
             if (hpBar != null) hpBar.TrailColor = trailColor;
             if (groggyBar != null) groggyBar.TrailColor = trailColor;
+        }
+
+        private void OnEnable()
+        {
+            UpdateOcclusionTargets();
+        }
+
+        private void OnDisable()
+        {
+            BossOcclusionOutlineFeature.ClearTargets();
         }
 
         private void Start()
@@ -75,6 +90,17 @@ namespace TeamOdd.UI
             canvasGroup.alpha = boss == null ? 0f : 1f;
             UpdateFill(hpBar, GetHpRatio());
             UpdateFill(groggyBar, GetGroggyRatio());
+
+            // 플레이어가 늦게 생길 수 있어 찾을 때까지 다시 시도
+            if (player == null)
+            {
+                player = FindAnyObjectByType<Player.Player>();
+                if (player != null) UpdateOcclusionTargets();
+            }
+            // 외곽선 색은 이름 텍스트 색을 매 프레임 따라감
+            Color outlineColor = nameText != null ? nameText.color : trailColor;
+            outlineColor.a = 1f;
+            BossOcclusionOutlineFeature.SetStyle(outlineColor, occlusionOutlineWidth);
         }
 
         // 새 보스의 체력·무력화 수치로 바를 바로 맞춤
@@ -84,6 +110,18 @@ namespace TeamOdd.UI
             if (hpBar != null) hpBar.SetFillImmediate(GetHpRatio());
             if (groggyBar != null) groggyBar.SetFillImmediate(GetGroggyRatio());
             UpdateName();
+            UpdateOcclusionTargets();
+        }
+
+        private void UpdateOcclusionTargets()
+        {
+            if (boss == null || player == null)
+            {
+                BossOcclusionOutlineFeature.ClearTargets();
+                return;
+            }
+
+            BossOcclusionOutlineFeature.SetTargets(boss.gameObject, player.gameObject);
         }
 
         private void UpdateFill(VectorBar bar, float ratio)

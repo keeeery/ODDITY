@@ -171,6 +171,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2864915537702138846}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2920962985299418174}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -304,8 +307,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 68
   holdBodyLeadAngle: 50
+  standingHoldLeadAngle: 15
   armYawRange: 30
   holdTurnSpeed: 15
+  minimapReturnSpeed: 6
   armReach: 0.6
   armIkWeight: 0.55
   holdFingerBendScale: 0.5
@@ -322,6 +327,12 @@ MonoBehaviour:
   attackWristBend: 45
   attackBlendSpeed: 35
   attackAimDistance: 14
+  attackArmLeftRange: 40
+  attackArmRightRange: 20
+  attackTurnSpeed: 25
+  attackLookBodyWeight: 0.3
+  attackLookHeadWeight: 0.6
+  attackLookBlendSpeed: 12
   MaxEarlyWakeUpCooldown: 5
   WakeUpTime: 3
   InvincibleTime: 1.5
@@ -441,3 +452,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af796d1ff8d5fd94589b17e4d426231b, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeReverseEffect
+--- !u!114 &2920962985299418174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b84901f69454ea59258ac1022842b5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.PlayerCombatIdle
+  psychokinesisLayerName: Psycokinesis
+  fadeSpeed: 4
+  walkSwayWeight: 0.3
+  swaySpeed: 0.35
+  swayAngle: {x: 2.5, y: 4.5, z: 3}
+  idleLeanForward: 4
+  breathRate: 0.3
+  breathAngle: 1.5
+  headStabilize: 0.7
+  matchWalkFootWidth: 1
+  idleFootWidth: 0.25
+  walkWidthSmoothing: 2
+  groundFeet: 1
+  rollGroundFrom: 0.5
+  maxGroundDrop: 0.5
