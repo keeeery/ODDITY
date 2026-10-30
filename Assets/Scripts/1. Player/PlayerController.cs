@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using Study.Utilities;
 using TeamOdd.Combat;
@@ -21,7 +22,9 @@ namespace TeamOdd.Player
         private static readonly int WakeUp = Animator.StringToHash("WakeUp");
         private static readonly int Dead = Animator.StringToHash("Dead");
         private static readonly int KnockdownState = Animator.StringToHash("Knockdown Blend Tree");
+        private static readonly int WakeupState = Animator.StringToHash("Wakeup Blend Tree");
         private const float UpperLayerFadeDuration = 0.25f; // 대기 자세로 돌아갈 때 들기·조준 상체 레이어를 내리는 시간
+        private const string HoldLayerName = "Psycokinesis"; // 들기·조준 상체 레이어
 
         [Header("이동")]
         [SerializeField] private float walkSpeed = 4f;
@@ -45,6 +48,7 @@ namespace TeamOdd.Player
         [SerializeField] private string rollClipName = "Unarmed-DiveRoll-Forward1"; // 첫 구르기 전 길이 계산용
         public float NeedRollStamina;
         private int rollStateHash;
+        private int holdLayer; // 들기·조준 상체 레이어 번호 (이름으로 찾음)
         private bool hasEnteredRollState; // 이번 구르기에서 Roll 상태를 한 번이라도 거쳤는지
 
         [SerializeField] private Animator animator;
@@ -65,8 +69,14 @@ namespace TeamOdd.Player
         [Header("보스 몸 겹침")]
         [Tooltip("겹치면 바깥으로 빼내는 레이어(보스 부위, 다리 사이 막기 콜라이더)")]
         [SerializeField] private LayerMask bodyBlockLayers;
-        [Tooltip("양쪽에서 감싼 부위에 끼여 밀어내는 방향이 서로 상쇄될 때, 빠져나갈 방향으로 밀려나는 속도(m/s)")]
+        [Tooltip("겹친 몸에서 빠져나가는 속도(m/s), 달리기보다 빨라야 함")]
         [SerializeField, Min(0.1f)] private float bodyEscapeSpeed = 8f;
+        [Tooltip("겹친 보스 부위가 이 속도(m/s)보다 빠르면 지나가는 중으로 보고 빼내지 않음")]
+        [SerializeField, Min(0f)] private float bodyPassingSpeed = 1f;
+        [Tooltip("겹친 보스 부위가 이 시간(초) 동안 멈춰 있어야 멈춘 것으로 보고 빼냄")]
+        [SerializeField, Min(0f)] private float bodyStopTime = 0.2f;
+        [Tooltip("보스 부위와 이 시간(초)보다 오래 겹치면 옆으로 비켜섬")]
+        [SerializeField, Min(0f)] private float bodySidestepDelay = 0.3f;
         [Tooltip("끼였을 때 몸 밖으로 빠져나갈 자리를 찾는 최대 거리(m)")]
         [SerializeField, Min(0.5f)] private float bodyEscapeSearchDistance = 4f;
         [Tooltip("빠져나가는 길에 있으면 막힌 방향으로 보는 레이어(벽 등)")]
@@ -76,8 +86,12 @@ namespace TeamOdd.Player
         [SerializeField, Range(0f, 90f)]
         private float holdBodyLeadAngle = 50f;
 
+        [Tooltip("제자리에서 물체를 들 때 조준보다 오른쪽으로 더 돌리는 몸 각도")]
+        [SerializeField, Range(0f, 90f)] private float standingHoldLeadAngle = 15f;
         [SerializeField, Range(0f, 90f)] private float armYawRange = 30f;
         [SerializeField, Min(0.1f)] private float holdTurnSpeed = 15f;
+        // 몸을 되돌리지 않고 홀딩·공격을 끝낼 때 미니맵 방향이 몸 방향으로 돌아가는 빠르기
+        [SerializeField, Min(0.1f)] private float minimapReturnSpeed = 6f;
         [SerializeField, Min(0.1f)] private float armReach = 0.6f;
         [SerializeField, Range(0f, 1f)] private float armIkWeight = 0.55f;
         [SerializeField, Range(0f, 1f)] private float holdFingerBendScale = 0.5f;
@@ -104,6 +118,16 @@ namespace TeamOdd.Player
         [SerializeField, Range(-90f, 90f)] private float attackWristBend = 45f;
         [SerializeField, Min(0.1f)] private float attackBlendSpeed = 35f;
         [SerializeField, Min(1f)] private float attackAimDistance = 14f;
+
+        [Header("기본 공격 방향")]
+        // 몸 정면 기준 왼팔이 닿는 조준 범위, 벗어난 만큼만 몸을 돌림
+        [SerializeField, Range(0f, 180f)] private float attackArmLeftRange = 40f;
+        [SerializeField, Range(0f, 180f)] private float attackArmRightRange = 20f;
+        [SerializeField, Min(0.1f)] private float attackTurnSpeed = 25f; // 팔이 뻗기 전에 몸이 따라오도록 빠르게
+        // 범위 안에서는 몸 대신 척추·머리를 조준 쪽으로 비틂
+        [SerializeField, Range(0f, 1f)] private float attackLookBodyWeight = 0.3f;
+        [SerializeField, Range(0f, 1f)] private float attackLookHeadWeight = 0.6f;
+        [SerializeField, Min(0.1f)] private float attackLookBlendSpeed = 12f;
 
         [Header("피격")]
         private float earlyWakeUpCooldown;
@@ -139,11 +163,24 @@ namespace TeamOdd.Player
         private readonly Collider[] bodyOverlaps = new Collider[16];
         private Vector3 escapeDirection;        // 끼임에서 빠져나가는 중인 방향, 몸에서 다 빠져나오면 비움
         private Vector3 blockedEscapeDirection; // 벽 등에 막혀 나아가지 못한 방향, 다음 탐색에서 뺌
+        private static readonly Vector3 NoBodyHistory = Vector3.positiveInfinity; // 처음 겹쳐 직전 위치가 없는 부위
+        private readonly Dictionary<Collider, Vector3> overlappedBodies = new(); // 충돌을 꺼 둔 겹친 보스 부위와 직전 위치
+        private readonly HashSet<Collider> touchedBodies = new(); // 이번 검사에서 겹친 부위
+        private readonly List<Collider> separatedBodies = new();
+        private Dictionary<Collider, Vector3> nearBodies = new(); // skinWidth 안에 들어온(충돌은 켜 둔) 보스 부위와 직전 위치
+        private Dictionary<Collider, Vector3> nextNearBodies = new();
+        private bool isPushingOut; // 겹친 몸에서 빠져나가는 중
+        private float bodyStillTime; // 겹친 보스 부위가 모두 멈춰 있던 시간(초)
+        private float bodyOverlapTime; // 보스 부위와 계속 겹친 시간(초)
+        private Vector3 sidestepDirection; // 비켜선 수평 방향, 다음 Update의 걷기 모션·회전에 씀
 
         private bool defaultRotateTowardMove;
         private bool isHolding;
         private bool isRestoringFacing;
         private float bodyTargetYaw;
+        private float appliedBodyLead = -1f; // bodyTargetYaw에 반영된 몸 회전 오프셋, 음수면 미정
+        private bool turnedForHold; // 홀딩 때문에 몸을 돌렸는지, 돌렸을 때만 끝나고 되돌림
+        private float attackLookBlend; // 기본 공격 중 척추·머리 비틀기 정도
         private float restoreTargetYaw;
         private float minimapYawOffset;
         private float ikBlend;
@@ -204,6 +241,7 @@ namespace TeamOdd.Player
             earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
 
             rollStateHash = Animator.StringToHash(rollStateName);
+            holdLayer = animator.GetLayerIndex(HoldLayerName);
             foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
             {
                 if (clip.name != rollClipName) continue;
@@ -229,15 +267,19 @@ namespace TeamOdd.Player
             }
             hitRoutine = null;
             FinishHitReaction();
+            RestoreBodyCollisions();
         }
 
         private void Update()
         {
+            IgnoreOverlappedBodies();
+
             // 조작이 돌아오면 상체 레이어는 다시 매 프레임 여기서 정한다
             upperLayerFade?.Kill();
             float relativeScale = SlowMotion.PlayerRelativeScale;
             ApplyAnimatorTimeScale(relativeScale);
             if (attackSequence != null) attackSequence.timeScale = relativeScale;
+            UpdateWakeUpRootMotion();
 
             // 죽은 뒤에도 슬로모션 배율은 애니메이터에 계속 적용하고, 이동·입력은 처리하지 않는다.
             if (isDead) return;
@@ -260,10 +302,11 @@ namespace TeamOdd.Player
 
             UpdateMovement();
             WalkAnimation();
+            FaceSidestep();
             CheckRollInput();
 
             heldObject = psychokinesisController.HeldObject;
-            animator.SetLayerWeight(1, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
+            animator.SetLayerWeight(holdLayer, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
         }
 
         private void UpdateMovement()
@@ -342,11 +385,22 @@ namespace TeamOdd.Player
             Vector2 inputRaw = ReadMoveInput();
 
             // 걷기·달리기가 막혀 있으면 걷는 모션도 내지 않는다. 달리기는 막혀 있으면 IsSprinting이 이미 false
-            bool isMove = inputRaw != Vector2.zero && IsMoveBlocked == false;
+            // 보스 몸에서 비켜서는 동안은 미끄러져 보이지 않게 걷기 모션을 냄
+            bool isMove = (inputRaw != Vector2.zero && IsMoveBlocked == false) || sidestepDirection != Vector3.zero;
             bool isRun = IsSprinting;
 
             animator.SetBool(Walk, isMove);
             animator.SetBool(Run, isRun);
+        }
+
+        // 입력 없이 비켜설 때 그쪽을 보고 걷게 함, 들기·조준 중에는 방향을 지키고 걷기 모션만 냄
+        private void FaceSidestep()
+        {
+            if (sidestepDirection == Vector3.zero || ReadMoveInput() != Vector2.zero) return;
+            if (rotateTowardMove == false || HoldTarget != null) return;
+
+            transform.rotation = Quaternion.RotateTowards(transform.rotation,
+                Quaternion.LookRotation(sidestepDirection), turnSpeed * PlayerDeltaTime);
         }
 
         public void DeathAnimation()
@@ -358,7 +412,33 @@ namespace TeamOdd.Player
         
         private void OnAnimatorIK(int layerIndex)
         {
+            // 상체 비틀기는 Base Layer, 팔 IK는 들기 레이어에서만 (Base Layer도 발 IK로 IK Pass를 씀)
+            if (layerIndex == 0) UpdateAttackLookAt();
+
+            if (layerIndex != holdLayer) return;
+
             UpdateHoldArmIK();
+        }
+
+        // 기상 모션은 기어가며 자리를 옮기므로, 기상하는 동안만 루트 모션을 켜 수평 이동을 캡슐에 반영
+        // (끄면 대기로 돌아갈 때 캡슐 자리로 끌려와 위치가 튐)
+        private void UpdateWakeUpRootMotion()
+        {
+            if (animator == null) return;
+
+            int current = animator.GetCurrentAnimatorStateInfo(0).shortNameHash;
+            int next = animator.IsInTransition(0) ? animator.GetNextAnimatorStateInfo(0).shortNameHash : 0;
+            animator.applyRootMotion = isDead == false && (current == WakeupState || next == WakeupState);
+        }
+
+        // 루트 모션의 수평 이동만 CharacterController로 적용, 컨트롤러가 꺼진 동안(되감기)은 무시
+        private void OnAnimatorMove()
+        {
+            if (animator == null || animator.applyRootMotion == false || controller == null || controller.enabled == false) return;
+
+            Vector3 delta = animator.deltaPosition;
+            delta.y = 0f;
+            if (delta.sqrMagnitude > 0f) controller.Move(delta);
         }
 
         // 보스 부위가 애니메이션으로 움직인 뒤에 겹침을 검사
@@ -509,35 +589,44 @@ namespace TeamOdd.Player
             slideOffDirection = direction.normalized;
         }
 
-        // CharacterController는 스스로 움직일 때만 막히고, 애니메이션·Kinematic 이동으로 다가온 보스 부위에는 밀려나지 않음
-        // 한 번 겹치면 그 콜라이더를 무시하고 지나가 버리므로, 겹친 만큼 직접 바깥으로 빼냄
+        // 걸어 들어가면 막히고, 보스가 움직여 들어오면 통과시키며 겹친 동안만 그 부위와 충돌을 꺼 둠
+        // 피격 중에는 밀지 않고, 이동 입력·보스 정지·오래 겹침 중 하나면 빼내 몸 안이 안전지대가 되지 않게 함
+        // 금방 지나가는 다리·꼬리는 통과, 오래 겹치면 보스 진행 방향의 옆으로 비켜섬
         // 위아래로 빼내면 발 위에 올라서거나 바닥에 묻히므로 수평으로만 밀고, Move로 밀어 벽은 뚫지 않음
-        // 피격·구르기 중에도 겹치지 않아야 하므로 Update의 조기 반환과 관계없이 매 프레임 검사
+        // 피격·구르기 중에도 충돌 토글은 이어야 하므로 Update의 조기 반환과 관계없이 매 프레임 검사
         // 머리와 팔 사이처럼 양쪽에서 감싼 부위에 끼이면 밀어내는 방향이 서로 상쇄되므로, 몸 밖으로 가장 가깝게 빠지는 방향을 찾아 다 빠질 때까지 밀어냄
         private void PushOutOfBodies()
         {
+            sidestepDirection = Vector3.zero;
             if (bodyBlockLayers.value == 0 || controller.enabled == false) return;
 
             float radius = controller.radius;
             Vector3 center = transform.TransformPoint(controller.center);
             Vector3 offset = Vector3.up * Mathf.Max(controller.height * 0.5f - radius, 0f);
-            int count = Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
-                bodyBlockLayers, QueryTriggerInteraction.Ignore);
+            int count = OverlapBodies(center, offset, GetBodyContactRadius());
 
             Vector3 push = Vector3.zero;
             Vector3 bodyCenterSum = Vector3.zero;
             float largestPush = 0f;
             int pushCount = 0;
+            bool isBodyPassing = false;
+            Vector3 passMove = Vector3.zero;
+            touchedBodies.Clear();
 
             for (int index = 0; index < count; index++)
             {
                 Collider other = bodyOverlaps[index];
-                if (other == controller || other.transform.IsChildOf(transform)) continue;
+                if (IsOwnCollider(other)) continue;
 
-                Transform otherTransform = other.transform;
-                if (Physics.ComputePenetration(controller, transform.position, transform.rotation,
-                        other, otherTransform.position, otherTransform.rotation, out Vector3 direction, out float distance) == false)
+                if (TryGetBodyPenetration(other, out Vector3 direction, out float distance) == false)
+                {
+                    // skinWidth 안에만 들어온 부위는 빼내지 않고, 멈추면 충돌을 다시 켬
+                    if (overlappedBodies.ContainsKey(other) && TrackOverlappedBody(other, out _) == false) touchedBodies.Remove(other);
                     continue;
+                }
+
+                isBodyPassing |= TrackOverlappedBody(other, out Vector3 bodyMove);
+                passMove += bodyMove;
 
                 Vector3 single = GetHorizontalPush(other, direction, distance);
                 push += single;
@@ -546,17 +635,178 @@ namespace TeamOdd.Player
                 pushCount++;
             }
 
+            RestoreSeparatedBodies();
+
+            bodyStillTime = isBodyPassing ? 0f : bodyStillTime + Time.deltaTime;
+
+            bodyOverlapTime += Time.deltaTime;
+
+            if (pushCount == 0 || IsHit)
+            {
+                isPushingOut = false;
+                bodyStillTime = 0f;
+                bodyOverlapTime = 0f;
+                escapeDirection = Vector3.zero;
+                blockedEscapeDirection = Vector3.zero;
+                return;
+            }
+
+            if (isPushingOut == false)
+                isPushingOut = IsTryingToMove || bodyStillTime >= bodyStopTime || bodyOverlapTime >= bodySidestepDelay;
+            if (isPushingOut == false) return;
+
             // 한 번 빠져나가기 시작하면 남은 한 부위가 다른 부위 쪽으로 되밀어 다시 끼이지 않도록 몸에서 다 빠질 때까지 같은 방향으로 감
             bool isPinched = pushCount >= 2 && push.magnitude < largestPush * 0.5f;
-            if (pushCount > 0 && (isPinched || escapeDirection != Vector3.zero))
+            if (isPinched || escapeDirection != Vector3.zero)
             {
                 EscapeFromBodies(center, offset, radius, bodyCenterSum / pushCount);
+                sidestepDirection = escapeDirection;
                 return;
             }
 
             escapeDirection = Vector3.zero;
             blockedEscapeDirection = Vector3.zero;
-            if (push != Vector3.zero) controller.Move(push);
+
+            // 깊이 겹쳐도 한 프레임에 튀지 않게 속도로 나눠 밂
+            Vector3 step = isBodyPassing
+                ? GetSidestepDirection(push, passMove, bodyCenterSum / pushCount) * (bodyEscapeSpeed * PlayerDeltaTime)
+                : Vector3.ClampMagnitude(push, bodyEscapeSpeed * PlayerDeltaTime);
+            controller.Move(step);
+
+            step.y = 0f;
+            sidestepDirection = step.sqrMagnitude > 0.000001f ? step.normalized : Vector3.zero;
+        }
+
+        // 앞으로 밀면 보스에 끌려가므로 진행 방향 성분을 빼고 옆으로 비켜섬
+        // 옆 성분이 없으면 몸 중심 기준 플레이어 쪽, 그것도 없으면 진행 방향 오른쪽
+        private Vector3 GetSidestepDirection(Vector3 push, Vector3 passMove, Vector3 bodyCenter)
+        {
+            passMove.y = 0f;
+            if (passMove.sqrMagnitude < 0.000001f) return push.normalized;
+
+            Vector3 passDirection = passMove.normalized;
+            Vector3 side = Vector3.ProjectOnPlane(push, passDirection);
+
+            if (side.sqrMagnitude < 0.0001f)
+            {
+                side = Vector3.ProjectOnPlane(transform.position - bodyCenter, passDirection);
+                if (side.sqrMagnitude < 0.0001f) side = Vector3.Cross(Vector3.up, passDirection);
+            }
+
+            side.y = 0f;
+            return side.normalized;
+        }
+
+        // CharacterController는 Move 중 겹친 콜라이더 밖으로 스스로 밀려나므로, 움직이기 전에 보스가 밀고 들어온 부위의 충돌을 먼저 끔
+        // skinWidth 띠 안에서 움직이는 부위도 끄고, 띠 안에서 멈춘 부위는 걸어와 닿은 것일 수 있어 켜 둠
+        private void IgnoreOverlappedBodies()
+        {
+            if (bodyBlockLayers.value == 0 || controller.enabled == false) return;
+
+            float radius = controller.radius;
+            Vector3 center = transform.TransformPoint(controller.center);
+            Vector3 offset = Vector3.up * Mathf.Max(controller.height * 0.5f - radius, 0f);
+            int count = OverlapBodies(center, offset, GetBodyContactRadius());
+
+            nextNearBodies.Clear();
+            for (int index = 0; index < count; index++)
+            {
+                Collider other = bodyOverlaps[index];
+                if (IsOwnCollider(other) || overlappedBodies.ContainsKey(other)) continue;
+
+                Vector3 current = other.transform.position;
+                bool isPenetrating = TryGetBodyPenetration(other, out _, out _);
+                bool isMovingNear = nearBodies.TryGetValue(other, out Vector3 last) && IsBodyMoving(current - last);
+
+                if (isPenetrating || isMovingNear)
+                {
+                    Physics.IgnoreCollision(controller, other, true);
+                    overlappedBodies[other] = NoBodyHistory;
+                    continue;
+                }
+
+                nextNearBodies[other] = current;
+            }
+
+            (nearBodies, nextNearBodies) = (nextNearBodies, nearBodies);
+        }
+
+        // 반경 + skinWidth에 transform·물리 위치 차이만큼 여유를 더함
+        private float GetBodyContactRadius() => controller.radius + controller.skinWidth + 0.05f;
+
+        // 보스는 월드 시간으로 움직이므로 월드 시간으로 잼
+        private bool IsBodyMoving(Vector3 moved)
+        {
+            float deltaTime = Time.deltaTime;
+            return deltaTime > 0f && moved.magnitude > bodyPassingSpeed * deltaTime;
+        }
+
+        private bool IsOwnCollider(Collider other) => other == controller || other.transform.IsChildOf(transform);
+
+        private int OverlapBodies(Vector3 center, Vector3 offset, float radius) =>
+            Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
+                bodyBlockLayers, QueryTriggerInteraction.Ignore);
+
+        private bool TryGetBodyPenetration(Collider other, out Vector3 direction, out float distance)
+        {
+            direction = Vector3.zero;
+            distance = 0f;
+            if (IsOwnCollider(other)) return false;
+
+            Transform otherTransform = other.transform;
+            return Physics.ComputePenetration(controller, transform.position, transform.rotation,
+                other, otherTransform.position, otherTransform.rotation, out direction, out distance);
+        }
+
+        // 구르기나 (막히지 않은) 걷기 입력으로 스스로 움직이려 하는지
+        private bool IsTryingToMove => IsRolling || (ReadMoveInput() != Vector2.zero && IsMoveBlocked == false);
+
+        // 겹친 부위의 충돌을 끄고, 지나가는 중인지와 직전 프레임부터 움직인 양을 돌려줌 (처음 겹친 부위는 지나가는 중으로 침)
+        private bool TrackOverlappedBody(Collider other, out Vector3 moved)
+        {
+            touchedBodies.Add(other);
+            moved = Vector3.zero;
+
+            // bounds는 물리 스텝마다만 갱신되므로 매 프레임 반영되는 transform으로 잼
+            Vector3 current = other.transform.position;
+            bool isPassing = true;
+
+            if (overlappedBodies.TryGetValue(other, out Vector3 last) == false)
+            {
+                Physics.IgnoreCollision(controller, other, true);
+            }
+            else if (float.IsPositiveInfinity(last.x) == false) // Vector3 ==는 무한대끼리 같다고 보지 않음
+            {
+                moved = current - last;
+                isPassing = Time.deltaTime <= 0f || IsBodyMoving(moved);
+            }
+
+            overlappedBodies[other] = current;
+            return isPassing;
+        }
+
+        // 이번 검사에서 겹치지 않은 부위의 충돌을 되돌림
+        private void RestoreSeparatedBodies()
+        {
+            separatedBodies.Clear();
+            foreach (Collider body in overlappedBodies.Keys)
+            {
+                if (touchedBodies.Contains(body) == false) separatedBodies.Add(body);
+            }
+
+            foreach (Collider body in separatedBodies)
+            {
+                if (body != null) Physics.IgnoreCollision(controller, body, false);
+                overlappedBodies.Remove(body);
+            }
+        }
+
+        private void RestoreBodyCollisions()
+        {
+            nearBodies.Clear();
+            touchedBodies.Clear();
+            RestoreSeparatedBodies();
+            isPushingOut = false;
         }
 
         private void EscapeFromBodies(Vector3 center, Vector3 offset, float radius, Vector3 bodyCenter)
@@ -672,7 +922,7 @@ namespace TeamOdd.Player
 
             // 들기·조준 상체 레이어는 끊지 않고 서서히 내린다
             upperLayerFade?.Kill();
-            upperLayerFade = DOTween.To(() => animator.GetLayerWeight(1), weight => animator.SetLayerWeight(1, weight), 0f, UpperLayerFadeDuration)
+            upperLayerFade = DOTween.To(() => animator.GetLayerWeight(holdLayer), weight => animator.SetLayerWeight(holdLayer, weight), 0f, UpperLayerFadeDuration)
                 .SetTarget(this);
 
             if (TryGetComponent(out CombatEntity entity) && entity.IsDead) return;
@@ -719,35 +969,75 @@ namespace TeamOdd.Player
                 if (isHolding)
                 {
                     isHolding = false;
-                    isRestoringFacing = IsRolling == false;
+                    isRestoringFacing = IsRolling == false && turnedForHold;
                     restoreTargetYaw = aimYaw;
+                    turnedForHold = false;
+                    appliedBodyLead = -1f;
                 }
 
                 ikBlend = Mathf.Lerp(ikBlend, 0f, t);
                 throwPrepareBlend = 0f;
+                BlendAttackLook(false);
+                // 몸을 되돌리는 중이면 몸과 같은 속도로, 아니면 미니맵이 몸 방향으로 천천히 돌아가게 줄임
+                float minimapT = isRestoringFacing ? t : 1f - Mathf.Exp(-minimapReturnSpeed * PlayerDeltaTime);
                 RestoreFacing(t);
-                minimapYawOffset = Mathf.LerpAngle(minimapYawOffset, 0f, t);
+                minimapYawOffset = Mathf.LerpAngle(minimapYawOffset, 0f, minimapT);
                 if (Mathf.Abs(minimapYawOffset) < 0.01f) minimapYawOffset = 0f;
                 return;
             }
 
-            if (isHolding == false)
+            isHolding = true;
+            bool standing = (ReadMoveInput() == Vector2.zero || IsMoveBlocked) && sidestepDirection == Vector3.zero;
+
+            // 물체 없이 기본 공격만 할 때는 몸 회전 오프셋을 주지 않음
+            bool attackOnly = HoldTarget == null;
+            BlendAttackLook(attackOnly);
+
+            // 기본 공격은 팔 범위 안이면 상체만 비틀고 벗어난 만큼만 몸을 돌림, 끝나도 되돌리지 않음
+            if (attackOnly)
             {
-                isHolding = true;
+                appliedBodyLead = -1f;
                 isRestoringFacing = false;
-                bodyTargetYaw = aimYaw + holdBodyLeadAngle;
+
+                float bodyYaw = transform.eulerAngles.y;
+                float aimFromBody = Mathf.DeltaAngle(bodyYaw, aimYaw); // +면 조준이 몸 오른쪽
+                float targetYaw = bodyYaw;
+                if (aimFromBody > attackArmRightRange) targetYaw = aimYaw - attackArmRightRange;
+                else if (aimFromBody < -attackArmLeftRange) targetYaw = aimYaw + attackArmLeftRange;
+
+                SetBodyYaw(Mathf.LerpAngle(bodyYaw, targetYaw, 1f - Mathf.Exp(-attackTurnSpeed * PlayerDeltaTime)));
+
+                // 미니맵은 홀딩처럼 조준 방향을 따라가 홀딩·공격 전환에도 끊기지 않음
+                float attackMinimapYaw = Mathf.LerpAngle(MinimapFacingYaw, aimYaw, t);
+                minimapYawOffset = Mathf.DeltaAngle(attackMinimapYaw, transform.eulerAngles.y);
             }
+            else
+            {
+                // 제자리에서 물체를 들면 조금만, 움직이면 팔이 닿도록 크게 돌림
+                float bodyLead = standing ? standingHoldLeadAngle : holdBodyLeadAngle;
 
-            float armYaw = Mathf.DeltaAngle(bodyTargetYaw - holdBodyLeadAngle, aimYaw);
+                // 오프셋이 바뀌면 새 오프셋 기준으로 다시 맞춤
+                if (Mathf.Approximately(bodyLead, appliedBodyLead) == false)
+                {
+                    isRestoringFacing = false;
+                    appliedBodyLead = bodyLead;
+                    bodyTargetYaw = aimYaw + bodyLead;
+                }
 
-            if (armYaw < 0f) bodyTargetYaw = aimYaw + holdBodyLeadAngle;
-            else if (armYaw > armYawRange) bodyTargetYaw = aimYaw + holdBodyLeadAngle - armYawRange;
+                // 서 있으면 조준을 그대로 따라가고, 움직일 때는 팔 회전 범위를 벗어날 때만 몸을 돌림
+                float armYaw = Mathf.DeltaAngle(bodyTargetYaw - bodyLead, aimYaw);
 
-            // 표시 방향은 같은 속도로 조준을 따라가고, 홀딩 자세 때문에 더 돌아간 몸 각도만 제외한다.
-            float minimapYaw = Mathf.LerpAngle(MinimapFacingYaw, aimYaw, t);
-            float bodyYaw = Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t);
-            SetBodyYaw(bodyYaw);
-            minimapYawOffset = Mathf.DeltaAngle(minimapYaw, bodyYaw);
+                if (standing) bodyTargetYaw = aimYaw + bodyLead;
+                else if (armYaw < 0f) bodyTargetYaw = aimYaw + bodyLead;
+                else if (armYaw > armYawRange) bodyTargetYaw = aimYaw + bodyLead - armYawRange;
+
+                // 표시 방향은 같은 속도로 조준을 따라가고, 홀딩 자세 때문에 더 돌아간 몸 각도만 제외한다.
+                float minimapYaw = Mathf.LerpAngle(MinimapFacingYaw, aimYaw, t);
+                float bodyYaw = Mathf.LerpAngle(transform.eulerAngles.y, bodyTargetYaw, t);
+                SetBodyYaw(bodyYaw);
+                minimapYawOffset = Mathf.DeltaAngle(minimapYaw, bodyYaw);
+                turnedForHold = true;
+            }
 
             // 공격은 한 번 누르자마자 팔이 올라와야 하므로 더 빠르게 블렌드
             if (HoldTarget != null) ikBlend = Mathf.Lerp(ikBlend, armIkWeight, t);
@@ -756,6 +1046,28 @@ namespace TeamOdd.Player
             bool preparingThrow = heldObject != null &&
                 externalHoldTarget == null && SimpleInput.GetMouseButton(SimpleInput.MouseButton.Left);
             throwPrepareBlend = Mathf.Lerp(throwPrepareBlend, preparingThrow ? 1f : 0f, t);
+        }
+
+        private void BlendAttackLook(bool active)
+        {
+            float speed = 1f - Mathf.Exp(-attackLookBlendSpeed * PlayerDeltaTime);
+            attackLookBlend = Mathf.Lerp(attackLookBlend, active ? 1f : 0f, speed);
+            if (attackLookBlend < 0.001f) attackLookBlend = 0f;
+        }
+
+        // 카메라 조준점을 바라보게 해 척추·머리를 조준 쪽으로 비틂
+        private void UpdateAttackLookAt()
+        {
+            // 피격·사망 중에는 블렌드를 갱신하는 Update가 멈추므로 여기서 끔
+            if (attackLookBlend <= 0f || isDead || IsHit || Camera.main == null)
+            {
+                animator.SetLookAtWeight(0f);
+                return;
+            }
+
+            Transform cam = Camera.main.transform;
+            animator.SetLookAtPosition(cam.position + cam.forward * attackAimDistance);
+            animator.SetLookAtWeight(attackLookBlend, attackLookBodyWeight, attackLookHeadWeight, 0f, 0.5f);
         }
 
         private void RestoreFacing(float t)
@@ -968,9 +1280,12 @@ namespace TeamOdd.Player
                 externalHoldTarget = null;
                 isHolding = false;
                 isRestoringFacing = false;
+                turnedForHold = false;
+                appliedBodyLead = -1f;
+                attackLookBlend = 0f;
                 ikBlend = 0f;
                 throwPrepareBlend = 0f;
-                animator.SetLayerWeight(1, 0f);
+                animator.SetLayerWeight(holdLayer, 0f);
                 hitAnimationEnded = false;
                 // 지난 넉다운에서 조기 기상을 쓰지 않았어도 이번 넉다운의 기상 가능 시점(WakeUp 신호)부터 다시 허용
                 CanWakeUp = false;
@@ -1084,6 +1399,7 @@ namespace TeamOdd.Player
         private void FinishHitReaction()
         {
             IsHit = false;
+            isPushingOut = true; // 피격이 끝날 때 겹쳐 있으면 바로 빼냄
             if (hasHitStepOffset == false) return;
             if (controller != null) controller.stepOffset = savedHitStepOffset;
             hasHitStepOffset = false;
