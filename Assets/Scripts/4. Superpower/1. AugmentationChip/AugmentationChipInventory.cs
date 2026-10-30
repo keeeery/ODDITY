@@ -68,7 +68,8 @@ namespace TeamOdd.Superpower
         {
             SuperpowerSkill skill = def is SkillChipDef skillDef ? SkillFactory.Create(skillDef) : null;
             if (skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
-            OwnedChip chip = new OwnedChip(def, cells, skill);
+            // 칩은 버리지 않으므로 지금까지 얻은 개수가 곧 얻은 순서다
+            OwnedChip chip = new OwnedChip(def, cells, skill, chips.Count);
             chips.Add(chip);
             return chip;
         }

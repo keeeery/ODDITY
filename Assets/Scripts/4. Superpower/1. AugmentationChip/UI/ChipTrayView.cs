@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 namespace TeamOdd.Superpower
 {
-    public enum ChipSortKey { ID, Name, StatType, Value, Size }
+    // 정렬 버튼의 기준. 프리팹에 번호로 저장되지만 버튼 구성과 순서는 Build Layout이 다시 맞춘다
+    public enum ChipSortKey { Recent, Type, Size, Name }
 
     // 트레이에 보여줄 칩 묶음. 스킬 칩은 분류(SkillCategory)별, 능력치 칩은 하나로 묶는다
     // 프리팹에 번호로 저장되므로 새 값은 맨 뒤에 붙인다
@@ -36,13 +37,13 @@ namespace TeamOdd.Superpower
         }
 
         [SerializeField] private RectTransform content;
-        [SerializeField] private FilterToggle[] filterToggles; // 비워두면 Build Layout이 만든다
-        [SerializeField] private SortButton[] sortButtons;
+        [SerializeField] private FilterToggle[] filterToggles; // 빠진 필터는 Build Layout이 만든다
+        [SerializeField] private SortButton[] sortButtons; // 기준과 순서는 Build Layout이 맞춘다
         // content 안쪽 여백이자 칩 사이 간격
         [SerializeField] private float chipSpacing = 36f;
 
         private readonly List<ChipItemView> chips = new();
-        private ChipSortKey sortKey = ChipSortKey.ID;
+        private ChipSortKey sortKey = ChipSortKey.Recent; // 방금 얻은 칩을 찾기 쉽게 최신순으로 시작한다
         private bool sortAscending = true;
 
         public RectTransform Content => content;
@@ -185,10 +186,11 @@ namespace TeamOdd.Superpower
             AugmentationChipDef y = b.Owned.Def;
             int result = sortKey switch
             {
-                ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
-                ChipSortKey.StatType => CompareType(x, y),
-                ChipSortKey.Value => CompareValue(x, y),
+                // 최신순은 ▲(오름차순)일 때 나중에 얻은 칩이 앞에 온다
+                ChipSortKey.Recent => b.Owned.AcquiredOrder.CompareTo(a.Owned.AcquiredOrder),
+                ChipSortKey.Type => CompareType(x, y),
                 ChipSortKey.Size => x.CellCount.CompareTo(y.CellCount),
+                ChipSortKey.Name => string.CompareOrdinal(x.Name, y.Name),
                 _ => 0,
             };
 
@@ -199,7 +201,7 @@ namespace TeamOdd.Superpower
             return sortAscending ? result : -result;
         }
 
-        // 스탯/수치 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
+        // 종류 정렬은 능력치 칩끼리, 스킬 칩끼리 먼저 모은다
         private static int CompareType(AugmentationChipDef x, AugmentationChipDef y)
         {
             int result = KindOrder(x).CompareTo(KindOrder(y));
@@ -218,22 +220,6 @@ namespace TeamOdd.Superpower
 
                 return skillX.SkillType.CompareTo(skillY.SkillType);
             }
-
-            return 0;
-        }
-
-        // 스킬 칩은 수치 대신 쿨타임으로 비교한다
-        private static int CompareValue(AugmentationChipDef x, AugmentationChipDef y)
-        {
-            int result = KindOrder(x).CompareTo(KindOrder(y));
-            if (result != 0)
-                return result;
-
-            if (x is StatChipDef statX && y is StatChipDef statY)
-                return statX.Value.CompareTo(statY.Value);
-
-            if (x is SkillChipDef skillX && y is SkillChipDef skillY)
-                return skillX.Cooldown.CompareTo(skillY.Cooldown);
 
             return 0;
         }
