@@ -14970,7 +14970,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: requiresLineOfSight
@@ -16227,8 +16227,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdbb8c0f54e4d3b96a50888deac4369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidTackleCombo
-  <MinDistance>k__BackingField: 3
-  <MaxDistance>k__BackingField: 9
+  <MinDistance>k__BackingField: 0
+  <MaxDistance>k__BackingField: 2.5
   minAngle: -30
   maxAngle: 30
   cooldown: 9
@@ -16289,7 +16289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidCombo7
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 3.5
+  <MaxDistance>k__BackingField: 3
   minAngle: -40
   maxAngle: 40
   cooldown: 12
@@ -16353,9 +16353,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidHeavySlash
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 8
-  minAngle: -20
-  maxAngle: 20
+  <MaxDistance>k__BackingField: 3
+  minAngle: -30
+  maxAngle: 30
   cooldown: 10
   <Weight>k__BackingField: 0.8
   <IsUrgent>k__BackingField: 0
@@ -16379,7 +16379,7 @@ MonoBehaviour:
       duration: 0.5
       direction: 1
       angleOffset: 0
-    radius: 3.5
+    radius: 2
   - origin: {fileID: 3161827305724420012}
     damage: 15
     reaction: 1
@@ -16389,7 +16389,7 @@ MonoBehaviour:
       duration: 0.5
       direction: 1
       angleOffset: 0
-    radius: 3.5
+    radius: 3
   - origin: {fileID: 3161827305724420014}
     damage: 15
     reaction: 1
@@ -16399,7 +16399,7 @@ MonoBehaviour:
       duration: 0.5
       direction: 1
       angleOffset: 0
-    radius: 3.5
+    radius: 4
   groundLayers:
     serializedVersion: 2
     m_Bits: 2043
@@ -16546,8 +16546,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 212910fe50d748309ef30641e412c059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidRiseSpinSmash
-  <MinDistance>k__BackingField: 2
-  <MaxDistance>k__BackingField: 9
+  <MinDistance>k__BackingField: 2.75
+  <MaxDistance>k__BackingField: 5.5
   minAngle: -30
   maxAngle: 30
   cooldown: 12
@@ -16657,8 +16657,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fb4211ad4fb427a88201a7a14123a66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidCharge
-  <MinDistance>k__BackingField: 15
-  <MaxDistance>k__BackingField: 60
+  <MinDistance>k__BackingField: 10
+  <MaxDistance>k__BackingField: 22.5
   minAngle: -30
   maxAngle: 30
   cooldown: 15
@@ -16674,12 +16674,12 @@ MonoBehaviour:
   hits: []
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
-  useChance: 0.75
+  useChance: 0.4
   aimDuration: 1.2
   aimTurnSpeed: 180
   aimRunAnimSpeed: 0.3
-  chargeDistance: 30
-  chargeSpeed: 20
+  chargeDistance: 25
+  chargeSpeed: 30
   chargeRunAnimSpeed: 1.4
   passThroughMask:
     serializedVersion: 2
@@ -16898,7 +16898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidDimensionSlash
   <MinDistance>k__BackingField: 0
-  <MaxDistance>k__BackingField: 100
+  <MaxDistance>k__BackingField: 999
   minAngle: -180
   maxAngle: 180
   cooldown: 0
@@ -16947,7 +16947,7 @@ MonoBehaviour:
   shakeTrauma: 0.8
   releaseFadeDuration: 0.3
   idleCrossFade: 0.4
-  damageRatio: 0.35
+  damageRatio: 1
   minHpRatio: 0.2
   push:
     distance: 3
