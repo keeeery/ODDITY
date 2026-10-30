@@ -13,6 +13,8 @@ namespace TeamOdd.Boss
     {
         private const float SKIN_WIDTH = 0.05f;
         private const int MAX_SLIDE_COUNT = 2;
+        private const float BELOW_FEET_MARGIN = 0.1f; // 발 높이보다 이만큼 더 낮은 접촉은 바닥 아래 구조물로 봄
+        private const int MAX_WALL_HITS = 16;
 
         [Title("Components")]
         [SerializeField] private Rigidbody body;
@@ -27,6 +29,7 @@ namespace TeamOdd.Boss
         [ShowInInspector, ReadOnly] private float pendingYaw;
 
         private TimeFreezable clock;
+        private readonly RaycastHit[] wallHits = new RaycastHit[MAX_WALL_HITS];
 
         // 막힌 물리 스텝마다 발생, 벽 충돌 그로기 같은 반응은 구독하는 상태가 판단
         public event Action<BossBlockInfo> OnBlocked;
@@ -126,11 +129,31 @@ namespace TeamOdd.Boss
 
         // 몸 전체 반경의 구로 판정해 머리·팔·꼬리가 벽에 파고들지 않게 함
         // 구라서 회전해도 모양이 같아 회전은 검사하지 않음, 시작할 때 이미 겹친 콜라이더는 감지하지 못함
+        // 구가 바닥 아래까지 내려가므로 발보다 낮은 곳에 닿은 구조물(아래층 벽, 바닥 받침)은 막지 않음
         private bool CastWall(Vector3 position, Vector3 dir, float distance, out RaycastHit hit)
         {
-            Vector3 origin = position + Vector3.up * castHeight;
             hit = default;
-            return wallMask != 0 && Physics.SphereCast(origin, wallRadius, dir, out hit, distance, wallMask, QueryTriggerInteraction.Ignore);
+            if (wallMask == 0) return false;
+
+            Vector3 origin = position + Vector3.up * castHeight;
+            int count = Physics.SphereCastNonAlloc(origin, wallRadius, dir, wallHits, distance, wallMask, QueryTriggerInteraction.Ignore);
+            float floorY = position.y - BELOW_FEET_MARGIN;
+            bool found = false;
+
+            for (int i = 0; i < count; i++)
+            {
+                RaycastHit candidate = wallHits[i];
+
+                // 시작할 때 이미 겹친 콜라이더는 거리 0, 위치 0으로 오므로 SphereCast처럼 무시
+                if (candidate.distance <= 0f && candidate.point == Vector3.zero) continue;
+                if (candidate.point.y < floorY) continue;
+                if (found && candidate.distance >= hit.distance) continue;
+
+                hit = candidate;
+                found = true;
+            }
+
+            return found;
         }
 
         #region CAST_VISUALIZATION

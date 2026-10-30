@@ -359,7 +359,21 @@ namespace TeamOdd.Psychokinesis
             // 원본 Collider를 먼저 제거해야 생성된 파편이 원본과 겹치지 않는다.
             gameObject.SetActive(false);
             Shattered?.Invoke(impactPosition, impactNormal, body.mass, debrisMaterial);
+            Remove();
+        }
 
+        // 맵 밖(구멍 아래 등)으로 떨어진 경우처럼 파편 없이 조용히 없앰
+        public void Vanish()
+        {
+            if (isActiveAndEnabled == false) return;
+
+            Release(Vector3.zero);
+            gameObject.SetActive(false);
+            Remove();
+        }
+
+        private void Remove()
+        {
             if (TryGetComponent(out IObjectPoolItem poolItem)) poolItem.ReturnToPool();
             else Destroy(gameObject);
         }

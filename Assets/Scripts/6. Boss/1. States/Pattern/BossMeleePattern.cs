@@ -58,6 +58,8 @@ namespace TeamOdd.Boss
         [field: SerializeField] public bool IsUrgent { get; private set; } // 우선 처리 여부
         [field: SerializeField] public bool CanApproach { get; private set; } // 범위 밖일 경우 근접하여 사용할지 여부
         [SerializeField] private bool requiresLineOfSight = true; // 장애물에 가려 대상이 안 보이면 고르지 않음, 장애물을 무시하고 쓰는 패턴은 끔
+        [Tooltip("대상까지 걸어서 곧장 갈 수 없으면(구멍·난간 너머) 사거리 안이어도 쓰지 않고 돌아가서 쓴다. 너머로도 닿는 원거리 패턴은 끈다.")]
+        [SerializeField] private bool requiresDirectPath;
 
         [Title("Animation")]
         [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
@@ -99,7 +101,9 @@ namespace TeamOdd.Boss
         protected virtual bool CanEndByAnimation => true;
         
         public bool IsTooClose => root.DistanceToTarget < MinDistance;
-        public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance;
+        // 곧장 갈 수 없는 대상은 사거리 밖으로 취급해, 고른 패턴이 있으면 Chase가 경로를 따라 돌아가게 함
+        public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance
+                                         && (requiresDirectPath == false || root.HasDirectPath);
         public bool IsInRange => IsDistanceInRange && IsAngleInside(root.SignedAngleToTarget);
         
         

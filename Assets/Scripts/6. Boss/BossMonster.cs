@@ -56,6 +56,18 @@ namespace TeamOdd.Boss
         public Vector3 SteerPoint => Pathfinder != null ? Pathfinder.GetSteerPoint(Movement.Position, Target.position) : Target.position;
         public float SignedAngleToSteer => SignedAngleTo(SteerPoint);
 
+        // 대상까지 NavMesh 위로 막힘 없이 걸어갈 수 있는지(구멍·난간 너머가 아닌지), 경로를 쓰지 않으면 항상 true
+        // 경로는 SteerPoint를 물을 때 갱신되므로 먼저 물어 최신 판정을 씀
+        public bool HasDirectPath
+        {
+            get
+            {
+                if (Pathfinder == null) return true;
+                _ = SteerPoint;
+                return Pathfinder.IsDirect;
+            }
+        }
+
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
 
         // 장애물을 돌아가는 중엔 대상이 아닌 경로 방향으로 걸으므로 이동 가능 각도도 경로 기준
