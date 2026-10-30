@@ -7,8 +7,8 @@ namespace TeamOdd.Superpower
     /// </summary>
     public static class ChipGridMetrics
     {
-        public const float CellSize = 72f;
-        public const float CellGap = 4f;
+        public const float CellSize = 216f;
+        public const float CellGap = 12f;
         public const float Step = CellSize + CellGap;
 
         // 칩 모양을 뽑을 때 이 크기 그리드에 들어가는 모양만 고른다. 프리팹 그리드 크기(AugmentationChipLayoutBuilder.gridSize)와 맞춘다

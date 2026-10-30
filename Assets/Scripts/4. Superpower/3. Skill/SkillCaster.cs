@@ -103,6 +103,10 @@ namespace TeamOdd.Superpower
                 return;
             }
 
+            // 패시브는 키가 아니라 트리거로 발동한다 (PassiveSkillRunner)
+            if (chip.Skill is PassiveSkill)
+                return;
+
             if (chip.Skill.IsReady == false)
             {
                 Debug.Log($"[SkillCaster] {chip.Skill.Name} 쿨타임 {chip.Skill.RemainingCooldown:0.0}초 남음");

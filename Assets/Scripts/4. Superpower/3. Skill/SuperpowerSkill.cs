@@ -56,10 +56,16 @@ namespace TeamOdd.Superpower
         // 쿨타임을 deltaTime만큼 흘린다. 매 프레임 부른다
         public void Tick(float deltaTime)
         {
-            remainingCooldown = Mathf.Max(0f, remainingCooldown - deltaTime);
+            ReduceCooldown(deltaTime);
         }
 
-        // 쿨타임을 바로 끝낸다. 정비를 마칠 때 인벤토리가 부른다
+        // 남은 쿨타임을 seconds만큼 줄인다. 아드레날린 과분비 칩처럼 쿨타임을 당겨 주는 효과가 부른다
+        public void ReduceCooldown(float seconds)
+        {
+            remainingCooldown = Mathf.Max(0f, remainingCooldown - seconds);
+        }
+
+        // 쿨타임을 바로 끝낸다. 마을과 아레나 사이를 오갈 때 인벤토리가 부른다
         public void ResetCooldown()
         {
             remainingCooldown = 0f;

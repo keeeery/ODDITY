@@ -22,5 +22,12 @@ namespace TeamOdd.Superpower
         TimeStop,
         TimeSlow,
         Resize,
+
+        // 패시브
+        SecondHeart,
+        LifeSteal,
+        ConditionedReflex,
+        RightfulRevenge,
+        AdrenalineHypersecretion,
     }
 }

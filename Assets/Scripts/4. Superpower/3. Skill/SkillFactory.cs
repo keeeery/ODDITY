@@ -41,6 +41,13 @@ namespace TeamOdd.Superpower
                 SkillType.TimeSlow => new TimeSlowSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Multiplier")),
                 SkillType.Resize => new ResizeSkill(name, cooldown, p.GetFloat("Multiplier")),
 
+                // 패시브. 쿨타임은 내부 쿨타임으로 쓴다
+                SkillType.SecondHeart => new SecondHeartSkill(name, cooldown, p.GetInt("Amount")),
+                SkillType.LifeSteal => new LifeStealSkill(name, cooldown, p.GetInt("Amount")),
+                SkillType.ConditionedReflex => new ConditionedReflexSkill(name, cooldown),
+                SkillType.RightfulRevenge => new RightfulRevengeSkill(name, cooldown, p.GetInt("Amount")),
+                SkillType.AdrenalineHypersecretion => new AdrenalineHypersecretionSkill(name, cooldown, p.GetFloat("Amount")),
+
                 _ => null,
             };
 
