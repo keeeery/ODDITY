@@ -127,6 +127,11 @@ namespace TeamOdd.EditorTools
                         foreach (string prop in parts[1].Split(','))
                             result.AppendLine($"debris {prop}: {RenderDebris(prop.Trim())}");
                         break;
+                    case "dump":
+                        // 열린 씬의 오브젝트를 깊이 3까지 월드 위치, 레이어, 렌더러 바운드와 함께 나열
+                        foreach (GameObject rootObject in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+                            Dump(rootObject.transform, 0, result);
+                        break;
                     case "measure":
                         foreach (string name in parts[1].Split(','))
                             result.AppendLine($"measure {name.Trim()}: {Measure(name.Trim())}");
@@ -241,6 +246,22 @@ namespace TeamOdd.EditorTools
                 Object.DestroyImmediate(root);
                 Object.DestroyImmediate(light);
             }
+        }
+
+        private static void Dump(Transform target, int depth, StringBuilder result)
+        {
+            Bounds bounds = default;
+            bool found = false;
+            foreach (Renderer renderer in target.GetComponentsInChildren<Renderer>())
+            {
+                if (found) bounds.Encapsulate(renderer.bounds);
+                else bounds = renderer.bounds;
+                found = true;
+            }
+            result.AppendLine($"{new string(' ', depth * 2)}{target.name} active={target.gameObject.activeSelf} layer={LayerMask.LayerToName(target.gameObject.layer)} pos={target.position:F2} rot={target.eulerAngles:F0} scale={target.lossyScale:F2}"
+                + (found ? $" bounds={bounds.center:F2}/{bounds.size:F2}" : ""));
+            if (depth >= 2) return;
+            foreach (Transform child in target) Dump(child, depth + 1, result);
         }
 
         private static Vector3 ParseVector(string text)
