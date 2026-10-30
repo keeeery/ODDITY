@@ -180,8 +180,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "* \uC5F0\uD569 \uAC00\uC785 (7)"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 659ceb8947c683b4a9e1216df0a67515, type: 2}
-  m_sharedMaterial: {fileID: 6898141960898469622, guid: 659ceb8947c683b4a9e1216df0a67515, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f03a9758a8495c54c9612d6324a2aa66, type: 2}
+  m_sharedMaterial: {fileID: 4855992509581317030, guid: f03a9758a8495c54c9612d6324a2aa66, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

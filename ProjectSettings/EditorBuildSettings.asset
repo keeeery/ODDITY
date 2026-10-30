@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/10. Build/1. Fisrt Week/2. Fight with boss.unity
     guid: 5bc8fcabf75f31745b907b961a5672e1
+  - enabled: 1
+    path: Assets/Scenes/1. Player/1. Get mission 1.unity
+    guid: 1373535d85f3d6d479ad64bf72dc7db4
+  - enabled: 1
+    path: Assets/Scenes/1. Player/Test.unity
+    guid: 9ffc444bc6498fb45b9ef540cc01e34e
+  - enabled: 1
+    path: Assets/Scenes/1. Player/0. Start.unity
+    guid: ca2d3cf6096fa241d2453ade5dc02708
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 0080f10fa8f3d7645883ffa7f095ef2d, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
