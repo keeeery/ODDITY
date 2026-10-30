@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TeamOdd.Boss
 {
     // 쓰러진 보스가 같은 모습의 홀로그램으로 바뀌어 제자리에서 흩어지는 사망 연출.
-    // 부를 때 SkinnedMeshRenderer들의 지금 자세를 메시로 구워 홀로그램 머티리얼(Knife/Hologram Shader Unlit)로 같은 자리에 그리고,
+    // 부를 때 SkinnedMeshRenderer들의 지금 자세를 메시로 구워(무기 같은 일반 메시는 그대로 복사해) 홀로그램 머티리얼(Knife/Hologram Shader Unlit)로 같은 자리에 그리고,
     // 나타남(Alpha) → 다 나타나면 원본 메시를 끄고 몸 충돌도 없앰 → 노이즈로 녹아 사라짐(Dissolve Hide)과 함께 아래에서 위로 지워짐 순서로 진행한 뒤 구운 메시까지 지운다.
     // 아래에서 위로 지우는 건 셰이더의 상자 마스크(Mask Feature)로, 지울 높이 아래를 모두 덮는 큰 상자를 올리며 그 위 경계만 부드럽게 남긴다.
     // 게임 시간을 따르므로 슬로모션 중에는 함께 느려진다.
@@ -26,6 +26,8 @@ namespace TeamOdd.Boss
         [SerializeField] private Material material;
         [Tooltip("막을 만들 메시, 비워 두면 자식의 SkinnedMeshRenderer를 모두 쓴다.")]
         [SerializeField] private SkinnedMeshRenderer[] meshes;
+        [Tooltip("무기처럼 뼈에 붙은 일반 메시, 구울 필요 없이 같은 자리에 복사해 함께 홀로그램으로 바꾼다. 비워 두면 쓰지 않는다.")]
+        [SerializeField] private MeshRenderer[] rigidMeshes;
         [Tooltip("가장 진할 때의 불투명도(0~1), 머티리얼의 Alpha에 곱하지 않고 대신한다.")]
         [SerializeField, Range(0f, 1f)] private float opacity = 0.45f;
 
@@ -54,6 +56,12 @@ namespace TeamOdd.Boss
         private bool hasHiddenSource;
 
         public bool IsPlaying => isActiveAndEnabled && shell != null;
+
+        // 같은 홀로그램으로 순간이동 연출(HumanoidHologramWarp)을 할 때 설정을 함께 씀
+        public Material Material => material;
+        public IReadOnlyList<SkinnedMeshRenderer> SkinnedMeshes => meshes;
+        public IReadOnlyList<MeshRenderer> RigidMeshes => rigidMeshes;
+        public float Opacity => opacity;
 
         private void Awake()
         {
@@ -118,10 +126,8 @@ namespace TeamOdd.Boss
             Bounds bounds = default;
             bool hasBounds = false;
 
-            foreach (SkinnedMeshRenderer source in meshes)
+            foreach (Renderer source in GetSources())
             {
-                if (source == null || source.enabled == false || source.gameObject.activeInHierarchy == false) continue;
-
                 if (hasBounds) bounds.Encapsulate(source.bounds);
                 else bounds = source.bounds;
 
@@ -134,17 +140,33 @@ namespace TeamOdd.Boss
             halfHeight = bounds.extents.y;
             shell.position = bounds.center;
 
-            foreach (SkinnedMeshRenderer source in meshes)
+            foreach (Renderer source in GetSources())
             {
-                if (source == null || source.enabled == false || source.gameObject.activeInHierarchy == false) continue;
-
-                // useScale로 뼈 크기까지 구웠으므로 놓을 때는 크기 1
-                Mesh mesh = new Mesh { name = $"{source.name} Shed" };
-                source.BakeMesh(mesh, true);
-                bakedMeshes.Add(mesh);
-
                 GameObject part = new GameObject(source.name);
                 part.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
+
+                Mesh mesh;
+                if (source is SkinnedMeshRenderer skinned)
+                {
+                    // useScale은 렌더러 자신의 스케일만 구워 넣으므로, 부모(모델 루트 등)에 걸린 스케일은 놓을 때 곱함
+                    mesh = new Mesh { name = $"{source.name} Shed" };
+                    skinned.BakeMesh(mesh, true);
+                    bakedMeshes.Add(mesh);
+                    part.transform.localScale = GetParentScale(source.transform);
+                }
+                else
+                {
+                    // 일반 메시는 원본 메시를 그대로 쓰고 크기만 맞춤
+                    if (source.TryGetComponent(out MeshFilter filter) == false || filter.sharedMesh == null)
+                    {
+                        Destroy(part);
+                        continue;
+                    }
+
+                    mesh = filter.sharedMesh;
+                    part.transform.localScale = source.transform.lossyScale;
+                }
+
                 part.transform.SetParent(shell, true);
                 part.AddComponent<MeshFilter>().sharedMesh = mesh;
 
@@ -162,12 +184,36 @@ namespace TeamOdd.Boss
             return true;
         }
 
+        private static Vector3 GetParentScale(Transform source)
+        {
+            Vector3 lossy = source.lossyScale;
+            Vector3 local = source.localScale;
+            return new Vector3(lossy.x / local.x, lossy.y / local.y, lossy.z / local.z);
+        }
+
+        private IEnumerable<Renderer> GetSources()
+        {
+            foreach (SkinnedMeshRenderer source in meshes)
+                if (IsVisible(source)) yield return source;
+
+            if (rigidMeshes == null) yield break;
+
+            foreach (MeshRenderer source in rigidMeshes)
+                if (IsVisible(source)) yield return source;
+        }
+
+        private static bool IsVisible(Renderer source) => source != null && source.enabled && source.gameObject.activeInHierarchy;
+
         // 홀로그램이 다 나타난 뒤 원본을 꺼 보스가 홀로그램으로 바뀐 것처럼 보이게 함, 쓰러진 보스는 다시 보이지 않음
         private void HideSource()
         {
             hasHiddenSource = true;
             foreach (SkinnedMeshRenderer source in meshes)
                 if (source != null) source.enabled = false;
+
+            if (rigidMeshes != null)
+                foreach (MeshRenderer source in rigidMeshes)
+                    if (source != null) source.enabled = false;
 
             DisableBodyCollision();
         }

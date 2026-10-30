@@ -101,6 +101,14 @@ namespace TeamOdd.Combat
                 .OnComplete(() => gameObject.SetActive(false)).OnKill(() => impactTween = null);
         }
 
+        // 만든 쪽(분신 등)이 먼저 삭제돼도 재생 중인 충격과 입자를 끝까지 보여 준 뒤 지움
+        public void DestroyAfterPlaying()
+        {
+            float remain = impactTween != null && impactTween.IsActive() ? impactTween.Duration(false) - impactTween.Elapsed(false) : 0f;
+            if (debris != null && debris.IsAlive(true)) remain = Mathf.Max(remain, debris.main.startLifetime.constantMax);
+            Destroy(gameObject, remain);
+        }
+
         // intensity가 0이면 점광원을 쓰지 않음
         public void SetLight(Color color, float intensity, float range)
         {

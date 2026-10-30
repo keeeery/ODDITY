@@ -60,6 +60,7 @@ namespace TeamOdd.Boss
         private BossGroggy groggy;
         private BossDizzy dizzy;
         private BossFootDust footDust;
+        private BossLyingGroundFit groundFit;
         private HitFlash flash;
 
         private float enterTime;
@@ -74,6 +75,7 @@ namespace TeamOdd.Boss
             groggy = root.GetComponent<BossGroggy>();
             dizzy = root.GetComponent<BossDizzy>(); // 없으면 들썩임·떨림 없이 동작만 재생
             footDust = root.GetComponent<BossFootDust>();
+            groundFit = root.GetComponent<BossLyingGroundFit>(); // 없으면 서 있던 바닥 높이에 그대로 누움
             flash = HitFlash.GetOrAdd(root.gameObject);
 
             // 상태는 꺼진 채로 기다리므로 Initialize에서 구독
@@ -100,6 +102,7 @@ namespace TeamOdd.Boss
 
             isSlumping = true;
             if (dizzy != null) dizzy.Slump.Begin();
+            if (groundFit != null) groundFit.Begin();
 
             PlayBreakFeedback();
             StartPhase(GroggyPhase.Fall);
@@ -129,6 +132,7 @@ namespace TeamOdd.Boss
         protected override void OnExit()
         {
             EndSlump();
+            if (groundFit != null) groundFit.End();
             Animator.SetBool(BossAnimParams.IS_GROGGY, false);
             if (groggy != null) groggy.Restore();
         }
@@ -153,6 +157,9 @@ namespace TeamOdd.Boss
 
         private void StartPhase(GroggyPhase next)
         {
+            // 일어나는 동안 원래 바닥 높이로 내려옴
+            if (next == GroggyPhase.GetUp && groundFit != null) groundFit.End();
+
             phase = next;
             phaseStartTime = Clock.LocalTime;
         }
