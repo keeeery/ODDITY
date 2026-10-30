@@ -23,6 +23,10 @@ namespace TeamOdd
         [SerializeField] private float appearDuration = 0.8f;
         [SerializeField, Range(0f, 1f)] private float appearGlitch = 1f; // 등장 시작 순간의 흔들림, 원래 값으로 줄어듦
 
+        // 본체 예고와 구분되도록 홀로그램(Hologram Earth 1, 청보라 HDR) 색조에 맞춘 파란색
+        [Title("Telegraph")]
+        [SerializeField] private Color telegraphColor = new(0.25f, 0.4f, 1f, 1f);
+
         [Title("Vanish")]
         [SerializeField] private float vanishDuration = 0.6f;
         [SerializeField, Range(0f, 1f)] private float vanishGlitch = 1f;
@@ -47,6 +51,7 @@ namespace TeamOdd
             block = new MaterialPropertyBlock();
             combatEntity.DestroyOnDeath = false;
             combatEntity.Died += HandleDied;
+            boss.TelegraphColor = telegraphColor;
 
             foreach (Renderer target in GetComponentsInChildren<Renderer>(true))
             {
@@ -61,11 +66,21 @@ namespace TeamOdd
             SetHologram(0f, appearGlitch);
         }
 
-        private void Start() => StartCoroutine(Appear());
+        // 분신은 플레이어를 막거나 밀어내지 않고 통과시킴, 뼈 히트박스가 Awake에서 붙은 뒤라 Start에서 등록
+        private void Start()
+        {
+            Player.Player player = Player.Player.Instance;
+            if (player != null && player.PlayerController != null) player.PlayerController.AddPassThroughBody(transform);
+
+            StartCoroutine(Appear());
+        }
 
         private void OnDestroy()
         {
             if (combatEntity != null) combatEntity.Died -= HandleDied;
+
+            Player.Player player = Player.Player.Instance;
+            if (player != null && player.PlayerController != null) player.PlayerController.RemovePassThroughBody(transform);
         }
 
         // instant: 세상이 멈추는 연출(A15) 등 기다릴 수 없을 때 연출 없이 바로 삭제

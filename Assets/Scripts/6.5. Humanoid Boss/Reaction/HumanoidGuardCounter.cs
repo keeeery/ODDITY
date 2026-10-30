@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
 using TeamOdd.Boss;
+using TeamOdd.Combat;
 using UnityEngine;
 
 namespace TeamOdd
@@ -19,6 +20,11 @@ namespace TeamOdd
         [SerializeField] private float catchSpeed = 40f; // 막힌 자리에서 붙잡을 위치까지 끌려오는 속도(m/s)
         [SerializeField] private float deflectSpeed = 30f;
         [SerializeField] private float aimHeight = 1f;
+
+        // 되돌려 보내는 순간(OnDeflectRelease) 물체 자리에서 터지는 연출
+        [Title("Feedback")]
+        [SerializeField, Min(0f)] private float releaseHitStop = 0.08f; // 0이면 쓰지 않음
+        [SerializeField] private HumanoidReflectBurst releaseBurst = new();
 
         private float guardEndTime;
         private bool isGuardDone;
@@ -67,6 +73,8 @@ namespace TeamOdd
             EndGuard();
         }
 
+        private void OnDestroy() => releaseBurst.Dispose();
+
         protected override void OnPatternAnimEventOccurs(string name, string param)
         {
             if (name == "OnDeflectRelease") Release();
@@ -112,6 +120,9 @@ namespace TeamOdd
             if (heldProjectile == null) return;
 
             Vector3 start = heldProjectile.transform.position;
+            HitStop.Request(releaseHitStop);
+            releaseBurst.Play(start);
+
             Vector3 aimPoint = Target.position + Vector3.up * aimHeight;
             heldProjectile.Fire(GetDeflectVelocity(start, aimPoint));
             heldProjectile = null;

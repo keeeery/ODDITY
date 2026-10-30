@@ -29,7 +29,9 @@ namespace TeamOdd
         protected bool IsProjectileFlying => Projectile != null && Projectile.isActiveAndEnabled
                                              && Projectile.IsHeld == false && Projectile.Body.isKinematic == false;
 
-        protected float ProjectileDistance => Vector3.Distance(Projectile.Body.worldCenterOfMass, root.transform.position + Vector3.up * centerHeight);
+        protected Vector3 BodyCenter => root.transform.position + Vector3.up * centerHeight;
+
+        protected float ProjectileDistance => Vector3.Distance(Projectile.Body.worldCenterOfMass, BodyCenter);
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {

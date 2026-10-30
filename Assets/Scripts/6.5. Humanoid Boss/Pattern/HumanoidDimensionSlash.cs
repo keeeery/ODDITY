@@ -15,7 +15,8 @@ namespace TeamOdd
     // 검을 천천히 들어 잠깐 멈췄다가 빠르게 세로로 내려베고 화면을 가른 뒤 확정 피해
     // 다른 담당 코드를 고치지 않으려고 기존 기능을 씀
     // - 세상 정지: TimeFreezable.FreezeWorld(아주 작은 배율), 0이면 시간 정지 홀로그램 막이 덮이므로 / 보스만 SetWorldExempt
-    // - 플레이어 정지: PlayerController.SetActionLocked (이동·구르기·염동력·스킬·마우스 시점 입력 차단)
+    // - 플레이어 감속: SlowMotion.AddPlayerOnly(아주 작은 배율)로 플레이어만 느리게 해 사실상 움직이지 못하게 함, 염동력·스킬은 SetSuperpowerLocked로 막음
+    // - 순간이동: 사망 연출과 같은 홀로그램(HumanoidHologramWarp)으로 떠오르며 사라졌다가 플레이어 정면에서 내려오며 나타남
     // - 회색·깨짐: ScreenGlitch(Desaturate, Glitch), 화면 가르기: HumanoidSlashScreen
     public class HumanoidDimensionSlash : BossMeleePattern
     {
@@ -28,12 +29,15 @@ namespace TeamOdd
 
         [Title("World Freeze")]
         [SerializeField, Range(0.001f, 0.1f)] private float worldTimeScale = 0.01f;
+        [SerializeField, Range(0.001f, 0.2f)] private float playerTimeScale = 0.02f; // 플레이어만 이 배율로 느려져 이동·구르기가 거의 안 됨
         [SerializeField] private float grayDuration = 0.25f;
 
-        // 화면이 다 회색이 된 뒤 사라졌다가 플레이어 정면 멀리 나타남
+        // 화면이 다 회색이 된 뒤 홀로그램으로 떠오르며 사라졌다가 플레이어 정면 멀리 홀로그램으로 내려오며 나타남
         [Title("Teleport")]
-        [SerializeField] private float vanishTime = 0.3f; // 대시 출발 모션을 보여 준 뒤 사라지는 시점(발동부터 초), grayDuration 이상
-        [SerializeField] private float appearTime = 0.5f;
+        [SerializeField] private float vanishTime = 0.3f; // 대시 출발 모션을 보여 준 뒤 사라지기 시작하는 시점(발동부터 초)
+        [SerializeField] private float appearTime = 0.5f; // 나타나기 시작하는 가장 이른 시점(발동부터 초), 사라짐이 늦게 끝나면 그 뒤
+        [SerializeField] private float vanishIdleCrossFade = 0.3f; // 사라지기 전 대시 출발 모션에서 대기 자세로 돌아오는 시간
+        [SerializeField] private HumanoidHologramWarp.Settings hologram = HumanoidHologramWarp.Settings.Default;
         [SerializeField] private float appearDistance = 13f; // 플레이어 앞 나타나는 거리
         [SerializeField] private float minTeleportDistance = 3f;
         [SerializeField] private float bodyRadius = 1.5f;
@@ -45,6 +49,8 @@ namespace TeamOdd
         [SerializeField] private float strikeDistance = 6f;
         [SerializeField] private float approachSpeed = 2.8f;
         [SerializeField] private float approachAnimSpeed = 0.7f; // 걷기 루프 재생 속도, 이동 속도에 맞춰 발이 미끄러지지 않게
+        [SerializeField] private float approachStartDelay = 0.15f; // 나타난 뒤 대기 자세로 잠깐 서 있다가 걷기 시작
+        [SerializeField] private float approachBlendTime = 0.45f; // 대기에서 걷기로 섞이는 시간, 그동안 이동 속도도 0에서 함께 올림
         [SerializeField] private float maxApproachTime = 3f;
         [SerializeField] private float approachTurnSpeed = 180f;
 
@@ -54,8 +60,17 @@ namespace TeamOdd
         [SerializeField, Range(0f, 0.25f)] private float raiseEndTime = 0.22f; // DimensionSlash 정규화 시간, 베기(0.25) 직전
         [SerializeField] private Vector2 raiseHoldTime = new Vector2(0.5f, 0.75f);
 
+        // 위에서 아래로 빠르게 그어진 흰 심이 번쩍이며 화면이 몇 px 어긋나고, 잦아들면 검은 틈(흰 테두리)으로 남았다가
+        // 화면이 갈라지는 동안 틈이 끝까지 벌어짐
+        [Title("Cut Line")]
+        [SerializeField] private float cutDrawDuration = 0.06f;
+        [SerializeField] private float cutLineDuration = 0.25f; // 번쩍임이 잦아드는 시간
+        [SerializeField, Range(0f, 1f)] private float cutRiftOpen = 0.5f; // 잦아든 뒤 검은 틈이 벌어진 정도, 갈라지며 1까지
+        [SerializeField] private float slipOffset = 4f; // 그어지는 순간 어긋나는 거리(화면 높이 1080 기준 픽셀), 갈라질 때 여기서 이어짐
+        [SerializeField, Range(0f, 1f)] private float cutFlashAlpha = 0.25f;
+        [SerializeField] private float cutShakeTrauma = 0.3f;
+
         [Title("Split")]
-        [SerializeField] private float cutLineDuration = 0.15f;
         [SerializeField] private float splitOffset = 40f; // 화면 높이 1080 기준 픽셀
         [SerializeField] private float splitDuration = 0.2f;
         [SerializeField] private float crackDuration = 0.4f;
@@ -82,10 +97,10 @@ namespace TeamOdd
         private HumanoidBossCombatEntity combatEntity;
         private HumanoidCloneSummon cloneSummon;
         private HumanoidSlashScreen screen;
+        private HumanoidHologramWarp warp;
         private Renderer[] bodyRenderers;
         private readonly List<Renderer> hiddenRenderers = new();
         private bool isWorldFrozen;
-        private bool wasActionLocked;
         private float savedAnimatorSpeed = 1f;
         private bool hasCut;
         private bool hasFrozenPose;
@@ -114,6 +129,7 @@ namespace TeamOdd
             combatEntity = root.GetComponent<HumanoidBossCombatEntity>();
             cloneSummon = root.GetComponentInChildren<HumanoidCloneSummon>(true);
             bodyRenderers = root.GetComponentsInChildren<Renderer>(true);
+            warp = HumanoidHologramWarp.GetOrAdd(root.gameObject);
         }
 
         // 애니메이션 트리거(dimensionSlash)는 BossMeleePattern이 켜서 DimensionDash(대시 출발 모션)부터 재생
@@ -139,6 +155,7 @@ namespace TeamOdd
             Release();
 
             screen.HideAll();
+            if (warp != null) warp.Clear();
             ScreenGlitch.Desaturate = 0f;
             ScreenGlitch.Glitch = 0f;
             SetBodyVisible(true);
@@ -154,34 +171,34 @@ namespace TeamOdd
         private IEnumerator Run()
         {
             float startTime = Clock.LocalTime;
+            StartCoroutine(FadeToGray());
 
-            while (Clock.LocalTime - startTime < vanishTime)
-            {
-                ScreenGlitch.Desaturate = Mathf.Clamp01((Clock.LocalTime - startTime) / grayDuration);
-                yield return null;
-            }
+            while (Clock.LocalTime - startTime < vanishTime) yield return null;
+            yield return Vanish();
 
-            SetBodyVisible(false);
-            while (Clock.LocalTime - startTime < appearTime)
-            {
-                ScreenGlitch.Desaturate = Mathf.Clamp01((Clock.LocalTime - startTime) / grayDuration);
-                yield return null;
-            }
-
-            ScreenGlitch.Desaturate = 1f;
+            while (Clock.LocalTime - startTime < appearTime) yield return null;
             TeleportInFront();
-            SetBodyVisible(true);
+            yield return Appear();
 
             yield return Approach();
             yield return RaiseSword();
 
             while (hasCut == false) yield return null;
-            float cutX = GetCutViewportX();
-            yield return FadeCutLine(cutX);
 
-            while (hasFrozenPose == false) yield return null;
+            // 그어지는 순간부터 찍은 화면을 두 반쪽으로 덮어 어긋나게 보여 줌, 보스가 멈출 때까지는 매 프레임 다시 찍음
+            CaptureView();
+            screen.ShowSplit(GetCutViewportX());
+            yield return DrawCutLine();
+
+            while (hasFrozenPose == false)
+            {
+                CaptureView();
+                yield return null;
+            }
+
             Animator.speed = 0f;
-            yield return SplitScreen(cutX);
+            CaptureView();
+            yield return SplitScreen();
 
             Shatter();
             yield return FadeOut();
@@ -193,15 +210,72 @@ namespace TeamOdd
             root.ChangeBossState(typeof(BossIdleState));
         }
 
+        private IEnumerator FadeToGray()
+        {
+            float startTime = Clock.LocalTime;
+            while (Clock.LocalTime - startTime < grayDuration)
+            {
+                ScreenGlitch.Desaturate = Mathf.Clamp01((Clock.LocalTime - startTime) / grayDuration);
+                yield return null;
+            }
+
+            ScreenGlitch.Desaturate = 1f;
+        }
+
+        // 대시 출발 모션에서 대기 자세로 돌아온 뒤 홀로그램으로 바뀌어 떠오르며 사라짐, 홀로그램을 못 만들면 바로 숨김
+        // 덮이는 동안 원본이 움직여 홀로그램과 어긋나지 않도록 동작을 멈춤 (나타날 때 되돌림)
+        private IEnumerator Vanish()
+        {
+            Animator.CrossFadeInFixedTime(IDLE_STATE, vanishIdleCrossFade);
+            yield return Clock.Wait(vanishIdleCrossFade);
+
+            Animator.speed = 0f;
+            if (warp == null || warp.Bake() == false)
+            {
+                SetBodyVisible(false);
+                yield break;
+            }
+
+            yield return warp.Vanish(hologram, () => SetBodyVisible(false));
+        }
+
+        // 대기 자세로 세운 채 위에서 내려오며 그려지고, 다 그려지면 원본으로 바뀌어 걷기 시작함
+        // 숨긴 렌더러는 크기·자세를 구울 수 없으므로 같은 프레임에 잠깐 보이게 해 구움(화면에는 그려지지 않음)
+        private IEnumerator Appear()
+        {
+            Animator.speed = savedAnimatorSpeed;
+            Animator.Play(IDLE_STATE, 0, 0f);
+            Animator.Update(0f);
+            Animator.speed = 0f;
+
+            bool hasBaked = false;
+            if (warp != null)
+            {
+                SetBodyVisible(true);
+                hasBaked = warp.Bake();
+                SetBodyVisible(false);
+            }
+
+            if (hasBaked) yield return warp.Appear(hologram, ShowAfterAppear);
+            else ShowAfterAppear();
+        }
+
+        private void ShowAfterAppear()
+        {
+            SetBodyVisible(true);
+            Animator.speed = savedAnimatorSpeed;
+        }
+
         // 보스가 한순간도 느려지지 않도록 예외를 먼저 걸고 세상을 멈춤 (풀 때는 반대 순서)
+        // 플레이어는 조작을 막지 않고 플레이어만 아주 느리게 해 입력은 받되 거의 움직이지 못하게 함
         private void Begin()
         {
             Clock.SetWorldExempt(true);
             TimeFreezable.FreezeWorld(worldTimeScale);
             isWorldFrozen = true;
 
-            wasActionLocked = PlayerController.IsActionLocked;
-            PlayerController.SetActionLocked(true);
+            SlowMotion.AddPlayerOnly(playerTimeScale);
+            PlayerController.SetSuperpowerLocked(true);
 
             savedAnimatorSpeed = Animator.speed;
             if (combatEntity != null) combatEntity.IsInvincible = true;
@@ -214,7 +288,8 @@ namespace TeamOdd
             isWorldFrozen = false;
             TimeFreezable.UnfreezeWorld(worldTimeScale);
             Clock.SetWorldExempt(false);
-            PlayerController.SetActionLocked(wasActionLocked);
+            SlowMotion.RemovePlayerOnly(playerTimeScale);
+            PlayerController.SetSuperpowerLocked(false);
             if (combatEntity != null) combatEntity.IsInvincible = false;
         }
 
@@ -241,14 +316,20 @@ namespace TeamOdd
         {
             if (root.DistanceToTarget <= strikeDistance) yield break;
 
+            yield return Clock.Wait(approachStartDelay);
+
+            // 대기에서 바로 걷기 속도로 나가면 발이 미끄러지므로, 걷기가 섞이는 동안 이동 속도를 0에서 함께 올림
+            // 섞이는 시간도 재생 속도를 따르므로 실제 걸리는 시간에 맞춰 올림
             Animator.speed = approachAnimSpeed;
-            Animator.CrossFadeInFixedTime(WALK_STATE, 0.15f);
+            Animator.CrossFadeInFixedTime(WALK_STATE, approachBlendTime);
+            float rampDuration = approachBlendTime / Mathf.Max(0.01f, approachAnimSpeed);
 
             float startTime = Clock.LocalTime;
             while (root.DistanceToTarget > strikeDistance && Clock.LocalTime - startTime < maxApproachTime)
             {
+                float ramp = rampDuration > 0f ? Mathf.SmoothStep(0f, 1f, (Clock.LocalTime - startTime) / rampDuration) : 1f;
                 root.RotateYaw(root.SignedAngleToTarget, approachTurnSpeed * Clock.LocalDeltaTime);
-                Movement.Move(root.transform.forward * (approachSpeed * Clock.LocalDeltaTime));
+                Movement.Move(root.transform.forward * (approachSpeed * ramp * Clock.LocalDeltaTime));
                 yield return null;
             }
         }
@@ -293,25 +374,52 @@ namespace TeamOdd
             return view.WorldToViewportPoint(root.transform.position + Vector3.up * 2f).x;
         }
 
-        private IEnumerator FadeCutLine(float cutX)
-        {
-            float startTime = Clock.LocalTime;
-
-            while (Clock.LocalTime - startTime < cutLineDuration)
-            {
-                screen.SetCutLine(cutX, 1f - (Clock.LocalTime - startTime) / cutLineDuration);
-                yield return null;
-            }
-
-            screen.SetCutLine(cutX, 0f);
-        }
-
-        private IEnumerator SplitScreen(float cutX)
+        private void CaptureView()
         {
             Camera view = Camera.main;
             if (view != null) screen.Capture(view);
-            screen.ShowSplit(cutX);
+        }
 
+        // 칼이 지나가는 순간 흰 심이 위에서 아래로 빠르게 그어지며 화면이 살짝 번쩍이고 흔들리면서 몇 px 어긋나고,
+        // 번쩍임이 잦아들며 검은 틈이 드러남
+        private IEnumerator DrawCutLine()
+        {
+            CameraMove.CameraController cameraController = Player.Player.Instance.CameraController;
+            if (cameraController != null) cameraController.AddTrauma(cutShakeTrauma, cutDrawDuration + cutLineDuration);
+
+            float slip = slipOffset * Screen.height / 1080f;
+            float startTime = Clock.LocalTime;
+            while (Clock.LocalTime - startTime < cutDrawDuration)
+            {
+                float draw = Mathf.Clamp01((Clock.LocalTime - startTime) / cutDrawDuration);
+                float eased = 1f - (1f - draw) * (1f - draw);
+                screen.SetCut(eased, 1f, 0f);
+                screen.SetSplit(slip * eased, 0f);
+                screen.SetFlash(cutFlashAlpha * draw);
+                CaptureView();
+                yield return null;
+            }
+
+            startTime = Clock.LocalTime;
+            while (Clock.LocalTime - startTime < cutLineDuration)
+            {
+                float fade = Mathf.Clamp01((Clock.LocalTime - startTime) / cutLineDuration);
+                float eased = 1f - (1f - fade) * (1f - fade);
+                screen.SetCut(1f, 1f - eased, cutRiftOpen * eased);
+                screen.SetSplit(slip, 0f);
+                screen.SetFlash(cutFlashAlpha * (1f - eased));
+                CaptureView();
+                yield return null;
+            }
+
+            screen.SetCut(1f, 0f, cutRiftOpen);
+            screen.SetFlash(0f);
+        }
+
+        // 어긋남이 이어져 크게 벌어지고, 찍은 화면이 그만큼 확대되어 위아래 끝이 비지 않음
+        private IEnumerator SplitScreen()
+        {
+            float slip = slipOffset * Screen.height / 1080f;
             float offset = splitOffset * Screen.height / 1080f;
             float startTime = Clock.LocalTime;
 
@@ -319,7 +427,11 @@ namespace TeamOdd
             {
                 float elapsed = Clock.LocalTime - startTime;
                 float split = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / splitDuration));
-                screen.SetSplit(offset * split, Mathf.Clamp01(elapsed / crackDuration));
+                screen.SetSplit(Mathf.Lerp(slip, offset, split), Mathf.Clamp01(elapsed / crackDuration));
+
+                // 틈이 끝까지 벌어지고, 깨지기 직전까지 테두리가 조금씩 떨림
+                float flicker = 1f + 0.1f * Mathf.Sin(elapsed * 60f);
+                screen.SetCut(1f, 0f, Mathf.Lerp(cutRiftOpen, 1f, split) * flicker);
                 yield return null;
             }
         }

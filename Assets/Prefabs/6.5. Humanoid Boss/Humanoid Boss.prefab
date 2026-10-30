@@ -84,12 +84,70 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1371975284
   useRootMotion: 1
   trackDuration: 0.5
   trackSpeed: 120
   <Recovery>k__BackingField: 1
-  hits: []
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.6
+      length: 4.4
+    offset: {x: 0, y: 0}
+    warnDuration: 0.25
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 3.6
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0.3, y: 1}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 4.1
+      angle: 160
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0.2, y: 1.1}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &530059670705327613
@@ -145,6 +203,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -1842980855
   useRootMotion: 0
   trackDuration: 0.46
@@ -225,6 +284,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: 780553842
   useRootMotion: 1
   trackDuration: 0
@@ -319,12 +379,70 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -681069039
   useRootMotion: 1
   trackDuration: 1.65
   trackSpeed: 120
   <Recovery>k__BackingField: 1
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.2
+      angle: 160
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.8
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 4.2
+      angle: 160
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.23
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2
+      length: 4.6
+    offset: {x: 0, y: 0}
+    warnDuration: 0.8
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &1442391566110118453
@@ -431,15 +549,35 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -1643175366
   useRootMotion: 0
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0.6
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.6
+      angle: 200
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.37
+    damage: 15
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
-  turnDuration: 0.85
+  turnDuration: 0.4
   maxTurnSpeed: 240
 --- !u!1 &1858208715420667990
 GameObject:
@@ -479,6 +617,7 @@ Transform:
   - {fileID: 7845311317190815647}
   - {fileID: 1650587847042035121}
   - {fileID: 4583683826714150876}
+  - {fileID: 7555064345212330967}
   m_Father: {fileID: 2673184468998081720}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2092899075954792204
@@ -537,6 +676,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -2001244468
   useRootMotion: 0
   trackDuration: 0.45
@@ -637,12 +777,32 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1158871993
   useRootMotion: 1
   trackDuration: 0.4
   trackSpeed: 120
   <Recovery>k__BackingField: 0.8
-  hits: []
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.4
+      length: 5
+    offset: {x: 0, y: 0}
+    warnDuration: 0.44
+    damage: 15
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0.1, y: 2.9}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2898368513525761335
@@ -698,12 +858,32 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1285865267
   useRootMotion: 1
   trackDuration: 0.5
   trackSpeed: 150
   <Recovery>k__BackingField: 0.6
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.5
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0.1, y: 3.2}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &2980803635351971822
@@ -790,12 +970,32 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1212518212
   useRootMotion: 1
   trackDuration: 0.35
   trackSpeed: 150
   <Recovery>k__BackingField: 0.3
-  hits: []
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 1.8
+      length: 4.8
+    offset: {x: 0, y: 0}
+    warnDuration: 0.41
+    damage: 18
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: -0.2, y: 0.6}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &3444538361232858657
@@ -851,12 +1051,89 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1315891115
   useRootMotion: 1
   trackDuration: 2
   trackSpeed: 120
   <Recovery>k__BackingField: 1
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.3
+      angle: 200
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.52
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 4.3
+      angle: 200
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.65
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 1
+      radius: 4.3
+      angle: 200
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.23
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2
+      length: 4.6
+    offset: {x: 0, y: 0}
+    warnDuration: 0.8
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &3775202239825928951
@@ -1045,6 +1322,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 1
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: -597998766
   useRootMotion: 0
   trackDuration: 0
@@ -1147,6 +1425,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: -915875468
   useRootMotion: 0
   trackDuration: 0
@@ -1254,6 +1533,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: 544200473
   useRootMotion: 0
   trackDuration: 0
@@ -1387,6 +1667,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: -1357769780
   useRootMotion: 1
   trackDuration: 0.3
@@ -1404,6 +1685,16 @@ MonoBehaviour:
   catchSpeed: 40
   deflectSpeed: 30
   aimHeight: 1
+  releaseHitStop: 0.08
+  releaseBurst:
+    material: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+    count: 40
+    speed: {x: 10, y: 20}
+    lifetime: {x: 0.35, y: 0.7}
+    size: 0.12
+    radius: 0.5
+    color: {r: 1, g: 1, b: 1, a: 1}
+    tipColor: {r: 0.6, g: 0.9, b: 1, a: 1}
 --- !u!1 &5082418290794873240
 GameObject:
   m_ObjectHideFlags: 0
@@ -1522,15 +1813,35 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 827010313
   useRootMotion: 0
   trackDuration: 0
   trackSpeed: 90
   <Recovery>k__BackingField: 0.6
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.6
+      angle: 200
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.37
+    damage: 15
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
-  turnDuration: 0.85
+  turnDuration: 0.4
   maxTurnSpeed: 240
 --- !u!1 &5792482037999499793
 GameObject:
@@ -1585,12 +1896,70 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -76932571
   useRootMotion: 0
   trackDuration: 0.3
   trackSpeed: 150
   <Recovery>k__BackingField: 1
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.2
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.29
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 4.2
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.39
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 3
+      length: 4.3
+    offset: {x: 0, y: 0}
+    warnDuration: 0.8
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &5793243019908525957
@@ -1647,6 +2016,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1139233184
   useRootMotion: 1
   trackDuration: 0.3
@@ -1727,12 +2097,51 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -1901772382
   useRootMotion: 1
   trackDuration: 0.42
   trackSpeed: 150
   <Recovery>k__BackingField: 0.4
-  hits: []
+  hits:
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2.6
+      length: 6
+    offset: {x: 0, y: 0}
+    warnDuration: 0.35
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 4.5
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.25
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: -0.1, y: 2.1}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &5803285768106623255
@@ -1788,12 +2197,51 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -892278593
   useRootMotion: 1
   trackDuration: 0.85
   trackSpeed: 120
   <Recovery>k__BackingField: 0.8
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 3.6
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.26
+    damage: 12
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: -0.3, y: 1.5}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 0
+      radius: 2.5
+      angle: 0
+      width: 0
+      length: 0
+    offset: {x: 0.1, y: 4.1}
+    warnDuration: 0.5
+    damage: 20
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 1
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 1.3}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &5829140787414754576
@@ -1849,14 +2297,121 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 130959345
   useRootMotion: 0
   trackDuration: 0.25
   trackSpeed: 180
   <Recovery>k__BackingField: 0.5
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.3
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.31
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 3.9
+      angle: 180
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 10
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
+--- !u!1 &5833181079839759412
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7555064345212330967}
+  - component: {fileID: 2007611175772457353}
+  m_Layer: 0
+  m_Name: Death
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7555064345212330967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5833181079839759412}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1171236596591293118}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2007611175772457353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5833181079839759412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af14639d5cb24301b9738b3a5a2d56f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathState
+  stateName: Death
+  crossFadeDuration: 0.15
+  startTime: 0
+  endTime: 0.98
+  playDuration: 2.1233335
+  impactTime: 0.45
+  hitStopDuration: 0.15
+  slowTimeScale: 0.1
+  slowHoldDuration: 0.85
+  slowRecoverDuration: 1.5
+  playerSlowScale: 0.35
+  flashDuration: 0.5
+  shakeTrauma: 0.55
+  shakeFadeTime: 0.6
+  zoomFov: 7
+  zoomInDuration: 0.1
+  dustAmount: 1.5
+  impactShakeTrauma: 0.8
+  impactShakeFadeTime: 1
+  shedDelay: 0.35
+  pullBackDistance: 1.5
+  pullBackDuration: 2.5
+  pullBackHold: 2
+  pullBackRelease: 1.5
 --- !u!1 &5854567238708996988
 GameObject:
   m_ObjectHideFlags: 0
@@ -1962,12 +2517,32 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -602166781
   useRootMotion: 1
   trackDuration: 0.3
   trackSpeed: 120
   <Recovery>k__BackingField: 0.8
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.5
+      angle: 160
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.4
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: 0, y: 3.6}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &6440582313334844515
@@ -2080,6 +2655,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: -1519942275
   useRootMotion: 0
   trackDuration: 0.25
@@ -2092,6 +2668,16 @@ MonoBehaviour:
   phase2Weight: 1
   cutRadius: 7
   closeRadius: 4
+  cutHitStop: 0.08
+  cutBurst:
+    material: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+    count: 40
+    speed: {x: 10, y: 20}
+    lifetime: {x: 0.35, y: 0.7}
+    size: 0.12
+    radius: 0.5
+    color: {r: 1, g: 1, b: 1, a: 1}
+    tipColor: {r: 0.6, g: 0.9, b: 1, a: 1}
 --- !u!1 &7432533206879479912
 GameObject:
   m_ObjectHideFlags: 0
@@ -2145,12 +2731,127 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -66593220
   useRootMotion: 0
   trackDuration: 4.5
   trackSpeed: 90
   <Recovery>k__BackingField: 1.2
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.4
+      angle: 180
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.45
+    damage: 8
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
+  - shape:
+      kind: 1
+      radius: 4.4
+      angle: 180
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 1.35
+    damage: 8
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 1
+      radius: 4.4
+      angle: 180
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.39
+    damage: 8
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 1
+      radius: 4.4
+      angle: 180
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.43
+    damage: 8
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 1
+      radius: 4.4
+      angle: 180
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 1
+    damage: 8
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 1
+  - shape:
+      kind: 2
+      radius: 0
+      angle: 0
+      width: 2
+      length: 5
+    offset: {x: 0, y: 0}
+    warnDuration: 0.8
+    damage: 15
+    reaction: 2
+    push:
+      distance: 4
+      height: 0.5
+      duration: 0.6
+      direction: 2
+      angleOffset: 0
+    lockOnWarn: 0
+    moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &7649080772002705252
@@ -2206,12 +2907,32 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1115633409
   useRootMotion: 1
   trackDuration: 0.65
   trackSpeed: 150
   <Recovery>k__BackingField: 0.6
-  hits: []
+  hits:
+  - shape:
+      kind: 1
+      radius: 4.3
+      angle: 150
+      width: 0
+      length: 0
+    offset: {x: 0, y: 0}
+    warnDuration: 0.5
+    damage: 15
+    reaction: 1
+    push:
+      distance: 2
+      height: 0
+      duration: 0.5
+      direction: 0
+      angleOffset: 0
+    lockOnWarn: 1
+    moveLead: {x: -0, y: 2.5}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
 --- !u!1 &7916601586479391078
@@ -2267,6 +2988,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1628729824
   useRootMotion: 0
   trackDuration: 0
@@ -2538,6 +3260,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 1
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 0
+  requiresDirectPath: 0
   trigger: -1940167703
   useRootMotion: 0
   trackDuration: 0
@@ -2562,6 +3285,7 @@ MonoBehaviour:
       angleOffset: 0
     lockOnWarn: 0
     moveLead: {x: 0, y: 0}
+    sharesPreviousTelegraph: 0
   hitFadeDuration: 0.3
   showRangeWhenInactive: 1
   template: {fileID: 0}
@@ -2629,6 +3353,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1027987967
   useRootMotion: 0
   trackDuration: 0.74
@@ -2795,6 +3520,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5313099309015429719}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7696178343661304871}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3085963711675820568}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1161441243179999686}
   m_SourcePrefab: {fileID: 100100000, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
 --- !u!4 &760891972866721219 stripped
 Transform:
@@ -2907,6 +3641,12 @@ MonoBehaviour:
     m_Bits: 128
   wallRadius: 2
   castHeight: 0.5
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stepHeight: 1
+  maxDrop: 1.5
+  heightSpeed: 6
 --- !u!114 &5057307636996297371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3198,6 +3938,67 @@ MonoBehaviour:
   sampleDistance: 6
   wallClearance: 2
   avoidWeight: 1
+--- !u!114 &7696178343661304871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337976221362853378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cfd5623cfc34bc8bfafa7f247523aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathShed
+  material: {fileID: 2100000, guid: cf857a154dca4fb2babb9d49dd4c6725, type: 2}
+  meshes: []
+  rigidMeshes:
+  - {fileID: 2182829401690050078}
+  opacity: 0.45
+  duration: 1.8
+  fadeInDuration: 0.2
+  holdDuration: 0.6
+  dissolveStart: 0.35
+  wipeStart: 0.25
+  wipeSoftness: 0.6
+--- !u!114 &3085963711675820568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337976221362853378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23aa062bfc9040baab66fd0739973828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossDeathResidue
+  material: {fileID: 2100000, guid: 6cf23f9d71634c0e9c70671ee1c2281b, type: 2}
+  color: {r: 0.45, g: 0.85, b: 1, a: 1}
+  tipColor: {r: 0.55, g: 0.4, b: 1, a: 1}
+  duration: 6
+  startRate: 45
+  riseSpeed: {x: 0.6, y: 1.6}
+  spread: 0.35
+  size: {x: 0.05, y: 0.12}
+  lifetime: {x: 1.4, y: 2.4}
+--- !u!114 &1161441243179999686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337976221362853378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb74e6097d24f29a748fcda7845408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossLyingGroundFit
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 641
+  maxLift: 1.2
+  liftSpeed: 4
 --- !u!1001 &5764837849109346097
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3271,6 +4072,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: -9137962142385034750, guid: 3af351dd455933241adaadfb8566111f, type: 3}
+--- !u!23 &2182829401690050078 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5641364073789536559, guid: 3af351dd455933241adaadfb8566111f, type: 3}
+  m_PrefabInstance: {fileID: 5764837849109346097}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5271350872471927558 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1812497409201261623, guid: 3af351dd455933241adaadfb8566111f, type: 3}
