@@ -1,17 +1,11 @@
 Id	Name	Description	CellCount	UnitSpriteKey	StatType	Value
-1001	강화 근섬유 칩(S)	초능력의 기본 공격력이 5 증가합니다.	3	AugmentationChip/ChipUnit_Red	Atk	5
-1002	강화 근섬유 칩(M)	초능력의 기본 공격력이 10 증가합니다.	4	AugmentationChip/ChipUnit_Red	Atk	10
-1003	강화 근섬유 칩(L)	초능력의 기본 공격력이 15 증가합니다.	5	AugmentationChip/ChipUnit_Red	Atk	15
-1004	강화 근섬유 칩(XL)	초능력의 기본 공격력이 25 증가합니다.	6	AugmentationChip/ChipUnit_Red	Atk	25
-1011	경화 외피 칩(S)	방어력이 3 증가합니다.	4	AugmentationChip/ChipUnit_Blue	Def	3
-1012	경화 외피 칩(M)	방어력이 6 증가합니다.	5	AugmentationChip/ChipUnit_Blue	Def	6
-1013	경화 외피 칩(L)	방어력이 9 증가합니다.	6	AugmentationChip/ChipUnit_Blue	Def	9
-1021	생체 증폭 칩(S)	최대 체력이 20 증가합니다.	4	AugmentationChip/ChipUnit_Green	MaxHp	20
-1022	생체 증폭 칩(M)	최대 체력이 40 증가합니다.	5	AugmentationChip/ChipUnit_Green	MaxHp	40
-1023	생체 증폭 칩(L)	최대 체력이 60 증가합니다.	6	AugmentationChip/ChipUnit_Green	MaxHp	60
-1031	염동력 강화 칩(S)	염동력으로 들 수 있는 최대 질량이 5kg 증가합니다.	3	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	5
-1032	염동력 강화 칩(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	4	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	10
-1033	염동력 강화 칩(L)	염동력으로 들 수 있는 최대 질량이 15kg 증가합니다.	5	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	15
-1041	스태미나 강화 칩(S)	최대 스태미나가 20 증가합니다.	4	AugmentationChip/ChipUnit_Orange	MaxStamina	20
-1042	스태미나 강화 칩(M)	최대 스태미나가 40 증가합니다.	5	AugmentationChip/ChipUnit_Orange	MaxStamina	40
-1043	스태미나 강화 칩(L)	최대 스태미나가 60 증가합니다.	6	AugmentationChip/ChipUnit_Orange	MaxStamina	60
+1001	강화 근섬유 칩(S)	초능력의 기본 공격력이 5 증가합니다.	2	AugmentationChip/ChipUnit_Red	Atk	5
+1002	강화 근섬유 칩(M)	초능력의 기본 공격력이 10 증가합니다.	3	AugmentationChip/ChipUnit_Red	Atk	10
+1003	경화 외피 칩(S)	방어력이 3 증가합니다.	2	AugmentationChip/ChipUnit_Blue	Def	3
+1004	경화 외피 칩(M)	방어력이 6 증가합니다.	3	AugmentationChip/ChipUnit_Blue	Def	6
+1005	생체 증폭 칩(S)	최대 체력이 20 증가합니다.	2	AugmentationChip/ChipUnit_Green	MaxHp	20
+1006	생체 증폭 칩(M)	최대 체력이 40 증가합니다.	3	AugmentationChip/ChipUnit_Green	MaxHp	40
+1007	염동력 강화 칩(S)	염동력으로 들 수 있는 최대 질량이 5kg 증가합니다.	2	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	5
+1008	염동력 강화 칩(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	3	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	10
+1009	스태미나 강화 칩(S)	최대 스태미나가 20 증가합니다.	2	AugmentationChip/ChipUnit_Orange	MaxStamina	20
+1010	스태미나 강화 칩(M)	최대 스태미나가 40 증가합니다.	3	AugmentationChip/ChipUnit_Orange	MaxStamina	40

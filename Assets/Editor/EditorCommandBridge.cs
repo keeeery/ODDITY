@@ -82,6 +82,14 @@ namespace TeamOdd.EditorTools
                         }
                         result.AppendLine($"deactivate {parts[1]}: {found != null}");
                         break;
+                    case "scene":
+                        // 열린 씬마다 경로와 저장 안 된 변경 여부를 알려 줌
+                        for (int index = 0; index < UnityEngine.SceneManagement.SceneManager.sceneCount; index++)
+                        {
+                            UnityEngine.SceneManagement.Scene loaded = UnityEngine.SceneManagement.SceneManager.GetSceneAt(index);
+                            result.AppendLine($"scene: {loaded.path} dirty={loaded.isDirty}");
+                        }
+                        break;
                     case "save":
                         result.AppendLine($"save: {UnityEditor.SceneManagement.EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene())}");
                         break;
@@ -98,6 +106,11 @@ namespace TeamOdd.EditorTools
                         // view <이름> <x,y,z> <x,y,z>: 한 시점을 Temp/ScenePreview/view_이름.png로 찍음
                         string[] viewArgs = parts[1].Split(' ');
                         result.AppendLine($"view {viewArgs[0]}: {RenderView(viewArgs[0], ParseVector(viewArgs[1]), ParseVector(viewArgs[2]))}");
+                        break;
+                    case "viewpp":
+                        // view와 같지만 씬의 Volume 포스트 프로세싱을 적용해서 찍음
+                        string[] viewPpArgs = parts[1].Split(' ');
+                        result.AppendLine($"viewpp {viewPpArgs[0]}: {RenderView(viewPpArgs[0], ParseVector(viewPpArgs[1]), ParseVector(viewPpArgs[2]), true)}");
                         break;
                     case "shards":
                         // 열린 씬의 WallFragmentSpawner마다 금속 조각 생성 메뉴를 실행
@@ -236,13 +249,14 @@ namespace TeamOdd.EditorTools
             return new Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]));
         }
 
-        private static string RenderView(string name, Vector3 position, Vector3 lookAt)
+        private static string RenderView(string name, Vector3 position, Vector3 lookAt, bool postProcessing = false)
         {
             RenderTexture target = new(1280, 720, 24, RenderTextureFormat.ARGB32);
             Texture2D image = new(1280, 720, TextureFormat.RGB24, false);
             Camera camera = new GameObject("View Camera") { hideFlags = HideFlags.HideAndDontSave }.AddComponent<Camera>();
             try
             {
+                UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(camera).renderPostProcessing = postProcessing;
                 camera.fieldOfView = 55f;
                 camera.farClipPlane = 1000f;
                 camera.targetTexture = target;
