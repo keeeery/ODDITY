@@ -38,7 +38,8 @@ MonoBehaviour:
   - {fileID: 2147300001}
   - {fileID: 7833122117494664109}
   - {fileID: 3125712369764644863}
-  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000ad6b866f10d7b46cffb7ddedd6c2602b
+  - {fileID: 2147300002}
+  m_RendererFeatureMap: a032fd7f00000000a132fd7f00000000ad6b866f10d7b46cffb7ddedd6c2602ba232fd7f00000000
   m_UseNativeRenderPass: 1
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
@@ -138,3 +139,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.ScreenGlitchFeature
   m_Active: 1
   shader: {fileID: 4800000, guid: 8249045ea2bde479585ca22e5dd96706, type: 3}
+--- !u!114 &2147300002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb601c3dfa04b0fb63a7a4273ad8b2e, type: 3}
+  m_Name: Boss Occlusion Outline
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.BossOcclusionOutlineFeature
+  m_Active: 1
+  outlineShader: {fileID: 4800000, guid: 91d84f18e74e4c7dbb61fb26d9d3bd98, type: 3}

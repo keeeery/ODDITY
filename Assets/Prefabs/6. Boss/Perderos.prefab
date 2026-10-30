@@ -994,9 +994,6 @@ MonoBehaviour:
   chargeDistance: 25
   chargeSpeed: 20
   chargeRunAnimSpeed: 1.5
-  passThroughMask:
-    serializedVersion: 2
-    m_Bits: 8
   hitRadius: 5
   chargeDamage: 21
   chargeReaction: 2
@@ -3541,10 +3538,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossMovement
   body: {fileID: 6146927584407496567}
-  blockMask:
-    serializedVersion: 2
-    m_Bits: 8
-  castRadius: 1.2
   wallMask:
     serializedVersion: 2
     m_Bits: 128
@@ -3644,7 +3637,7 @@ MonoBehaviour:
   finishAxisBias: 0.75
   finishRayDensity: 0.2
   finishCoreSize: 0.16
-  finishDebrisSpawnFill: 0.85
+  debrisSpawnFill: 0.85
   impactMaterial: {fileID: 2100000, guid: a3289664271548d28330e282e8fea8a4, type: 2}
   impactSize: 3
   impactDuration: 0.3

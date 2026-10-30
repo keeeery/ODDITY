@@ -38,7 +38,6 @@ namespace TeamOdd.Boss
         [SerializeField] private float chargeDistance = 25f;
         [SerializeField] private float chargeSpeed = 20f;
         [SerializeField] private float chargeRunAnimSpeed = 1.5f;
-        [SerializeField] private LayerMask passThroughMask; // 돌진 중 막히지 않고 통과할 레이어 (플레이어)
 
         [Title("Charge Hit")]
         [SerializeField] private float hitRadius = 5f; // 보스 위치 기준, 이 안에 대상이 들어오면 피해
@@ -235,7 +234,6 @@ namespace TeamOdd.Boss
             chargeDir.y = 0f;
             chargeDir.Normalize();
 
-            Movement.PassThroughMask = passThroughMask;
             Movement.OnBlocked += HandleBlocked;
 
             Animator.SetFloat(BossAnimParams.CHARGE_RUN_SPEED, chargeRunAnimSpeed);
@@ -365,7 +363,6 @@ namespace TeamOdd.Boss
         private void EndCharge()
         {
             Movement.OnBlocked -= HandleBlocked;
-            Movement.PassThroughMask = 0;
 
             // 벽에 부딪히거나 끝까지 달려 돌진이 끝나면 경로 표시를 사라지게 함
             if (pathTelegraph != null) pathTelegraph.Resolve(pathFadeDuration);

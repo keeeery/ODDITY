@@ -11,8 +11,8 @@ namespace TeamOdd.Boss
     // 뒤로 뛰는 모션(Hop)이 없는 보스가 안쪽으로 파고든 대상을 떼어내는 용도, 밀어내는 거리는 정면 공격 사거리에 맞춤
     // - 진입하면 Roar를 재생하고 보스 중심에 원형 범위를 예고
     // - OnRoarDrop 신호(포효 정점)에서 음파를 터뜨리고 범위 안의 대상을 바깥으로 밀어냄
-    // - 포효한 뒤 밀려난 대상 쪽으로 돌고, OnAttackEnded 신호로 끝나면 후딜 없이 연계 공격(followPatterns)으로 이어 감
-    // - 애니메이션은 포효 클립을 일찍 끊는 전용 상태(roarPush 트리거)를 써서 밀어낸 뒤 빈 시간을 줄임
+    // - 시전 내내 진입 방향을 유지하고, OnAttackEnded 신호로 끝나면 후딜 없이 연계 공격(followPatterns)으로 이어 감
+    // - 애니메이션은 포효 클립 0.75 지점부터 Idle과 섞는 전용 상태(roarPush 트리거)로 빈 시간을 줄임
     public class BossRoarPattern : BossMeleePattern
     {
         [Title("Condition")]
@@ -35,8 +35,6 @@ namespace TeamOdd.Boss
         [Title("Follow Up")]
         [Tooltip("밀어낸 뒤 후딜 없이 바로 이어 갈 공격 후보, 밀려난 거리에서 닿는 Forward 공격을 넣는다.")]
         [SerializeField] private BossMeleePattern[] followPatterns;
-        [Tooltip("포효한 뒤 밀려난 대상 쪽으로 도는 속도(도/초), 연계 공격의 각도 안에 대상을 두기 위함")]
-        [SerializeField, Min(0f)] private float faceTurnSpeed = 300f;
 
         [Title("Effect")]
         [Tooltip("음파 연출, 비어 있으면 보스에서 찾고 없으면 생략")]
@@ -74,12 +72,6 @@ namespace TeamOdd.Boss
             telegraph = root.ShowTelegraph(Shape, GetPose(), warnDuration);
         }
 
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-            if (hasRoared) root.RotateYaw(root.SignedAngleToTarget, faceTurnSpeed * Clock.LocalDeltaTime);
-        }
-
         protected override void OnPatternExit()
         {
             // 포효 전에 패턴이 끊기면 예고만 남지 않도록 바로 지움
@@ -111,7 +103,7 @@ namespace TeamOdd.Boss
             hasRoared = true;
         }
 
-        // 각도는 포효 뒤 대상 쪽으로 도는 중이라 거리만 보고 고름
+        // 포효 중 돌지 않으므로 거리·각도 모두 맞는 공격만 고름, 없으면 Idle에서 다시 판단
         private bool TryPickFollow(out BossMeleePattern result)
         {
             result = null;
@@ -122,7 +114,7 @@ namespace TeamOdd.Boss
 
             foreach (BossMeleePattern pattern in followPatterns)
             {
-                if (pattern == null || pattern.CanUse == false || pattern.IsDistanceInRange == false) continue;
+                if (pattern == null || pattern.CanUse == false || pattern.IsInRange == false) continue;
 
                 candidates.Add(pattern);
                 weights.Add(pattern.Weight);
