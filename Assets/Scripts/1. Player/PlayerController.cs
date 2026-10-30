@@ -168,6 +168,7 @@ namespace TeamOdd.Player
         private readonly HashSet<Collider> touchedBodies = new(); // 이번 검사에서 겹친 부위
         private readonly List<Collider> separatedBodies = new();
         private Dictionary<Collider, Vector3> nearBodies = new(); // skinWidth 안에 들어온(충돌은 켜 둔) 보스 부위와 직전 위치
+        private readonly List<Transform> passThroughBodies = new(); // 막지도 밀어내지도 않고 통과하는 몸(분신 등)의 루트
         private Dictionary<Collider, Vector3> nextNearBodies = new();
         private bool isPushingOut; // 겹친 몸에서 빠져나가는 중
         private float bodyStillTime; // 겹친 보스 부위가 모두 멈춰 있던 시간(초)
@@ -217,6 +218,9 @@ namespace TeamOdd.Player
         public bool IsDead => isDead;
         // 염동 내려찍기처럼 시전 중 이동·구르기·공격·다른 스킬과 카메라 회전을 막는 동안
         public bool IsActionLocked { get; private set; }
+        // 이동·구르기·시점은 그대로 두고 염동력·스킬만 막는 동안(보스 연출로 플레이어만 느려질 때 등), 행동 잠금도 포함
+        public bool IsSuperpowerLocked => IsActionLocked || isSuperpowerLocked;
+        private bool isSuperpowerLocked;
 
         // 마지막으로 확인한 Roll 상태 길이(초, 상태 Speed 반영)
         public float RollStateLength { get; private set; } = 1f;
@@ -742,9 +746,34 @@ namespace TeamOdd.Player
 
         private bool IsOwnCollider(Collider other) => other == controller || other.transform.IsChildOf(transform);
 
-        private int OverlapBodies(Vector3 center, Vector3 offset, float radius) =>
-            Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
+        // 통과하는 몸의 부위는 충돌을 끄고 결과에서 빼서, 밀어내기·충돌 토글 대상이 되지 않게 함
+        private int OverlapBodies(Vector3 center, Vector3 offset, float radius)
+        {
+            int count = Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
                 bodyBlockLayers, QueryTriggerInteraction.Ignore);
+
+            for (int index = count - 1; index >= 0; index--)
+            {
+                if (IsPassThroughBody(bodyOverlaps[index]) == false) continue;
+
+                Physics.IgnoreCollision(controller, bodyOverlaps[index], true);
+                bodyOverlaps[index] = bodyOverlaps[--count];
+            }
+
+            return count;
+        }
+
+        private bool IsPassThroughBody(Collider other)
+        {
+            for (int index = passThroughBodies.Count - 1; index >= 0; index--)
+            {
+                Transform root = passThroughBodies[index];
+                if (root == null) passThroughBodies.RemoveAt(index);
+                else if (other.transform.IsChildOf(root)) return true;
+            }
+
+            return false;
+        }
 
         private bool TryGetBodyPenetration(Collider other, out Vector3 direction, out float distance)
         {
@@ -900,6 +929,8 @@ namespace TeamOdd.Player
         public void BeginExternalHold(Transform target) => externalHoldTarget = target;
 
         public void SetActionLocked(bool locked) => IsActionLocked = locked;
+
+        public void SetSuperpowerLocked(bool locked) => isSuperpowerLocked = locked;
 
         // 보상창처럼 조작을 멈추는 화면이 뜰 때 걷기·달리기 입력을 끊어, 재생 중인 동작(구르기·피격 등)이 끝나면
         // 애니메이터의 전환을 따라 자연스럽게 대기 자세로 돌아가게 함. 강제로 대기 상태로 넘기지 않는다.
@@ -1251,6 +1282,19 @@ namespace TeamOdd.Player
         // direction: 밀려날 수평 방향, 거리·높이·시간은 공격마다 정한 push를 따름
         // attackerPosition: 맞는 순간 바라볼 공격자 위치
         // 피격 반응 중 다시 맞으면 피해만 받고 반응은 새로 시작하지 않음
+        // root 아래 콜라이더와는 부딪히지도 밀려나지도 않고 통과함(분신처럼 막을 필요가 없는 몸), 피격 판정은 그대로
+        // 지금 있는 콜라이더는 바로 충돌을 끄고, 나중에 생긴 부위(뼈 히트박스 등)는 몸 겹침 검사에서 만나는 순간 끔
+        public void AddPassThroughBody(Transform root)
+        {
+            if (root == null || passThroughBodies.Contains(root)) return;
+
+            passThroughBodies.Add(root);
+            foreach (Collider other in root.GetComponentsInChildren<Collider>(true))
+                if (other.isTrigger == false) Physics.IgnoreCollision(controller, other, true);
+        }
+
+        public void RemovePassThroughBody(Transform root) => passThroughBodies.Remove(root);
+
         public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
             if (reaction == HitReaction.None || IsHit) return;

@@ -145,7 +145,7 @@ namespace TeamOdd.Psychokinesis
         // 손을 당겼다 뻗는 동작을 시작하고, 손이 앞으로 나가는 순간에 염동탄을 쏜다.
         public void Fire()
         {
-            if (playerController != null && (playerController.IsHit || playerController.IsActionLocked)) return;
+            if (playerController != null && (playerController.IsHit || playerController.IsSuperpowerLocked)) return;
 
             float releaseDelay = playerController != null ? playerController.PlayAttackMotion() : 0f;
             pendingLaunches.Add(Time.time + releaseDelay);

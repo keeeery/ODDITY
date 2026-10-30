@@ -214,7 +214,7 @@ namespace TeamOdd.CameraMove
             {
                 // 스킬 시전으로 행동이 잠긴 동안은 마우스로 시점을 돌리지 않음
                 // 마우스 이동량은 시간 배율과 무관하므로 슬로모션 중에는 플레이어 배율만큼 직접 느리게 돌림
-                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.PlayerScale);
+                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.PlayerScale * SlowMotion.PlayerOnlyScale);
 
                 yaw += delta.x * mouseSensitivity;
                 pitch -= delta.y * mouseSensitivity;
