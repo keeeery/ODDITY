@@ -47,11 +47,6 @@ namespace TeamOdd.Superpower
         // 칩이나 스킬 슬롯을 드래그 중인지. 이때 오른쪽 클릭으로 장착을 바꾸면 들고 있는 것과 꼬인다
         public bool IsDragging => dragging != null || (SkillBar != null && SkillBar.IsDragging);
 
-        private void Awake()
-        {
-            Close();
-        }
-
         // 패널이 꺼진 채로 Close/Open이 먼저 불릴 수 있으므로 Awake에 기대지 않고 쓸 때 찾는다
         private SkillSlotBarView SkillBar
         {
