@@ -94,15 +94,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.49999958
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -8.8
+      value: -2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.w
@@ -110,15 +110,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -174,6 +174,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2920962985299418174}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6232883466832630808}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 288158857127106202}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 438697543137805273}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2911260366761806129}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4264485809676156296}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -230,12 +245,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.Player
   stamina: 100
-  maxStamina: 100
   staminaRegenRate: 15
   staminaRegenDelay: 1
-  CharacterController: {fileID: 0}
+  CharacterController: {fileID: 677289072813033125}
   CameraController: {fileID: 0}
-  PlayerController: {fileID: 0}
+  PlayerController: {fileID: 6101258613780513084}
 --- !u!114 &6101258613780513084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,7 +308,7 @@ MonoBehaviour:
   rollStateName: Roll
   rollClipName: Unarmed-DiveRoll-Forward1
   NeedRollStamina: 40
-  animator: {fileID: 0}
+  animator: {fileID: 1806036652689195332}
   pushForce: 150
   maxPushMass: 50
   minPushSpeedRatio: 0.3
@@ -306,6 +320,14 @@ MonoBehaviour:
   bodyBlockLayers:
     serializedVersion: 2
     m_Bits: 68
+  bodyEscapeSpeed: 8
+  bodyPassingSpeed: 1
+  bodyStopTime: 0.2
+  bodySidestepDelay: 0.3
+  bodyEscapeSearchDistance: 4
+  bodyEscapeBlockLayers:
+    serializedVersion: 2
+    m_Bits: 128
   holdBodyLeadAngle: 50
   standingHoldLeadAngle: 15
   armYawRange: 30
@@ -337,7 +359,6 @@ MonoBehaviour:
   WakeUpTime: 3
   InvincibleTime: 1.5
   maxHitAnimationWait: 3
-  isHit: 0
   CanWakeUp: 0
   heldObject: {fileID: 0}
 --- !u!114 &1595685480918527147
@@ -355,15 +376,23 @@ MonoBehaviour:
   aimCamera: {fileID: 0}
   player: {fileID: 677289072813033125}
   combatEntity: {fileID: 4790431442688611916}
-  playerStatus: {fileID: 0}
+  playerStatus: {fileID: 527695291722530190}
   queryLayers:
     serializedVersion: 2
-    m_Bits: 115
+    m_Bits: 320
   forceWave: {fileID: 5859343519902430467}
-  pickupDistance: 12
+  pickupDistance: 10
   castHalfWidth: 2
-  maxMass: 20
   attackInterval: 0.25
+  scaleAttackGroggy: 0
+  attackGroggyScale: 0.27
+  overrideObjectDamage: 0
+  objectMassThresholds: {x: 4.5, y: 9, z: 12}
+  smallObjectDamage: 25
+  mediumObjectDamage: 60
+  largeObjectDamage: 110
+  tankObjectDamage: 150
+  objectGroggyScale: 0.3
   swingMinSpeed: 17.5
   swingActivationSpeed: 180
   swingActiveDuration: 0.12
@@ -376,7 +405,7 @@ MonoBehaviour:
   maxAcceleration: 400
   maxHoldSpeed: 26
   breakDistance: 16
-  holdStaminaCostPerSecond: 20
+  holdStaminaCostPerSecond: 10
   minGrabStamina: 10
   throwPrepareDuration: 0.2
   throwPrepareDistance: 3.5
@@ -396,6 +425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
   <Collider>k__BackingField: {fileID: 677289072813033125}
   <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
+  maxHpOverride: 0
 --- !u!114 &5859343519902430467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,6 +451,7 @@ MonoBehaviour:
   trailRingInterval: 0.9
   trailRingSize: 1.63
   trailRingDuration: 0.22
+  groggyDamage: 8
   impactRippleSize: 5.53
   impactRippleDuration: 0.3
   pushRadius: 1.6
@@ -438,7 +469,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9cbaa70e586e399409d5b6b16f73a536, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeReverseRecorder
 --- !u!114 &2864915537702138846
 MonoBehaviour:
@@ -450,7 +481,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af796d1ff8d5fd94589b17e4d426231b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeReverseEffect
 --- !u!114 &2920962985299418174
 MonoBehaviour:
@@ -476,6 +507,92 @@ MonoBehaviour:
   matchWalkFootWidth: 1
   idleFootWidth: 0.25
   walkWidthSmoothing: 2
+  stepFeet: 1
+  stepThreshold: 0.07
+  stepTurnThreshold: 25
+  stepDuration: 0.22
+  stepHeight: 0.07
+  stepStartProgress: 0.4
+  restepDistance: 0.3
+  maxPlantDistance: 0.8
+  moveBodyWithStep: 1
+  maxBodyShift: 0.5
   groundFeet: 1
   rollGroundFrom: 0.5
   maxGroundDrop: 0.5
+  groundDropReturnSpeed: 0.6
+--- !u!114 &6232883466832630808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b21c34011bf4e4fa48e4fefaa6d81ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.WallFragmentRaycastTest
+  aimCamera: {fileID: 0}
+  fragmentSpawner: {fileID: 0}
+  rayDistance: 100
+--- !u!114 &288158857127106202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
+--- !u!114 &438697543137805273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc008deb0f4501a4493bb1dca1e730d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.SkillCaster
+  overridePsychoSlamDamage: 0
+  psychoSlamDamage: 120
+  psychoSlamGroggy: 60
+--- !u!114 &2911260366761806129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
+  chipIds: df070000e0070000e1070000e2070000e3070000
+  grantOnStart: 1
+  grantKey: 102
+  inventory: {fileID: 288158857127106202}
+--- !u!114 &4264485809676156296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea77d00cdbace34591803178b6fe8ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.PassiveSkillRunner
+--- !u!95 &1806036652689195332 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8074163760421901905, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+  m_PrefabInstance: {fileID: 7574322216899680021}
+  m_PrefabAsset: {fileID: 0}
