@@ -34,6 +34,7 @@ namespace TeamOdd
         private Transform target;
         private Collider[] ownerColliders;
         private float flightTime;
+        private Vector3 flightDirection; // 대상에 부딪혀 속도가 바뀌기 전의 진행 방향
         private bool isFlying;
         private readonly Collider[] overlaps = new Collider[16];
 
@@ -82,6 +83,7 @@ namespace TeamOdd
         {
             body.isKinematic = false;
             body.linearVelocity = velocity;
+            flightDirection = velocity.normalized;
             body.angularVelocity = Random.onUnitSphere * spinSpeed;
             isFlying = true;
         }
@@ -106,6 +108,7 @@ namespace TeamOdd
             if (isFlying == false || clock.IsFrozen) return;
 
             flightTime += Time.fixedDeltaTime;
+            if (body.linearVelocity.sqrMagnitude > 0.01f) flightDirection = body.linearVelocity.normalized;
 
             if (TryFindTargetOverlap(out Collider targetCollider))
             {
@@ -151,6 +154,7 @@ namespace TeamOdd
         }
 
         // 보스 투척과 같은 판정, 무적(구르기 등)이면 피해 없이 부서지기만 함
+        // 플레이어 몸(CharacterController)은 ClosestPoint로 맞은 면을 얻을 수 없어 파편이 몸과 겹쳐 생성이 막힐 수 있음 → 날아온 쪽으로 튀게 함
         private void Hit(Collider targetCollider)
         {
             Vector3 center = body.worldCenterOfMass;
@@ -163,7 +167,7 @@ namespace TeamOdd
                 SendDamage(hitPoint);
             }
 
-            Break(hitPoint);
+            Break(center + flightDirection);
         }
 
         private void SendDamage(Vector3 hitPoint)
