@@ -23,6 +23,7 @@ namespace TeamOdd.Boss
     // - 예고는 보스 기준 위치에 표시하고 타격 시점까지 보스를 따라감
     // - lockOnWarn을 켠 타격은 예고 순간 이동 후 위치를 예측해 고정(루트 모션으로 앞으로 내딛는 공격 대응)
     // - 예고 신호가 없으면 타격 시점에만 범위를 잠깐 표시, 두 신호를 쓰지 않는 패턴은 표시하지 않음
+    // - sharesPreviousTelegraph를 켠 타격은 앞 타격의 표시를 이어 받아, 콤보 연타를 표시 하나로 보여 주고 타격마다 다시 차오르게 함(판정은 타격마다 따로)
     // - 피격 판정은 타격 신호 순간 예고와 같은 모양으로 한 번만 검사, 무적 같은 피격 예외는 피격 대상 쪽에서 판단
     public abstract class BossMeleePattern : BossStateBase
     {
@@ -33,7 +34,7 @@ namespace TeamOdd.Boss
             public TelegraphShape shape = TelegraphShape.Sector(8f, 120f);
             [Tooltip("보스 위치 기준 범위 시작점의 오프셋(m), x는 오른쪽, y는 앞쪽. 범위는 보스 정면 방향으로 펼쳐진다.")]
             public Vector2 offset;
-            [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), OnHitWarn에서 OnHit까지의 시간에 맞춘다.")]
+            [Tooltip("예고 표시의 안쪽이 다 차오르는 데 걸리는 시간(초), 동작 빠르기 1일 때 OnHitWarn에서 OnHit까지의 시간에 맞춘다. 실제로는 보스 동작 빠르기(MotionSpeed)로 나눈다.")]
             [Min(0f)] public float warnDuration = 0.5f;
             [Min(0)] public int damage = 10;
             [Tooltip("피격 대상에게 줄 반응, 실제 넉백/넉다운 처리는 피격 대상 쪽에서 담당")]
@@ -44,6 +45,8 @@ namespace TeamOdd.Boss
             public bool lockOnWarn;
             [Tooltip("예고부터 타격까지 루트 모션으로 보스가 이동하는 거리(m), x는 오른쪽, y는 앞쪽. 고정할 범위를 이만큼 옮겨 둔다.")]
             [ShowIf(nameof(lockOnWarn))] public Vector2 moveLead;
+            [Tooltip("켜면 새 표시를 띄우지 않고 앞 타격의 표시를 이어 받아 다시 차오르게 한다. 콤보처럼 같은 범위를 연달아 때릴 때 쓰며, OnHitWarn은 앞 타격의 OnHit 직후에 둔다.")]
+            public bool sharesPreviousTelegraph;
         }
 
         [Title("Attack Range")]
@@ -58,6 +61,8 @@ namespace TeamOdd.Boss
         [field: SerializeField] public bool IsUrgent { get; private set; } // 우선 처리 여부
         [field: SerializeField] public bool CanApproach { get; private set; } // 범위 밖일 경우 근접하여 사용할지 여부
         [SerializeField] private bool requiresLineOfSight = true; // 장애물에 가려 대상이 안 보이면 고르지 않음, 장애물을 무시하고 쓰는 패턴은 끔
+        [Tooltip("대상까지 걸어서 곧장 갈 수 없으면(구멍·난간 너머) 사거리 안이어도 쓰지 않고 돌아가서 쓴다. 너머로도 닿는 원거리 패턴은 끈다.")]
+        [SerializeField] private bool requiresDirectPath;
 
         [Title("Animation")]
         [SerializeField, ValueDropdown("GetTriggers")] private int trigger;
@@ -84,6 +89,9 @@ namespace TeamOdd.Boss
         private Pose[] lockedPoses;
         private bool[] isLocked;
 
+        // 등장 연출(BossIntroCinematic)이 패턴 판정 없이 모션만 재생할 때 씀
+        public int AnimTrigger => trigger;
+
         // 시야는 고르는 시점에만 봄, 공격이 시작된 뒤 대상이 숨어도 범위 안이면 맞음
         public virtual bool CanUse => Clock.LocalTime >= readyTime && IsSightClear;
 
@@ -97,9 +105,14 @@ namespace TeamOdd.Boss
 
         // false면 OnAttackEnded 신호로 끝내지 않음, 중간 애니메이션의 종료 신호를 패턴이 직접 처리할 때 사용
         protected virtual bool CanEndByAnimation => true;
-        
+
+        // true인 동안 애니메이션 신호를 모두 무시, 다른 패턴을 끊고 들어온 패턴이 이전 애니메이션 상태가 끝날 때 몰아 보내는 신호를 받지 않도록 재정의
+        protected virtual bool IsIgnoringAnimEvents => false;
+
         public bool IsTooClose => root.DistanceToTarget < MinDistance;
-        public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance;
+        // 곧장 갈 수 없는 대상은 사거리 밖으로 취급해, 고른 패턴이 있으면 Chase가 경로를 따라 돌아가게 함
+        public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance
+                                         && (requiresDirectPath == false || root.HasDirectPath);
         public bool IsInRange => IsDistanceInRange && IsAngleInside(root.SignedAngleToTarget);
         
         
@@ -163,9 +176,11 @@ namespace TeamOdd.Boss
 
         private void OnOccursAnimEvent(string name, string param)
         {
+            if (IsIgnoringAnimEvents) return;
+
             if (string.Equals(name, "OnAttackEnded") && CanEndByAnimation)
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
                 return;
             }
 
@@ -224,7 +239,22 @@ namespace TeamOdd.Boss
             }
 
             if (hitTelegraphs[index] != null) hitTelegraphs[index].Cancel();
-            hitTelegraphs[index] = root.ShowTelegraph(hit.shape, pose, hit.warnDuration);
+            // 동작 빠르기가 1이 아니면 OnHitWarn~OnHit 실제 시간도 달라지므로 차오르는 시간을 맞춤
+            float warnDuration = hit.warnDuration / Mathf.Max(0.01f, root.MotionSpeed);
+
+            // 앞 타격이 남겨 둔 표시가 있으면 이어 받아 다시 차오르게 함
+            AttackTelegraph previous = hit.sharesPreviousTelegraph && index > 0 ? hitTelegraphs[index - 1] : null;
+            if (previous != null)
+            {
+                hitTelegraphs[index - 1] = null;
+                isLocked[index - 1] = false;
+                previous.SetPlacement(hit.shape, pose);
+                previous.Restart(warnDuration);
+                hitTelegraphs[index] = previous;
+                return;
+            }
+
+            hitTelegraphs[index] = root.ShowTelegraph(hit.shape, pose, warnDuration);
         }
 
         // 고정한 타격은 실제 이동량과 달라도 예고한 위치로 판정
@@ -232,9 +262,14 @@ namespace TeamOdd.Boss
         {
             MeleeHit hit = hits[index];
             Pose pose = isLocked[index] ? lockedPoses[index] : GetHitPose(hit, Vector2.zero);
-            isLocked[index] = false;
-            
+
             TryHit(hit.shape, pose, hit.damage, hit.reaction, hit.push);
+
+            // 다음 타격이 이 표시를 이어 받으면 지우지 않고 남겨 둠, 고정한 자리도 넘겨줄 때까지 유지
+            bool handsOver = index + 1 < hits.Length && hits[index + 1].sharesPreviousTelegraph && hitTelegraphs[index] != null;
+            if (handsOver) return;
+
+            isLocked[index] = false;
 
             // 예고 없이 타격했으면 타격 순간에만 범위를 보여 줌
             AttackTelegraph resolved = hitTelegraphs[index] != null ? hitTelegraphs[index] : root.ShowTelegraph(hit.shape, pose, 0f);

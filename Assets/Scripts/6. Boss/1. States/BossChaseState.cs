@@ -33,7 +33,7 @@ namespace TeamOdd.Boss
         {
             if (ShouldStopChase())
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
                 return;
             }
             
@@ -44,8 +44,7 @@ namespace TeamOdd.Boss
 
             root.RotateYaw(angle, Mathf.Lerp(rotateSpeed, maxRotateSpeed, turnRatio) * Clock.LocalDeltaTime);
 
-            AnimatorStateInfo currentState = Animator.GetCurrentAnimatorStateInfo(0);
-            float chaseSpeed = currentState.shortNameHash == RUN_HASH ? runSpeed : walkSpeed;
+            float chaseSpeed = GetChaseSpeed(Animator.GetCurrentAnimatorStateInfo(0));
             chaseSpeed *= Mathf.Lerp(1f, minSpeedRatio, turnRatio);
 
             Vector3 velocity = root.transform.forward * chaseSpeed;
@@ -53,6 +52,10 @@ namespace TeamOdd.Boss
         }
 
         protected override void OnExit() { }
+
+        // 지금 재생 중인 이동 상태에 맞는 속도, 이동 단계가 다른 보스는 재정의
+        protected virtual float GetChaseSpeed(AnimatorStateInfo currentState)
+            => currentState.shortNameHash == RUN_HASH ? runSpeed : walkSpeed;
 
         private bool ShouldStopChase()
         {

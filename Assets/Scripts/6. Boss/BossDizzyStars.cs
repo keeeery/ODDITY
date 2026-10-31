@@ -199,6 +199,13 @@ namespace TeamOdd.Boss
 
         private Transform FindHead()
         {
+            // 휴머노이드 보스는 뼈 이름 규칙이 달라 아바타의 머리 뼈를 씀, 이름으로 찾으면 머리 부위 콜라이더("Hitbox Head")가 걸리므로 먼저 봄
+            if (TryGetComponent(out Animator animator) && animator.isHuman)
+            {
+                Transform humanHead = animator.GetBoneTransform(HumanBodyBones.Head);
+                if (humanHead != null) return humanHead;
+            }
+
             foreach (Transform bone in GetComponentsInChildren<Transform>(true))
                 if (bone.name.EndsWith(" Head")) return bone;
 

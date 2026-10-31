@@ -1,18 +1,14 @@
 using System.Collections.Generic;
 using TeamOdd.Boss;
-using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
-using TeamOdd.TimeControl;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TeamOdd.UI
 {
     // 플레이어를 중심으로 카메라 Yaw에 맞춰 회전하는 원형 미니맵
-    // 바닥은 위에서 내려다보는 전용 카메라로 Ground 레이어만 그리고(Wall 등은 비어 보임),
+    // 바닥은 씬 시작 시 플레이어가 설 수 있는 범위를 물리로 한 번 구워서 단색 실루엣과 외곽선으로 그리고,
     // 보스와 염동력 오브젝트는 점으로, 플레이어는 바라보는 방향이 뾰족한 점으로 그린다. y 값은 무시한다.
     // 메인 카메라가 LateUpdate에서 회전한 뒤에 따라가도록 실행 순서를 늦춘다.
     [DefaultExecutionOrder(100)]
@@ -44,23 +40,18 @@ namespace TeamOdd.UI
         [SerializeField, Min(0f)] private float edgeArrowGap = 2f;
 
         [Header("Ground")]
-        // 미니맵 바닥에 그릴 레이어, 여기에 없는 레이어(Wall 등)는 배경색만 보인다.
-        [SerializeField] private LayerMask groundLayers;
-        // 바닥 위에 배경색으로 덮어서 비어 보이게 할 레이어
-        [SerializeField] private LayerMask wallLayers;
-        // 빌드에 포함되도록 참조, 비워두면 이름으로 찾는다.
-        [SerializeField] private Shader wallShader;
-        [SerializeField, Min(32)] private int textureSize = 256;
-        // 미니맵 카메라가 플레이어 위로 떠 있는 높이
-        [SerializeField, Min(1f)] private float cameraHeight = 50f;
-        // 플레이어 아래로 어디까지 그릴지
-        [SerializeField, Min(1f)] private float cameraDepthBelow = 50f;
-
-        [Header("Current Floor")]
-        [Tooltip("접지면 위로 표시할 높이(m). 위층·천장보다 낮게, 현재 층의 경사면보다 높게 설정합니다.")]
-        [SerializeField, Min(0.01f)] private float floorHeightAbove = 1f;
-        [Tooltip("접지면 아래로 표시할 깊이(m). 아래층 바닥이 포함되지 않도록 설정합니다.")]
-        [SerializeField, Min(0.01f)] private float floorDepthBelow = 0.5f;
+        [Tooltip("바닥과 장애물로 볼 레이어. 플레이어가 서는 바닥과 막는 벽·상자가 모두 들어가야 합니다.")]
+        [SerializeField] private LayerMask walkableLayers;
+        [Tooltip("월드 y가 이 높이 아래에 있는 바닥만 찾습니다.")]
+        [SerializeField] private float topHeight = 3f;
+        [Tooltip("월드 y가 이 높이보다 낮은 바닥은 무시합니다. 아래층이 표시되지 않게 합니다.")]
+        [SerializeField] private float bottomHeight = -2f;
+        [Tooltip("이동 가능 범위를 조사할 격자 간격(m)")]
+        [SerializeField, Min(0.05f)] private float bakeCellSize = 0.25f;
+        [Tooltip("맵이 커도 텍스처 한 변이 이 칸 수를 넘지 않도록 격자 간격을 늘립니다.")]
+        [SerializeField, Min(16)] private int bakeMaxCellsPerSide = 1024;
+        [Tooltip("켜면 플레이어 시작 위치에서 걸어서 이어진 곳만 표시합니다.")]
+        [SerializeField] private bool reachableOnly = true;
 
         [Header("Dot Size")]
         [SerializeField, Min(0f)] private float playerDotSize = 20f;
@@ -71,7 +62,11 @@ namespace TeamOdd.UI
 
         [Header("Colors")]
         [SerializeField] private Color backgroundColor = new(0f, 0f, 0f, 0.5f);
-        [SerializeField] private Color groundColor = Color.white;
+        // 지형은 세부 없이 바닥 실루엣만 단색으로 채우고 경계에 외곽선을 두른다.
+        [SerializeField] private Color groundFillColor = new(0.396f, 0.389f, 0.374f, 0.8f);
+        [SerializeField] private Color groundOutlineColor = new(0.9f, 0.87f, 0.82f, 1f);
+        // 지형 외곽선 두께(굽기 격자 칸)
+        [SerializeField, Range(0f, 4f)] private float groundOutlineWidth = 1.5f;
         [SerializeField] private Color playerColor = Color.white;
         [SerializeField] private Color bossColor = Color.red;
         [SerializeField] private Color objectColor = Color.cyan;
@@ -109,14 +104,12 @@ namespace TeamOdd.UI
 
         private float antiAlias;
 
-        private const string WallShaderName = "Hidden/TeamOdd/MinimapWall";
-        private static readonly int wallColorId = Shader.PropertyToID("_Color");
+        // CharacterController가 없을 때 쓰는 플레이어 크기
+        private const float DefaultPlayerRadius = 0.5f;
+        private const float DefaultPlayerHeight = 1.8f;
+        private const float DefaultStepOffset = 0.3f;
 
-        private Camera mapCamera;
-        private UniversalAdditionalCameraData mapCameraData;
-        private RenderTexture mapTexture;
-        private Material wallMaterial;
-        private MinimapWallPass wallPass;
+        private MinimapWalkableBaker.Result walkable;
 
         private readonly List<Vector2> objectPositions = new();
         private bool markerStateValid;
@@ -128,10 +121,6 @@ namespace TeamOdd.UI
         private bool groundWasEnabled;
         private bool groundSuspended;
         private float playerFacingAngle;
-
-        private CharacterController playerBody;
-        private bool hasFloorHeight;
-        private float floorHeight;
 
         private float mapYaw;
         private Vector2 mapCenter;
@@ -148,34 +137,17 @@ namespace TeamOdd.UI
             if (player == null) player = FindAnyObjectByType<Player.Player>();
             if (boss == null) boss = FindAnyObjectByType<BossMonster>();
             if (viewCamera == null && Camera.main != null) viewCamera = Camera.main.transform;
-            if (groundLayers == 0) groundLayers = LayerMask.GetMask("Ground");
-            if (wallLayers == 0) wallLayers = LayerMask.GetMask("Wall");
-            if (wallShader == null) wallShader = Shader.Find(WallShaderName);
+            if (walkableLayers == 0) walkableLayers = LayerMask.GetMask("Ground", "Wall");
 
-            if (player != null) playerBody = player.GetComponent<CharacterController>();
-            CreateMapCamera();
-            CreateWallPass();
             if (ground == null) ground = CreateGround();
-            ground.Texture = mapTexture;
-            RefreshMapCamera();
+            BakeWalkable();
+            UpdateGroundView();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            RenderPipelineManager.beginCameraRendering -= EnqueueWallPass;
-            if (wallMaterial != null) Destroy(wallMaterial);
-            if (mapCamera != null)
-            {
-                TimeFreezeOverlayFeature.IncludeCamera(mapCamera);
-                HitFlashFeature.IncludeCamera(mapCamera);
-                Destroy(mapCamera.gameObject);
-            }
-            if (mapTexture != null)
-            {
-                mapTexture.Release();
-                Destroy(mapTexture);
-            }
+            if (walkable != null) Destroy(walkable.Texture);
         }
 
         protected override void OnEnable()
@@ -186,12 +158,11 @@ namespace TeamOdd.UI
 
             if (groundSuspended && ground != null) ground.enabled = groundWasEnabled;
             groundSuspended = false;
-            RefreshMapCamera();
+            UpdateGroundView();
         }
 
         protected override void OnDisable()
         {
-            if (mapCamera != null) mapCamera.enabled = false;
             if (Application.isPlaying && ground != null)
             {
                 groundWasEnabled = ground.enabled;
@@ -205,21 +176,52 @@ namespace TeamOdd.UI
         {
             if (Application.isPlaying == false || player == null) return;
 
-            RefreshMapCamera();
+            UpdateGroundView();
             float facingYaw = player.PlayerController != null
                 ? player.PlayerController.MinimapFacingYaw : player.transform.eulerAngles.y;
             playerFacingAngle = Mathf.DeltaAngle(mapYaw, facingYaw);
             if (UpdateMarkerState()) SetVerticesDirty();
         }
 
-        private void RefreshMapCamera()
+        // 구운 마스크는 북쪽(+z)이 위인 채로 고정돼 있으므로, 바닥 셰이더가 플레이어 위치와 카메라 Yaw에 맞춰 돌려서 읽는다.
+        private void UpdateGroundView()
         {
-            if (mapCamera == null || player == null) return;
+            if (player == null) return;
 
             mapYaw = viewCamera != null ? viewCamera.eulerAngles.y : player.transform.eulerAngles.y;
-            UpdateFloorHeight();
-            UpdateMapCamera();
-            mapCamera.enabled = isActiveAndEnabled;
+            if (ground == null || walkable == null) return;
+
+            ground.SetStyle(backgroundColor, groundFillColor, groundOutlineColor, groundOutlineWidth);
+            Vector3 position = player.transform.position;
+            Vector2 center = new Vector2(
+                (position.x - walkable.Origin.x) / walkable.Size.x,
+                (position.z - walkable.Origin.y) / walkable.Size.y);
+            Vector2 scale = new Vector2(worldRadius * 2f / walkable.Size.x, worldRadius * 2f / walkable.Size.y);
+            ground.SetView(mapYaw, center, scale);
+        }
+
+        private void BakeWalkable()
+        {
+            CharacterController body = player != null ? player.GetComponent<CharacterController>() : null;
+            float scale = body != null ? Mathf.Max(body.transform.lossyScale.x, body.transform.lossyScale.z) : 1f;
+            float radius = body != null ? body.radius * scale : DefaultPlayerRadius;
+            float height = body != null ? body.height * body.transform.lossyScale.y : DefaultPlayerHeight;
+            float stepOffset = body != null ? body.stepOffset : DefaultStepOffset;
+
+            // 시작 직후라 아직 물리에 반영되지 않은 배치가 있을 수 있다.
+            Physics.SyncTransforms();
+            MinimapWalkableBaker.Settings settings = new MinimapWalkableBaker.Settings(walkableLayers, topHeight, bottomHeight,
+                bakeCellSize, bakeMaxCellsPerSide, radius, height, stepOffset, reachableOnly);
+            Vector3 start = player != null ? player.transform.position : transform.position;
+            walkable = MinimapWalkableBaker.Bake(settings, start);
+            if (walkable == null)
+            {
+                Debug.LogWarning("[Minimap] 이동 가능 범위를 찾지 못해 바닥을 그리지 않습니다. walkableLayers와 높이 범위를 확인하세요.", this);
+                ground.enabled = false;
+                return;
+            }
+
+            ground.Texture = walkable.Texture;
         }
 
         private bool UpdateMarkerState()
@@ -266,91 +268,9 @@ namespace TeamOdd.UI
         {
             base.Reset();
             raycastTarget = false;
-            groundLayers = LayerMask.GetMask("Ground");
-            wallLayers = LayerMask.GetMask("Wall");
-            wallShader = Shader.Find(WallShaderName);
+            walkableLayers = LayerMask.GetMask("Ground", "Wall");
         }
 #endif
-
-        private void CreateMapCamera()
-        {
-            mapTexture = new RenderTexture(textureSize, textureSize, 16, RenderTextureFormat.ARGB32) { name = "MinimapTexture" };
-
-            mapCamera = new GameObject("MinimapCamera").AddComponent<Camera>();
-            mapCamera.orthographic = true;
-            // Wall도 컬링 결과에 있어야 패스에서 다시 그릴 수 있으므로 함께 포함
-            mapCamera.cullingMask = groundLayers | wallLayers;
-            mapCamera.clearFlags = CameraClearFlags.SolidColor;
-            mapCamera.targetTexture = mapTexture;
-            mapCamera.allowHDR = false;
-            mapCamera.allowMSAA = false;
-            mapCamera.depth = -100f;
-
-            mapCameraData = mapCamera.GetUniversalAdditionalCameraData();
-            mapCameraData.renderPostProcessing = false;
-            mapCameraData.renderShadows = false;
-
-            // 시간 정지 막과 피격 번쩍임은 미니맵에 그리지 않는다.
-            TimeFreezeOverlayFeature.ExcludeCamera(mapCamera);
-            HitFlashFeature.ExcludeCamera(mapCamera);
-        }
-
-        private void CreateWallPass()
-        {
-            if (wallShader == null)
-            {
-                Debug.LogWarning($"[Minimap] {WallShaderName} 셰이더를 찾지 못해 Wall이 바닥처럼 그려집니다.", this);
-                return;
-            }
-
-            wallMaterial = new Material(wallShader) { name = "MinimapWall" };
-            wallPass = new MinimapWallPass(wallMaterial);
-            RenderPipelineManager.beginCameraRendering += EnqueueWallPass;
-        }
-
-        private void EnqueueWallPass(ScriptableRenderContext context, Camera renderingCamera)
-        {
-            if (renderingCamera != mapCamera) return;
-
-            wallPass.WallLayers = wallLayers;
-            mapCameraData.scriptableRenderer.EnqueuePass(wallPass);
-        }
-
-        // 위에서 내려다보면서 화면 위쪽이 카메라 Yaw 방향이 되도록 회전해서 점 좌표계와 맞춘다.
-        private void UpdateMapCamera()
-        {
-            // Wall이 배경과 같은 색으로 보이도록 같은 값을 쓴다.
-            mapCamera.backgroundColor = backgroundColor;
-            if (wallMaterial != null) wallMaterial.SetColor(wallColorId, backgroundColor);
-
-            mapCamera.orthographicSize = worldRadius;
-            mapCamera.nearClipPlane = Mathf.Max(0.1f, cameraHeight - floorHeightAbove);
-            mapCamera.farClipPlane = Mathf.Max(mapCamera.nearClipPlane + 0.01f,
-                cameraHeight + Mathf.Min(cameraDepthBelow, floorDepthBelow));
-            Vector3 cameraPosition = player.transform.position;
-            cameraPosition.y = floorHeight + cameraHeight;
-            mapCamera.transform.SetPositionAndRotation(
-                cameraPosition,
-                Quaternion.Euler(90f, mapYaw, 0f));
-        }
-
-        private void UpdateFloorHeight()
-        {
-            // 공중에서는 이전 층을 유지해 점프만으로 표시 층이 바뀌지 않게 한다.
-            if (hasFloorHeight && playerBody != null && playerBody.isGrounded == false) return;
-
-            Vector3 origin = playerBody != null ? playerBody.bounds.center : player.transform.position + Vector3.up;
-            float distance = playerBody != null ? playerBody.bounds.extents.y + 0.5f : 1.5f;
-            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, distance, groundLayers, QueryTriggerInteraction.Ignore))
-            {
-                floorHeight = hit.point.y;
-                hasFloorHeight = true;
-            }
-            else if (hasFloorHeight == false)
-            {
-                floorHeight = playerBody != null ? playerBody.bounds.min.y : player.transform.position.y;
-            }
-        }
 
         // 바닥이 점 아래에 그려지도록 같은 크기의 형제 오브젝트로 바로 앞 순서에 둔다.
         private MinimapGround CreateGround()
@@ -368,7 +288,7 @@ namespace TeamOdd.UI
 
             MinimapGround createdGround = groundRect.gameObject.AddComponent<MinimapGround>();
             createdGround.raycastTarget = false;
-            createdGround.color = groundColor;
+            createdGround.color = Color.white;
             return createdGround;
         }
 
@@ -381,7 +301,7 @@ namespace TeamOdd.UI
             mapRadius = Mathf.Min(rect.width, rect.height) * 0.5f;
             antiAlias = VectorShape.PixelsToUnits(canvas, antiAliasPixels);
 
-            // 실행 중에는 미니맵 카메라가 배경을 칠하므로 에디터 배치 확인용으로만 그린다.
+            // 실행 중에는 바닥 셰이더가 배경을 칠하므로 에디터 배치 확인용으로만 그린다.
             if (Application.isPlaying == false)
             {
                 shape.SetCircle(mapCenter, mapRadius, BackgroundSegments);

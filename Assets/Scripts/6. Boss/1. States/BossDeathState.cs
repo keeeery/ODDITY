@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TeamOdd.Boss
 {
     // 체력(CombatEntity)이 0이 되면 지금 무엇을 하든 즉시 끊고 들어오는 사망 상태, 보스가 쓰러진 채로 다시 일어나지 않는다.
-    // 그로기와 같은 Groggy 애니메이터 상태(Death 클립 + Motion Time)를 쓰되, 클립을 거의 처음부터 끝까지 재생한다.
+    // 그로기와 같은 Groggy 애니메이터 상태(Death 클립 + Motion Time)를 쓰되, 클립을 거의 처음부터 끝까지 재생한다. 그로기 클립이 따로인 보스는 stateName으로 전용 상태를 쓴다.
     // - 마무리 일격: 히트스탑 뒤 월드 전체를 크게 느리게 했다가(SlowMotion) 서서히 원래 속도로 되돌리고, 윤곽 번쩍임·카메라 흔들림을 더함
     //   카메라 FOV도 순간 좁혔다가 슬로모션이 풀리는 동안 함께 되돌림(줌 펀치), 맞은 자리의 큰 충격·입자는 BossHitFeedback이 맡음
     // - 쓰러짐: 땅에 닿는 클립 위치를 지나면 그로기보다 많은 흙먼지와 큰 흔들림, 몸에서 염동 빛 입자(BossDeathResidue)가 피어오르고 카메라가 천천히 물러남
@@ -16,6 +16,8 @@ namespace TeamOdd.Boss
     public class BossDeathState : BossStateBase
     {
         [Title("Animation")]
+        [Tooltip("사망 동작을 재생할 애니메이터 상태 이름, Motion Time이 groggyTime이어야 한다. 그로기와 클립이 다른 보스(휴머노이드)는 Death")]
+        [SerializeField] private string stateName = "Groggy";
         [Tooltip("지금 재생 중인 동작에서 사망 동작으로 넘어가는 블렌드 시간(초)")]
         [SerializeField, Min(0f)] private float crossFadeDuration = 0.15f;
         [Tooltip("재생을 시작할 Death 클립 위치(0~1)")]
@@ -71,6 +73,7 @@ namespace TeamOdd.Boss
         private BossFootDust footDust;
         private BossDeathResidue residue;
         private BossDeathShed shed;
+        private BossLyingGroundFit groundFit;
         private HitFlash flash;
 
         private float enterTime;
@@ -89,6 +92,7 @@ namespace TeamOdd.Boss
             footDust = root.GetComponent<BossFootDust>();
             residue = root.GetComponent<BossDeathResidue>(); // 없으면 빛 입자 없이 쓰러짐
             shed = root.GetComponent<BossDeathShed>(); // 없으면 홀로그램 없이 쓰러진 채로 남음
+            groundFit = root.GetComponent<BossLyingGroundFit>(); // 없으면 서 있던 바닥 높이에 그대로 쓰러짐
             flash = HitFlash.GetOrAdd(root.gameObject);
 
             // 상태는 꺼진 채로 기다리므로 Initialize에서 구독
@@ -115,7 +119,8 @@ namespace TeamOdd.Boss
             Animator.applyRootMotion = false;
             Animator.SetBool(BossAnimParams.IS_GROGGY, true);
             Animator.SetFloat(BossAnimParams.GROGGY_TIME, startTime);
-            Animator.CrossFadeInFixedTime(BossAnimParams.GROGGY_STATE, crossFadeDuration, 0);
+            Animator.CrossFadeInFixedTime(stateName, crossFadeDuration, 0);
+            if (groundFit != null) groundFit.Begin();
 
             PlayFinishingBlow();
         }
@@ -145,7 +150,7 @@ namespace TeamOdd.Boss
         private void HandleDied()
         {
             StateMachine.ClearReservedState();
-            StateMachine.ChangeState(typeof(BossDeathState), true);
+            root.ChangeBossState(typeof(BossDeathState), true);
         }
 
         private void PlayFinishingBlow()
@@ -174,7 +179,7 @@ namespace TeamOdd.Boss
         {
             hasImpacted = true;
             impactClockTime = Clock.LocalTime;
-            if (footDust != null) footDust.PlayLanding(dustAmount);
+            if (footDust != null) footDust.PlayBodyLanding(dustAmount);
             if (residue != null) residue.Play();
             ShakeCamera(impactShakeTrauma, impactShakeFadeTime);
 

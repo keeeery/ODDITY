@@ -145,14 +145,14 @@ namespace TeamOdd.Boss
 
             DestroyImpacts(impacts);
             DestroyImpacts(strongImpacts);
-            if (finishImpact != null) Destroy(finishImpact.gameObject);
+            if (finishImpact != null) finishImpact.DestroyAfterPlaying();
         }
 
         private static void DestroyImpacts(HitImpact[] impacts)
         {
             if (impacts == null) return;
             foreach (HitImpact impact in impacts)
-                if (impact != null) Destroy(impact.gameObject);
+                if (impact != null) impact.DestroyAfterPlaying();
         }
 
         private void HandleDamageExecuted(DamageEvent damageEvent, int receivedDamage)

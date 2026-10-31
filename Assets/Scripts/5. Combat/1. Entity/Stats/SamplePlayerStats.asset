@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b55ef4c42848bbbd4c16a9dc3f4555, type: 3}
   m_Name: SamplePlayerStats
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.PlayerStats
-  <MaxHp>k__BackingField: 200
-  <Atk>k__BackingField: 30
+  <MaxHp>k__BackingField: 1011
+  <Atk>k__BackingField: 338
   <Def>k__BackingField: 15
   <PsychoMaxMass>k__BackingField: 20
   <MaxStamina>k__BackingField: 100
