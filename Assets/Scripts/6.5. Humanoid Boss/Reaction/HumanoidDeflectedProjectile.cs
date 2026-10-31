@@ -29,6 +29,7 @@ namespace TeamOdd
         private MeshRenderer meshRenderer;
         private TimeFreezable clock;
         private WallFragmentSpawner debrisSpawner;
+        private Material debrisMaterial; // 원래 물체가 보스에 맞았을 때와 같은 조각으로 부서지도록 복사
 
         private Transform target;
         private Collider[] ownerColliders;
@@ -134,6 +135,7 @@ namespace TeamOdd
             // 맵 배치 물체는 메시가 자식에 있을 수 있음
             meshFilter.sharedMesh = source.GetComponentInChildren<MeshFilter>().sharedMesh;
             meshRenderer.sharedMaterials = source.GetComponentInChildren<MeshRenderer>().sharedMaterials;
+            debrisMaterial = source.DebrisMaterial;
 
             if (source.TryGetComponent(out BoxCollider sourceBox))
             {
@@ -173,7 +175,7 @@ namespace TeamOdd
             CombatManager.Instance.AddCombatEvent(new DamageEvent(null, receiver, info));
         }
 
-        // 바닥에 남지 않도록 파편 연출만 남기고 풀로 돌아감
+        // 바닥에 남지 않도록 원래 물체와 같은 파편 연출만 남기고 풀로 돌아감
         private void Break(Vector3 point)
         {
             isFlying = false;
@@ -183,7 +185,9 @@ namespace TeamOdd
             {
                 Vector3 center = body.worldCenterOfMass;
                 Vector3 normal = center - point;
-                debrisSpawner.SpawnImpactDebris(center, normal.sqrMagnitude > 0.0001f ? normal.normalized : Vector3.up, body.mass, null);
+                // 원본 Collider를 먼저 꺼야 생성된 파편이 원본과 겹치지 않음 (PsychokinesisObject.Shatter와 같은 순서)
+                gameObject.SetActive(false);
+                debrisSpawner.SpawnImpactDebris(center, normal.sqrMagnitude > 0.0001f ? normal.normalized : Vector3.up, body.mass, debrisMaterial);
             }
 
             ReturnToPool();

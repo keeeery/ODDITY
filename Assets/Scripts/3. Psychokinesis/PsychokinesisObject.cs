@@ -110,6 +110,7 @@ namespace TeamOdd.Psychokinesis
         public float IkWeight => ikWeight;
 
         public Rigidbody Body => body;
+        public Material DebrisMaterial => debrisMaterial;
         public bool IsHeld { get; private set; }
         // 시간 정지로 kinematic이 된 오브젝트도 원래 잡을 수 있었으면 잡을 수 있음
         public bool IsAvailable(float maxMass) => isActiveAndEnabled && clock.IsKinematicIgnoringFreeze(Body) == false && Body.mass <= maxMass;
