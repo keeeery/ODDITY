@@ -105,7 +105,10 @@ namespace TeamOdd.Boss
 
         // false면 OnAttackEnded 신호로 끝내지 않음, 중간 애니메이션의 종료 신호를 패턴이 직접 처리할 때 사용
         protected virtual bool CanEndByAnimation => true;
-        
+
+        // true인 동안 애니메이션 신호를 모두 무시, 다른 패턴을 끊고 들어온 패턴이 이전 애니메이션 상태가 끝날 때 몰아 보내는 신호를 받지 않도록 재정의
+        protected virtual bool IsIgnoringAnimEvents => false;
+
         public bool IsTooClose => root.DistanceToTarget < MinDistance;
         // 곧장 갈 수 없는 대상은 사거리 밖으로 취급해, 고른 패턴이 있으면 Chase가 경로를 따라 돌아가게 함
         public bool IsDistanceInRange => root.DistanceToTarget >= MinDistance && root.DistanceToTarget <= MaxDistance
@@ -173,6 +176,8 @@ namespace TeamOdd.Boss
 
         private void OnOccursAnimEvent(string name, string param)
         {
+            if (IsIgnoringAnimEvents) return;
+
             if (string.Equals(name, "OnAttackEnded") && CanEndByAnimation)
             {
                 root.ChangeBossState(typeof(BossIdleState));

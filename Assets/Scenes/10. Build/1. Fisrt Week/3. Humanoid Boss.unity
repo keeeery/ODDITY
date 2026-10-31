@@ -1040,6 +1040,37 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &110669122
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 110669123}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &110669123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 110669122}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 546237646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &170892523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1227,6 +1258,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -76932571
   useRootMotion: 0
   trackDuration: 0.3
@@ -1658,24 +1690,22 @@ MonoBehaviour:
   edgeMarkerSize: 16
   edgeArrowSize: 8
   edgeArrowGap: 2
-  groundLayers:
+  walkableLayers:
     serializedVersion: 2
     m_Bits: 0
-  wallLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  wallShader: {fileID: 4800000, guid: 7f2276dc3f08640ffb7092978927b160, type: 3}
-  textureSize: 256
-  cameraHeight: 50
-  cameraDepthBelow: 50
-  floorHeightAbove: 1
-  floorDepthBelow: 0.5
+  topHeight: 3
+  bottomHeight: -2
+  bakeCellSize: 0.25
+  bakeMaxCellsPerSide: 1024
+  reachableOnly: 1
   playerDotSize: 10
   playerTipLength: 1.7
   bossDotSize: 14
   objectDotSize: 6
   backgroundColor: {r: 0.1019608, g: 0.09411765, b: 0.07843137, a: 0.6}
-  groundColor: {r: 0.9019608, g: 0.8705882, b: 0.8156863, a: 1}
+  groundFillColor: {r: 0.396, g: 0.389, b: 0.374, a: 0.8}
+  groundOutlineColor: {r: 0.9, g: 0.87, b: 0.82, a: 1}
+  groundOutlineWidth: 1.5
   playerColor: {r: 0.9294118, g: 0.9019608, b: 0.8392157, a: 1}
   bossColor: {r: 0.7607843, g: 0.2313725, b: 0.2117647, a: 1}
   objectColor: {r: 0.5607843, g: 0.7019608, b: 0.7294118, a: 1}
@@ -2167,6 +2197,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1285865267
   useRootMotion: 1
   trackDuration: 0.5
@@ -2586,6 +2617,73 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &419357184
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 419357185}
+  - component: {fileID: 419357186}
+  m_Layer: 0
+  m_Name: Rain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &419357185
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419357184}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1500275744}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &419357186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419357184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7189cd3ac9d54570896799fa9e3d3ff7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Environment.CubeRain
+  prefabs:
+  - {fileID: 3396944717018336269, guid: 28597bd065c73f1449f0babe934f5a4b, type: 3}
+  - {fileID: 6402871539248170361, guid: ba0bfda29cd8e7343a0fcff4e7e60ccf, type: 3}
+  - {fileID: 7065667698415380183, guid: 54f778a4918b7754b993028bd9867676, type: 3}
+  - {fileID: 4937346072415860749, guid: 6a49c6b17831bc248a70eea5088ffb8c, type: 3}
+  - {fileID: 5242614758905865387, guid: 96e0bd76b7e664942a41e1e732271e38, type: 3}
+  boss: {fileID: 1795174712}
+  surface: {fileID: 287426235}
+  pool:
+    key: CubeRain
+    prefab: {fileID: 7235598713585771264, guid: ba0bfda29cd8e7343a0fcff4e7e60ccf, type: 3}
+    initialSize: 0
+    expandSize: 1
+    parent: {fileID: 110669123}
+  minCycleTime: 2
+  maxCycleTime: 4
+  maxActiveCount: 30
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 328
+  spawnHeight: 10
+  sampleDistance: 1
+  maxSpawnAttempts: 10
 --- !u!1 &425622887
 GameObject:
   m_ObjectHideFlags: 0
@@ -3346,6 +3444,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1212518212
   useRootMotion: 1
   trackDuration: 0.35
@@ -3407,6 +3506,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1158871993
   useRootMotion: 1
   trackDuration: 0.4
@@ -4189,6 +4289,7 @@ Transform:
   - {fileID: 49889021}
   - {fileID: 1801084247}
   - {fileID: 924576171}
+  - {fileID: 110669123}
   m_Father: {fileID: 1500275744}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &552869938
@@ -5040,6 +5141,37 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &618434514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 618434515}
+  m_Layer: 0
+  m_Name: tip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &618434515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 618434514}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.5, z: -0.025}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4308360785206521539}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &654455442
 Mesh:
   m_ObjectHideFlags: 0
@@ -5271,6 +5403,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -1643175366
   useRootMotion: 0
   trackDuration: 0
@@ -5365,6 +5498,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 130959345
   useRootMotion: 0
   trackDuration: 0.25
@@ -5622,6 +5756,14 @@ MonoBehaviour:
     m_Bits: 128
   wallRadius: 2
   castHeight: 0.5
+  constrainToNavMesh: 0
+  landEdgePadding: 0.6
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stepHeight: 1
+  maxDrop: 1.5
+  heightSpeed: 6
 --- !u!54 &711574880
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5728,6 +5870,10 @@ MonoBehaviour:
   droopAngle: {x: 0, y: 0, z: 0}
   heaveAngle: {x: 0.8, y: 2.5, z: 2}
   heaveFrequency: 0.75
+  heaveSettleDuration: 0
+  settledHeaveFrequency: 0.75
+  settledHeaveScale: 1
+  alignSlumpToBody: 0
   pinnedLimbs: []
   trembleAngle: 0.4
   trembleFrequency: 9
@@ -5745,6 +5891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossFootDust
   dustMaterial: {fileID: 2100000, guid: a6194cc4fb56a4cab85d9c590d3f93c7, type: 2}
   feet: []
+  bodyPoints: []
   groundMask:
     serializedVersion: 2
     m_Bits: 2043
@@ -5919,6 +6066,7 @@ MonoBehaviour:
   combatEntity: {fileID: 711574875}
   appearDuration: 0.8
   appearGlitch: 1
+  telegraphColor: {r: 0.25, g: 0.4, b: 1, a: 1}
   vanishDuration: 0.6
   vanishGlitch: 1
 --- !u!1 &752767894
@@ -7418,6 +7566,8 @@ MonoBehaviour:
   groggyBar: {fileID: 1069273371}
   smoothGroggyBar: 1
   trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
+  cloneHpBar: {fileID: 0}
+  cloneBarFadeDuration: 0.3
   occlusionOutlineWidth: 2
 --- !u!225 &910817645
 CanvasGroup:
@@ -7515,6 +7665,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 0
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 827010313
   useRootMotion: 0
   trackDuration: 0
@@ -9070,6 +9221,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 546237646}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1144343557
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1144343558}
+  m_Layer: 0
+  m_Name: base
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1144343558
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144343557}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.095, z: -0.01}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4308360785206521539}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1254758821
 GameObject:
   m_ObjectHideFlags: 0
@@ -9124,21 +9306,34 @@ MonoBehaviour:
   distance: 4
   holdDistance: 1
   sprintDistance: 0.5
-  transitionSpeed: 10
+  transitionDuration: 0.45
+  transitionEase: 12
+  bossCloseEnterDistance: 3
+  bossCloseExitDistance: 4.5
+  bossClosePivotOffset: {x: 0, y: 1.9, z: 0}
+  bossCloseDistance: 4.6
+  bossCloseFovWiden: 5
   mouseSensitivity: 2
+  rotationSmoothSpeed: 30
   minPitch: -40
   maxPitch: 70
   minYaw: -40
   maxYaw: 70
-  focusTurnSpeed: 8
+  focusSmoothTime: 0.15
   collisionMask:
     serializedVersion: 2
     m_Bits: 183
   collisionRadius: 0.2
+  collisionRecoverSpeed: 6
+  shoulderClearance: 0.3
+  shoulderReturnMargin: 0.4
+  shoulderSwitchDuration: 0.4
   maxShakePosition: {x: 0.3, y: 0.3, z: 0}
   maxShakeRotation: {x: 3, y: 1.5, z: 5}
   shakeFrequency: 25
   traumaDecay: 1.7
+  shotReturnDuration: 0.6
+  shotReturnEase: 10
 --- !u!114 &1254758824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9352,6 +9547,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: 1115633409
   useRootMotion: 1
   trackDuration: 0.65
@@ -10445,6 +10641,7 @@ Transform:
   - {fileID: 382682456}
   - {fileID: 1800087807}
   - {fileID: 546237646}
+  - {fileID: 419357185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1500846078
@@ -12878,9 +13075,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.SkillSlotHUD
   inventory: {fileID: 0}
+  player: {fileID: 0}
+  slots: []
+  wakeUpSlot:
+    Graphic: {fileID: 0}
+    Key: {fileID: 0}
+    Name: {fileID: 0}
+    Cooldown: {fileID: 0}
   font: {fileID: 11400000, guid: 659ceb8947c683b4a9e1216df0a67515, type: 2}
-  slotSize: {x: 54, y: 54}
-  slotGap: 8
   style:
     trackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.85}
     emptyTrackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.5}
@@ -12893,10 +13095,6 @@ MonoBehaviour:
     shadowSize: 3
     readyBorderWidth: 1
     antiAliasPixels: 1
-  textColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 1}
-  keyFontSize: 11
-  nameFontSize: 13
-  cooldownFontSize: 15
   nameLength: 3
   readyFlashDuration: 0.3
 --- !u!43 &2046850144
@@ -13130,6 +13328,7 @@ MonoBehaviour:
   <IsUrgent>k__BackingField: 0
   <CanApproach>k__BackingField: 1
   requiresLineOfSight: 1
+  requiresDirectPath: 0
   trigger: -681069039
   useRootMotion: 1
   trackDuration: 1.65
@@ -13774,15 +13973,42 @@ PrefabInstance:
       propertyPath: m_Name
       value: Humanoid Boss
       objectReference: {fileID: 0}
+    - target: {fileID: 6445626254664541311, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+      propertyPath: material
+      value: 
+      objectReference: {fileID: 2100000, guid: 31fd61b752b66e54d96c39590286b2bf, type: 2}
+    - target: {fileID: 6445626254664541311, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+      propertyPath: tipTrans
+      value: 
+      objectReference: {fileID: 618434515}
+    - target: {fileID: 6445626254664541311, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+      propertyPath: baseTrans
+      value: 
+      objectReference: {fileID: 1144343558}
+    - target: {fileID: 6456336017364605397, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+      propertyPath: m_Name
+      value: Sword
+      objectReference: {fileID: 0}
     - target: {fileID: 9112759982524228605, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
       propertyPath: template
       value: 
       objectReference: {fileID: 711574889}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5271350872471927558, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1144343558}
+    - targetCorrespondingSourceObject: {fileID: 5271350872471927558, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 618434515}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+--- !u!4 &4308360785206521539 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5271350872471927558, guid: f94ca9783332a5a42bb23e2f5e1f1f5c, type: 3}
+  m_PrefabInstance: {fileID: 4308360785206521538}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -294,6 +294,7 @@ MonoBehaviour:
   hitFadeDuration: 0.3
   showRangeWhenInactive: 0
   centerHeight: 2.5
+  animEventIgnoreTime: 0.2
   phase2Weight: 0.8
 --- !u!1 &860512912502408936
 GameObject:
@@ -1333,9 +1334,17 @@ MonoBehaviour:
   showRangeWhenInactive: 1
   hpRatio: 0.9
   worldTimeScale: 0.01
+  playerTimeScale: 0.02
   grayDuration: 0.25
   vanishTime: 0.3
   appearTime: 0.5
+  vanishIdleCrossFade: 0.3
+  hologram:
+    vanishDuration: 0.55
+    appearDuration: 0.6
+    fadeDuration: 0.12
+    travelHeight: 1.2
+    softness: 0.5
   appearDistance: 13
   minTeleportDistance: 3
   bodyRadius: 1.5
@@ -1348,13 +1357,25 @@ MonoBehaviour:
   strikeDistance: 6
   approachSpeed: 3
   approachAnimSpeed: 0.8
+  approachStartDelay: 0.15
+  approachBlendTime: 0.45
   maxApproachTime: 3
   approachTurnSpeed: 180
   raiseAnimSpeed: 0.25
   raiseEndTime: 0.22
   raiseHoldTime: {x: 0.15, y: 0.2}
+  useDiagonalSlash: 1
+  diagonalStartOffset: 0.4
+  diagonalRaiseEndTime: 0.355
+  diagonalCutAngle: 40
+  cutDrawDuration: 0.06
   cutLineDuration: 0.15
+  cutRiftOpen: 0.5
+  slipOffset: 4
+  cutFlashAlpha: 0.25
+  cutShakeTrauma: 0.3
   splitOffset: 40
+  splitPause: 0.2
   splitDuration: 0.2
   crackDuration: 0.4
   holdAfterFreeze: 0.7
@@ -1678,6 +1699,7 @@ MonoBehaviour:
   hitFadeDuration: 0.3
   showRangeWhenInactive: 0
   centerHeight: 2.5
+  animEventIgnoreTime: 0.2
   phase2Weight: 1
   acceptRadius: 6
   maxGuardTime: 1.5
@@ -1749,6 +1771,27 @@ MonoBehaviour:
   - {fileID: 2925223582652963469}
   - {fileID: 5942261673968717563}
   - {fileID: 3537335274299680318}
+  earlyInterruptibleStates:
+  - {fileID: 842309831472494679}
+  - {fileID: 3916006926232998028}
+  - {fileID: 3122333516163714315}
+  - {fileID: 2484365788898771241}
+  - {fileID: 8139536772050374500}
+  - {fileID: 6572092549902156427}
+  - {fileID: 3062325892780577714}
+  - {fileID: 8309562474537771259}
+  - {fileID: 2359390992122810266}
+  - {fileID: 2068782549178195635}
+  - {fileID: 1239620029955063191}
+  - {fileID: 7580632681315844959}
+  - {fileID: 8922875713059889037}
+  - {fileID: 7320282475680804292}
+  - {fileID: 3828501172030961090}
+  - {fileID: 2193028100210668615}
+  - {fileID: 1905758924710621755}
+  - {fileID: 1928766376241248788}
+  - {fileID: 4660229607383688717}
+  - {fileID: 9026277270015773680}
   reactions:
   - {fileID: 1208218032393173752}
   - {fileID: 8838173543860627013}
@@ -1759,7 +1802,10 @@ MonoBehaviour:
   hitRadius: 4
   centerHeight: 2.5
   frontHalfAngle: 100
-  cooldown: 3
+  earlyInterruptTime: 0.3
+  cooldown: 5
+  reactChance: 0.3
+  phase2ReactChance: 0.6
   logSkipReason: 1
 --- !u!1 &5629328895022808041
 GameObject:
@@ -2666,6 +2712,7 @@ MonoBehaviour:
   hitFadeDuration: 0.3
   showRangeWhenInactive: 0
   centerHeight: 2.5
+  animEventIgnoreTime: 0.2
   phase2Weight: 1
   cutRadius: 7
   closeRadius: 4
@@ -3642,6 +3689,8 @@ MonoBehaviour:
     m_Bits: 128
   wallRadius: 2
   castHeight: 0.5
+  constrainToNavMesh: 0
+  landEdgePadding: 0.6
   groundMask:
     serializedVersion: 2
     m_Bits: 0
@@ -3817,6 +3866,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossFootDust
   dustMaterial: {fileID: 2100000, guid: a6194cc4fb56a4cab85d9c590d3f93c7, type: 2}
   feet: []
+  bodyPoints: []
   groundMask:
     serializedVersion: 2
     m_Bits: 2043
@@ -4075,7 +4125,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 691674299709288164, guid: 3af351dd455933241adaadfb8566111f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6445626254664541311}
   m_SourcePrefab: {fileID: -9137962142385034750, guid: 3af351dd455933241adaadfb8566111f, type: 3}
 --- !u!23 &2182829401690050078 stripped
 MeshRenderer:
@@ -4087,3 +4140,61 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1812497409201261623, guid: 3af351dd455933241adaadfb8566111f, type: 3}
   m_PrefabInstance: {fileID: 5764837849109346097}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6456336017364605397 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 691674299709288164, guid: 3af351dd455933241adaadfb8566111f, type: 3}
+  m_PrefabInstance: {fileID: 5764837849109346097}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6445626254664541311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6456336017364605397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8149d925f31dba4a939fb1c2201983b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.HumanoidSwordTrail
+  baseTrans: {fileID: 0}
+  tipTrans: {fileID: 0}
+  material: {fileID: 2100000, guid: ec194b84f7a17fd419c28602be23444f, type: 2}
+  lifetime: 0.3
+  subdivision: 4
+  minSampleDistance: 0.02
+  colorOverAge:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  idleSpeed: 1
+  swingSpeed: 12
+  idleIntensity: 0.25
+  intensitySharpness: 15
+  teleportDistance: 3

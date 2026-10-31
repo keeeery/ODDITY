@@ -11,6 +11,9 @@ namespace TeamOdd
     {
         [Title("Reaction")]
         [SerializeField] private float centerHeight = 2.5f; // 날아오는 물체와의 거리를 잴 보스 몸통 높이
+        // 공격을 끊고 들어오면 전이(0.12초)가 끝날 때 공격 상태가 남은 신호(OnAttackEnded 등)를 몰아 보내므로 그동안 무시
+        // 반응 애니메이션의 가장 이른 신호(튕겨내기 OnDeflectCut, 약 0.28초)보다 짧아야 함
+        [SerializeField] private float animEventIgnoreTime = 0.2f;
 
         // 페이즈 1은 회피 위주, 페이즈 2는 튕겨내기·베기 위주로 가중치를 바꿈
         [Title("Phase 2")]
@@ -18,6 +21,9 @@ namespace TeamOdd
 
         private HumanoidBossCombatEntity combatEntity;
         private bool isPhase2;
+        private float enterTime;
+
+        protected override bool IsIgnoringAnimEvents => Clock.LocalTime < enterTime + animEventIgnoreTime;
 
         public float ReactionWeight => isPhase2 ? phase2Weight : Weight;
 
@@ -48,6 +54,8 @@ namespace TeamOdd
         // 추적·스트레이프를 끊고 들어오므로 이동 플래그를 꺼야 반응이 끝난 뒤 Idle에서 다시 출발하지 않음
         protected override void OnPatternEnter()
         {
+            enterTime = Clock.LocalTime;
+
             Animator.SetBool(BossAnimParams.IS_CHASING, false);
             Animator.SetBool(BossAnimParams.IS_STRAFING, false);
             Animator.SetBool(BossAnimParams.IS_TURNING, false);

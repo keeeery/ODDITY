@@ -8,11 +8,13 @@ using UnityEngine;
 namespace TeamOdd
 {
     // 염동력 코드를 고치지 않으려고 피격 이벤트 대신 날아오는 물체를 직접 살펴 맞기 전에 반응함
-    public class HumanoidProjectileWatcher : MonoBehaviour
+    public class HumanoidProjectileWatcher : MonoBehaviour, IHumanoidPhaseListener
     {
         [Title("References")]
         [SerializeField] private BossMonster boss;
         [SerializeField] private BossStateBase[] interruptibleStates; // 이 상태일 때만 반응, 공격 중엔 그냥 맞음
+        // 들어온 직후 earlyInterruptTime 동안만 반응, 들어올 때 순간이동·소환처럼 끊으면 정리가 안 되는 패턴은 넣지 않음
+        [SerializeField] private BossStateBase[] earlyInterruptibleStates;
         [SerializeField] private HumanoidReactionPattern[] reactions;
 
         [Title("Detection")]
@@ -22,9 +24,14 @@ namespace TeamOdd
         [SerializeField] private float hitRadius = 4f; // 진행선이 보스 몸통에서 이 거리 안을 지나면 맞을 물체로 봄
         [SerializeField] private float centerHeight = 2.5f;
         [SerializeField] private float frontHalfAngle = 100f; // 등 뒤에서 오는 물체엔 반응하지 않음 (등 뒤 공략 여지)
+        [SerializeField] private float earlyInterruptTime = 0.3f; // earlyInterruptibleStates에 들어온 뒤 반응할 수 있는 시간
 
         [Title("Cooldown")]
         [SerializeField] private float cooldown = 3f; // 반응마다의 쿨과 별개로, 연달아 던지면 가끔은 맞도록
+        [SerializeField, Range(0f, 1f)] private float reactChance = 0.5f; // 쿨이 돌았어도 이 확률로만 반응, 던질 때마다 한 번 굴림
+
+        [Title("Phase 2")]
+        [SerializeField, Range(0f, 1f)] private float phase2ReactChance = 0.5f;
 
         // 반응 조건을 맞추는 동안 켜 둠, 맞을 물체에 반응하지 않은 이유를 물체마다 바뀔 때만 남김
         [Title("Debug")]
@@ -38,8 +45,17 @@ namespace TeamOdd
         private readonly HashSet<PsychokinesisObject> playerObjects = new();
 
         private float readyTime;
+        private PsychokinesisObject rolledObject;
+        private bool isChancePassed;
+        private bool isPhase2;
+        private BossStateBase earlyState;
+        private float earlyEnterTime;
         private PsychokinesisObject loggedObject;
         private string loggedReason;
+
+        private float ReactChance => isPhase2 ? phase2ReactChance : reactChance;
+
+        public void EnterPhase2() => isPhase2 = true;
 
         private void FixedUpdate()
         {
@@ -47,6 +63,8 @@ namespace TeamOdd
             TrackPlayerObjects();
 
             if (boss.Clock.IsFrozen) return;
+
+            TrackEarlyState();
 
             if (TryFindThreat(out PsychokinesisObject threat, out PsychokinesisObject rejected, out string rejectReason) == false)
             {
@@ -72,6 +90,12 @@ namespace TeamOdd
                 return;
             }
 
+            if (PassChance(threat) == false)
+            {
+                LogSkip(threat, $"확률에서 빠짐 (reactChance {ReactChance})");
+                return;
+            }
+
             readyTime = boss.Clock.LocalTime + cooldown;
             Debug.Log($"[HumanoidProjectileWatcher] {threat.name}에 {reaction.GetType().Name}로 반응", this);
             reaction.React(threat);
@@ -93,7 +117,26 @@ namespace TeamOdd
             playerObjects.RemoveWhere(IsGone);
 
             foreach (PsychokinesisObject candidate in PsychokinesisObject.ActiveObjects)
-                if (candidate.IsHeld) playerObjects.Add(candidate);
+            {
+                if (candidate.IsHeld == false) continue;
+
+                playerObjects.Add(candidate);
+
+                // 다시 잡으면 새로 던지는 것이므로 확률도 다시 굴림
+                if (candidate == rolledObject) rolledObject = null;
+            }
+        }
+
+        // 날아오는 동안 매 물리 스텝 굴리면 결국 반응하게 되므로 던질 때마다 한 번만 굴림
+        private bool PassChance(PsychokinesisObject threat)
+        {
+            if (threat != rolledObject)
+            {
+                rolledObject = threat;
+                isChancePassed = Random.value < ReactChance;
+            }
+
+            return isChancePassed;
         }
 
         private static bool IsGone(PsychokinesisObject candidate) => candidate == null || candidate.isActiveAndEnabled == false;
@@ -111,7 +154,27 @@ namespace TeamOdd
             foreach (BossStateBase state in interruptibleStates)
                 if (state.isActiveAndEnabled) return true;
 
-            return false;
+            return earlyState != null && boss.Clock.LocalTime - earlyEnterTime <= earlyInterruptTime;
+        }
+
+        // 상태의 진입 시각을 상태 쪽에서 알려 주지 않으므로, 켜진 상태가 바뀌는 순간을 직접 기록함
+        // 같은 상태로 다시 들어오면 같은 프레임에 껐다 켜져서 새 진입으로 보지 못함
+        private void TrackEarlyState()
+        {
+            BossStateBase active = null;
+
+            foreach (BossStateBase state in earlyInterruptibleStates)
+            {
+                if (state.isActiveAndEnabled == false) continue;
+
+                active = state;
+                break;
+            }
+
+            if (active == earlyState) return;
+
+            earlyState = active;
+            earlyEnterTime = boss.Clock.LocalTime;
         }
 
         // 맞을 물체 중 가장 먼저 도착하는 것, 곧 도착하는데 빗나가거나 등 뒤라 뺀 물체는 rejected로 알려 줌
