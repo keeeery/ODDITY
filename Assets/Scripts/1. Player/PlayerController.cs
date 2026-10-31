@@ -132,6 +132,8 @@ namespace TeamOdd.Player
         [Header("피격")]
         private float earlyWakeUpCooldown;
         public float MaxEarlyWakeUpCooldown;
+        // 조기 기상 남은 쿨타임(초), 스킬 슬롯 HUD가 기상기 슬롯에 띄운다.
+        public float EarlyWakeUpCooldown => earlyWakeUpCooldown;
         public float WakeUpTime;
         public float InvincibleTime; 
         // 피격 모션 끝 신호(EndHit)가 상태 전환 등으로 오지 않아도 행동 불가로 묶이지 않도록 기다리는 최대 시간(초)
@@ -243,8 +245,6 @@ namespace TeamOdd.Player
             controller = GetComponent<CharacterController>();
             psychokinesisController = GetComponent<PsychokinesisController>();
             animator = GetComponent<Animator>();
-
-            earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
 
             rollStateHash = Animator.StringToHash(rollStateName);
             holdLayer = animator.GetLayerIndex(HoldLayerName);
