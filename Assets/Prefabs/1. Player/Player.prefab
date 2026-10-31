@@ -274,13 +274,13 @@ MonoBehaviour:
   rotateTowardMove: 1
   turnSpeed: 720
   rollDistance: 6
-  moveEndTime: 1
+  moveEndTime: 0.7
   speedCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0083351135
-      value: 0.98809814
+      time: 0.004840851
+      value: 1.1528625
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -520,10 +520,13 @@ MonoBehaviour:
   maxPlantDistance: 0.8
   moveBodyWithStep: 1
   maxBodyShift: 0.5
+  quickReleaseTime: 0.06
+  deathReleaseTime: 0.25
   groundFeet: 1
   rollGroundFrom: 0.5
   maxGroundDrop: 0.5
   groundDropReturnSpeed: 0.6
+  overshootReturnSpeed: 3
 --- !u!114 &6232883466832630808
 MonoBehaviour:
   m_ObjectHideFlags: 0
