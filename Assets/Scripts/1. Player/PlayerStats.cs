@@ -14,12 +14,14 @@ namespace TeamOdd.Player
         [field: Title("Player")]
         [field: SerializeField, Min(0)] public int PsychoMaxMass { get; private set; } = 20; // 염동력으로 들 수 있는 최대 질량 (kg)
         [field: SerializeField, Min(0)] public int MaxStamina { get; private set; } = 100;   // 최대 스태미나. 염동력으로 물체를 들고 있는 동안 줄어든다
+        [field: SerializeField, Min(1)] public int AttackRange { get; private set; } = 10;   // 염동력 기본 공격(염동파)이 닿는 거리 (m). 물체를 잡는 거리는 PsychokinesisController에 따로 있다
 
         // 플레이어 전용 스탯을 이름표로 꺼낼 수 있게 덧붙인다. 플레이어 전용 스탯을 추가하면 여기에도 한 줄 추가한다
         public override int Get(StatType type) => type switch
         {
             StatType.PsychoMaxMass => PsychoMaxMass,
             StatType.MaxStamina => MaxStamina,
+            StatType.AttackRange => AttackRange,
             _ => base.Get(type),
         };
     }

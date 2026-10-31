@@ -9,3 +9,5 @@ Id	Name	Description	CellCount	UnitSpriteKey	StatType	Value
 1402	염동력 강화 칩(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	3	AugmentationChip/ChipUnit_Yellow	PsychoMaxMass	10
 1501	스태미나 강화 칩(S)	최대 스태미나가 20 증가합니다.	2	AugmentationChip/ChipUnit_Orange	MaxStamina	20
 1502	스태미나 강화 칩(M)	최대 스태미나가 40 증가합니다.	3	AugmentationChip/ChipUnit_Orange	MaxStamina	40
+1601	염동력 사거리 강화 칩(S)	염동력 기본 공격의 사거리가 2m 증가합니다.	2	AugmentationChip/ChipUnit_Cyan	AttackRange	2
+1602	염동력 사거리 강화 칩(M)	염동력 기본 공격의 사거리가 4m 증가합니다.	3	AugmentationChip/ChipUnit_Cyan	AttackRange	4
