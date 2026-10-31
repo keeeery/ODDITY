@@ -179,7 +179,7 @@ namespace TeamOdd.Boss
         {
             hasImpacted = true;
             impactClockTime = Clock.LocalTime;
-            if (footDust != null) footDust.PlayLanding(dustAmount);
+            if (footDust != null) footDust.PlayBodyLanding(dustAmount);
             if (residue != null) residue.Play();
             ShakeCamera(impactShakeTrauma, impactShakeFadeTime);
 

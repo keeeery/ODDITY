@@ -1606,7 +1606,8 @@ MonoBehaviour:
   lieTime: 1
   fallDuration: 1
   impactAt: 0.6
-  impactShakeTrauma: 0.3
+  impactShakeTrauma: 0.4
+  impactDustAmount: 1.4
   getUpDuration: 0.85
   getUpEndTime: 0
   hitStopDuration: 0.12
@@ -3871,13 +3872,17 @@ MonoBehaviour:
   yawSwayFrequency: 0.23
   irregularity: 0.35
   slump:
-    fadeInDuration: 0.6
+    fadeInDuration: 1.2
     fadeOutDuration: 0.8
   droopAngle: {x: 0, y: 0, z: 0}
-  heaveAngle: {x: 0.8, y: 2.5, z: 2}
-  heaveFrequency: 0.75
+  heaveAngle: {x: 7, y: -3.5, z: -2}
+  heaveFrequency: 0.85
+  heaveSettleDuration: 3
+  settledHeaveFrequency: 0.35
+  settledHeaveScale: 0.65
+  alignSlumpToBody: 1
   pinnedLimbs: []
-  trembleAngle: 0.4
+  trembleAngle: 0.3
   trembleFrequency: 9
 --- !u!114 &6982573755008797951
 MonoBehaviour:

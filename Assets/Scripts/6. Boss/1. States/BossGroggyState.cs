@@ -7,7 +7,7 @@ namespace TeamOdd.Boss
     // 무력화 수치(BossGroggy)가 0이 되면 지금 무엇을 하든 즉시 끊고 들어오는 그로기 상태, 보스가 바닥에 쓰러졌다가 일어난다.
     // 전용 클립이 없어 Death 클립을 Motion Time(groggyTime)으로 구간만 골라 재생한다.
     // - 무너짐: 히트스톱·윤곽 번쩍임·카메라 흔들림으로 무너지는 순간을 강조
-    // - 쓰러짐: 클립 앞쪽의 뒷발로 일어서는 동작은 건너뛰고 쓰러지는 구간부터 재생, 땅에 닿을 무렵 흙먼지와 흔들림
+    // - 쓰러짐: 클립 앞쪽의 뒷발로 일어서는 동작은 건너뛰고 쓰러지는 구간부터 재생, 땅에 닿을 무렵 몸이 닿은 자리에서 흙먼지와 흔들림
     // - 누움: 팔다리까지 바닥에 내려앉은 자세로 멈추고 BossDizzy Slump 겹(거친 숨에 맞춘 들썩임·떨림)을 덧붙임
     // - 일어남: 클립을 거꾸로 감아 몸을 일으킨 뒤 Idle로 블렌드
     // 클립 구간은 보스마다 다르므로 인스펙터 값으로 맞춘다.
@@ -38,6 +38,8 @@ namespace TeamOdd.Boss
         [SerializeField, Range(0f, 1f)] private float impactAt = 0.85f;
         [Tooltip("땅에 닿을 때 카메라 흔들림 세기(0~1)")]
         [SerializeField, Range(0f, 1f)] private float impactShakeTrauma = 0.3f;
+        [Tooltip("땅에 닿을 때 흙먼지·파편 수 배율, 충격파는 그 절반만큼 넓어짐")]
+        [SerializeField, Min(0f)] private float impactDustAmount = 1f;
 
         [Title("Get Up")]
         [Tooltip("일어나는 데 걸리는 시간(초), duration 안에 포함")]
@@ -212,7 +214,7 @@ namespace TeamOdd.Boss
         private void PlayImpact()
         {
             hasImpacted = true;
-            if (footDust != null) footDust.PlayLanding();
+            if (footDust != null) footDust.PlayBodyLanding(impactDustAmount);
             ShakeCamera(impactShakeTrauma);
         }
 
