@@ -86,6 +86,22 @@ namespace TeamOdd.Boss
             groundHeight = body.position.y;
         }
 
+        // 배치 높이가 바닥과 어긋나 있으면 heightSpeed로 따라가느라 땅에서 솟아오르거나 가라앉으므로 시작할 때 바로 맞춤
+        private void Start()
+        {
+            if (groundMask == 0) return;
+
+            float target = float.NegativeInfinity;
+            SampleGround(body.position, ref target);
+            if (float.IsNegativeInfinity(target)) return;
+
+            groundHeight = target;
+            Vector3 position = body.position;
+            position.y = groundHeight + lift;
+            body.transform.position = position;
+            body.position = position;
+        }
+
         private void FixedUpdate()
         {
             if (clock.IsFrozen) return;
