@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using TeamOdd.Boss;
+using TeamOdd.Combat;
 using UnityEngine;
 
 namespace TeamOdd
@@ -37,7 +38,11 @@ namespace TeamOdd
         // 사라지는 연출이 끝나 삭제되기 직전 한 번
         public event Action<HumanoidClone> Vanished;
 
+        // 맵에 나와 있는 분신 (한 번에 하나), 꺼 둔 원본·대기 복제본은 켜지기 전이라 들어오지 않음, 보스 HUD가 체력바에 씀
+        public static HumanoidClone Active { get; private set; }
+
         public float AppearDuration => appearDuration;
+        public CombatEntity CombatEntity => combatEntity;
 
         private readonly List<Renderer> holograms = new();
         private readonly List<float> baseAlphas = new();
@@ -64,6 +69,16 @@ namespace TeamOdd
             }
 
             SetHologram(0f, appearGlitch);
+        }
+
+        private void OnEnable()
+        {
+            if (hasFinished == false) Active = this;
+        }
+
+        private void OnDisable()
+        {
+            if (Active == this) Active = null;
         }
 
         // 분신은 플레이어를 막거나 밀어내지 않고 통과시킴, 뼈 히트박스가 Awake에서 붙은 뒤라 Start에서 등록
