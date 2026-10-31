@@ -643,6 +643,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 267122893}
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: WakeUpTime
       value: 3
       objectReference: {fileID: 0}
@@ -677,6 +681,10 @@ PrefabInstance:
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: speedCurve.m_Curve.Array.data[0].value
       value: 1.1420593
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232883466832630808, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1621,21 +1629,34 @@ MonoBehaviour:
   distance: 4
   holdDistance: 4
   sprintDistance: 4
-  transitionSpeed: 10
+  transitionDuration: 0.45
+  transitionEase: 12
+  bossCloseEnterDistance: 3
+  bossCloseExitDistance: 4.5
+  bossClosePivotOffset: {x: 0, y: 1.9, z: 0}
+  bossCloseDistance: 4.6
+  bossCloseFovWiden: 5
   mouseSensitivity: 2
+  rotationSmoothSpeed: 30
   minPitch: -40
   maxPitch: 70
   minYaw: -40
   maxYaw: 70
-  focusTurnSpeed: 8
+  focusSmoothTime: 0.15
   collisionMask:
     serializedVersion: 2
     m_Bits: 656
   collisionRadius: 0.2
+  collisionRecoverSpeed: 6
+  shoulderClearance: 0.3
+  shoulderReturnMargin: 0.4
+  shoulderSwitchDuration: 0.4
   maxShakePosition: {x: 0.3, y: 0.3, z: 0}
   maxShakeRotation: {x: 3, y: 1.5, z: 5}
   shakeFrequency: 25
   traumaDecay: 1.7
+  shotReturnDuration: 0.6
+  shotReturnEase: 10
 --- !u!1 &1637217033
 GameObject:
   m_ObjectHideFlags: 0
@@ -1771,6 +1792,10 @@ PrefabInstance:
     - target: {fileID: 2243586315636391990, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2470903307000598164, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
+      propertyPath: wave
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2851421100980067503, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: hits.Array.data[0].reaction
