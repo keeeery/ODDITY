@@ -88,6 +88,15 @@ namespace TeamOdd.CameraMove
         [Tooltip("기본 trauma 감쇠 속도(초당). 지속 시간을 따로 주면 그 값이 우선")]
         [SerializeField, Min(0f)] private float traumaDecay = 1.7f;
 
+        [Header("시네마틱 (보스 등장 등)")]
+        [Tooltip("연출 시점에서 플레이어 추적 시점으로 돌아올 때 기본 시간(초)과 곡선, 부르는 쪽이 따로 주면 그 값이 우선")]
+        [SerializeField, Min(0f)] private float shotReturnDuration = 0.6f;
+        [SerializeField] private Ease shotReturnEase = Ease.InOutCubic;
+        private Vector3 shotPosition;
+        private Quaternion shotRotation;
+        private float shotBlend;       // 1이면 연출 시점, 0이면 평소 추적 시점
+        private Tween shotTween;
+
         private Camera viewCamera;
         private float baseFov;
         private float fovPunch;        // 기본 FOV에서 좁힌 각도(도)
@@ -112,6 +121,35 @@ namespace TeamOdd.CameraMove
 
         public bool IsCinematicPlaying => fovPunchSequence != null || pullBackSequence != null;
 
+        // 연출 시점에 있거나 추적 시점으로 돌아오는 중이면 true
+        public bool IsShotPlaying => shotBlend > 0f;
+
+        // 보간 없이 즉시 연출 시점으로 자름, 추적 시점은 뒤에서 그대로 계산해 두므로 돌아갈 때 튀지 않음
+        public void CutToShot(Vector3 position, Quaternion rotation)
+        {
+            shotTween?.Kill();
+            shotPosition = position;
+            shotRotation = rotation;
+            shotBlend = 1f;
+        }
+
+        // 연출 시점 안에서 카메라를 움직일 때 매 프레임 부름, 섞는 비율은 그대로 둠
+        public void MoveShot(Vector3 position, Quaternion rotation)
+        {
+            shotPosition = position;
+            shotRotation = rotation;
+        }
+
+        // 연출 시점에서 지금의 추적 시점으로 보간해 돌아감, duration < 0이면 인스펙터 값, 시간은 실제 초
+        public Tween ReturnFromShot(float duration = -1f)
+        {
+            shotTween?.Kill();
+            shotTween = DOTween.To(() => shotBlend, value => shotBlend = value, 0f, duration < 0f ? shotReturnDuration : duration)
+                .SetEase(shotReturnEase).SetUpdate(true).SetTarget(this)
+                .OnKill(() => shotTween = null);
+            return shotTween;
+        }
+
         // 대상을 화면 중앙에 두는 고정 시점을 켬
         public void BeginFocus(Transform focus) => focusTarget = focus;
 
@@ -133,6 +171,7 @@ namespace TeamOdd.CameraMove
             pullBackSequence?.Kill();
             transitionSequence?.Kill();
             shoulderTween?.Kill();
+            shotTween?.Kill();
         }
 
         private void Start()
@@ -324,6 +363,7 @@ namespace TeamOdd.CameraMove
             UpdateRotation();
             Vector3 basePosition = UpdatePosition();
             lastBasePosition = basePosition;
+            ApplyShot(ref basePosition);
             UpdateTrauma(out Vector3 posOffset, out Quaternion rotOffset);
 
             // 흔들림은 렌더 직전에만 더한다. yaw/pitch 누적값은 건드리지 않음
@@ -339,6 +379,15 @@ namespace TeamOdd.CameraMove
             transform.rotation *= rotOffset;
 
             if (viewCamera != null) viewCamera.fieldOfView = baseFov + currentFovWiden - fovPunch;
+        }
+
+        // 추적 시점과 연출 시점을 shotBlend만큼 섞음, 흔들림은 섞은 뒤에 얹음
+        private void ApplyShot(ref Vector3 basePosition)
+        {
+            if (shotBlend <= 0f) return;
+
+            basePosition = Vector3.LerpUnclamped(basePosition, shotPosition, shotBlend);
+            transform.rotation = Quaternion.SlerpUnclamped(transform.rotation, shotRotation, shotBlend);
         }
 
         private void UpdateRotation()

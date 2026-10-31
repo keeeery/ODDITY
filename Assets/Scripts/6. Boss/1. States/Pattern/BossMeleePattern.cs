@@ -89,6 +89,9 @@ namespace TeamOdd.Boss
         private Pose[] lockedPoses;
         private bool[] isLocked;
 
+        // 등장 연출(BossIntroCinematic)이 패턴 판정 없이 모션만 재생할 때 씀
+        public int AnimTrigger => trigger;
+
         // 시야는 고르는 시점에만 봄, 공격이 시작된 뒤 대상이 숨어도 범위 안이면 맞음
         public virtual bool CanUse => Clock.LocalTime >= readyTime && IsSightClear;
 

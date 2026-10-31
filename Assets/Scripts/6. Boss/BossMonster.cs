@@ -55,6 +55,10 @@ namespace TeamOdd.Boss
         // 시간 정지 스킬이 보스를 멈출 때 쓰는 시계, 프리팹에 없으면 Awake에서 붙임
         public TimeFreezable Clock { get; private set; }
 
+        // 켜 두면 Start에서 상태머신을 시작하지 않고 StartStateMachine을 기다림(등장 연출 등), Start보다 먼저(Awake에서) 켜야 함
+        public bool DefersStart { get; set; }
+        public bool HasStarted { get; private set; }
+
         // 대상이 죽으면 Target은 그대로 두고(거리·각도 계산이 계속 쓰므로) 새 판단만 멈춤
         public bool IsTargetDead => Player.Player.Instance.PlayerController.IsDead;
 
@@ -108,6 +112,12 @@ namespace TeamOdd.Boss
             Animator.speed = motionSpeed;
         }
 
+        protected override void Start()
+        {
+            if (DefersStart) return;
+            StartStateMachine();
+        }
+
         private void Update()
         {
             Animator.SetFloat(BossAnimParams.DISTANCE_TO_TARGET, DistanceToTarget);
@@ -123,6 +133,14 @@ namespace TeamOdd.Boss
         }
 
         #region PUBLIC_METHODS
+
+        // 미뤄 둔 상태머신을 기본 상태부터 시작, 이미 시작했으면 무시
+        public void StartStateMachine()
+        {
+            if (HasStarted) return;
+            HasStarted = true;
+            base.Start();
+        }
 
         // 페이즈 전환 등으로 보스 전체 동작 빠르기를 바꿈
         // 시간 정지·감속이 기억해 둔 속도로 풀 때 되돌아가므로 정상 시간(Clock.TimeScale 1)일 때 호출
