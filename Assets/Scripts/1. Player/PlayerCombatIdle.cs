@@ -17,6 +17,8 @@ namespace TeamOdd.Player
         private static readonly int WalkState = Animator.StringToHash("Walk");
         private static readonly int RunState = Animator.StringToHash("Run");
         private static readonly int RollState = Animator.StringToHash("Roll");
+        private static readonly int RollRecoverState = Animator.StringToHash("RollRecover");
+        private static readonly int DeadState = Animator.StringToHash("Dead");
 
         [Header("흔들림")]
         [SerializeField] private string psychokinesisLayerName = "Psycokinesis"; // 들기·조준 중에는 흔들림을 멈춰 왼팔 IK가 떨리지 않게 함
@@ -41,8 +43,8 @@ namespace TeamOdd.Player
         [SerializeField] private bool stepFeet = true;
         [Tooltip("뒷발이 앞발 기준 대기 자세 자리에서 이 거리(m)보다 벌어져 있으면 옮김")]
         [SerializeField, Min(0.01f)] private float stepThreshold = 0.07f;
-        [Tooltip("몸이 돌아 발끝이 이 각도(도)보다 틀어지면 옮김")]
-        [SerializeField, Range(1f, 90f)] private float stepTurnThreshold = 25f;
+        [Tooltip("몸이 돌아 발끝이 이 각도(도)보다 좌우로 틀어지면 옮김")]
+        [SerializeField, Range(1f, 90f)] private float stepTurnThreshold = 18f;
         [SerializeField, Min(0.05f)] private float stepDuration = 0.22f; // 한 발을 옮기는 시간(초)
         [SerializeField, Min(0f)] private float stepHeight = 0.07f; // 옮기는 동안 발을 드는 최고 높이(m)
         [Tooltip("대기 전환이 이만큼 진행된 뒤부터 발을 옮김, 그 전에는 대기 자세 자리가 아직 많이 움직이므로 고정만 함")]
@@ -54,6 +56,9 @@ namespace TeamOdd.Player
         [Tooltip("뒷발을 옮기는 동안 몸(캡슐)도 앞발 쪽으로 옮겨, 다 디뎠을 때 두 발이 대기 자세처럼 몸 아래에 오게 함")]
         [SerializeField] private bool moveBodyWithStep = true;
         [SerializeField, Min(0f)] private float maxBodyShift = 0.5f; // 한 걸음에 몸을 옮기는 최대 거리(m)
+        [Tooltip("구르기·피격으로 넘어갈 때 발 고정을 푸는 시간(초), 길면 몸만 나가고 발이 남아 다리가 늘어나 보임")]
+        [SerializeField, Min(0.01f)] private float quickReleaseTime = 0.06f;
+        [SerializeField, Min(0.01f)] private float deathReleaseTime = 0.25f; // 사망으로 넘어갈 때 발 고정을 푸는 시간(초)
 
         [Header("착지 보정")]
         [SerializeField] private bool groundFeet = true;
@@ -61,6 +66,7 @@ namespace TeamOdd.Player
         [SerializeField, Range(0f, 1f)] private float rollGroundFrom = 0.5f;
         [SerializeField, Min(0f)] private float maxGroundDrop = 0.5f; // 한 프레임에 골반을 내리는 최대 거리(m)
         [SerializeField, Min(0.01f)] private float groundDropReturnSpeed = 0.6f; // 보정이 끝날 때 골반을 원래 높이로 되돌리는 빠르기(m/s)
+        [SerializeField, Min(0.01f)] private float overshootReturnSpeed = 3f; // 허용치보다 내려가 있는 골반을 되돌리는 빠르기(m/s)
 
         private Animator animator;
         private Transform spine;
@@ -86,6 +92,7 @@ namespace TeamOdd.Player
         private bool isPlanted; // 발을 바닥에 고정해 둔 상태인지, 대기를 벗어나 보정이 다 풀리면 놓음
         private bool leftIsFront; // 고정해 둔 두 발 중 기준이 되는 앞발이 왼발인지
         private bool stanceStepped; // 이번에 고정한 뒤 뒷발을 한 걸음 옮겼는지(옮길 필요가 없었던 경우 포함)
+        private bool skipStanceStep; // 달리기·구르기에서 대기로 들어가는 중, 다음 고정 때 뒷발을 딛지 않음
         private Vector3 pendingBodyShift; // IK에서 정한 몸 이동, 다음 프레임 애니메이션 전에 캡슐에 적용
         private bool isWalking;
         private bool isIdleSettled;
@@ -167,9 +174,10 @@ namespace TeamOdd.Player
             float target = grounded && IsGettingUp() ? allowed : 0f;
 
             // 내릴 때는 바로 따라가고, 보정이 끝나면 천천히 되돌림
+            // 발이 먼저 바닥에 닿아 허용치보다 많이 내려가 있으면 한 번에 튀어 오르지 않게 빠르게만 되돌림
             float deltaTime = Time.deltaTime * SlowMotion.PlayerRelativeScale;
-            groundDrop = target >= groundDrop ? target : Mathf.Max(target, groundDrop - groundDropReturnSpeed * deltaTime);
-            groundDrop = Mathf.Min(groundDrop, allowed);
+            float returnSpeed = groundDrop > allowed ? overshootReturnSpeed : groundDropReturnSpeed;
+            groundDrop = target >= groundDrop ? target : Mathf.Max(target, groundDrop - returnSpeed * deltaTime);
 
             if (groundDrop > 0f) hips.position -= Vector3.up * groundDrop;
         }
@@ -269,11 +277,17 @@ namespace TeamOdd.Player
             if (stepFeet)
             {
                 // 대기 중에는 발을 고정하고 앞발 기준으로 뒷발만 옮기며, 벗어날 때는 가중치만 푼다
-                // 걷기에서 멈출 때는 대기에 다 들어간 뒤부터 고정한다
+                // 걷기·달리기·구르기에서 멈출 때는 대기에 다 들어간 뒤부터 고정한다
+                // 달리기·구르기에서 멈출 때는 고정한 자리에 그대로 서고 뒷발을 딛지 않는다
                 int state = BaseStateHash();
-                bool fromWalk = enteringIdle && animator.GetCurrentAnimatorStateInfo(0).shortNameHash == WalkState;
-                bool planting = state == IdleState && fromWalk == false;
-                if (fromWalk) isPlanted = false; // 직전 대기에서 고정해 둔 발 자리에 끌리지 않게 놓음
+                int current = animator.GetCurrentAnimatorStateInfo(0).shortNameHash;
+                bool fromWalk = enteringIdle && current == WalkState;
+                bool fromRunOrRoll = enteringIdle && (current == RunState || current == RollState || current == RollRecoverState);
+                bool settling = fromWalk || fromRunOrRoll;
+                if (state != IdleState) skipStanceStep = false; // 대기로 가다 다른 동작으로 끊기면 취소
+                if (fromRunOrRoll) skipStanceStep = true;
+                bool planting = state == IdleState && settling == false;
+                if (settling) isPlanted = false; // 직전 대기에서 고정해 둔 발 자리에 끌리지 않게 놓음
                 if (planting && isPlanted == false)
                 {
                     leftPlant = new FootPlant(leftTarget, leftRotation);
@@ -281,23 +295,35 @@ namespace TeamOdd.Player
                     isPlanted = true;
                     ChooseFrontFoot(leftTarget, rightTarget);
 
-                    // 한 발이 들려 있으면 딛고 있는 발을 기준으로 들린 발을 바로 내려 딛게 함
-                    float lift = leftTarget.y - rightTarget.y;
-                    if (Mathf.Abs(lift) > stepThreshold * 0.5f)
+                    if (skipStanceStep)
                     {
-                        leftIsFront = lift < 0f;
-                        BackPlant.BeginStep();
                         stanceStepped = true;
+                        skipStanceStep = false;
+                    }
+                    else
+                    {
+                        // 한 발이 들려 있으면 딛고 있는 발을 기준으로 들린 발을 바로 내려 딛게 함
+                        float lift = leftTarget.y - rightTarget.y;
+                        if (Mathf.Abs(lift) > stepThreshold * 0.5f)
+                        {
+                            leftIsFront = lift < 0f;
+                            BackPlant.BeginStep();
+                            stanceStepped = true;
+                        }
                     }
                 }
 
-                // 피격·구르기·사망처럼 다리가 크게 움직이는 동작으로 넘어가면 바로 놓음
-                if (planting == false && state != WalkState && state != RunState && fromWalk == false)
+                // 피격·구르기·사망처럼 다리가 크게 움직이는 동작으로 넘어가면 짧게 풀고 다 풀리면 놓음 (한 프레임에 놓으면 발이 튐)
+                if (planting == false && state != WalkState && state != RunState && settling == false)
                 {
-                    footWidthWeight = 0f;
-                    isPlanted = false;
-                    SetFootIKWeight(0f);
-                    return;
+                    float releaseTime = state == DeadState ? deathReleaseTime : quickReleaseTime;
+                    footWidthWeight = Mathf.MoveTowards(footWidthWeight, 0f, Time.deltaTime * SlowMotion.PlayerRelativeScale / releaseTime);
+                    if (footWidthWeight <= 0f)
+                    {
+                        isPlanted = false;
+                        SetFootIKWeight(0f);
+                        return;
+                    }
                 }
 
                 if (isPlanted)
@@ -311,6 +337,8 @@ namespace TeamOdd.Player
                     GetPlantGoals(leftTarget, rightTarget, out Vector3 leftGoal, out Vector3 rightGoal);
                     leftOut = leftPlant.Evaluate(leftGoal, leftRotation, stepHeight, out leftRotationOut);
                     rightOut = rightPlant.Evaluate(rightGoal, rightRotation, stepHeight, out rightRotationOut);
+                    leftRotationOut = KeepYaw(leftRotationOut, leftRotation);
+                    rightRotationOut = KeepYaw(rightRotationOut, rightRotation);
                 }
             }
 
@@ -438,9 +466,9 @@ namespace TeamOdd.Player
             // 서 있는 발이 목표 자리에서 벌어진 거리(m), 옮기는 중이면 0
             public float Error(Vector3 target) => IsStepping ? 0f : Vector3.Distance(position, target);
 
-            // 몸이 돌아 발끝이 목표 방향에서 기준 각도보다 틀어졌는지
+            // 몸이 돌아 발끝이 목표 방향에서 기준 각도보다 좌우로 틀어졌는지, 기울기는 애니메이션을 따르므로 빼고 잼
             public bool IsTurned(Quaternion targetRotation, float threshold) =>
-                IsStepping == false && Quaternion.Angle(rotation, targetRotation) > threshold;
+                IsStepping == false && Mathf.Abs(YawAngle(rotation, targetRotation)) > threshold;
 
             public void BeginStep()
             {
@@ -474,6 +502,20 @@ namespace TeamOdd.Player
                 outRotation = Quaternion.Slerp(stepFromRotation, targetRotation, t);
                 return Vector3.Lerp(stepFromPosition, target, t) + Vector3.up * (Mathf.Sin(stepTime * Mathf.PI) * height);
             }
+        }
+
+        // 고정한 발은 발끝 방향만 지키고 앞뒤·좌우 기울기는 애니메이션을 따름 (기울기까지 고정하면 골반이 움직일 때 발목이 꺾임)
+        private static Quaternion KeepYaw(Quaternion planted, Quaternion animated) =>
+            Quaternion.AngleAxis(YawAngle(animated, planted), Vector3.up) * animated;
+
+        // from에서 to까지 발끝이 바닥 위에서 돈 각도(도), 발끝이 수직에 가까우면 0
+        private static float YawAngle(Quaternion from, Quaternion to)
+        {
+            Vector3 fromForward = Vector3.ProjectOnPlane(from * Vector3.forward, Vector3.up);
+            Vector3 toForward = Vector3.ProjectOnPlane(to * Vector3.forward, Vector3.up);
+            if (fromForward.sqrMagnitude < 0.0001f || toForward.sqrMagnitude < 0.0001f) return 0f;
+
+            return Vector3.SignedAngle(fromForward, toForward, Vector3.up);
         }
 
         private void SetFootIKWeight(float weight)
