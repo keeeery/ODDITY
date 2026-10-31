@@ -12,7 +12,7 @@ using UnityEngine;
 namespace TeamOdd
 {
     // 차원 가르기 (A15): 체력이 일정 비율 이하가 되면 한 번, 세상을 멈추고 플레이어 정면 멀리 나타나 천천히 걸어온 뒤
-    // 검을 천천히 들어 잠깐 멈췄다가 빠르게 세로로 내려베고 화면을 가른 뒤 확정 피해
+    // 검을 천천히 들어 잠깐 멈췄다가 빠르게 내려베고(세로 또는 사선) 화면을 가른 뒤 확정 피해
     // 다른 담당 코드를 고치지 않으려고 기존 기능을 씀
     // - 세상 정지: TimeFreezable.FreezeWorld(아주 작은 배율), 0이면 시간 정지 홀로그램 막이 덮이므로 / 보스만 SetWorldExempt
     // - 플레이어 감속: SlowMotion.AddPlayerOnly(아주 작은 배율)로 플레이어만 느리게 해 사실상 움직이지 못하게 함, 염동력·스킬은 SetSuperpowerLocked로 막음
@@ -22,6 +22,7 @@ namespace TeamOdd
     {
         private static readonly int WALK_STATE = Animator.StringToHash("DimensionWalk");
         private static readonly int SLASH_STATE = Animator.StringToHash("DimensionSlash");
+        private static readonly int DIAGONAL_SLASH_STATE = Animator.StringToHash("DimensionSlashDiagonal");
         private static readonly int IDLE_STATE = Animator.StringToHash("Idle");
 
         [Title("Condition")]
@@ -54,11 +55,19 @@ namespace TeamOdd
         [SerializeField] private float maxApproachTime = 3f;
         [SerializeField] private float approachTurnSpeed = 180f;
 
-        // 검을 천천히 들어 올려(DimensionSlash 앞부분을 느리게) raiseEndTime에서 잠깐 멈춘 뒤, 원래 속도로 내려벰
+        // 검을 천천히 들어 올려(베기 앞부분을 느리게) raiseEndTime에서 잠깐 멈춘 뒤, 원래 속도로 내려벰, 사선 베기면 diagonalRaiseEndTime
         [Title("Raise")]
         [SerializeField] private float raiseAnimSpeed = 0.25f;
         [SerializeField, Range(0f, 0.25f)] private float raiseEndTime = 0.22f; // DimensionSlash 정규화 시간, 베기(0.25) 직전
         [SerializeField] private Vector2 raiseHoldTime = new Vector2(0.5f, 0.75f);
+
+        // 사선 베기: DimensionSlashDiagonal(Skill_A)의 화면 왼쪽 위에서 오른쪽 아래로 내려베는 부분을 써서 화면도 기울여 가름
+        // 앞쪽의 낮게 휘두르는 동작은 건너뛰고 칼을 들기 시작하는 곳부터 재생, 끄면 원래 수직 내려베기로 돌아감
+        [Title("Diagonal Slash")]
+        [SerializeField] private bool useDiagonalSlash = true;
+        [SerializeField] private float diagonalStartOffset = 0.4f; // 재생을 시작하는 클립 시간(초)
+        [SerializeField, Range(0f, 1f)] private float diagonalRaiseEndTime = 0.355f; // 칼이 가장 높이 올라간 정규화 시간, 베기(0.385) 직전
+        [SerializeField, Range(-80f, 80f)] private float diagonalCutAngle = 40f; // 가르는 선이 세로에서 기운 각도, 양수면 화면에서 위가 왼쪽(\)
 
         // 위에서 아래로 빠르게 그어진 흰 심이 번쩍이며 화면이 몇 px 어긋나고, 잦아들면 검은 틈(흰 테두리)으로 남았다가
         // 화면이 갈라지는 동안 틈이 끝까지 벌어짐
@@ -72,9 +81,10 @@ namespace TeamOdd
 
         [Title("Split")]
         [SerializeField] private float splitOffset = 40f; // 화면 높이 1080 기준 픽셀
+        [SerializeField] private float splitPause = 0.2f; // 베기 정지 프레임에서 흔들림·떨림 없이 멈춰 있다가 한 번에 갈라짐
         [SerializeField] private float splitDuration = 0.2f;
         [SerializeField] private float crackDuration = 0.4f;
-        [SerializeField] private float holdAfterFreeze = 0.7f; // 베기 정지 프레임부터 깨질 때까지
+        [SerializeField] private float holdAfterFreeze = 0.7f; // 갈라지기 시작부터 깨질 때까지
         [SerializeField] private int screenSortingOrder = -50; // HUD 캔버스보다 아래
 
         [Title("Shatter")]
@@ -122,6 +132,12 @@ namespace TeamOdd
         }
 
         private PlayerController PlayerController => Player.Player.Instance.PlayerController;
+
+        private int SlashState => useDiagonalSlash ? DIAGONAL_SLASH_STATE : SLASH_STATE;
+
+        private float RaiseEndTime => useDiagonalSlash ? diagonalRaiseEndTime : raiseEndTime;
+
+        private float CutAngle => useDiagonalSlash ? diagonalCutAngle : 0f;
 
         public override void Initialize(MonoBehaviourFSM stateMachine)
         {
@@ -187,7 +203,7 @@ namespace TeamOdd
 
             // 그어지는 순간부터 찍은 화면을 두 반쪽으로 덮어 어긋나게 보여 줌, 보스가 멈출 때까지는 매 프레임 다시 찍음
             CaptureView();
-            screen.ShowSplit(GetCutViewportX());
+            screen.ShowSplit(GetCutViewportPoint(), CutAngle);
             yield return DrawCutLine();
 
             while (hasFrozenPose == false)
@@ -337,23 +353,23 @@ namespace TeamOdd
         private IEnumerator RaiseSword()
         {
             Animator.speed = raiseAnimSpeed;
-            Animator.CrossFadeInFixedTime(SLASH_STATE, 0.2f);
+            Animator.CrossFadeInFixedTime(SlashState, 0.2f, 0, useDiagonalSlash ? diagonalStartOffset : 0f);
 
-            while (GetSlashNormalizedTime() < raiseEndTime) yield return null;
+            while (GetSlashNormalizedTime() < RaiseEndTime) yield return null;
 
             Animator.speed = 0f;
             yield return Clock.Wait(Random.Range(raiseHoldTime.x, raiseHoldTime.y));
             Animator.speed = savedAnimatorSpeed;
         }
 
-        // 걷기에서 넘어오는 동안은 다음 상태(DimensionSlash)의 시간을 봄
+        // 걷기에서 넘어오는 동안은 다음 상태(베기)의 시간을 봄
         private float GetSlashNormalizedTime()
         {
             AnimatorStateInfo current = Animator.GetCurrentAnimatorStateInfo(0);
-            if (current.shortNameHash == SLASH_STATE) return current.normalizedTime;
+            if (current.shortNameHash == SlashState) return current.normalizedTime;
 
             AnimatorStateInfo next = Animator.GetNextAnimatorStateInfo(0);
-            return next.shortNameHash == SLASH_STATE ? next.normalizedTime : 0f;
+            return next.shortNameHash == SlashState ? next.normalizedTime : 0f;
         }
 
         private Vector3 GetViewForward()
@@ -365,13 +381,14 @@ namespace TeamOdd
             return forward.sqrMagnitude > 0.0001f ? forward.normalized : root.transform.forward;
         }
 
-        // 수직 내려베기라 칼이 지나간 화면 x는 보스 몸 중심과 같음
-        private float GetCutViewportX()
+        // 칼이 보스 몸 앞을 지나가므로 가르는 선은 몸 중심을 지남, 수직이면 높이는 상관없어 화면 가운데를 확대 기준으로 둠
+        private Vector2 GetCutViewportPoint()
         {
             Camera view = Camera.main;
-            if (view == null) return 0.5f;
+            if (view == null) return new Vector2(0.5f, 0.5f);
 
-            return view.WorldToViewportPoint(root.transform.position + Vector3.up * 2f).x;
+            Vector3 point = view.WorldToViewportPoint(root.transform.position + Vector3.up * 2f);
+            return new Vector2(point.x, useDiagonalSlash ? point.y : 0.5f);
         }
 
         private void CaptureView()
@@ -416,17 +433,22 @@ namespace TeamOdd
             screen.SetFlash(0f);
         }
 
-        // 어긋남이 이어져 크게 벌어지고, 찍은 화면이 그만큼 확대되어 위아래 끝이 비지 않음
+        // 벤 채로 잠깐 정적이 흐른 뒤 어긋남이 한 번에 크게 벌어지고, 찍은 화면이 그만큼 확대되어 위아래 끝이 비지 않음
         private IEnumerator SplitScreen()
         {
             float slip = slipOffset * Screen.height / 1080f;
             float offset = splitOffset * Screen.height / 1080f;
-            float startTime = Clock.LocalTime;
 
+            screen.SetSplit(slip, 0f);
+            screen.SetCut(1f, 0f, cutRiftOpen);
+            yield return Clock.Wait(splitPause);
+
+            float startTime = Clock.LocalTime;
             while (Clock.LocalTime - startTime < holdAfterFreeze)
             {
                 float elapsed = Clock.LocalTime - startTime;
-                float split = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / splitDuration));
+                float progress = Mathf.Clamp01(elapsed / splitDuration);
+                float split = 1f - Mathf.Pow(1f - progress, 3f); // 정적을 깨고 단숨에 벌어지도록 ease-out
                 screen.SetSplit(Mathf.Lerp(slip, offset, split), Mathf.Clamp01(elapsed / crackDuration));
 
                 // 틈이 끝까지 벌어지고, 깨지기 직전까지 테두리가 조금씩 떨림
