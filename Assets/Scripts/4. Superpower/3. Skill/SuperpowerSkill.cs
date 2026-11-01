@@ -1,3 +1,4 @@
+using System;
 using TeamOdd.Combat;
 using UnityEngine;
 
@@ -35,6 +36,9 @@ namespace TeamOdd.Superpower
         public bool IsReady => remainingCooldown <= 0f;
         public float RemainingCooldown => remainingCooldown;
 
+        // 효과로 쿨타임이 당겨졌을 때. 스킬 바 슬롯이 받아서 반짝인다
+        public event Action CooldownReduced;
+
         // 모든 스킬에 공통인 값. 자식 클래스는 자기 매개변수와 함께 이 둘을 받아 넘긴다
         protected SuperpowerSkill(string name, float cooldown)
         {
@@ -54,15 +58,17 @@ namespace TeamOdd.Superpower
         }
 
         // 쿨타임을 deltaTime만큼 흘린다. 매 프레임 부른다
+        // ReduceCooldown을 부르지 않는 건 CooldownReduced가 매 프레임 터지지 않게 하려는 것이다
         public void Tick(float deltaTime)
         {
-            ReduceCooldown(deltaTime);
+            remainingCooldown = Mathf.Max(0f, remainingCooldown - deltaTime);
         }
 
         // 남은 쿨타임을 seconds만큼 줄인다. 아드레날린 과분비 칩처럼 쿨타임을 당겨 주는 효과가 부른다
         public void ReduceCooldown(float seconds)
         {
             remainingCooldown = Mathf.Max(0f, remainingCooldown - seconds);
+            CooldownReduced?.Invoke();
         }
 
         // 쿨타임을 바로 끝낸다. 마을과 아레나 사이를 오갈 때 인벤토리가 부른다
