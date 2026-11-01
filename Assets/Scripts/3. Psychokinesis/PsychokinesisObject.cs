@@ -56,7 +56,10 @@ namespace TeamOdd.Psychokinesis
         internal static PsychokinesisObject OutlinedObject { get; private set; }
         internal MeshRenderer OutlineRenderer => meshRenderer;
         internal int SubMeshCount => subMeshCount;
-        internal Color OutlineColor { get; private set; }
+        // FlashUnavailable로 정한 시간 동안은 잡을 수 있어도 "잡을 수 없음" 색으로 보여 줌
+        internal Color OutlineColor => Time.time < unavailableFlashEndTime ? unavailableOutline.GetColor(outlineColorId) : focusOutlineColor;
+        private Color focusOutlineColor;
+        private float unavailableFlashEndTime = float.NegativeInfinity;
         // 조준 중인 대상을 지금 잡을 수 있는지 (조준점 링 표시용)
         internal bool IsFocusAvailable { get; private set; }
         internal float OutlineWidthPixels => outlineWidthPixels;
@@ -480,8 +483,14 @@ namespace TeamOdd.Psychokinesis
             }
             IsFocusAvailable = available;
             Material colorMaterial = available ? availableOutline : unavailableOutline;
-            OutlineColor = colorMaterial.GetColor(outlineColorId);
+            focusOutlineColor = colorMaterial.GetColor(outlineColorId);
             OutlinedObject = this;
+        }
+
+        // 스킬 등 외부에서 duration초 동안 외곽선을 "잡을 수 없음" 색으로 보이게 함 (크기 조절 칩 실패 연출)
+        public void FlashUnavailable(float duration)
+        {
+            unavailableFlashEndTime = Time.time + duration;
         }
 
         // 크기와 질량에 factor를 곱함. 풀에서 다시 꺼낼 때 ApplyVariant가 원래 형태로 되돌림
