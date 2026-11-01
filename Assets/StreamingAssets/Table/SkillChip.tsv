@@ -5,14 +5,14 @@ Id	Name	Description	CellCount	UnitSpriteKey	Category	SkillType	Cooldown	Cost	Par
 2104	염동 폭풍 칩	10초 동안 적을 추적해 초당 10의 피해를 입히는 폭풍을 부릅니다.	6	AugmentationChip/ChipUnit_Purple	Attack	PsychoTempest	20	0	Duration=10;DPS=10;TrackSpeed=10;Radius=2.5;TickInterval=0.25	Skill/Projectile/PsychoTempest
 2105	염동 구체 칩	바라보는 방향으로 염동력 구체를 던집니다. 구체는 적에 닿으면 크게 느려지며 통과하는 동안 초당 20의 피해를 입힙니다.	4	AugmentationChip/ChipUnit_Purple	Attack	PsychoOrb	8	0	Speed=25;SlowSpeed=2;Range=30;Radius=1;DPS=20;TickInterval=0.25	Skill/Projectile/PsychoOrb
 2106	염동 투사 칩	키를 누르고 있는 동안 조준한 곳으로 레이저를 쏴 닿은 적에게 초당 25의 피해를 입힙니다. 최대 4초 동안 유지됩니다.	5	AugmentationChip/ChipUnit_Purple	Attack	PsychoBeam	12	0	Duration=4;Range=25;DPS=25;TickInterval=0.2	Skill/Projectile/PsychoBeam
-2201	회복 칩	체력을 30 회복합니다.	3	AugmentationChip/ChipUnit_Purple	Defense	Heal	8	0	Amount=30	
-2202	보호막 칩	6초 동안 피해 40을 막는 보호막을 두릅니다.	4	AugmentationChip/ChipUnit_Purple	Defense	Barrier	20	0	Shield=40;Duration=6	
+2201	회복 칩	체력을 30 회복합니다.	3	AugmentationChip/ChipUnit_Purple	Defense	Heal	8	0	Amount=30	Skill/Effect/HealEffect
+2202	보호막 칩	6초 동안 피해 40을 막는 보호막을 두릅니다.	4	AugmentationChip/ChipUnit_Purple	Defense	Barrier	20	0	Shield=40;Duration=6	Skill/Effect/BarrierEffect
 2203	시간 역행 칩	10초 이전 자리와 그때의 체력·스태미나로 되돌아갑니다.	5	AugmentationChip/ChipUnit_Purple	Defense	TimeReverse	30	0	Duration=10	
-2301	순간 이동 칩	바라보는 방향으로 8m 순간 이동합니다.	3	AugmentationChip/ChipUnit_Purple	Utility	Blink	5	0	Distance=8;PassThrough=false	
+2301	순간 이동 칩	바라보는 방향으로 8m 순간 이동합니다.	3	AugmentationChip/ChipUnit_Purple	Utility	Blink	5	0	Distance=8;PassThrough=false	Skill/Effect/BlinkEffect
 2302	시간 정지 칩	5초 동안 플레이어를 제외한 모든 것의 시간을 멈춥니다.	6	AugmentationChip/ChipUnit_Purple	Utility	TimeStop	45	0	Duration=5	
 2303	크기 조절 칩	들고 있거나 조준한 염동력 오브젝트의 크기와 무게를 1.5배로 키웁니다.	4	AugmentationChip/ChipUnit_Purple	Utility	Resize	10	0	Multiplier=1.5
 2304	시간 감속 칩	5초 동안 플레이어를 제외한 모든 것의 시간이 느리게 흐릅니다.	5	AugmentationChip/ChipUnit_Purple	Utility	TimeSlow	30	0	Duration=5;Multiplier=0.5	
-2401	두 번째 심장 칩	치명적인 피해를 입을 때마다 최대 체력의 30%로 부활합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	SecondHeart	999999	0	Amount=30
+2401	두 번째 심장 칩	치명적인 피해를 입을 때마다 최대 체력의 30%로 부활합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	SecondHeart	999999	0	Amount=30	Skill/Effect/SecondHeartEffect
 2402	생명 착취 칩	적에게 피해를 입힐 때마다 최대 체력의 2%를 회복합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	LifeSteal	1	0	Amount=2
 2403	조건 반사 칩	피해를 받으려 할 때마다 자동으로 회피합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	ConditionedReflex	10	0
 2404	정당한 보복 칩	피해를 받을 때마다 공격력이 1% 증가합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	RightfulRevenge	1	0	Amount=1

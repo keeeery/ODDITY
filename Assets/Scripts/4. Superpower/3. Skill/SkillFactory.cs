@@ -32,18 +32,18 @@ namespace TeamOdd.Superpower
                 SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("DPS"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoBeam>()),
 
                 // 방어
-                SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),
-                SkillType.Barrier => new BarrierSkill(name, cooldown, p.GetInt("Shield"), p.GetFloat("Duration")),
+                SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount"), def.Prefab),
+                SkillType.Barrier => new BarrierSkill(name, cooldown, p.GetInt("Shield"), p.GetFloat("Duration"), def.Prefab),
                 SkillType.TimeReverse => new TimeReverseSkill(name, cooldown, p.GetFloat("Duration")),
 
                 // 유틸
-                SkillType.Blink => new BlinkSkill(name, cooldown, p.GetFloat("Distance"), p.GetBool("PassThrough")),
+                SkillType.Blink => new BlinkSkill(name, cooldown, p.GetFloat("Distance"), p.GetBool("PassThrough"), def.Prefab),
                 SkillType.TimeStop => new TimeStopSkill(name, cooldown, p.GetFloat("Duration")),
                 SkillType.TimeSlow => new TimeSlowSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Multiplier")),
                 SkillType.Resize => new ResizeSkill(name, cooldown, p.GetFloat("Multiplier")),
 
                 // 패시브. 쿨타임은 내부 쿨타임으로 쓴다
-                SkillType.SecondHeart => new SecondHeartSkill(name, cooldown, p.GetInt("Amount")),
+                SkillType.SecondHeart => new SecondHeartSkill(name, cooldown, p.GetInt("Amount"), def.Prefab),
                 SkillType.LifeSteal => new LifeStealSkill(name, cooldown, p.GetInt("Amount")),
                 SkillType.ConditionedReflex => new ConditionedReflexSkill(name, cooldown),
                 SkillType.RightfulRevenge => new RightfulRevengeSkill(name, cooldown, p.GetInt("Amount")),
