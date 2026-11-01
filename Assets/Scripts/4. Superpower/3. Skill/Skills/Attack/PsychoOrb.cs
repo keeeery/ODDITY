@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TeamOdd.Superpower
 {
-    // 염동 구체 프리팹(Resources/Skill/PsychoOrb)에 붙어 구체를 날리고 피해를 준다. 규칙은 PsychoOrbSkill 주석에 있다
+    // 염동 구체 프리팹(Resources/Skill/Projectile/PsychoOrb)에 붙어 구체를 날리고 피해를 준다. 규칙은 PsychoOrbSkill 주석에 있다
     // PsychoOrbSkill이 Instantiate하고 Init으로 값을 넘기면 혼자 날아가고, 다 날아가면 스스로 사라진다
     // 겉모습(지금은 임시 구)과 이펙트는 프리팹에 붙인다. 프리팹 크기는 반경에 맞춰 코드가 바꾸므로 지름 1 기준으로 만든다
     public class PsychoOrb : MonoBehaviour

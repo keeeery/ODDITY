@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TeamOdd.Superpower
 {
-    // 염동 폭풍 프리팹(Resources/Skill/PsychoTempest)에 붙어 적을 쫓으며 피해를 준다. 규칙은 PsychoTempestSkill 주석에 있다
+    // 염동 폭풍 프리팹(Resources/Skill/Projectile/PsychoTempest)에 붙어 적을 쫓으며 피해를 준다. 규칙은 PsychoTempestSkill 주석에 있다
     // PsychoTempestSkill이 Instantiate하고 Init으로 값을 넘기면 혼자 움직이고, Duration초가 지나면 스스로 사라진다
     // 겉모습(지금은 임시 납작한 원기둥)과 이펙트는 프리팹에 붙인다. 프리팹 가로 크기는 반경에 맞춰 코드가 바꾸므로 지름 1 기준으로 만든다
     public class PsychoTempest : MonoBehaviour

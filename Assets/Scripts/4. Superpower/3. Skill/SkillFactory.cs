@@ -10,6 +10,7 @@ namespace TeamOdd.Superpower
     /// 공격/방어/유틸 분류는 표시·정렬용 꼬리표라 만드는 방법에는 영향이 없다. switch도 읽기 쉽게 분류별로 묶어 두었을 뿐이다.
     /// 스킬을 추가할 때: SkillType에 이름 추가 → Skills/분류 폴더에 SuperpowerSkill 자식 클래스 작성 → 아래 switch의 같은 분류 묶음에 한 줄 추가 → 테이블에 칩 추가(Category 칸 포함)
     /// 프리팹을 띄우는 스킬은 표의 PrefabKey 칸에 Resources 경로를 적고, 여기서 def.Prefab에 붙은 스크립트를 꺼내 넘긴다.
+    /// 프리팹은 Resources/Skill 아래에 종류별로 둔다. 날아가거나 스스로 움직이는 것은 Projectile, 보여주기만 하는 이펙트는 Effect
     /// PrefabKey를 비웠거나 경로가 틀리면 def.Prefab이 null이라 테이블을 읽을 때 바로 예외가 난다.
     /// </summary>
     public static class SkillFactory

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TeamOdd.Superpower
 {
-    // 염동 레이저 프리팹(Resources/Skill/PsychoBeam)에 붙어 레이저를 쏘고 피해를 준다. 규칙은 PsychoBeamSkill 주석에 있다
+    // 염동 레이저 프리팹(Resources/Skill/Projectile/PsychoBeam)에 붙어 레이저를 쏘고 피해를 준다. 규칙은 PsychoBeamSkill 주석에 있다
     // PsychoBeamSkill이 Instantiate하고 Init으로 값을 넘기면 쏘기 시작하고, 끝나면 스스로 사라진다
     // 키를 떼면 PsychoBeamSkill.Release가 Stop을 부른다
     // 겉모습(지금은 임시 원기둥)과 이펙트는 프리팹에 붙인다. 프리팹은 매 프레임 레이저 시작과 끝 사이로 옮기고 늘인다 (높이 2인 원기둥 기준)
