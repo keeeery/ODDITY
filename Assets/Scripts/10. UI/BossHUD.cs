@@ -29,6 +29,12 @@ namespace TeamOdd.UI
         [Tooltip("체력·무력화 바가 줄 때 남는 잔상 색, 바(VectorBar)의 설정보다 우선한다. 기본값은 보스 이름 텍스트와 같은 회백색")]
         [SerializeField] private Color trailColor = new(0.847f, 0.824f, 0.769f, 1f);
 
+        [Header("Clone")]
+        [Tooltip("휴머노이드 보스 분신(HumanoidClone) 체력, 분신이 맵에 있을 때만 보인다. 분신이 없는 보스면 비워 둔다.")]
+        [SerializeField] private VectorBar cloneHpBar;
+        [Tooltip("분신 체력바가 나타나고 사라지는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float cloneBarFadeDuration = 0.3f;
+
         [Header("Occlusion Outline")]
         [Tooltip("보스에 가려진 플레이어 외곽선 두께(픽셀), 색은 보스 이름 텍스트 색을 따른다.")]
         [SerializeField, Range(1f, 8f)] private float occlusionOutlineWidth = 2f;
@@ -36,8 +42,10 @@ namespace TeamOdd.UI
         private bool findsBoss;
         private Player.Player player;
         private BossGroggy groggy;
+        private HumanoidClone clone;
 
         private CanvasGroup canvasGroup;
+        private CanvasGroup cloneBarGroup;
 
         private void Awake()
         {
@@ -55,6 +63,14 @@ namespace TeamOdd.UI
             // 잔상 색도 씬마다 맞추지 않도록 두 바에 같이 적용
             if (hpBar != null) hpBar.TrailColor = trailColor;
             if (groggyBar != null) groggyBar.TrailColor = trailColor;
+
+            // 분신 바는 따로 페이드하므로 바 오브젝트에 CanvasGroup을 두고 처음엔 숨김
+            if (cloneHpBar != null)
+            {
+                cloneHpBar.TrailColor = trailColor;
+                if (cloneHpBar.TryGetComponent(out cloneBarGroup) == false) cloneBarGroup = cloneHpBar.gameObject.AddComponent<CanvasGroup>();
+                cloneBarGroup.alpha = 0f;
+            }
         }
 
         private void OnEnable()
@@ -90,6 +106,7 @@ namespace TeamOdd.UI
             canvasGroup.alpha = boss == null ? 0f : 1f;
             UpdateFill(hpBar, GetHpRatio());
             UpdateFill(groggyBar, GetGroggyRatio());
+            UpdateCloneBar();
 
             // 플레이어가 늦게 생길 수 있어 찾을 때까지 다시 시도
             if (player == null)
@@ -129,6 +146,35 @@ namespace TeamOdd.UI
             if (bar == null) return;
 
             bar.FillAmount = ratio;
+        }
+
+        // 분신이 바뀌면 새 분신 체력으로 바로 맞추고, 나와 있는 동안 보이다가 사라지기 시작하면 감춤
+        // 죽어서 사라질 때는 비워진 바와 잔상이 보이도록 사라진 분신의 마지막 체력을 그대로 둠
+        private void UpdateCloneBar()
+        {
+            if (cloneHpBar == null) return;
+
+            HumanoidClone active = HumanoidClone.Active;
+            if (active != null && active != clone)
+            {
+                clone = active;
+                cloneHpBar.SetFillImmediate(GetCloneHpRatio());
+            }
+
+            bool visible = active != null && active.IsVanishing == false;
+            float step = Time.unscaledDeltaTime / cloneBarFadeDuration;
+            cloneBarGroup.alpha = Mathf.MoveTowards(cloneBarGroup.alpha, visible ? 1f : 0f, step);
+
+            if (clone != null) UpdateFill(cloneHpBar, GetCloneHpRatio());
+        }
+
+        private float GetCloneHpRatio()
+        {
+            CombatEntity entity = clone != null ? clone.CombatEntity : null;
+            if (entity == null || entity.CurrentStats == null) return 0f;
+
+            int maxHp = entity.CurrentStats.MaxHp;
+            return maxHp > 0 ? (float)entity.Hp / maxHp : 0f;
         }
 
         private void UpdateName()

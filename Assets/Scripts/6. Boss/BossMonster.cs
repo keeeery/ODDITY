@@ -1,4 +1,6 @@
-﻿using TeamOdd.Player;
+﻿using System;
+using System.Collections.Generic;
+using TeamOdd.Player;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using FantasyGarden.FSM;
@@ -27,7 +29,8 @@ namespace TeamOdd.Boss
         [SerializeField, TabGroup("Settings/Type", "Sight")] private float eyeHeight = 3f; // 보스 위치에서 시야 판정 시작점까지의 높이
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float moveHalfAngle = 45f;
         [SerializeField, TabGroup("Settings/Type", "Movement")] private float keepMoveHalfAngle = 90f; // 이미 이동 중일 때 계속 이동할 수 있는 각도
-
+        [SerializeField, TabGroup("Settings/Type", "Motion")] private float motionSpeed = 1f;
+        
         [Title("States")]
         [ShowInInspector, ReadOnly] public float IntentStartTime { get; private set; }
         [ShowInInspector, ReadOnly] public BossMeleePattern Intent { get; private set; }
@@ -39,12 +42,22 @@ namespace TeamOdd.Boss
 
         private bool isTelegraphPoolMissing;
 
+        // 이 보스의 예고 색, 비어 있으면 AttackTelegraph의 기본 색, 분신처럼 본체와 구분할 때 HumanoidClone이 정함
+        public Color? TelegraphColor { get; set; }
+
+        // 부르는 타입 → 실제로 붙어 있는 상태 타입
+        private readonly Dictionary<Type, Type> stateTypes = new();
+
         private Collider targetCollider;
         private bool hasLineOfSight = false;
         private int sightFrame = -1;
 
         // 시간 정지 스킬이 보스를 멈출 때 쓰는 시계, 프리팹에 없으면 Awake에서 붙임
         public TimeFreezable Clock { get; private set; }
+
+        // 켜 두면 Start에서 상태머신을 시작하지 않고 StartStateMachine을 기다림(등장 연출 등), Start보다 먼저(Awake에서) 켜야 함
+        public bool DefersStart { get; set; }
+        public bool HasStarted { get; private set; }
 
         // 대상이 죽으면 Target은 그대로 두고(거리·각도 계산이 계속 쓰므로) 새 판단만 멈춤
         public bool IsTargetDead => Player.Player.Instance.PlayerController.IsDead;
@@ -55,6 +68,18 @@ namespace TeamOdd.Boss
         // 걸어서 대상에게 갈 때 지금 향해야 할 지점, 장애물이 가로막으면 대상 대신 경로의 다음 꺾임점
         public Vector3 SteerPoint => Pathfinder != null ? Pathfinder.GetSteerPoint(Movement.Position, Target.position) : Target.position;
         public float SignedAngleToSteer => SignedAngleTo(SteerPoint);
+
+        // 대상까지 NavMesh 위로 막힘 없이 걸어갈 수 있는지(구멍·난간 너머가 아닌지), 경로를 쓰지 않으면 항상 true
+        // 경로는 SteerPoint를 물을 때 갱신되므로 먼저 물어 최신 판정을 씀
+        public bool HasDirectPath
+        {
+            get
+            {
+                if (Pathfinder == null) return true;
+                _ = SteerPoint;
+                return Pathfinder.IsDirect;
+            }
+        }
 
         public bool IsTargetOnRight => SignedAngleToTarget >= 0f;
 
@@ -83,6 +108,14 @@ namespace TeamOdd.Boss
             Target = Player.Player.Instance.transform;
             Target.TryGetComponent(out targetCollider);
             base.Awake();
+            MapStateTypes();
+            Animator.speed = motionSpeed;
+        }
+
+        protected override void Start()
+        {
+            if (DefersStart) return;
+            StartStateMachine();
         }
 
         private void Update()
@@ -100,8 +133,34 @@ namespace TeamOdd.Boss
         }
 
         #region PUBLIC_METHODS
-        
+
+        // 미뤄 둔 상태머신을 기본 상태부터 시작, 이미 시작했으면 무시
+        public void StartStateMachine()
+        {
+            if (HasStarted) return;
+            HasStarted = true;
+            base.Start();
+        }
+
+        // 페이즈 전환 등으로 보스 전체 동작 빠르기를 바꿈
+        // 시간 정지·감속이 기억해 둔 속도로 풀 때 되돌아가므로 정상 시간(Clock.TimeScale 1)일 때 호출
+        public void SetMotionSpeed(float speed)
+        {
+            motionSpeed = speed;
+            Animator.speed = speed;
+        }
+
+        // 공용 FSM은 실제 타입으로만 상태를 찾으므로, 부모 타입으로 불러도 상속한 상태(HumanoidIdleState 등)로 바꿔 넘김
+        public void ChangeBossState(Type nextState, bool ignoreReservedState = false)
+        {
+            Type stateType = stateTypes.TryGetValue(nextState, out Type mapped) ? mapped : nextState;
+            ChangeState(stateType, ignoreReservedState);
+        }
+
         public bool IsTargetInRange(float range) => DistanceToTarget <= range;
+
+        // 시간 정지·감속을 뺀 보스 동작 빠르기, 애니메이션 신호 사이의 실제 시간은 클립 시간 / MotionSpeed
+        public float MotionSpeed => motionSpeed;
         public bool IsTargetInSight() => IsTargetInRange(sightRange) && Mathf.Abs(SignedAngleToTarget) <= sightHalfAngle;
         
         public void SetIntent(BossMeleePattern intent)
@@ -158,11 +217,29 @@ namespace TeamOdd.Boss
                 return null;
             }
 
+            // 예고가 보스 몸 위에 그려지지 않도록 처음 띄울 때 몸 렌더러를 마스크에 등록
+            TelegraphMaskFeature.Add(gameObject);
             telegraph.Show(shape, origin, warnDuration, clock != null ? clock : Clock);
+            if (TelegraphColor.HasValue) telegraph.SetColor(TelegraphColor.Value);
             return telegraph;
         }
 
         #endregion
+
+        // 실제 타입을 먼저 다 넣고, 그 타입의 상태가 따로 없을 때만 부모 타입을 상속한 상태에 연결 (페르데로스처럼 부모 상태가 직접 있으면 그대로)
+        private void MapStateTypes()
+        {
+            BossStateBase[] states = GetComponentsInChildren<BossStateBase>(true);
+
+            foreach (BossStateBase state in states)
+                stateTypes[state.GetType()] = state.GetType();
+
+            foreach (BossStateBase state in states)
+            {
+                for (Type type = state.GetType().BaseType; type != typeof(BossStateBase); type = type.BaseType)
+                    stateTypes.TryAdd(type, state.GetType());
+            }
+        }
 
         private float SignedAngleTo(Vector3 point)
         {

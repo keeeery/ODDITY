@@ -12,6 +12,7 @@ namespace TeamOdd.Boss
     // 쓰는 쪽이 겹마다 Begin/End를 짝지어 부르면 그 겹의 가중치가 서서히 오르고 내린다. 둘 다 횟수로 세므로 겹쳐 걸어도 안전
     // 부위마다 정한 각도를 그 부위의 뼈 수로 나눠 쓰므로 목뼈 개수가 다른 보스도 같은 값으로 비슷하게 흔들린다.
     // Slump 동안에는 척추에 매달린 팔(쇄골)을 흔들기 전 월드 회전으로 되돌려, 바닥을 짚은 손이 몸통을 따라 들리지 않게 한다.
+    // 누워서 숨을 고르는 보스(휴머노이드)는 Slump를 몸이 뻗은 방향 기준으로 들어 올리고, 거친 숨이 시간이 지나며 잦아들게 할 수 있다.
     // 보스 시간(TimeFreezable)을 따라 시간 정지 중에는 흔들림도 그 자세로 멈춘다.
     [DisallowMultipleComponent]
     public sealed class BossDizzy : MonoBehaviour
@@ -74,6 +75,14 @@ namespace TeamOdd.Boss
         [SerializeField] private Vector3 heaveAngle = new(2.5f, 2f, 1.5f);
         [Tooltip("숨을 몰아쉬는 빈도(회/초)")]
         [SerializeField, Min(0f)] private float heaveFrequency = 0.75f;
+        [Tooltip("숨이 잦아드는 데 걸리는 시간(초), Slump를 건 순간부터 셈. 0이면 처음 빈도·각도 그대로 몰아쉰다.")]
+        [SerializeField, Min(0f)] private float heaveSettleDuration = 0f;
+        [Tooltip("다 잦아든 뒤의 숨 빈도(회/초)")]
+        [SerializeField, Min(0f)] private float settledHeaveFrequency = 0.75f;
+        [Tooltip("다 잦아든 뒤의 들썩임 각도 배율")]
+        [SerializeField, Min(0f)] private float settledHeaveScale = 1f;
+        [Tooltip("켜면 들썩이고 처지는 축을 보스 방향 대신 척추에서 머리로 뻗은 몸 방향으로 잡아, 누운 몸도 숨을 들이쉬면 가슴이 위로 들린다.")]
+        [SerializeField] private bool alignSlumpToBody;
         [Tooltip("Slump 동안 몸통이 들썩여도 애니메이션 방향을 유지할 팔다리 시작 뼈, 비워 두면 이름이 \" Clavicle\"로 끝나는 뼈를 찾는다.")]
         [SerializeField] private Transform[] pinnedLimbs;
         [Tooltip("잘게 떨리는 각도(도), 뼈마다 같은 값을 쓴다.")]
@@ -101,6 +110,7 @@ namespace TeamOdd.Boss
         private float circlePhase;
         private float yawPhase;
         private float heavePhase;
+        private float slumpElapsed;
         private float noiseSeed;
 
         public Layer Sway => sway;
@@ -146,9 +156,11 @@ namespace TeamOdd.Boss
             float noise = (Mathf.PerlinNoise(noiseSeed, time * 0.4f) - 0.5f) * 2f * irregularity;
             circlePhase += deltaTime * circleFrequency * (1f + noise * 0.5f) * Mathf.PI * 2f;
             yawPhase += deltaTime * yawSwayFrequency * Mathf.PI * 2f;
-            heavePhase += deltaTime * heaveFrequency * Mathf.PI * 2f;
+            slumpElapsed = slump.IsActive ? slumpElapsed + deltaTime : 0f;
+            float settle = heaveSettleDuration > 0f ? Mathf.SmoothStep(0f, 1f, slumpElapsed / heaveSettleDuration) : 0f;
+            heavePhase += deltaTime * Mathf.Lerp(heaveFrequency, settledHeaveFrequency, settle) * Mathf.PI * 2f;
 
-            Apply(sway.Eased * (1f + noise * 0.4f), slump.Eased, time);
+            Apply(sway.Eased * (1f + noise * 0.4f), slump.Eased, Mathf.Lerp(1f, settledHeaveScale, settle), time);
         }
 
         private void OnDisable()
@@ -159,7 +171,7 @@ namespace TeamOdd.Boss
             slump.Clear();
         }
 
-        private void Apply(float swayAmount, float slumpAmount, float time)
+        private void Apply(float swayAmount, float slumpAmount, float heaveScale, float time)
         {
             Transform root = transform;
 
@@ -170,6 +182,9 @@ namespace TeamOdd.Boss
                 RestoreBase(ref limbs[index]);
                 if (limbs[index].Transform != null) limbs[index].PinnedWorld = limbs[index].Transform.rotation;
             }
+
+            // 이 축으로 양수만큼 돌면 몸 끝(머리 쪽)이 위로 들림
+            Vector3 liftAxis = alignSlumpToBody ? GetBodyLiftAxis(root) : -root.right;
 
             for (int index = 0; index < chain.Length; index++)
             {
@@ -190,14 +205,16 @@ namespace TeamOdd.Boss
 
                 if (slumpAmount > 0f)
                 {
-                    // 보스 오른쪽 축으로 양수만큼 돌면 앞이 아래로 숙여지고, 숨을 들이쉬면 들림. 끝으로 갈수록 조금 늦게 따라옴
-                    float heave = GetBreath(heavePhase - bone.PhaseLag * 0.3f);
-                    float pitch = (droopAngle[bone.Part] - heave * heaveAngle[bone.Part]) * bone.PartShare;
+                    // 숨을 들이쉬면 들리고 처지는 각도만큼 숙여짐. 끝으로 갈수록 조금 늦게 따라옴
+                    // 누운 몸은 내쉴 때 바닥을 파고들지 않도록 쉬는 자세에서 들리기만 함
+                    float breath = GetBreath(heavePhase - bone.PhaseLag * 0.3f);
+                    float heave = (alignSlumpToBody ? Mathf.InverseLerp(-0.6f, 1f, breath) : breath) * heaveScale;
+                    float lift = (heave * heaveAngle[bone.Part] - droopAngle[bone.Part]) * bone.PartShare;
                     float trembleTime = time * trembleFrequency;
                     float trembleX = (Mathf.PerlinNoise(bone.NoiseSeed, trembleTime) - 0.5f) * 2f * trembleAngle;
                     float trembleZ = (Mathf.PerlinNoise(trembleTime, bone.NoiseSeed) - 0.5f) * 2f * trembleAngle;
 
-                    offset = Quaternion.AngleAxis((pitch + trembleX) * slumpAmount, root.right)
+                    offset = Quaternion.AngleAxis((lift - trembleX) * slumpAmount, liftAxis)
                              * Quaternion.AngleAxis(trembleZ * slumpAmount, root.forward)
                              * offset;
                 }
@@ -230,6 +247,17 @@ namespace TeamOdd.Boss
             bone.Transform.localRotation = current;
         }
 
+        // 척추 시작에서 머리까지 뻗은 방향을 수평으로 눕혀 그 옆 축을 씀, 몸이 거의 서 있으면 보스 방향을 씀
+        private Vector3 GetBodyLiftAxis(Transform root)
+        {
+            Vector3 body = chain.Length >= 2 && chain[0].Transform != null && chain[^1].Transform != null
+                ? chain[^1].Transform.position - chain[0].Transform.position
+                : root.forward;
+            body.y = 0f;
+            if (body.sqrMagnitude < 0.0001f) return -root.right;
+            return Vector3.Cross(body.normalized, Vector3.up);
+        }
+
         // 숨을 들이쉴 때 크게 들리고 내쉴 때 덜 처지도록 사인을 한쪽으로 치우침
         private static float GetBreath(float phase)
         {
@@ -257,13 +285,13 @@ namespace TeamOdd.Boss
             sorted.Sort((a, b) => GetDepth(a).CompareTo(GetDepth(b)));
 
             var partCounts = new int[3];
-            foreach (Transform bone in sorted) partCounts[GetPart(bone.name)]++;
+            foreach (Transform bone in sorted) partCounts[GetPart(bone)]++;
             int total = Mathf.Max(1, sorted.Count);
 
             var result = new Bone[sorted.Count];
             for (int index = 0; index < sorted.Count; index++)
             {
-                int part = GetPart(sorted[index].name);
+                int part = GetPart(sorted[index]);
                 result[index] = new Bone
                 {
                     Transform = sorted[index],
@@ -278,8 +306,22 @@ namespace TeamOdd.Boss
             return result;
         }
 
-        // 이름 규칙 밖의 뼈를 직접 넣은 경우 머리로 봄
-        private static int GetPart(string boneName) => IsPart(boneName, "Spine") ? 0 : IsPart(boneName, "Neck") ? 1 : 2;
+        // 이름 규칙 밖의 뼈는 아바타 매핑으로 가리고(휴머노이드), 그래도 모르면 머리로 봄
+        private int GetPart(Transform bone)
+        {
+            if (IsPart(bone.name, "Spine")) return 0;
+            if (IsPart(bone.name, "Neck")) return 1;
+            if (IsPart(bone.name, "Head")) return 2;
+
+            if (TryGetComponent(out Animator animator) && animator.isHuman)
+            {
+                if (bone == animator.GetBoneTransform(HumanBodyBones.Spine) || bone == animator.GetBoneTransform(HumanBodyBones.Chest)
+                    || bone == animator.GetBoneTransform(HumanBodyBones.UpperChest)) return 0;
+                if (bone == animator.GetBoneTransform(HumanBodyBones.Neck)) return 1;
+            }
+
+            return 2;
+        }
 
         private int GetDepth(Transform bone)
         {
@@ -290,9 +332,14 @@ namespace TeamOdd.Boss
 
         private Transform[] FindBones()
         {
+            // 휴머노이드 보스는 뼈 이름 규칙이 달라 아바타의 척추·목·머리 뼈를 씀
+            // 이름으로 찾으면 뼈에 붙여 만든 부위 콜라이더("Hitbox Head")가 걸려 실제 뼈 대신 흔들리므로 아바타를 먼저 봄
             var found = new List<Transform>();
-            foreach (Transform bone in GetComponentsInChildren<Transform>(true))
-                if (IsPart(bone.name, "Spine") || IsPart(bone.name, "Neck") || IsPart(bone.name, "Head")) found.Add(bone);
+            AddHumanBones(found, HumanBodyBones.Spine, HumanBodyBones.Chest, HumanBodyBones.UpperChest, HumanBodyBones.Neck, HumanBodyBones.Head);
+
+            if (found.Count == 0)
+                foreach (Transform bone in GetComponentsInChildren<Transform>(true))
+                    if (IsPart(bone.name, "Spine") || IsPart(bone.name, "Neck") || IsPart(bone.name, "Head")) found.Add(bone);
 
             if (found.Count == 0)
                 Debug.LogWarning($"[{nameof(BossDizzy)}] {name}에서 척추·목·머리 뼈를 찾지 못했습니다. Bones를 직접 지정하세요.", this);
@@ -303,9 +350,24 @@ namespace TeamOdd.Boss
         private Transform[] FindLimbs()
         {
             var found = new List<Transform>();
-            foreach (Transform bone in GetComponentsInChildren<Transform>(true))
-                if (bone.name.EndsWith(" Clavicle")) found.Add(bone);
+            AddHumanBones(found, HumanBodyBones.LeftShoulder, HumanBodyBones.RightShoulder);
+
+            if (found.Count == 0)
+                foreach (Transform bone in GetComponentsInChildren<Transform>(true))
+                    if (bone.name.EndsWith(" Clavicle")) found.Add(bone);
             return found.ToArray();
+        }
+
+        // 아바타에 매핑되지 않은 뼈(UpperChest 등)는 건너뜀
+        private void AddHumanBones(List<Transform> found, params HumanBodyBones[] humanBones)
+        {
+            if (TryGetComponent(out Animator animator) == false || animator.isHuman == false) return;
+
+            foreach (HumanBodyBones humanBone in humanBones)
+            {
+                Transform bone = animator.GetBoneTransform(humanBone);
+                if (bone != null) found.Add(bone);
+            }
         }
 
         // " Neck", " Neck1"처럼 공백 + 부위 이름 + 숫자(없어도 됨)로 끝나는지

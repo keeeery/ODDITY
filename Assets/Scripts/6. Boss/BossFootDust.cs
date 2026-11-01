@@ -18,6 +18,8 @@ namespace TeamOdd.Boss
         [SerializeField] private Material dustMaterial;
         [Tooltip("먼지가 일어날 발, 비워 두면 이름이 \"L Foot\"·\"R Foot\"으로 끝나는 뼈를 찾는다.")]
         [SerializeField] private Transform[] feet;
+        [Tooltip("몸째 쓰러져 바닥에 닿을 때(무력화·사망) 먼지가 일어날 부위, 비워 두면 휴머노이드는 골반·가슴, 그 밖에는 발을 쓴다.")]
+        [SerializeField] private Transform[] bodyPoints;
         [Tooltip("땅으로 볼 레이어")]
         [SerializeField] private LayerMask groundMask = Physics.DefaultRaycastLayers;
         [Tooltip("발에서 이 거리(m) 안에 땅이 있어야 먼지를 일으킨다.")]
@@ -82,6 +84,7 @@ namespace TeamOdd.Boss
         {
             boss = GetComponent<BossMonster>();
             if (feet == null || feet.Length == 0) feet = FindFeet();
+            if (bodyPoints == null || bodyPoints.Length == 0) bodyPoints = FindBodyPoints();
         }
 
         private void Start()
@@ -130,11 +133,14 @@ namespace TeamOdd.Boss
 
         // 애니메이션 이벤트 없이 무거운 몸이 땅에 닿는 순간(무력화로 주저앉음, 사망 등)에 쓰는 쪽이 부름
         // amount는 먼지·파편 수 배율, 충격파는 그 절반만큼 넓어짐
-        public void PlayLanding(float amount = 1f) => Land(amount);
+        public void PlayLanding(float amount = 1f) => Land(feet, amount);
+
+        // 몸째 쓰러져 바닥에 닿는 순간(무력화·사망)에 쓰는 쪽이 부름, 발이 아닌 몸이 닿은 자리에서 먼지가 일어남
+        public void PlayBodyLanding(float amount = 1f) => Land(bodyPoints, amount);
 
         private void HandleAnimEvent(string eventName, string parameter)
         {
-            if (string.Equals(eventName, "OnJumpLand") || string.Equals(eventName, "OnHopLand")) Land(1f);
+            if (string.Equals(eventName, "OnJumpLand") || string.Equals(eventName, "OnHopLand")) Land(feet, 1f);
         }
 
         private void HandleFrozenChanged(bool frozen)
@@ -143,7 +149,7 @@ namespace TeamOdd.Boss
         }
 
         // 두 발에서 고리 모양으로 퍼지고, 두 발 사이에서 큰 먼지가 피어오름
-        private void Land(float amount)
+        private void Land(Transform[] points, float amount)
         {
             GroundDust system = GetDust();
             if (system == null) return;
@@ -151,9 +157,9 @@ namespace TeamOdd.Boss
             Vector3 centerSum = Vector3.zero;
             int grounded = 0;
 
-            foreach (Transform foot in feet)
+            foreach (Transform point in points)
             {
-                if (foot == null || TryFindGround(foot.position, out RaycastHit hit) == false) continue;
+                if (point == null || TryFindGround(point.position, out RaycastHit hit) == false) continue;
 
                 system.EmitRing(hit.point + hit.normal * 0.2f, hit.normal, Scale(landingCountPerFoot, amount), landingRadius,
                     landingSpeed, landingRise, landingSize, landingLifetime, landingOpacity);
@@ -260,10 +266,27 @@ namespace TeamOdd.Boss
                 else if (right == null && bone.name.EndsWith("R Foot")) right = bone;
             }
 
+            // 휴머노이드 보스는 뼈 이름 규칙이 달라 아바타의 발 뼈를 씀
+            if ((left == null || right == null) && TryGetComponent(out Animator animator) && animator.isHuman)
+            {
+                left = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                right = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+            }
+
             if (left == null || right == null)
                 Debug.LogWarning($"[{nameof(BossFootDust)}] {name}에서 발 뼈(L Foot·R Foot)를 찾지 못했습니다. Feet를 직접 지정하세요.", this);
 
             return Array.FindAll(new[] { left, right }, foot => foot != null);
+        }
+
+        // 휴머노이드는 엎어지거나 드러누우면 골반·가슴이 바닥에 닿음, 네발 보스는 쓰러져도 발이 몸 가까이 있어 발을 그대로 씀
+        private Transform[] FindBodyPoints()
+        {
+            if (TryGetComponent(out Animator animator) == false || animator.isHuman == false) return feet;
+
+            Transform[] found = Array.FindAll(new[] { animator.GetBoneTransform(HumanBodyBones.Hips), animator.GetBoneTransform(HumanBodyBones.Chest) },
+                bone => bone != null);
+            return found.Length > 0 ? found : feet;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TeamOdd.Combat
@@ -20,7 +21,25 @@ namespace TeamOdd.Combat
         // 플레이어·카메라 회전이 따르는 배율, 월드와 같이 가다가 playerScale을 주면 그 배율에 남는다.
         public static float PlayerScale { get; private set; } = 1f;
         // 월드 시간(Time.deltaTime)에 곱해 플레이어 배율이 되게 하는 값, 플레이어 쪽 이동·애니메이션에 씀
-        public static float PlayerRelativeScale => Scale > 0f ? Mathf.Clamp(PlayerScale / Scale, 0.01f, 1f) : 1f;
+        public static float PlayerRelativeScale => (Scale > 0f ? Mathf.Clamp(PlayerScale / Scale, 0.01f, 1f) : 1f) * PlayerOnlyScale;
+        // 월드는 그대로 두고 플레이어만 더 느리게 하는 배율(보스 연출 등), 슬로모션과 따로 곱해지고 Resume으로 풀리지 않음
+        // 여러 개가 겹치면 가장 느린 배율을 따름
+        public static float PlayerOnlyScale
+        {
+            get
+            {
+                float scale = 1f;
+                foreach (float item in playerOnlyScales) scale = Mathf.Min(scale, item);
+                return scale;
+            }
+        }
+
+        private static readonly List<float> playerOnlyScales = new();
+
+        // 같은 scale로 RemovePlayerOnly와 짝을 맞춰 부른다
+        public static void AddPlayerOnly(float scale) => playerOnlyScales.Add(Mathf.Clamp(scale, 0.001f, 1f));
+
+        public static void RemovePlayerOnly(float scale) => playerOnlyScales.Remove(Mathf.Clamp(scale, 0.001f, 1f));
         // 월드나 플레이어 중 하나라도 아직 느린 동안
         public static bool IsSlowed => Scale < 1f || PlayerScale < 1f;
 
@@ -90,6 +109,7 @@ namespace TeamOdd.Combat
             defaultFixedDeltaTime = -1f;
             Scale = 1f;
             PlayerScale = 1f;
+            playerOnlyScales.Clear();
         }
 
         private void OnDisable()

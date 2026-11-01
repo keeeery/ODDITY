@@ -9,7 +9,7 @@ namespace TeamOdd.Superpower
     /// <summary>
     /// 발동 키로 스킬 슬롯의 스킬을 쓴다. 인벤토리가 있는 플레이어 오브젝트에 같이 붙인다.
     /// 슬롯에 어떤 스킬이 있는지는 모르고 SuperpowerSkill.TryUse만 부른다. (전략 패턴에서 전략을 쓰는 쪽. A_Coupon의 DiscountDemo 자리)
-    /// 커서가 풀려 있으면(증강칩 패널이 열려 있거나 ESC로 풀었을 때) 키를 받지 않는다. PsychokinesisController와 같은 기준이다.
+    /// UIManager.IsUIClose가 false이면 키를 받지 않는다. PsychokinesisController와 같은 기준이다.
     /// </summary>
     [RequireComponent(typeof(AugmentationChipInventory))]
     public class SkillCaster : MonoBehaviour
@@ -57,9 +57,9 @@ namespace TeamOdd.Superpower
         {
             int count = Mathf.Min(SlotKeys.Length, AugmentationChipInventory.SkillSlotCount);
 
-            // 커서가 풀리거나 피격·행동 잠금으로 스킬을 쓸 수 없으면 채널링도 멈춘다
-            if (Keyboard.current == null || Cursor.lockState != CursorLockMode.Locked
-                || (playerController != null && (playerController.IsHit || playerController.IsActionLocked)))
+            // UI 입력 제한이나 피격·행동 잠금으로 스킬을 쓸 수 없으면 채널링도 멈춘다
+            if (Keyboard.current == null || UIManager.Instance.IsUIClose == false
+                || (playerController != null && (playerController.IsHit || playerController.IsSuperpowerLocked)))
             {
                 for (int i = 0; i < count; i++)
                     Release(i);
@@ -93,7 +93,7 @@ namespace TeamOdd.Superpower
                 return;
 
             // 피격 중이거나 다른 스킬(염동 내려찍기 등)을 시전하는 동안은 쓰지 않는다.
-            if (playerController != null && (playerController.IsHit || playerController.IsActionLocked))
+            if (playerController != null && (playerController.IsHit || playerController.IsSuperpowerLocked))
                 return;
 
             OwnedChip chip = inventory.SkillSlots[slot];

@@ -402,7 +402,7 @@ MonoBehaviour:
   holdRotationLag: 0.18
   swingRotationSpeed: 180
   maxHoldLagAngle: 60
-  holdDistance: 6.5
+  holdDistance: 5
   followStrength: 180
   followDamping: 24
   maxAcceleration: 400
@@ -512,7 +512,7 @@ MonoBehaviour:
   walkWidthSmoothing: 2
   stepFeet: 1
   stepThreshold: 0.07
-  stepTurnThreshold: 25
+  stepTurnThreshold: 18
   stepDuration: 0.22
   stepHeight: 0.07
   stepStartProgress: 0.4

@@ -7,7 +7,7 @@ namespace TeamOdd.Boss
     // 무력화 수치(BossGroggy)가 0이 되면 지금 무엇을 하든 즉시 끊고 들어오는 그로기 상태, 보스가 바닥에 쓰러졌다가 일어난다.
     // 전용 클립이 없어 Death 클립을 Motion Time(groggyTime)으로 구간만 골라 재생한다.
     // - 무너짐: 히트스톱·윤곽 번쩍임·카메라 흔들림으로 무너지는 순간을 강조
-    // - 쓰러짐: 클립 앞쪽의 뒷발로 일어서는 동작은 건너뛰고 쓰러지는 구간부터 재생, 땅에 닿을 무렵 흙먼지와 흔들림
+    // - 쓰러짐: 클립 앞쪽의 뒷발로 일어서는 동작은 건너뛰고 쓰러지는 구간부터 재생, 땅에 닿을 무렵 몸이 닿은 자리에서 흙먼지와 흔들림
     // - 누움: 팔다리까지 바닥에 내려앉은 자세로 멈추고 BossDizzy Slump 겹(거친 숨에 맞춘 들썩임·떨림)을 덧붙임
     // - 일어남: 클립을 거꾸로 감아 몸을 일으킨 뒤 Idle로 블렌드
     // 클립 구간은 보스마다 다르므로 인스펙터 값으로 맞춘다.
@@ -38,6 +38,8 @@ namespace TeamOdd.Boss
         [SerializeField, Range(0f, 1f)] private float impactAt = 0.85f;
         [Tooltip("땅에 닿을 때 카메라 흔들림 세기(0~1)")]
         [SerializeField, Range(0f, 1f)] private float impactShakeTrauma = 0.3f;
+        [Tooltip("땅에 닿을 때 흙먼지·파편 수 배율, 충격파는 그 절반만큼 넓어짐")]
+        [SerializeField, Min(0f)] private float impactDustAmount = 1f;
 
         [Title("Get Up")]
         [Tooltip("일어나는 데 걸리는 시간(초), duration 안에 포함")]
@@ -60,6 +62,7 @@ namespace TeamOdd.Boss
         private BossGroggy groggy;
         private BossDizzy dizzy;
         private BossFootDust footDust;
+        private BossLyingGroundFit groundFit;
         private HitFlash flash;
 
         private float enterTime;
@@ -74,6 +77,7 @@ namespace TeamOdd.Boss
             groggy = root.GetComponent<BossGroggy>();
             dizzy = root.GetComponent<BossDizzy>(); // 없으면 들썩임·떨림 없이 동작만 재생
             footDust = root.GetComponent<BossFootDust>();
+            groundFit = root.GetComponent<BossLyingGroundFit>(); // 없으면 서 있던 바닥 높이에 그대로 누움
             flash = HitFlash.GetOrAdd(root.gameObject);
 
             // 상태는 꺼진 채로 기다리므로 Initialize에서 구독
@@ -100,6 +104,7 @@ namespace TeamOdd.Boss
 
             isSlumping = true;
             if (dizzy != null) dizzy.Slump.Begin();
+            if (groundFit != null) groundFit.Begin();
 
             PlayBreakFeedback();
             StartPhase(GroggyPhase.Fall);
@@ -129,21 +134,34 @@ namespace TeamOdd.Boss
         protected override void OnExit()
         {
             EndSlump();
+            if (groundFit != null) groundFit.End();
             Animator.SetBool(BossAnimParams.IS_GROGGY, false);
             if (groggy != null) groggy.Restore();
         }
 
         // 지금 상태와 무관하게 즉시 끊음, 예약해 둔 다음 상태도 무시
+        // 상태 맵은 실제 타입으로 찾으므로 하위 클래스(휴머노이드 그로기 등)도 찾히도록 GetType 사용
         private void HandleBroken()
         {
             StateMachine.ClearReservedState();
-            StateMachine.ChangeState(typeof(BossGroggyState), true);
+            StateMachine.ChangeState(GetType(), true);
         }
+
+        // 쓰러지는 동안의 자세, 기본은 Death 클립을 Motion Time으로 감음. 전용 클립이 있는 보스는 재정의
+        protected virtual void ApplyFallPose(float progress)
+            => Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(fallStartTime, lieTime, progress));
+
+        // 일어나는 동안의 자세(progress는 이징이 걸린 0~1), 기본은 Death 클립을 거꾸로 감음
+        protected virtual void ApplyGetUpPose(float progress)
+            => Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(lieTime, getUpEndTime, progress));
 
         #region PHASE_METHODS
 
         private void StartPhase(GroggyPhase next)
         {
+            // 일어나는 동안 원래 바닥 높이로 내려옴
+            if (next == GroggyPhase.GetUp && groundFit != null) groundFit.End();
+
             phase = next;
             phaseStartTime = Clock.LocalTime;
         }
@@ -152,7 +170,7 @@ namespace TeamOdd.Boss
         private void UpdateFall(float elapsed)
         {
             float progress = Mathf.Clamp01(elapsed / fallDuration);
-            Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(fallStartTime, lieTime, progress));
+            ApplyFallPose(progress);
 
             if (hasImpacted == false && progress >= impactAt) PlayImpact();
             if (progress >= 1f) StartPhase(GroggyPhase.Lie);
@@ -171,7 +189,7 @@ namespace TeamOdd.Boss
         {
             float progress = Mathf.Clamp01(elapsed / getUpDuration);
             float eased = progress * progress * (3f - 2f * progress);
-            Animator.SetFloat(BossAnimParams.GROGGY_TIME, Mathf.Lerp(lieTime, getUpEndTime, eased));
+            ApplyGetUpPose(eased);
 
             if (progress < 1f) return;
             StateMachine.Restart();
@@ -196,7 +214,7 @@ namespace TeamOdd.Boss
         private void PlayImpact()
         {
             hasImpacted = true;
-            if (footDust != null) footDust.PlayLanding();
+            if (footDust != null) footDust.PlayBodyLanding(impactDustAmount);
             ShakeCamera(impactShakeTrauma);
         }
 

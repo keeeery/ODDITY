@@ -12,6 +12,7 @@ namespace TeamOdd.Boss
     {
         private const int MAX_CORNER_COUNT = 32;
         private const float OFF_MESH_DISTANCE = 0.1f;
+        private const float CLAMP_SAMPLE_DISTANCE = 1f; // 이동 제한 때 발밑 NavMesh를 찾는 거리, 이보다 멀면 NavMesh 밖으로 보고 자르지 않음
 
         [Title("Settings")]
         [SerializeField] private string agentTypeName = "Boss"; // 보스 반경으로 구운 NavMesh의 Agent Type 이름
@@ -58,6 +59,61 @@ namespace TeamOdd.Boss
         }
 
         #region PUBLIC_METHODS
+
+        // position에서 maxDistance 안의 가장 가까운 NavMesh 위 자리, 도약 착지처럼 구멍·벽 안에 내려앉았을 때 되돌릴 자리
+        // 경계에서 edgePadding보다 가까우면 안쪽으로 그만큼 들임, 경계 바로 위에 서면 벌린 발 한쪽이 구멍·단차 밖으로 떠서
+        // 모서리처럼 경계가 둘인 곳을 위해 두 번까지 들이고, 들인 자리까지 NavMesh로 곧장 이어질 때만 옮김
+        public bool TryGetNearestOnNavMesh(Vector3 position, float maxDistance, float edgePadding, out Vector3 result)
+        {
+            result = position;
+            if (hasAgentType == false || NavMesh.SamplePosition(position, out NavMeshHit hit, maxDistance, filter) == false) return false;
+
+            result = hit.position;
+            for (int i = 0; i < 2 && edgePadding > 0f; i++)
+            {
+                if (NavMesh.FindClosestEdge(result, out NavMeshHit edge, filter) == false || edge.distance >= edgePadding) break;
+
+                // 경계 위에 딱 붙어(구멍·벽에서 끌어온 자리) 방향을 못 구하면 경계의 법선을 씀
+                Vector3 inward = new Vector3(result.x - edge.position.x, 0f, result.z - edge.position.z);
+                if (inward.sqrMagnitude < 0.0001f) inward = new Vector3(edge.normal.x, 0f, edge.normal.z);
+                if (inward.sqrMagnitude < 0.0001f) break;
+
+                Vector3 candidate = edge.position + inward.normalized * edgePadding;
+                if (NavMesh.SamplePosition(candidate, out NavMeshHit inside, edgePadding, filter) == false) break;
+                if (NavMesh.Raycast(result, inside.position, out _, filter)) break;
+
+                result = inside.position;
+            }
+
+            return true;
+        }
+
+        // NavMesh 밖(구멍·맵 바깥)으로 나가지 않도록 수평 이동량을 경계에서 자르고, 남은 만큼은 경계를 따라 미끄러지게 함
+        // NavMesh는 몸 반경으로 깎여 있어 경계가 곧 몸이 벽·구멍 가장자리에 닿는 자리, 서 있는 곳 근처에 NavMesh가 없으면(공중 등) 자르지 않음
+        public Vector3 ClampToNavMesh(Vector3 from, Vector3 delta)
+        {
+            delta.y = 0f;
+            if (hasAgentType == false || delta.sqrMagnitude < 0.00000001f) return delta;
+            if (NavMesh.SamplePosition(from, out NavMeshHit start, CLAMP_SAMPLE_DISTANCE, filter) == false) return delta;
+
+            Vector3 origin = start.position;
+            if (NavMesh.Raycast(origin, origin + delta, out NavMeshHit edge, filter) == false) return delta;
+
+            Vector3 moved = edge.position - origin;
+            moved.y = 0f;
+
+            Vector3 normal = new Vector3(edge.normal.x, 0f, edge.normal.z).normalized;
+            Vector3 slide = Vector3.ProjectOnPlane(delta - moved, normal);
+            slide.y = 0f;
+
+            if (slide.sqrMagnitude > 0.00000001f && NavMesh.Raycast(edge.position, edge.position + slide, out NavMeshHit second, filter))
+            {
+                slide = second.position - edge.position;
+                slide.y = 0f;
+            }
+
+            return moved + slide;
+        }
 
         // 지금 향해야 할 지점, 경로를 쓰지 않을 때는 대상 위치 그대로
         // Idle·Turn·Chase가 한 프레임에 여러 번 물어도 계산은 프레임당 한 번만 함

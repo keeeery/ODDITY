@@ -32,7 +32,7 @@ namespace FantasyGarden.FSM
             }
         }
 
-        protected void Start()
+        protected virtual void Start()
         {
             ChangeState(defaultStateType);
         }

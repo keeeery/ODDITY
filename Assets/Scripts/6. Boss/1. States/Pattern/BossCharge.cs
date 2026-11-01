@@ -306,7 +306,7 @@ namespace TeamOdd.Boss
         {
             if (Clock.LocalTime >= phaseEndTime - stunRecoverTime) Recover();
             if (Clock.LocalTime < phaseEndTime) return;
-            StateMachine.ChangeState(typeof(BossIdleState));
+            root.ChangeBossState(typeof(BossIdleState));
         }
 
         // 느린 Idle 반복에서 Idle로 돌아가고 흔들림이 잦아듦, 패턴이 중간에 끊겨도 헤롱거림이 남지 않도록 종료 때도 부름

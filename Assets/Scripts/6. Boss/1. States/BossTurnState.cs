@@ -31,7 +31,7 @@ namespace TeamOdd.Boss
 
             if (Mathf.Abs(delta) <= doneAngle || IsChaseReady() || Clock.LocalTime - enterTime >= timeout)
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
                 return;
             }
 

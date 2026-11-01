@@ -56,6 +56,8 @@ namespace TeamOdd.Player
 
         private void Update()
         {
+            Debug.Log("UI Close: " + UIManager.instance.IsUIClose);
+            
             // 칩을 빼서 최대치가 줄면 회복할 때 새 최대치로 맞춰진다
             if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)
                 stamina = Mathf.Min(MaxStamina, stamina + staminaRegenRate * Time.deltaTime);

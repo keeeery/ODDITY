@@ -41,7 +41,7 @@ namespace TeamOdd.Player
         [Header("구르기")]
         // 커브 Y = 1일 때 속도가 rollDistance / (Roll 길이 * moveEndTime), 실제 거리는 rollDistance * 커브 넓이
         [SerializeField] private float rollDistance = 4f;
-        [SerializeField, Range(0.05f, 1f)] private float moveEndTime = 0.7f; // 이 진행도 이후로는 이동하지 않음
+        [SerializeField, Range(0.05f, 1f)] private float moveEndTime = 0.8f; // 이 진행도 이후로는 이동하지 않음
         // X: Roll 진행도 0 ~ moveEndTime을 0~1로 늘린 값, Y: 속도 배율
         [SerializeField] private AnimationCurve speedCurve = new();
         [SerializeField] private string rollStateName = "Roll";
@@ -132,6 +132,8 @@ namespace TeamOdd.Player
         [Header("피격")]
         private float earlyWakeUpCooldown;
         public float MaxEarlyWakeUpCooldown;
+        // 조기 기상 남은 쿨타임(초), 스킬 슬롯 HUD가 기상기 슬롯에 띄운다.
+        public float EarlyWakeUpCooldown => earlyWakeUpCooldown;
         public float WakeUpTime;
         public float InvincibleTime; 
         // 피격 모션 끝 신호(EndHit)가 상태 전환 등으로 오지 않아도 행동 불가로 묶이지 않도록 기다리는 최대 시간(초)
@@ -168,6 +170,7 @@ namespace TeamOdd.Player
         private readonly HashSet<Collider> touchedBodies = new(); // 이번 검사에서 겹친 부위
         private readonly List<Collider> separatedBodies = new();
         private Dictionary<Collider, Vector3> nearBodies = new(); // skinWidth 안에 들어온(충돌은 켜 둔) 보스 부위와 직전 위치
+        private readonly List<Transform> passThroughBodies = new(); // 막지도 밀어내지도 않고 통과하는 몸(분신 등)의 루트
         private Dictionary<Collider, Vector3> nextNearBodies = new();
         private bool isPushingOut; // 겹친 몸에서 빠져나가는 중
         private float bodyStillTime; // 겹친 보스 부위가 모두 멈춰 있던 시간(초)
@@ -220,6 +223,9 @@ namespace TeamOdd.Player
         public bool IsDead => isDead;
         // 염동 내려찍기처럼 시전 중 이동·구르기·공격·다른 스킬과 카메라 회전을 막는 동안
         public bool IsActionLocked { get; private set; }
+        // 이동·구르기·시점은 그대로 두고 염동력·스킬만 막는 동안(보스 연출로 플레이어만 느려질 때 등), 행동 잠금도 포함
+        public bool IsSuperpowerLocked => IsActionLocked || isSuperpowerLocked;
+        private bool isSuperpowerLocked;
 
         // 마지막으로 확인한 Roll 상태 길이(초, 상태 Speed 반영)
         public float RollStateLength { get; private set; } = 1f;
@@ -234,14 +240,14 @@ namespace TeamOdd.Player
         private static float PlayerDeltaTime => Time.deltaTime * SlowMotion.PlayerRelativeScale;
         private float appliedAnimatorTimeScale = 1f; // 지금 animator.speed에 곱해 둔 플레이어 배율
         private float playerTime; // 플레이어 배율로 흐르는 시계, 공격 자세·무적처럼 시간을 재는 곳에 Time.time 대신 씀
+        
+        private bool isUIClose => UIManager.Instance.IsUIClose;
 
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
             psychokinesisController = GetComponent<PsychokinesisController>();
             animator = GetComponent<Animator>();
-
-            earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
 
             rollStateHash = Animator.StringToHash(rollStateName);
             holdLayer = animator.GetLayerIndex(HoldLayerName);
@@ -308,6 +314,8 @@ namespace TeamOdd.Player
             FaceSidestep();
             CheckRollInput();
 
+            Debug.Log("UI Close pc"+isUIClose);
+            
             heldObject = psychokinesisController.HeldObject;
             animator.SetLayerWeight(holdLayer, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
         }
@@ -323,7 +331,7 @@ namespace TeamOdd.Player
 
             Vector2 inputRaw = ReadMoveInput();
             
-            IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed);
+            IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed) && isUIClose;
 
             moveX = SmoothAxis(moveX, inputRaw.x);
             moveZ = SmoothAxis(moveZ, inputRaw.y);
@@ -360,14 +368,9 @@ namespace TeamOdd.Player
             totalMove += slideOffDirection * slideOffSpeed;
             slideOffDirection = Vector3.zero;
 
-            controller.Move(totalMove * PlayerDeltaTime);
+            if (isUIClose) controller.Move(totalMove * PlayerDeltaTime);
 
-            bool isMove = inputRaw != Vector2.zero;
-
-            animator.SetBool(Walk, isMove);
-            animator.SetBool(Run, IsSprinting);
-
-            if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f)
+            if (rotateTowardMove && moveVector.sqrMagnitude > 0.0001f && isUIClose)
             {
                 Quaternion targetRotation =
                     heldObject != null
@@ -389,7 +392,7 @@ namespace TeamOdd.Player
 
             // 걷기·달리기가 막혀 있으면 걷는 모션도 내지 않는다. 달리기는 막혀 있으면 IsSprinting이 이미 false
             // 보스 몸에서 비켜서는 동안은 미끄러져 보이지 않게 걷기 모션을 냄
-            bool isMove = (inputRaw != Vector2.zero && IsMoveBlocked == false) || sidestepDirection != Vector3.zero;
+            bool isMove = (inputRaw != Vector2.zero && IsMoveBlocked == false && isUIClose) || sidestepDirection != Vector3.zero;
             bool isRun = IsSprinting;
 
             animator.SetBool(Walk, isMove);
@@ -457,7 +460,7 @@ namespace TeamOdd.Player
 
         private void CheckRollInput()
         {
-            if (IsActionLocked || IsHit || SimpleInput.GetKeyDown(Key.Space) == false) return;
+            if (isUIClose == false || IsActionLocked || IsHit || SimpleInput.GetKeyDown(Key.Space) == false) return;
 
             OnRollRequested?.Invoke();
         }
@@ -747,9 +750,34 @@ namespace TeamOdd.Player
 
         private bool IsOwnCollider(Collider other) => other == controller || other.transform.IsChildOf(transform);
 
-        private int OverlapBodies(Vector3 center, Vector3 offset, float radius) =>
-            Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
+        // 통과하는 몸의 부위는 충돌을 끄고 결과에서 빼서, 밀어내기·충돌 토글 대상이 되지 않게 함
+        private int OverlapBodies(Vector3 center, Vector3 offset, float radius)
+        {
+            int count = Physics.OverlapCapsuleNonAlloc(center + offset, center - offset, radius, bodyOverlaps,
                 bodyBlockLayers, QueryTriggerInteraction.Ignore);
+
+            for (int index = count - 1; index >= 0; index--)
+            {
+                if (IsPassThroughBody(bodyOverlaps[index]) == false) continue;
+
+                Physics.IgnoreCollision(controller, bodyOverlaps[index], true);
+                bodyOverlaps[index] = bodyOverlaps[--count];
+            }
+
+            return count;
+        }
+
+        private bool IsPassThroughBody(Collider other)
+        {
+            for (int index = passThroughBodies.Count - 1; index >= 0; index--)
+            {
+                Transform root = passThroughBodies[index];
+                if (root == null) passThroughBodies.RemoveAt(index);
+                else if (other.transform.IsChildOf(root)) return true;
+            }
+
+            return false;
+        }
 
         private bool TryGetBodyPenetration(Collider other, out Vector3 direction, out float distance)
         {
@@ -906,6 +934,8 @@ namespace TeamOdd.Player
 
         public void SetActionLocked(bool locked) => IsActionLocked = locked;
 
+        public void SetSuperpowerLocked(bool locked) => isSuperpowerLocked = locked;
+
         // 보상창처럼 조작을 멈추는 화면이 뜰 때 걷기·달리기 입력을 끊어, 재생 중인 동작(구르기·피격 등)이 끝나면
         // 애니메이터의 전환을 따라 자연스럽게 대기 자세로 돌아가게 함. 강제로 대기 상태로 넘기지 않는다.
         // 피격·공격 정리는 컴포넌트가 꺼질 때(OnDisable) 하므로, 조작을 끈 뒤에 부르면 남는 동작이 없다.
@@ -959,7 +989,7 @@ namespace TeamOdd.Player
             heldObject = psychokinesisController.HeldObject;
 
             // 잡기 입력(우클릭) 중이거나 홀딩 중에는 이동 방향 회전 대신 여기서 몸 방향을 정함
-            bool aiming = HoldTarget != null || IsAttackStance || SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right);
+            bool aiming = HoldTarget != null || IsAttackStance /*|| SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right)*/;
             rotateTowardMove = defaultRotateTowardMove && aiming == false;
 
             float aimYaw = Camera.main.transform.eulerAngles.y;
@@ -1256,6 +1286,19 @@ namespace TeamOdd.Player
         // direction: 밀려날 수평 방향, 거리·높이·시간은 공격마다 정한 push를 따름
         // attackerPosition: 맞는 순간 바라볼 공격자 위치
         // 피격 반응 중 다시 맞으면 피해만 받고 반응은 새로 시작하지 않음
+        // root 아래 콜라이더와는 부딪히지도 밀려나지도 않고 통과함(분신처럼 막을 필요가 없는 몸), 피격 판정은 그대로
+        // 지금 있는 콜라이더는 바로 충돌을 끄고, 나중에 생긴 부위(뼈 히트박스 등)는 몸 겹침 검사에서 만나는 순간 끔
+        public void AddPassThroughBody(Transform root)
+        {
+            if (root == null || passThroughBodies.Contains(root)) return;
+
+            passThroughBodies.Add(root);
+            foreach (Collider other in root.GetComponentsInChildren<Collider>(true))
+                if (other.isTrigger == false) Physics.IgnoreCollision(controller, other, true);
+        }
+
+        public void RemovePassThroughBody(Transform root) => passThroughBodies.Remove(root);
+
         public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
             if (reaction == HitReaction.None || IsHit) return;

@@ -89,6 +89,7 @@ namespace TeamOdd.Boss
             isWarning = false;
             isJumping = true;
             isHoming = fixedJumpDirection == Vector3.zero;
+            root.Movement.BeginAirborne(); // 공중에서는 구멍·벽을 넘어감
             FaceJumpDirection();
 
             if (impactTelegraph == null) impactTelegraph = root.ShowTelegraph(ImpactShape, GetWarningPose(), airDuration);
@@ -132,6 +133,8 @@ namespace TeamOdd.Boss
         {
             // 충돌 처리 전의 대기 이동량을 빼고, 실제 착지 위치와 몸 방향에 맞춘다.
             root.Movement.Teleport(root.Body.position, root.Body.rotation);
+            // 구멍·벽 안에 내려앉았으면 가장 가까운 NavMesh 위로 옮긴 뒤 그 자리로 충격 판정
+            root.Movement.EndAirborne();
             Vector3 center = root.Body.position + TelegraphShape.FlatForward(root.Body.rotation) * impactOffset;
             Pose pose = new Pose(center, Quaternion.identity);
             if (impactTelegraph != null)
@@ -149,6 +152,8 @@ namespace TeamOdd.Boss
 
         public void Stop()
         {
+            // 공중에서 끊겨도(그로기·사망) 구멍·벽 안에 남지 않게 착지 처리
+            if (isJumping) root.Movement.EndAirborne();
             isWarning = false;
             isJumping = false;
             isHoming = false;

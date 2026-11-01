@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Study.Utilities;
+using TeamOdd.Boss;
 using TeamOdd.Combat;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,25 +20,63 @@ namespace TeamOdd.CameraMove
         [SerializeField] private float distance = 4f;
         [SerializeField] private float holdDistance = 4f;
         [SerializeField] private float sprintDistance = 4f;
-        [SerializeField] private float transitionSpeed = 10f;
+        [Tooltip("평소·홀딩·질주·보스 근접 시점이 바뀔 때 새 위치로 옮겨가는 시간(초)")]
+        [SerializeField, Min(0f)] private float transitionDuration = 0.45f;
+        [SerializeField] private Ease transitionEase = Ease.OutQuart;
         private Vector3 currentOffset;
-        private float currentDistance; 
+        private float currentDistance;
+        private float currentFovWiden;   // 기본 FOV에서 넓힌 각도(도)
+        private ViewMode viewMode;
+        private Sequence transitionSequence;
+
+        private enum ViewMode { Normal, Hold, Sprint, BossClose }
+
+        [Header("보스 근접")]
+        [Tooltip("플레이어와 보스 몸(콜라이더 경계) 사이 수평 거리가 이 값 이하면 보스 근접 시점으로 바뀐다")]
+        [SerializeField, Min(0f)] private float bossCloseEnterDistance = 3f;
+        [Tooltip("이 값보다 멀어져야 평소 시점으로 돌아온다. 경계에서 시점이 오락가락하지 않게 enter보다 크게 둔다")]
+        [SerializeField, Min(0f)] private float bossCloseExitDistance = 4.5f;
+        [Tooltip("보스 근접 중 피벗 오프셋. 높이면 보스를 조금 내려다보는 시점이 된다")]
+        [SerializeField] private Vector3 bossClosePivotOffset = new(0f, 1.9f, 0f);
+        [SerializeField] private float bossCloseDistance = 4.6f;
+        [Tooltip("보스 근접 중 기본 FOV에서 넓힐 각도(도)")]
+        [SerializeField, Min(0f)] private float bossCloseFovWiden = 5f;
+        private const float BOSS_SEARCH_INTERVAL = 1f;
+        private BossMonster boss;
+        private CombatEntity bossEntity;
+        private Collider[] bossColliders;
+        private float nextBossSearchTime;
 
         [Header("회전")]
         [SerializeField] private float mouseSensitivity = 2f;
-        [SerializeField] private float minPitch = -40f;
+        [Tooltip("마우스 회전을 따라가는 빠르기. 클수록 즉각적이고 0이면 보간하지 않는다. 25~40이면 입력 지연 없이 떨림만 걸러진다")]
+        [SerializeField, Min(0f)] private float rotationSmoothSpeed = 30f;
+        [SerializeField] private float minPitch = -20f;
         [SerializeField] private float maxPitch = 70f;
         [SerializeField] private float minYaw = -40f;
         [SerializeField] private float maxYaw = 70f;
 
         [Header("대상 고정 (염동 내려찍기 등)")]
-        [Tooltip("대상이 화면 중앙에 오도록 시점을 돌리는 빠르기, 클수록 빨리 맞춰진다. 거리는 홀딩 줌인 값을 그대로 쓴다")]
-        [SerializeField, Min(0.1f)] private float focusTurnSpeed = 8f;
+        [Tooltip("대상이 화면 중앙에 오기까지 걸리는 대략적인 시간(초). 천천히 가속했다 감속하며 돌아간다. 거리는 홀딩 줌인 값을 그대로 쓴다")]
+        [SerializeField, Min(0.01f)] private float focusSmoothTime = 0.15f;
 
         [Header("충돌")]
         [Tooltip("카메라가 막힐 레이어")]
         [SerializeField] private LayerMask collisionMask = ~0;
         [SerializeField] private float collisionRadius = 0.2f;
+        [Tooltip("벽에 막혔다 풀릴 때 원래 거리로 돌아오는 빠르기. 막힐 때는 벽을 뚫지 않도록 즉시 당긴다")]
+        [SerializeField, Min(0.1f)] private float collisionRecoverSpeed = 6f;
+        private float collisionPull;   // 벽 때문에 당겨 들어온 거리(m)
+
+        [Header("어깨 전환")]
+        [Tooltip("어깨 쪽 옆으로 이만큼(m)의 여유가 없으면 반대 어깨로 넘긴다. 양쪽 다 막히면 가운데로 모은다")]
+        [SerializeField, Min(0f)] private float shoulderClearance = 0.3f;
+        [Tooltip("원래 어깨로 돌아오려면 추가로 비어 있어야 하는 거리(m). 벽 경계에서 좌우가 오락가락하지 않게 한다")]
+        [SerializeField, Min(0f)] private float shoulderReturnMargin = 0.4f;
+        [SerializeField, Min(0f)] private float shoulderSwitchDuration = 0.4f;
+        private float shoulderSide = 1f;        // shoulderOffset.x에 곱하는 값, 트윈으로 -1~1 사이를 오감
+        private float shoulderTargetSide = 1f;
+        private Tween shoulderTween;
 
         [Header("흔들림 (trauma)")]
         [Tooltip("trauma 1일 때 위치 흔들림 최대 세기(m). 실제 세기는 trauma²")]
@@ -48,6 +87,15 @@ namespace TeamOdd.CameraMove
         [SerializeField, Min(0.1f)] private float shakeFrequency = 25f;
         [Tooltip("기본 trauma 감쇠 속도(초당). 지속 시간을 따로 주면 그 값이 우선")]
         [SerializeField, Min(0f)] private float traumaDecay = 1.7f;
+
+        [Header("시네마틱 (보스 등장 등)")]
+        [Tooltip("연출 시점에서 플레이어 추적 시점으로 돌아올 때 기본 시간(초)과 곡선, 부르는 쪽이 따로 주면 그 값이 우선")]
+        [SerializeField, Min(0f)] private float shotReturnDuration = 0.6f;
+        [SerializeField] private Ease shotReturnEase = Ease.InOutCubic;
+        private Vector3 shotPosition;
+        private Quaternion shotRotation;
+        private float shotBlend;       // 1이면 연출 시점, 0이면 평소 추적 시점
+        private Tween shotTween;
 
         private Camera viewCamera;
         private float baseFov;
@@ -60,14 +108,47 @@ namespace TeamOdd.CameraMove
         private float currentDecay;
         private float noiseTime;
 
-        private float yaw;   // 좌우 회전 누적값
-        private float pitch; // 상하 회전 누적값
+        private float yaw;   // 좌우 회전 누적값(입력 목표)
+        private float pitch; // 상하 회전 누적값(입력 목표)
+        private float smoothYaw;    // 실제로 적용되는 회전, 목표를 보간해 따라감
+        private float smoothPitch;
+        private float yawVelocity;  // 대상 고정 SmoothDamp용
+        private float pitchVelocity;
 
         private bool isHeld;
         private Transform focusTarget;     // 지정되면 마우스 대신 이 대상이 화면 중앙에 오도록 시점을 돌림
         private Vector3 lastBasePosition;  // 지난 프레임의 흔들림 전 카메라 위치, 대상을 볼 각도 계산에 씀
 
         public bool IsCinematicPlaying => fovPunchSequence != null || pullBackSequence != null;
+
+        // 연출 시점에 있거나 추적 시점으로 돌아오는 중이면 true
+        public bool IsShotPlaying => shotBlend > 0f;
+
+        // 보간 없이 즉시 연출 시점으로 자름, 추적 시점은 뒤에서 그대로 계산해 두므로 돌아갈 때 튀지 않음
+        public void CutToShot(Vector3 position, Quaternion rotation)
+        {
+            shotTween?.Kill();
+            shotPosition = position;
+            shotRotation = rotation;
+            shotBlend = 1f;
+        }
+
+        // 연출 시점 안에서 카메라를 움직일 때 매 프레임 부름, 섞는 비율은 그대로 둠
+        public void MoveShot(Vector3 position, Quaternion rotation)
+        {
+            shotPosition = position;
+            shotRotation = rotation;
+        }
+
+        // 연출 시점에서 지금의 추적 시점으로 보간해 돌아감, duration < 0이면 인스펙터 값, 시간은 실제 초
+        public Tween ReturnFromShot(float duration = -1f)
+        {
+            shotTween?.Kill();
+            shotTween = DOTween.To(() => shotBlend, value => shotBlend = value, 0f, duration < 0f ? shotReturnDuration : duration)
+                .SetEase(shotReturnEase).SetUpdate(true).SetTarget(this)
+                .OnKill(() => shotTween = null);
+            return shotTween;
+        }
 
         // 대상을 화면 중앙에 두는 고정 시점을 켬
         public void BeginFocus(Transform focus) => focusTarget = focus;
@@ -88,6 +169,9 @@ namespace TeamOdd.CameraMove
         {
             fovPunchSequence?.Kill();
             pullBackSequence?.Kill();
+            transitionSequence?.Kill();
+            shoulderTween?.Kill();
+            shotTween?.Kill();
         }
 
         private void Start()
@@ -96,9 +180,12 @@ namespace TeamOdd.CameraMove
            UIManager.Instance.LockCursor(true);
            target.CameraController = this;
            yaw = target.transform.eulerAngles.y;
+           smoothYaw = yaw;
+           smoothPitch = pitch;
+           shoulderTargetSide = Mathf.Sign(shoulderOffset.x);
 
-           currentOffset = pivotOffset;
-           currentDistance = distance;
+           viewMode = GetViewMode();
+           (currentOffset, currentDistance, currentFovWiden) = GetCameraTarget(viewMode);
            lastBasePosition = transform.position;
 
            DOTween.defaultUpdateType = UpdateType.Normal;
@@ -107,6 +194,7 @@ namespace TeamOdd.CameraMove
         private void Update()
         {
             isHeld = target.PlayerController.HasHoldTarget;
+            UpdateViewMode();
 
             if (SimpleInput.GetKeyDown(Key.Digit7))
                 Shake(new Vector3(0.3f, 0f, 0f), 0.3f);   // 세기 0.3m, 0.3초
@@ -145,6 +233,97 @@ namespace TeamOdd.CameraMove
                 .OnKill(() => pullBackSequence = null);
         }
 
+        // 시점 상태가 바뀌면 지금 위치에서 새 오프셋·거리로 트윈, 도중에 또 바뀌면 그 자리에서 이어받음
+        private void UpdateViewMode()
+        {
+            ViewMode mode = GetViewMode();
+            if (mode == viewMode) return;
+            viewMode = mode;
+
+            var (targetOffset, targetDistance, targetFovWiden) = GetCameraTarget(mode);
+            transitionSequence?.Kill();
+            transitionSequence = DOTween.Sequence().SetTarget(this)
+                .Join(DOTween.To(() => currentOffset, value => currentOffset = value, targetOffset, transitionDuration).SetEase(transitionEase))
+                .Join(DOTween.To(() => currentDistance, value => currentDistance = value, targetDistance, transitionDuration).SetEase(transitionEase))
+                .Join(DOTween.To(() => currentFovWiden, value => currentFovWiden = value, targetFovWiden, transitionDuration).SetEase(transitionEase))
+                .OnKill(() => transitionSequence = null);
+        }
+
+        // 보스가 없거나 죽었으면 false, 경계 근처에서 오락가락하지 않게 들어갈 때와 나올 때 거리를 다르게 씀
+        private bool IsBossClose()
+        {
+            if (boss == null)
+            {
+                if (Time.unscaledTime < nextBossSearchTime) return false;
+                nextBossSearchTime = Time.unscaledTime + BOSS_SEARCH_INTERVAL;
+
+                boss = FindAnyObjectByType<BossMonster>();
+                if (boss == null) return false;
+                bossEntity = boss.GetComponent<CombatEntity>();
+                bossColliders = boss.GetComponentsInChildren<Collider>();
+            }
+
+            if (bossEntity != null && bossEntity.IsDead) return false;
+
+            float threshold = viewMode == ViewMode.BossClose ? bossCloseExitDistance : bossCloseEnterDistance;
+            return GetFlatDistanceToBoss() <= threshold;
+        }
+
+        // 큰 보스는 중심점보다 몸 표면이 기준이어야 해서 콜라이더 경계 상자까지의 수평 거리를 씀
+        private float GetFlatDistanceToBoss()
+        {
+            Vector3 playerPosition = target.transform.position;
+            float closest = float.MaxValue;
+
+            foreach (Collider bossCollider in bossColliders)
+            {
+                if (bossCollider == null || bossCollider.isTrigger || bossCollider.enabled == false) continue;
+
+                Vector3 offset = bossCollider.bounds.ClosestPoint(playerPosition) - playerPosition;
+                offset.y = 0f;
+                closest = Mathf.Min(closest, offset.magnitude);
+            }
+
+            if (closest == float.MaxValue)
+            {
+                Vector3 offset = boss.transform.position - playerPosition;
+                offset.y = 0f;
+                closest = offset.magnitude;
+            }
+
+            return closest;
+        }
+
+        // 어깨 쪽 옆이 막히면 반대 어깨로, 양쪽 다 막히면 가운데로 옮긴다. 원래 어깨로는 여유가 더 있을 때만 돌아옴
+        private void UpdateShoulderSide(Vector3 pivot)
+        {
+            float preferred = Mathf.Sign(shoulderOffset.x);
+            if (Mathf.Approximately(shoulderOffset.x, 0f)) return;
+
+            float side;
+            if (IsShoulderBlocked(pivot, preferred)) side = IsShoulderBlocked(pivot, -preferred) ? 0f : -preferred;
+            else side = preferred;
+
+            if (Mathf.Approximately(side, shoulderTargetSide)) return;
+            shoulderTargetSide = side;
+
+            shoulderTween?.Kill();
+            shoulderTween = DOTween.To(() => shoulderSide, value => shoulderSide = value, side * preferred, shoulderSwitchDuration)
+                .SetEase(Ease.InOutSine).SetTarget(this)
+                .OnKill(() => shoulderTween = null);
+        }
+
+        // side는 화면 기준 1(오른쪽)/-1(왼쪽), 지금 그쪽에 있지 않으면 돌아갈 여유를 더 요구함
+        private bool IsShoulderBlocked(Vector3 pivot, float side)
+        {
+            float margin = Mathf.Approximately(shoulderTargetSide, side) ? 0f : shoulderReturnMargin;
+            float length = Mathf.Abs(shoulderOffset.x) + shoulderClearance + margin;
+            Vector3 right = Quaternion.Euler(0f, smoothYaw, 0f) * Vector3.right;
+
+            return Physics.SphereCast(pivot, collisionRadius, right * side, out _, length,
+                collisionMask, QueryTriggerInteraction.Ignore);
+        }
+
         // 기존 호출 호환용: strength 크기를 maxShakePosition 대비 trauma로 바꾼다. vibrato/elasticity는 사용하지 않음
         public void Shake(Vector3 strength, float duration, int vibrato = 10, float elasticity = 1f)
         {
@@ -179,11 +358,12 @@ namespace TeamOdd.CameraMove
 
         private void LateUpdate()
         {
-            if (target == null) return;
+            if (target == null || UIManager.Instance.IsUIClose == false) return;
 
             UpdateRotation();
             Vector3 basePosition = UpdatePosition();
             lastBasePosition = basePosition;
+            ApplyShot(ref basePosition);
             UpdateTrauma(out Vector3 posOffset, out Quaternion rotOffset);
 
             // 흔들림은 렌더 직전에만 더한다. yaw/pitch 누적값은 건드리지 않음
@@ -198,7 +378,16 @@ namespace TeamOdd.CameraMove
             transform.position = basePosition + shake;
             transform.rotation *= rotOffset;
 
-            if (viewCamera != null) viewCamera.fieldOfView = baseFov - fovPunch;
+            if (viewCamera != null) viewCamera.fieldOfView = baseFov + currentFovWiden - fovPunch;
+        }
+
+        // 추적 시점과 연출 시점을 shotBlend만큼 섞음, 흔들림은 섞은 뒤에 얹음
+        private void ApplyShot(ref Vector3 basePosition)
+        {
+            if (shotBlend <= 0f) return;
+
+            basePosition = Vector3.LerpUnclamped(basePosition, shotPosition, shotBlend);
+            transform.rotation = Quaternion.SlerpUnclamped(transform.rotation, shotRotation, shotBlend);
         }
 
         private void UpdateRotation()
@@ -214,48 +403,49 @@ namespace TeamOdd.CameraMove
             {
                 // 스킬 시전으로 행동이 잠긴 동안은 마우스로 시점을 돌리지 않음
                 // 마우스 이동량은 시간 배율과 무관하므로 슬로모션 중에는 플레이어 배율만큼 직접 느리게 돌림
-                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.PlayerScale);
+                Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.PlayerScale * SlowMotion.PlayerOnlyScale);
 
                 yaw += delta.x * mouseSensitivity;
                 pitch -= delta.y * mouseSensitivity;
+                pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+
+                // 입력은 목표에 바로 쌓고 적용 회전만 빠른 지수 감쇠로 따라가게 함
+                // 감속만 있고 가속 구간이 없어 입력 첫 프레임부터 움직이며, 히트스탑 중에도 멈추지 않도록 실제 시간을 씀
+                float t = rotationSmoothSpeed > 0f ? 1f - Mathf.Exp(-rotationSmoothSpeed * Time.unscaledDeltaTime) : 1f;
+                smoothYaw = Mathf.Lerp(smoothYaw, yaw, t);
+                smoothPitch = Mathf.Lerp(smoothPitch, pitch, t);
+                yawVelocity = 0f;
+                pitchVelocity = 0f;
             }
 
-            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-
-            // if (isHeld)
-            //     yaw = Mathf.Clamp(yaw, minYaw, maxYaw);
-            // 이거 아마 팔 뻗고 부자연스럽게 회전하는 거 막으려는 조치로 해두신 듯?
-            // 그 부분은 해결했으니 위에 주석 처리한 거 아예 지워버려도 될 것 같고
-            // 오히려 x축 회전 하한선 조정해야 할 듯, 카메라 아래로 쭉 당기면 플레이어 관통돼서 보임
-
-            transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+            transform.rotation = Quaternion.Euler(smoothPitch, smoothYaw, 0f);
         }
 
-        // 지난 프레임 카메라 위치에서 대상을 보는 각도로 서서히 돌림
-        // 카메라 위치가 회전을 따라 공전해도 몇 프레임 안에 대상이 화면 중앙에 맞춰지고, yaw/pitch를 같이 바꾸므로 풀었을 때 시점이 튀지 않음
+        // 지난 프레임 카메라 위치에서 대상을 보는 각도로 SmoothDamp해 천천히 가속했다 감속하며 돌림
+        // 카메라 위치가 회전을 따라 공전해도 몇 프레임 안에 대상이 화면 중앙에 맞춰지고, 목표 회전도 같이 맞추므로 풀었을 때 시점이 튀지 않음
         private void AimAtFocus()
         {
             Vector3 toFocus = focusTarget.position - lastBasePosition;
             if (toFocus.sqrMagnitude < 0.0001f) return;
 
             Vector3 look = Quaternion.LookRotation(toFocus).eulerAngles;
-            float t = 1f - Mathf.Exp(-focusTurnSpeed * Time.deltaTime);
-            yaw = Mathf.LerpAngle(yaw, look.y, t);
-            pitch = Mathf.LerpAngle(pitch, Mathf.DeltaAngle(0f, look.x), t);
+            smoothYaw = Mathf.SmoothDampAngle(smoothYaw, look.y, ref yawVelocity, focusSmoothTime, Mathf.Infinity, Time.deltaTime);
+            smoothPitch = Mathf.SmoothDampAngle(smoothPitch, Mathf.DeltaAngle(0f, look.x), ref pitchVelocity, focusSmoothTime, Mathf.Infinity, Time.deltaTime);
+            smoothPitch = Mathf.Clamp(smoothPitch, minPitch, maxPitch);
+
+            yaw = smoothYaw;
+            pitch = smoothPitch;
         }
 
         private Vector3 UpdatePosition()
         {
-            var (targetOffset, targetDistance, speed) = GetCameraTarget();
-
-            // 프레임 독립 감쇠: FPS와 관계없이 같은 속도로 수렴합니다.
-            float t = 1f - Mathf.Exp(-speed * Time.deltaTime);
-            currentOffset = Vector3.Lerp(currentOffset, targetOffset, t);
-            currentDistance = Mathf.Lerp(currentDistance, targetDistance + extraDistance, t);
-            
+            // currentOffset/currentDistance는 시점 전환 트윈이, extraDistance는 PullBack 트윈이 보간합니다.
             Vector3 pivot = target.transform.position + currentOffset;
+            UpdateShoulderSide(pivot);
+
             // 피벗에서 회전 방향의 뒤쪽(distance)으로 물러난 곳이 카메라가 있고 싶은 위치 입니다.
-            Vector3 desiredOffset = transform.rotation * (shoulderOffset + Vector3.back * currentDistance);
+            Vector3 shoulder = new(shoulderOffset.x * shoulderSide, shoulderOffset.y, shoulderOffset.z);
+            Vector3 desiredOffset = transform.rotation * (shoulder + Vector3.back * (currentDistance + extraDistance));
 
             float length = desiredOffset.magnitude;
             
@@ -266,27 +456,34 @@ namespace TeamOdd.CameraMove
             Vector3 direction = desiredOffset / length;
 
             // 피벗 -> 카메라 사이에 벽이 있으면 벽 앞까지만 물러납니다.
+            // 당겨 들어올 때는 즉시, 벽에서 벗어날 때는 천천히 풀어서 벽 근처에서 카메라가 앞뒤로 튀지 않게 합니다.
+            float pull = 0f;
             if (Physics.SphereCast(pivot, collisionRadius, direction, out RaycastHit hit, length,
                     collisionMask, QueryTriggerInteraction.Ignore))
             {
-                length = hit.distance;
+                pull = length - hit.distance;
             }
 
-            return pivot + direction * length;
+            if (pull >= collisionPull) collisionPull = pull;
+            else collisionPull = Mathf.Lerp(collisionPull, pull, 1f - Mathf.Exp(-collisionRecoverSpeed * Time.deltaTime));
+
+            return pivot + direction * Mathf.Max(0f, length - collisionPull);
         }
         
-        private (Vector3 offset, float distance, float speed) GetCameraTarget()
+        private ViewMode GetViewMode()
         {
-            if (isHeld)
-                return (holdPivotOffset, holdDistance, transitionSpeed);
-
-            if (target.PlayerController.IsSprinting)
-                return (pivotOffset, distance + sprintDistance, transitionSpeed);
-            
-            if (isHeld && target.PlayerController.IsSprinting)
-                return (holdPivotOffset, distance + sprintDistance, transitionSpeed);
-
-            return (pivotOffset, distance, transitionSpeed);
+            if (isHeld) return ViewMode.Hold;
+            if (IsBossClose()) return ViewMode.BossClose;
+            if (target.PlayerController.IsSprinting) return ViewMode.Sprint;
+            return ViewMode.Normal;
         }
+
+        private (Vector3 offset, float distance, float fovWiden) GetCameraTarget(ViewMode mode) => mode switch
+        {
+            ViewMode.Hold => (holdPivotOffset, holdDistance, 0f),
+            ViewMode.BossClose => (bossClosePivotOffset, bossCloseDistance, bossCloseFovWiden),
+            ViewMode.Sprint => (pivotOffset, distance + sprintDistance, 0f),
+            _ => (pivotOffset, distance, 0f),
+        };
     }
 }

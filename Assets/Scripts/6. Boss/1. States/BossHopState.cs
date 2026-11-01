@@ -52,7 +52,7 @@ namespace TeamOdd.Boss
         {
             if (Clock.LocalTime - enterTime >= timeout)
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
                 return;
             }
 
@@ -118,7 +118,7 @@ namespace TeamOdd.Boss
 
             if (string.Equals(name, "OnHopEnded"))
             {
-                StateMachine.ChangeState(typeof(BossIdleState));
+                root.ChangeBossState(typeof(BossIdleState));
             }
         }
 

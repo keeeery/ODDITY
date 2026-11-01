@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TeamOdd.Boss
 {
     // 쓰러진 보스가 같은 모습의 홀로그램으로 바뀌어 제자리에서 흩어지는 사망 연출.
-    // 부를 때 SkinnedMeshRenderer들의 지금 자세를 메시로 구워 홀로그램 머티리얼(Knife/Hologram Shader Unlit)로 같은 자리에 그리고,
+    // 부를 때 SkinnedMeshRenderer들의 지금 자세를 메시로 구워(무기 같은 일반 메시는 그대로 복사해) 홀로그램 머티리얼(Knife/Hologram Shader Unlit)로 같은 자리에 그리고,
     // 나타남(Alpha) → 다 나타나면 원본 메시를 끄고 몸 충돌도 없앰 → 노이즈로 녹아 사라짐(Dissolve Hide)과 함께 아래에서 위로 지워짐 순서로 진행한 뒤 구운 메시까지 지운다.
     // 아래에서 위로 지우는 건 셰이더의 상자 마스크(Mask Feature)로, 지울 높이 아래를 모두 덮는 큰 상자를 올리며 그 위 경계만 부드럽게 남긴다.
     // 게임 시간을 따르므로 슬로모션 중에는 함께 느려진다.
@@ -26,6 +26,8 @@ namespace TeamOdd.Boss
         [SerializeField] private Material material;
         [Tooltip("막을 만들 메시, 비워 두면 자식의 SkinnedMeshRenderer를 모두 쓴다.")]
         [SerializeField] private SkinnedMeshRenderer[] meshes;
+        [Tooltip("무기처럼 뼈에 붙은 일반 메시, 구울 필요 없이 같은 자리에 복사해 함께 홀로그램으로 바꾼다. 비워 두면 쓰지 않는다.")]
+        [SerializeField] private MeshRenderer[] rigidMeshes;
         [Tooltip("가장 진할 때의 불투명도(0~1), 머티리얼의 Alpha에 곱하지 않고 대신한다.")]
         [SerializeField, Range(0f, 1f)] private float opacity = 0.45f;
 
@@ -45,15 +47,20 @@ namespace TeamOdd.Boss
         [Tooltip("지워지는 경계의 부드러운 폭(m), 클수록 흐릿하게 사라진다.")]
         [SerializeField, Min(0.01f)] private float wipeSoftness = 0.6f;
 
-        private readonly List<Mesh> bakedMeshes = new();
-        private readonly List<MeshRenderer> shellRenderers = new();
+        private readonly HologramShell hologram = new();
         private MaterialPropertyBlock properties;
-        private Transform shell;
-        private float halfHeight; // 구운 막의 절반 높이(m)
+        private Transform shell => hologram.Root;
+        private float halfHeight => hologram.HalfHeight;
         private float elapsed;
         private bool hasHiddenSource;
 
         public bool IsPlaying => isActiveAndEnabled && shell != null;
+
+        // 같은 홀로그램으로 순간이동 연출(HumanoidHologramWarp)을 할 때 설정을 함께 씀
+        public Material Material => material;
+        public IReadOnlyList<SkinnedMeshRenderer> SkinnedMeshes => meshes;
+        public IReadOnlyList<MeshRenderer> RigidMeshes => rigidMeshes;
+        public float Opacity => opacity;
 
         private void Awake()
         {
@@ -101,8 +108,6 @@ namespace TeamOdd.Boss
         {
             if (material == null) return;
 
-            Clear();
-
             if (Bake() == false) return;
 
             elapsed = 0f;
@@ -112,55 +117,7 @@ namespace TeamOdd.Boss
 
         #endregion
 
-        // 지금 자세를 구워 몸 중심에 둔 부모 아래 같은 자리에 놓음
-        private bool Bake()
-        {
-            Bounds bounds = default;
-            bool hasBounds = false;
-
-            foreach (SkinnedMeshRenderer source in meshes)
-            {
-                if (source == null || source.enabled == false || source.gameObject.activeInHierarchy == false) continue;
-
-                if (hasBounds) bounds.Encapsulate(source.bounds);
-                else bounds = source.bounds;
-
-                hasBounds = true;
-            }
-
-            if (hasBounds == false) return false;
-
-            shell = new GameObject($"{name} Death Shed").transform;
-            halfHeight = bounds.extents.y;
-            shell.position = bounds.center;
-
-            foreach (SkinnedMeshRenderer source in meshes)
-            {
-                if (source == null || source.enabled == false || source.gameObject.activeInHierarchy == false) continue;
-
-                // useScale로 뼈 크기까지 구웠으므로 놓을 때는 크기 1
-                Mesh mesh = new Mesh { name = $"{source.name} Shed" };
-                source.BakeMesh(mesh, true);
-                bakedMeshes.Add(mesh);
-
-                GameObject part = new GameObject(source.name);
-                part.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
-                part.transform.SetParent(shell, true);
-                part.AddComponent<MeshFilter>().sharedMesh = mesh;
-
-                MeshRenderer meshRenderer = part.AddComponent<MeshRenderer>();
-                Material[] materials = new Material[mesh.subMeshCount];
-
-                for (int index = 0; index < materials.Length; index++) materials[index] = material;
-
-                meshRenderer.sharedMaterials = materials;
-                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                meshRenderer.receiveShadows = false;
-                shellRenderers.Add(meshRenderer);
-            }
-
-            return true;
-        }
+        private bool Bake() => hologram.Bake($"{name} Death Shed", material, meshes, rigidMeshes);
 
         // 홀로그램이 다 나타난 뒤 원본을 꺼 보스가 홀로그램으로 바뀐 것처럼 보이게 함, 쓰러진 보스는 다시 보이지 않음
         private void HideSource()
@@ -168,6 +125,10 @@ namespace TeamOdd.Boss
             hasHiddenSource = true;
             foreach (SkinnedMeshRenderer source in meshes)
                 if (source != null) source.enabled = false;
+
+            if (rigidMeshes != null)
+                foreach (MeshRenderer source in rigidMeshes)
+                    if (source != null) source.enabled = false;
 
             DisableBodyCollision();
         }
@@ -208,19 +169,9 @@ namespace TeamOdd.Boss
             properties.SetVector(MaskSizeId, Vector3.one * MaskBoxSize);
             properties.SetFloat(MaskFalloffId, wipeSoftness);
 
-            foreach (MeshRenderer shellRenderer in shellRenderers) shellRenderer.SetPropertyBlock(properties);
+            hologram.SetPropertyBlock(properties);
         }
 
-        private void Clear()
-        {
-            if (shell != null) Destroy(shell.gameObject);
-
-            shell = null;
-            shellRenderers.Clear();
-
-            foreach (Mesh mesh in bakedMeshes) Destroy(mesh);
-
-            bakedMeshes.Clear();
-        }
+        private void Clear() => hologram.Clear();
     }
 }
