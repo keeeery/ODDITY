@@ -36,11 +36,12 @@ namespace TeamOdd.EditorTools
         private static readonly Color HeartRed = new Color(1f, 0.2f, 0.33f);   // #FF3355
         private static readonly Color EmberOrange = new Color(1f, 0.54f, 0.24f); // #FF8A3D
 
-        // 수동 회피: 신경이 번쩍 튀는 느낌의 밝은 청록·흰색. 순간 이동(보라)과 헷갈리지 않게 색을 나눈다
+        // 수동 회피: 몸이 빠져나간 자리에 남는 하얀 허물. 슬로모션 동안 하얗게 머물다 바스러진다
         private const string ManualDodgePrefabPath = "Assets/Resources/Skill/Effect/ManualDodgeEffect.prefab";
         private const string ManualDodgeMaterialPath = "Assets/VFX/Skill/ManualDodgeEffect.mat";
-        private static readonly Color NerveCyan = new Color(0.4f, 0.95f, 1f); // #66F2FF
-        private static readonly Color SparkWhite = new Color(0.9f, 1f, 1f);   // #E6FFFF
+        private const string DodgeShellShaderName = "TeamOdd/Dodge Shell";
+        private const float ShellHoldDuration = 0.5f;      // 하얗게 머무는 시간. 수동 회피 슬로모션 시간(DodgeEffect.SlowDuration)과 맞춘다 (실제 시간, 초)
+        private const float ShellDissolveDuration = 0.35f; // 바스러져 사라지는 시간 (실제 시간, 초)
 
         // 자동 회피: 몸이 빠져나간 자리에 남는 파란 잔상. 수동 회피(청록)보다 짙은 파랑으로 나눈다
         private const string AutoDodgePrefabPath = "Assets/Resources/Skill/Effect/AutoDodgeEffect.prefab";
@@ -81,116 +82,24 @@ namespace TeamOdd.EditorTools
             SavePrefab(root, AutoDodgePrefabPath);
         }
 
-        // 수동 회피 이펙트 (신경 반사). 구르는 중에 공격을 흘려 낸 순간 그 자리에 남는다. 공격을 아슬아슬하게 피해 낸 느낌
-        // - Flash: 몸통 높이에서 청록 빛이 아주 짧게 번쩍인다
-        // - Ring: 발밑에서 얇은 빛 원이 빠르게 퍼진다
-        // - 맨 위(Sparks): 전기 불꽃 같은 짧은 빛줄기가 옆으로 튀어 나갔다가 금방 멈춘다. 가장 오래 남아서 끝날 때 Stop Action으로 전체를 지운다
+        // 수동 회피 이펙트 (허물). 파티클이 아니라 DodgeShell이 그 순간 플레이어 자세를 하얀 메시로 굳혀 그린다
+        // 몸에서 무언가 터져 나오면 맞은 것처럼 보여서, 몸은 빠져나가고 껍데기만 남았다가 바스러지는 모양으로 "피해 냈다"를 보여 준다
         [MenuItem("Tools/Team Odd/Create Manual Dodge Effect")]
         private static void CreateManualDodgeEffect()
         {
-            Material material = CreateAdditiveMaterial(ManualDodgeMaterialPath);
+            Material material = new Material(Shader.Find(DodgeShellShaderName));
+            Directory.CreateDirectory(Path.GetDirectoryName(ManualDodgeMaterialPath));
+            AssetDatabase.DeleteAsset(ManualDodgeMaterialPath);
+            AssetDatabase.CreateAsset(material, ManualDodgeMaterialPath);
 
             GameObject root = new GameObject("ManualDodgeEffect");
-            SetUpManualDodgeSparks(root.AddComponent<ParticleSystem>(), material);
-
-            ParticleSystem flash = CreateChild(root.transform, "Flash");
-            SetUpManualDodgeFlash(flash, material);
-
-            ParticleSystem ring = CreateChild(root.transform, "Ring");
-            ring.transform.localPosition = new Vector3(0f, -0.95f, 0f); // 루트가 몸통 높이에 뜨므로 발밑까지 내린다. 바닥과 겹쳐 깜빡이지 않게 살짝 띄운다
-            SetUpManualDodgeRing(ring, material);
+            SerializedObject shell = new SerializedObject(root.AddComponent<Player.DodgeShell>());
+            shell.FindProperty("material").objectReferenceValue = material;
+            shell.FindProperty("holdDuration").floatValue = ShellHoldDuration;
+            shell.FindProperty("dissolveDuration").floatValue = ShellDissolveDuration;
+            shell.ApplyModifiedPropertiesWithoutUndo();
 
             SavePrefab(root, ManualDodgePrefabPath);
-        }
-
-        // 빛줄기 30개가 몸 둘레에서 바닥과 나란히 사방으로 튀어 나갔다가 확 멈춘다
-        private static void SetUpManualDodgeSparks(ParticleSystem system, Material material)
-        {
-            system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-
-            ParticleSystem.MainModule main = system.main;
-            main.duration = 0.1f;
-            main.loop = false;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.2f, 0.4f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(8f, 14f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.07f);
-            main.startColor = new ParticleSystem.MinMaxGradient(NerveCyan, SparkWhite);
-            main.simulationSpace = ParticleSystemSimulationSpace.World; // 플레이어가 굴러 나가도 그 자리에 남는다
-            main.stopAction = ParticleSystemStopAction.Destroy;         // 가장 오래 남으므로 끝나면 전체를 지운다
-
-            ParticleSystem.EmissionModule emission = system.emission;
-            emission.rateOverTime = 0f;
-            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 30) });
-
-            ParticleSystem.ShapeModule shape = system.shape;
-            shape.shapeType = ParticleSystemShapeType.Circle;
-            shape.radius = 0.3f;
-            shape.rotation = new Vector3(90f, 0f, 0f); // 원을 바닥에 눕혀 옆으로만 튄다
-
-            // 튀어 나간 속도를 빠르게 줄여 "탁 튀고 멈추는" 느낌을 낸다
-            ParticleSystem.LimitVelocityOverLifetimeModule limit = system.limitVelocityOverLifetime;
-            limit.enabled = true;
-            limit.limit = 1f;
-            limit.dampen = 0.25f;
-
-            SetFade(system, 1f);
-            SetStreakRenderer(system, material);
-        }
-
-        // 0.12초 동안 확 커지며 번쩍였다가 사라지는 빛
-        private static void SetUpManualDodgeFlash(ParticleSystem system, Material material)
-        {
-            system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-
-            ParticleSystem.MainModule main = system.main;
-            main.duration = 0.1f;
-            main.loop = false;
-            main.startLifetime = 0.12f;
-            main.startSpeed = 0f;
-            main.startSize = 2f;
-            main.startColor = SparkWhite;
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-
-            ParticleSystem.EmissionModule emission = system.emission;
-            emission.rateOverTime = 0f;
-            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 2) }); // 두 겹 겹쳐 더 밝게
-
-            ParticleSystem.ShapeModule shape = system.shape;
-            shape.enabled = false;
-
-            SetFade(system, 1f);
-            SetSize(system, new AnimationCurve(new Keyframe(0f, 0.5f, 4f, 4f), new Keyframe(1f, 1.2f, 0f, 0f)));
-
-            system.GetComponent<ParticleSystemRenderer>().sharedMaterial = material;
-        }
-
-        // 바닥에 눕힌 빛 원이 0.25초 만에 지름 3m까지 퍼진다
-        private static void SetUpManualDodgeRing(ParticleSystem system, Material material)
-        {
-            system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-
-            ParticleSystem.MainModule main = system.main;
-            main.duration = 0.1f;
-            main.loop = false;
-            main.startLifetime = 0.25f;
-            main.startSpeed = 0f;
-            main.startSize = 3f;
-            main.startColor = new Color(NerveCyan.r, NerveCyan.g, NerveCyan.b, 0.6f);
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-
-            ParticleSystem.EmissionModule emission = system.emission;
-            emission.rateOverTime = 0f;
-            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 1) });
-
-            ParticleSystem.ShapeModule shape = system.shape;
-            shape.enabled = false;
-
-            SetFade(system, 1f);
-            SetSize(system, new AnimationCurve(new Keyframe(0f, 0.1f, 4f, 4f), new Keyframe(1f, 1f, 0f, 0f)));
-
-            ParticleSystemRenderer renderer = system.GetComponent<ParticleSystemRenderer>();
-            renderer.renderMode = ParticleSystemRenderMode.HorizontalBillboard; // 카메라가 아니라 바닥을 보게 눕힌다
-            renderer.sharedMaterial = material;
         }
 
         // 두 번째 심장 이펙트 (심장 박동). 일어서는 순간 플레이어 자식으로 붙어 따라다닌다 (SecondHeartRevival)

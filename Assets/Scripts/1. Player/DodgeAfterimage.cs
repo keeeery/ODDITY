@@ -4,7 +4,6 @@ namespace TeamOdd.Player
 {
     // 자동 회피 잔상. 플레이어의 그 순간 자세를 메시로 굳혀 그 자리에 남기고, duration초 동안 흐려지다 스스로 사라진다
     // SkillEffectFactory가 만든 AutoDodgeEffect 프리팹에 붙어 있고, DodgeEffect가 띄운 뒤 Bake를 부른다
-    // 캐릭터가 여러 조각(SkinnedMeshRenderer)으로 나뉘어 있어서 보이는 조각마다 하나씩 굳힌다
     public class DodgeAfterimage : MonoBehaviour
     {
         private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
@@ -21,26 +20,7 @@ namespace TeamOdd.Player
         {
             fadingMaterial = new Material(material);
             fadingMaterial.SetColor(BaseColor, color);
-
-            // 꺼진 오브젝트의 조각은 GetComponentsInChildren이 빼 준다. 켜져 있어도 렌더러가 꺼진 조각은 건너뛴다
-            SkinnedMeshRenderer[] skins = player.GetComponentsInChildren<SkinnedMeshRenderer>();
-            meshes = new Mesh[skins.Length];
-            for (int i = 0; i < skins.Length; i++)
-            {
-                if (skins[i].enabled == false)
-                    continue;
-
-                meshes[i] = new Mesh();
-                skins[i].BakeMesh(meshes[i], true); // 조각의 크기 배율까지 메시에 굳힌다
-
-                GameObject piece = new GameObject(skins[i].name);
-                piece.transform.SetPositionAndRotation(skins[i].transform.position, skins[i].transform.rotation);
-                piece.transform.SetParent(transform, true);
-                piece.AddComponent<MeshFilter>().sharedMesh = meshes[i];
-                MeshRenderer pieceRenderer = piece.AddComponent<MeshRenderer>();
-                pieceRenderer.sharedMaterial = fadingMaterial;
-                pieceRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            }
+            meshes = PoseBaker.Bake(player, transform, fadingMaterial);
         }
 
         private void Update()
