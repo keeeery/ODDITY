@@ -77,11 +77,14 @@ namespace TeamOdd.Player
             combatEntity.Hit -= HandleHit;
         }
 
-        // 구르기·기상 직후 무적이면 막고, 아니면 SkillGuard(패시브 칩)에 묻는다
+        // 구르기로 피하면 그 구르기를 누가 시작했는지에 맞는 회피 피드백. 기상 직후 무적은 피한 게 아니라서 띄우지 않는다
         public bool BlockDamage(DamageEvent damageEvent)
         {
             if (PlayerController.IsInvincible)
+            {
+                if (PlayerController.IsRolling) DodgeEffect.Play(transform, PlayerController.RollType);
                 return true;
+            }
 
             return SkillGuard != null && SkillGuard.BlockDamage(damageEvent);
         }
@@ -99,7 +102,7 @@ namespace TeamOdd.Player
             if (stamina < PlayerController.NeedRollStamina) return;
 
             ConsumeStamina(PlayerController.NeedRollStamina);
-            PlayerController.InputRolling();
+            PlayerController.InputRolling(DodgeType.Manual);
         }
         
         private void HandleAnimStateEvent(string eventName, string parameter)
