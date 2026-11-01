@@ -119,17 +119,9 @@ namespace TeamOdd
         // 글리치가 세지다 끊김 → 가로 선으로 접힘 → 점으로 줄어듦 → 점이 사라짐 → 검은 화면으로 UI 까지 덮음
         private UniTask PlayFadeOut()
         {
-            float glitchEnd = glitchDuration;
-            float foldEnd = glitchEnd + foldDuration;
-            float shrinkEnd = foldEnd + shrinkDuration;
-
             sequence?.Kill();
             sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
-            sequence.Insert(0f, DOTween.To(() => ScreenGlitch.Glitch, SetGlitch, 1f, glitchDuration).SetEase(Ease.InQuad));
-            sequence.InsertCallback(glitchEnd, () => ScreenGlitch.Glitch = 0f);
-            sequence.Insert(glitchEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 1f, foldDuration).SetEase(Ease.InCubic));
-            sequence.Insert(foldEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 2f, shrinkDuration).SetEase(Ease.InCubic));
-            sequence.Insert(shrinkEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 3f, dotFadeDuration).SetEase(Ease.OutQuad));
+            ScreenOffEffect.Insert(sequence, 0f, glitchDuration, foldDuration, shrinkDuration, dotFadeDuration);
             sequence.OnComplete(() => SetFadeAlpha(1f));
             return sequence.ToUniTask();
         }
