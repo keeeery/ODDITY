@@ -188,8 +188,8 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
-            // 커서가 풀렸거나 스킬 시전으로 행동이 잠기면 들고 있던 물체를 놓고 입력을 받지 않음
-            if (Cursor.lockState != CursorLockMode.Locked || IsSuperpowerLocked)
+            // UI로 입력이 제한되거나 스킬 시전으로 행동이 잠기면 들고 있던 물체를 놓고 입력을 받지 않음
+            if (UIManager.Instance.IsUIClose == false || IsSuperpowerLocked)
             {
                 releaseRequested = true;
                 grabRequested = false;
@@ -231,15 +231,15 @@ namespace TeamOdd.Psychokinesis
             candidateCount = 0;
 #endif
 
-            // Update에서 받은 입력도 같은 프레임에 피격되거나 시전이 시작되면 실행하지 않는다.
-            if (IsHit || IsSuperpowerLocked || Cursor.lockState != CursorLockMode.Locked)
+            // Update에서 받은 입력도 같은 프레임에 UI가 열리거나 피격·시전이 시작되면 실행하지 않는다.
+            if (IsHit || IsSuperpowerLocked || UIManager.Instance.IsUIClose == false)
             {
                 InterruptForHit();
                 return;
             }
 
             if (heldObject == null)
-                SetFocus(Cursor.lockState == CursorLockMode.Locked ? FindFocus() : null);
+                SetFocus(FindFocus());
 
             if (grabRequested)
             {
