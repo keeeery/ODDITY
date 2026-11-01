@@ -213,6 +213,7 @@ namespace TeamOdd.Player
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
         public bool IsSprinting { get; private set; }
+        // 구르기·기상 직후 무적. 피해를 막을지는 Player.BlockDamage가 이 값을 보고 정한다
         public bool IsInvincible { get; private set; }
         public bool IsDead => isDead;
         // 염동 내려찍기처럼 시전 중 이동·구르기·공격·다른 스킬과 카메라 회전을 막는 동안

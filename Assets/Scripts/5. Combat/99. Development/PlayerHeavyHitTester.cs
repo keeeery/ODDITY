@@ -30,7 +30,9 @@ namespace TeamOdd.Combat.Development
             }
 
             Debug.Log($"[피격 테스트] {target.name}: 피해 {damage}, 반응 {reaction}", this);
-            DamageInfo info = new DamageInfo(damage, target.transform.position, target.Collider, reaction);
+            // 공격자는 정면 1m에 있다고 치고, 밀지 않고 피격 모션만 본다
+            DamageInfo info = new DamageInfo(damage, target.transform.position, target.Collider, reaction,
+                attackerPosition: target.transform.position + target.transform.forward);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(null, target, info));
         }
     }

@@ -7,7 +7,7 @@ namespace TeamOdd.Superpower
     /// 트리거가 일어나면 스킬 슬롯의 패시브 스킬을 발동한다. 인벤토리가 있는 플레이어 오브젝트에 같이 붙인다.
     /// 슬롯에 어떤 패시브가 있는지는 모르고 트리거가 같은 패시브의 TryUse만 부른다. (전략 패턴에서 전략을 쓰는 쪽. SkillCaster와 같은 자리)
     /// 피해를 준 뒤·받은 뒤는 CombatManager의 피해 이벤트를 듣고,
-    /// 피해를 받기 직전·죽기 직전은 CombatEntity의 Guard로 자기를 넣어 CombatEntity가 물어볼 때 답한다.
+    /// 피해를 받기 직전·죽기 직전은 Player의 SkillGuard로 자기를 넣어, Player가 구르기 무적을 먼저 본 뒤 물어볼 때 답한다.
     /// </summary>
     public class PassiveSkillRunner : MonoBehaviour, IDamageGuard
     {
@@ -19,7 +19,7 @@ namespace TeamOdd.Superpower
         {
             inventory = GetComponent<AugmentationChipInventory>();
             owner = GetComponent<CombatEntity>();
-            owner.Guard = this;
+            GetComponent<Player.Player>().SkillGuard = this;
         }
 
         private void Start()

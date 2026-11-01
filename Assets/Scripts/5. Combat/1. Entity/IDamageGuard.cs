@@ -1,6 +1,6 @@
 namespace TeamOdd.Combat
 {
-    // CombatEntity가 피해를 체력에 적용하기 전에 물어보는 쪽. 플레이어의 패시브 칩(조건 반사, 두 번째 심장)이 쓴다
+    // CombatEntity가 피해를 체력에 적용하기 전에 물어보는 쪽. 플레이어는 Player가 구르기 무적과 패시브 칩(조건 반사, 두 번째 심장)을 묶어 답한다
     public interface IDamageGuard
     {
         // true면 이번 피해는 없던 일이 된다 (회피)
