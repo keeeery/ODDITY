@@ -289,7 +289,8 @@ namespace TeamOdd.Boss
 
         // 피해·반응·밀어낼 방향을 피해 이벤트 하나로 보냄, 맞을지(무적·회피)와 넉백/넉다운 처리는 피격 대상이 담당
         // hitCenter는 넉백 방향을 FromHitCenter로 정할 때 기준점, 보낸 쪽은 보스 전용 피격 처리(ICombatable)를 정리할 때까지 비워 둠
-        protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint)
+        // unavoidable이면 구르기·회피 칩으로 피할 수 없는 확정 피격으로 보냄
+        protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint, bool unavoidable = false)
         {
             ICombatable receiver = Target.GetComponentInParent<ICombatable>();
             if (receiver == null) return;
@@ -298,7 +299,7 @@ namespace TeamOdd.Boss
 
             Vector3 pushDirection = push.GetDirection(root.transform, hitCenter, Target.position);
             DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, reaction,
-                push: push, pushDirection: pushDirection, attackerPosition: root.transform.position);
+                push: push, pushDirection: pushDirection, attackerPosition: root.transform.position, unavoidable: unavoidable);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(null, receiver, info));
         }
 

@@ -39,9 +39,11 @@ namespace TeamOdd.Combat
         public Vector3 PushDirection { get; }
         // 맞는 순간 바라볼 공격자 위치
         public Vector3 AttackerPosition { get; }
+        // true면 구르기·회피 칩으로 피할 수 없는 확정 피격. 시간 역행 같은 스킬 무적(CombatEntity.IsInvincible)은 그대로 막는다
+        public bool Unavoidable { get; }
 
         public DamageInfo(int damage, Vector3 hitPoint, Collider collider, HitReaction reaction = HitReaction.None, int groggy = 0,
-            HitPush push = default, Vector3 pushDirection = default, Vector3 attackerPosition = default)
+            HitPush push = default, Vector3 pushDirection = default, Vector3 attackerPosition = default, bool unavoidable = false)
         {
             Damage = damage;
             HitPoint = hitPoint;
@@ -51,6 +53,7 @@ namespace TeamOdd.Combat
             Push = push;
             PushDirection = pushDirection;
             AttackerPosition = attackerPosition;
+            Unavoidable = unavoidable;
         }
     }
 

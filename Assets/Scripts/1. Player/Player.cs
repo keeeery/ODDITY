@@ -80,8 +80,12 @@ namespace TeamOdd.Player
         }
 
         // 구르기로 피하면 그 구르기를 누가 시작했는지에 맞는 회피 피드백. 기상 직후 무적은 피한 게 아니라서 띄우지 않는다
+        // 확정 피격(Unavoidable)은 구르기 무적도 패시브 칩도 묻지 않고 맞는다
         public bool BlockDamage(DamageEvent damageEvent)
         {
+            if (damageEvent.Info.Unavoidable)
+                return false;
+
             if (PlayerController.IsInvincible)
             {
                 if (PlayerController.IsRolling) DodgeEffect.Play(transform, PlayerController.RollType);
