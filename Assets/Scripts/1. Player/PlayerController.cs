@@ -1301,7 +1301,7 @@ namespace TeamOdd.Player
 
         public void ApplyHitReaction(HitReaction reaction, Vector3 direction, HitPush push, Vector3 attackerPosition)
         {
-            if (reaction == HitReaction.None || IsHit) return;
+            if (reaction == HitReaction.None || IsHit || IsInvincible) return;
 
             StopAttackMotion();
 

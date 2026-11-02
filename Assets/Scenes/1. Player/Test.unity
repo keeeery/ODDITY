@@ -369,7 +369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &11127901
 Transform:
   m_ObjectHideFlags: 0
@@ -32722,24 +32722,22 @@ MonoBehaviour:
   edgeMarkerSize: 16
   edgeArrowSize: 8
   edgeArrowGap: 2
-  groundLayers:
+  walkableLayers:
     serializedVersion: 2
     m_Bits: 0
-  wallLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  wallShader: {fileID: 4800000, guid: 7f2276dc3f08640ffb7092978927b160, type: 3}
-  textureSize: 256
-  cameraHeight: 50
-  cameraDepthBelow: 50
-  floorHeightAbove: 1
-  floorDepthBelow: 0.5
+  topHeight: 3
+  bottomHeight: -2
+  bakeCellSize: 0.25
+  bakeMaxCellsPerSide: 1024
+  reachableOnly: 1
   playerDotSize: 10
   playerTipLength: 1.7
   bossDotSize: 14
   objectDotSize: 6
   backgroundColor: {r: 0.1019608, g: 0.09411765, b: 0.07843137, a: 0.6}
-  groundColor: {r: 0.9019608, g: 0.8705882, b: 0.8156863, a: 1}
+  groundFillColor: {r: 0.396, g: 0.389, b: 0.374, a: 0.8}
+  groundOutlineColor: {r: 0.9, g: 0.87, b: 0.82, a: 1}
+  groundOutlineWidth: 1.5
   playerColor: {r: 0.9294118, g: 0.9019608, b: 0.8392157, a: 1}
   bossColor: {r: 0.7607843, g: 0.2313725, b: 0.2117647, a: 1}
   objectColor: {r: 0.5607843, g: 0.7019608, b: 0.7294118, a: 1}
@@ -35645,6 +35643,8 @@ MonoBehaviour:
   groggyBar: {fileID: 1544739492}
   smoothGroggyBar: 1
   trailColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
+  cloneHpBar: {fileID: 0}
+  cloneBarFadeDuration: 0.3
   occlusionOutlineWidth: 2
 --- !u!225 &916268417
 CanvasGroup:
@@ -55546,7 +55546,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: waves.Array.data[0].reaction
@@ -68298,9 +68298,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.SkillSlotHUD
   inventory: {fileID: 2205336347470601080}
+  player: {fileID: 0}
+  slots: []
+  wakeUpSlot:
+    Graphic: {fileID: 0}
+    Key: {fileID: 0}
+    Name: {fileID: 0}
+    Cooldown: {fileID: 0}
   font: {fileID: 11400000, guid: 659ceb8947c683b4a9e1216df0a67515, type: 2}
-  slotSize: {x: 54, y: 54}
-  slotGap: 8
   style:
     trackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.85}
     emptyTrackColor: {r: 0.07058824, g: 0.07843137, b: 0.09019608, a: 0.5}
@@ -68313,10 +68318,6 @@ MonoBehaviour:
     shadowSize: 3
     readyBorderWidth: 1
     antiAliasPixels: 1
-  textColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 1}
-  keyFontSize: 11
-  nameFontSize: 13
-  cooldownFontSize: 15
   nameLength: 3
   readyFlashDuration: 0.3
 --- !u!1001 &1700922224
@@ -75253,6 +75254,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Augmentation Chip Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 1986625513747184529, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1986625513747184529, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2495439448123118342, guid: 5176f0bc94ae4f74abd422b6b52de580, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -79189,21 +79198,34 @@ MonoBehaviour:
   distance: 4
   holdDistance: 1
   sprintDistance: 0.5
-  transitionSpeed: 10
+  transitionDuration: 0.45
+  transitionEase: 12
+  bossCloseEnterDistance: 3
+  bossCloseExitDistance: 4.5
+  bossClosePivotOffset: {x: 0, y: 1.9, z: 0}
+  bossCloseDistance: 4.6
+  bossCloseFovWiden: 5
   mouseSensitivity: 2
+  rotationSmoothSpeed: 30
   minPitch: -20
   maxPitch: 70
   minYaw: -40
   maxYaw: 70
-  focusTurnSpeed: 8
+  focusSmoothTime: 0.15
   collisionMask:
     serializedVersion: 2
     m_Bits: 183
   collisionRadius: 0.2
+  collisionRecoverSpeed: 6
+  shoulderClearance: 0.3
+  shoulderReturnMargin: 0.4
+  shoulderSwitchDuration: 0.4
   maxShakePosition: {x: 0.3, y: 0.3, z: 0}
   maxShakeRotation: {x: 3, y: 1.5, z: 5}
   shakeFrequency: 25
   traumaDecay: 1.7
+  shotReturnDuration: 0.6
+  shotReturnEase: 10
 --- !u!1001 &1989274481
 PrefabInstance:
   m_ObjectHideFlags: 0
