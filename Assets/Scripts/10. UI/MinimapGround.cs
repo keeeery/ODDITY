@@ -13,9 +13,6 @@ namespace TeamOdd.UI
 
         private static readonly int backgroundColorId = Shader.PropertyToID("_BackgroundColor");
         private static readonly int fillColorId = Shader.PropertyToID("_FillColor");
-        private static readonly int outlineColorId = Shader.PropertyToID("_OutlineColor");
-        private static readonly int outlineWidthId = Shader.PropertyToID("_OutlineWidth");
-        private static readonly int maskTexelSizeId = Shader.PropertyToID("_MaskTexelSize");
         private static readonly int viewId = Shader.PropertyToID("_View");
         private static readonly int viewScaleId = Shader.PropertyToID("_ViewScale");
 
@@ -24,8 +21,6 @@ namespace TeamOdd.UI
 
         private Color backgroundColor;
         private Color fillColor;
-        private Color outlineColor;
-        private float outlineWidth;
 
         public override Texture mainTexture => texture != null ? texture : s_WhiteTexture;
 
@@ -64,14 +59,12 @@ namespace TeamOdd.UI
         }
 
         // 바뀐 값이 있을 때만 머티리얼을 갱신한다. 마스킹용 복사본도 함께 다시 만들어지도록 SetMaterialDirty를 부른다.
-        public void SetStyle(Color background, Color fill, Color outline, float width)
+        public void SetStyle(Color background, Color fill)
         {
-            if (backgroundColor == background && fillColor == fill && outlineColor == outline && outlineWidth.Equals(width)) return;
+            if (backgroundColor == background && fillColor == fill) return;
 
             backgroundColor = background;
             fillColor = fill;
-            outlineColor = outline;
-            outlineWidth = width;
             ApplyStyle();
             SetMaterialDirty();
         }
@@ -82,10 +75,6 @@ namespace TeamOdd.UI
 
             groundMaterial.SetColor(backgroundColorId, backgroundColor);
             groundMaterial.SetColor(fillColorId, fillColor);
-            groundMaterial.SetColor(outlineColorId, outlineColor);
-            groundMaterial.SetFloat(outlineWidthId, outlineWidth);
-            if (texture != null)
-                groundMaterial.SetVector(maskTexelSizeId, new Vector4(1f / texture.width, 1f / texture.height, 0f, 0f));
         }
 
         // 마스크는 북쪽이 위로 고정돼 있으므로 미니맵 Yaw(도)만큼 돌리고, 플레이어 위치(마스크 UV)를 중심으로
