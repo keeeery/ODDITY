@@ -3116,6 +3116,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 421322929}
+  - component: {fileID: 421322930}
   m_Layer: 0
   m_Name: Holograms
   m_TagString: Untagged
@@ -3141,6 +3142,28 @@ Transform:
   - {fileID: 904501649}
   m_Father: {fileID: 699566829}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &421322930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421322928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a84f243021b34ab99cb9000d06354fa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayDuration: 7.5
+  transitionDuration: 0.6
+  glitchPeakAmount: 0.6
+  holograms:
+  - <BossName>k__BackingField: "\uCC28\uB974\uCE74\uB85C\uC0AC\uC6B0\uB8E8\uC2A4"
+    <Model>k__BackingField: {fileID: 618857425}
+  - <BossName>k__BackingField: "\uD398\uB974\uB370\uB85C\uC2A4"
+    <Model>k__BackingField: {fileID: 1340824031}
+  - <BossName>k__BackingField: "\uD734\uBA38\uB178\uC774\uB4DC"
+    <Model>k__BackingField: {fileID: 904501649}
 --- !u!1001 &434425125
 PrefabInstance:
   m_ObjectHideFlags: 0

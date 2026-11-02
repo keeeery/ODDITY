@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Study.MiniDefence;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,12 @@ namespace TeamOdd.Mission
         // 수락한 미션 목록 (Stage Move UI 에서 이동할 미션을 고를 때 사용)
         public IReadOnlyList<MissionDef> AcceptedMissions => acceptedMissions;
 
+        // 이 UI 는 UI Canvas 프리팹에 있어 로비 씬 오브젝트(보스 홀로그램 등)가 참조할 수 없으므로 static 으로 연다.
+        public static IReadOnlyList<MissionDef> AcceptedMissionList => acceptedMissions;
+
+        // 수락 목록이 바뀔 때 (수락 · 클리어로 제거)
+        public static event Action OnAcceptedMissionsChanged;
+
         private void Awake()
         {
             // 씬에 배치해 둔 샘플 행은 지우고, 수락한 미션만 다시 그린다.
@@ -64,6 +71,7 @@ namespace TeamOdd.Mission
             CreateRow(missionDef, acceptedMissions.Count);
 
             UpdateCount();
+            OnAcceptedMissionsChanged?.Invoke();
             return AddMissionResult.Added;
         }
 
@@ -75,6 +83,7 @@ namespace TeamOdd.Mission
             if (index < 0) return false;
 
             acceptedMissions.RemoveAt(index);
+            OnAcceptedMissionsChanged?.Invoke();
             return true;
         }
 
