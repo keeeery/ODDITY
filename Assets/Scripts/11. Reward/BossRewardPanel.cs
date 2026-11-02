@@ -8,14 +8,15 @@ using UnityEngine.UI;
 
 namespace TeamOdd.Reward
 {
-    // 화면과 아이콘 슬롯은 씬에 배치하고, 획득 결과만 채운다.
+    // 화면은 씬에 배치하고, 아이콘 슬롯은 씬에 둔 슬롯 하나를 본떠 받은 보상 수만큼 만든다.
     // 열면 잠시 뒤 가운데 1px 선이 좌우로 뻗고 위아래로 열리며 화면이 켜지고, 짧게 지직거린 뒤 슬롯이 하나씩 번쩍이며 켜진다.
     // 연출은 실제 시간 기준이다. 사망 화면(PlayerDeathScreen)과 같은 부품을 세기만 다르게 쓴다.
     [DisallowMultipleComponent]
     public sealed class BossRewardPanel : MonoBehaviour
     {
         [SerializeField] private GameObject panelRoot;
-        [SerializeField] private RewardIconView[] icons;
+        [Tooltip("씬에 둔 슬롯 하나, 보상이 더 많으면 같은 부모 아래에 복제해 늘린다.")]
+        [SerializeField] private RewardIconView iconTemplate;
         [SerializeField] private Button closeButton;
         [SerializeField] private TooltipView tooltip;
 
@@ -31,6 +32,7 @@ namespace TeamOdd.Reward
         [SerializeField, Min(0.01f)] private float glitchDuration = 0.25f;
         [SerializeField, Range(0f, 1f)] private float glitchStrength = 0.35f;
 
+        private readonly List<RewardIconView> icons = new();
         private UIManager uiManager;
         private Tween reveal;
 
@@ -51,18 +53,19 @@ namespace TeamOdd.Reward
         public void Open(IReadOnlyList<OwnedChip> rewards)
         {
             if (tooltip != null) tooltip.Hide();
-            if (panelRoot == null || icons == null || closeButton == null)
+            if (panelRoot == null || iconTemplate == null || closeButton == null)
             {
-                Debug.LogError("[BossRewardPanel] 씬의 Panel Root, Icons, Close Button을 연결해 주세요.", this);
+                Debug.LogError("[BossRewardPanel] 씬의 Panel Root, Icon Template, Close Button을 연결해 주세요.", this);
                 if (SlowMotion.IsSlowed) SlowMotion.Resume();
                 return;
             }
 
-            for (int i = 0; i < icons.Length; i++)
+            // 만든 슬롯은 지우지 않고 남겨 두었다가, 보상이 적으면 남는 슬롯만 끈다.
+            if (icons.Count == 0) icons.Add(iconTemplate);
+            while (icons.Count < rewards.Count)
+                icons.Add(Instantiate(iconTemplate, iconTemplate.transform.parent));
+            for (int i = 0; i < icons.Count; i++)
                 icons[i].Show(i < rewards.Count ? rewards[i] : null);
-
-            if (rewards.Count > icons.Length)
-                Debug.LogWarning($"[BossRewardPanel] 지급된 {rewards.Count}종 중 아이콘 슬롯 {icons.Length}개만 표시합니다. 씬에 슬롯을 추가해 주세요.", this);
 
             // 이미 열려 있으면 내용만 바꾼다. 나타나기를 기다리는 중이면 그대로 기다린다.
             if (IsOpen)

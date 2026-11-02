@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TeamOdd.Boss;
 using TeamOdd.Combat;
@@ -7,21 +6,7 @@ using UnityEngine;
 
 namespace TeamOdd.Reward
 {
-    [Serializable]
-    public class ChipRewardRule
-    {
-        [Min(1)] public int CellCount;
-        [Tooltip("이 CellCount에서 중복 없이 지급할 칩 종류 수")]
-        [Min(0)] public int Count;
-
-        public ChipRewardRule(int cellCount, int count)
-        {
-            CellCount = cellCount;
-            Count = count;
-        }
-    }
-
-    // 보스 루트에 붙인다. 사망 연출과 칩 데이터는 기존 구현을 사용하고 보상 규칙만 여기서 정한다.
+    // 보스 루트에 붙인다. 사망 연출과 칩 데이터는 기존 구현을 사용하고, 보상 규칙은 BossReward.tsv에서 RewardId로 고른다.
     [DisallowMultipleComponent]
     public sealed class BossChipReward : MonoBehaviour
     {
@@ -32,14 +17,9 @@ namespace TeamOdd.Reward
         [SerializeField] private AugmentationChipInventory inventory;
         [SerializeField] private BossRewardPanel rewardPanel;
 
-        [Header("Reward Rules")]
-        [Tooltip("스킬·스탯 칩을 합쳐 CellCount별로 추첨합니다. 기존 보유 칩도 후보에 포함됩니다.")]
-        [SerializeField] private List<ChipRewardRule> rules = new()
-        {
-            new ChipRewardRule(6, 1),
-            new ChipRewardRule(5, 2),
-            new ChipRewardRule(3, 2),
-        };
+        [Header("Reward")]
+        [Tooltip("BossReward.tsv의 RewardId, 같은 RewardId의 줄을 모두 지급합니다. 스킬·스탯 칩을 합쳐 추첨하고 기존 보유 칩도 후보에 포함됩니다.")]
+        [SerializeField] private int rewardId = 1;
 
         private bool hasGranted;
 
@@ -80,9 +60,18 @@ namespace TeamOdd.Reward
                 return;
             }
 
+            BossRewardTable rewardTable = new BossRewardTable();
+            rewardTable.Load();
+            if (rewardTable.TryGet(rewardId, out IReadOnlyList<BossRewardDef> rules) == false)
+            {
+                Debug.LogError($"[BossChipReward] BossReward.tsv에 {rewardId}번 보상이 없습니다.", this);
+                if (SlowMotion.IsSlowed) SlowMotion.Resume();
+                return;
+            }
+
             AugmentationChipTable table = new AugmentationChipTable();
             table.Load();
-            List<AugmentationChipDef> selected = PickRewards(table.GetDefs());
+            List<AugmentationChipDef> selected = PickRewards(rules, table.GetDefs());
             List<OwnedChip> granted = new List<OwnedChip>(selected.Count);
 
             // 같은 개체의 완료 알림이나 컴포넌트 재활성화로 재지급하지 않는다.
@@ -103,24 +92,23 @@ namespace TeamOdd.Reward
             }
         }
 
-        private List<AugmentationChipDef> PickRewards(IReadOnlyCollection<AugmentationChipDef> defs)
+        private List<AugmentationChipDef> PickRewards(IReadOnlyList<BossRewardDef> rules, IReadOnlyCollection<AugmentationChipDef> defs)
         {
             List<AugmentationChipDef> selected = new List<AugmentationChipDef>();
             HashSet<int> selectedIds = new HashSet<int>();
             List<AugmentationChipDef> candidates = new List<AugmentationChipDef>();
 
-            foreach (ChipRewardRule rule in rules)
+            foreach (BossRewardDef rule in rules)
             {
-                if (rule == null || rule.CellCount < 1 || rule.Count <= 0) continue;
                 candidates.Clear();
                 foreach (AugmentationChipDef def in defs)
                 {
-                    if (def.CellCount == rule.CellCount && selectedIds.Contains(def.ID) == false)
+                    if (rule.Contains(def.CellCount) && selectedIds.Contains(def.ID) == false)
                         candidates.Add(def);
                 }
 
                 if (candidates.Count < rule.Count)
-                    Debug.LogWarning($"[BossChipReward] CellCount {rule.CellCount}: {rule.Count}종 요청 중 후보가 {candidates.Count}종이어서 가능한 종류만 지급합니다.", this);
+                    Debug.LogWarning($"[BossChipReward] {rule.MinCell}~{rule.MaxCell}칸: {rule.Count}종 요청 중 후보가 {candidates.Count}종이어서 가능한 종류만 지급합니다.", this);
 
                 int count = Mathf.Min(rule.Count, candidates.Count);
                 for (int i = 0; i < count; i++)
