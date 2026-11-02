@@ -36,8 +36,8 @@ namespace TeamOdd.Superpower
         public bool IsReady => remainingCooldown <= 0f;
         public float RemainingCooldown => remainingCooldown;
 
-        // 효과로 쿨타임이 당겨졌을 때. 스킬 바 슬롯이 받아서 반짝인다
-        public event Action CooldownReduced;
+        // 효과로 쿨타임이 당겨졌을 때. 어느 스킬인지 넘겨서 게임 화면 스킬 바(SkillSlotHUD)가 그 슬롯을 반짝인다
+        public event Action<SuperpowerSkill> CooldownReduced;
 
         // 모든 스킬에 공통인 값. 자식 클래스는 자기 매개변수와 함께 이 둘을 받아 넘긴다
         protected SuperpowerSkill(string name, float cooldown)
@@ -68,7 +68,7 @@ namespace TeamOdd.Superpower
         public void ReduceCooldown(float seconds)
         {
             remainingCooldown = Mathf.Max(0f, remainingCooldown - seconds);
-            CooldownReduced?.Invoke();
+            CooldownReduced?.Invoke(this);
         }
 
         // 쿨타임을 바로 끝낸다. 마을과 아레나 사이를 오갈 때 인벤토리가 부른다
