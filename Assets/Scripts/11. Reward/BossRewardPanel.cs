@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using TeamOdd.Combat;
+using TeamOdd.Mission;
 using TeamOdd.Superpower;
 using TeamOdd.UI;
 using UnityEngine;
@@ -92,7 +93,8 @@ namespace TeamOdd.Reward
             if (tooltip != null) tooltip.Hide();
             if (panelRoot != null) panelRoot.SetActive(false);
             if (IsOpen == false) return;
-
+            uiManager.MissionListUpdate();
+            
             IsOpen = false;
             if (SlowMotion.IsSlowed) SlowMotion.Resume();
             if (uiManager != null) uiManager.LockCursor(true);
