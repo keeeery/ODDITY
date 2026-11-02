@@ -41,6 +41,8 @@ namespace TeamOdd.UI
 
             // 잔상 색을 씬마다 맞추지 않도록 여기서 적용
             if (hpBar != null) hpBar.TrailColor = hpTrailColor;
+            // 회복·부활로 체력이 늘면 바로 채우지 않고 차오르게 한다
+            if (hpBar != null) hpBar.UseRise = true;
         }
 
         private void Start()
