@@ -27375,8 +27375,6 @@ MonoBehaviour:
   objectDotSize: 7.5
   backgroundColor: {r: 0.1019608, g: 0.09411765, b: 0.07843137, a: 0.6}
   groundFillColor: {r: 0.396, g: 0.389, b: 0.374, a: 0.8}
-  groundOutlineColor: {r: 0.9, g: 0.87, b: 0.82, a: 1}
-  groundOutlineWidth: 0
   playerColor: {r: 0.9294118, g: 0.9019608, b: 0.8392157, a: 1}
   bossColor: {r: 0.7607843, g: 0.2313725, b: 0.2117647, a: 1}
   objectColor: {r: 0.5607843, g: 0.7019608, b: 0.7294118, a: 1}
@@ -46288,17 +46286,109 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 378036316848615790, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 588864280852202731, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 788158842028150654, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1337988281538202538, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: jump.damage
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 1639146330187405594, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1639146330187405594, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[1].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1639146330187405594, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[2].damage
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 1861756219444596382, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: <Target>k__BackingField
       value: 
       objectReference: {fileID: 2205336347470601070}
+    - target: {fileID: 2544212416036314323, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2544212416036314323, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[1].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3645352601674145374, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922759421415302332, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: largeDamage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922759421415302332, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: mediumDamage
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3922759421415302332, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: fragmentSpawner
       value: 
       objectReference: {fileID: 1433546535}
+    - target: {fileID: 4091713680808868829, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4377086415526891515, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663631127443257715, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: jump.damage
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4663631127443257715, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: chargeDamage
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4787703938259214962, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984115569597563364, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984115569597563364, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[1].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984115569597563364, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[2].damage
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5070346573389025199, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5070346573389025199, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[1].damage
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 5367694399455952834, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: maxHpOverride
       value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5374203458365668163, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: hits.Array.data[0].damage
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5585251523130210030, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: holdDuration
@@ -46307,6 +46397,10 @@ PrefabInstance:
     - target: {fileID: 5585251523130210030, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: dissolveStart
       value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6358191790241812273, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: damage
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 6358191790241812273, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: fragmentSpawner
@@ -46319,6 +46413,10 @@ PrefabInstance:
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: waves.Array.data[0].damage
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -57020,7 +57118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 311e3a5fe87e46a08941e87d90885f55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.SkillSlotHUD
-  inventory: {fileID: 2205336347470601080}
+  inventory: {fileID: 0}
   player: {fileID: 0}
   slots:
   - Graphic: {fileID: 226698383}

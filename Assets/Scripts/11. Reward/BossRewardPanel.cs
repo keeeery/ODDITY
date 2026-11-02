@@ -96,6 +96,8 @@ namespace TeamOdd.Reward
             IsOpen = false;
             if (SlowMotion.IsSlowed) SlowMotion.Resume();
             if (uiManager != null) uiManager.LockCursor(true);
+            
+            SceneLoadManager.Instance.LoadScene("02. Lobby");
         }
 
         private void OnDisable() => Close();

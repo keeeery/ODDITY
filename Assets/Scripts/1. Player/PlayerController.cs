@@ -314,7 +314,7 @@ namespace TeamOdd.Player
             FaceSidestep();
             CheckRollInput();
 
-            Debug.Log("UI Close pc"+isUIClose);
+            //Debug.Log("UI Close pc"+isUIClose);
             
             heldObject = psychokinesisController.HeldObject;
             animator.SetLayerWeight(holdLayer, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
