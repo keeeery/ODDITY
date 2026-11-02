@@ -138,6 +138,9 @@ namespace TeamOdd.Psychokinesis
         // 들 수 있는 최대 질량. 기본값(PlayerStats 에셋) + 증강칩 보너스라 칩을 끼우고 빼면 바로 바뀌므로 쓸 때마다 읽는다
         private int MaxMass => combatEntity.CurrentStats.Get(StatType.PsychoMaxMass);
 
+        // 기본 공격 사거리. 최대 질량처럼 기본값(PlayerStats 에셋) + 증강칩 보너스라 쓸 때마다 읽는다
+        private int AttackRange => combatEntity.CurrentStats.Get(StatType.AttackRange);
+
         // 플레이어의 공격(기본 공격, 투척, 휘두르기)이 실제로 피해를 줬을 때 (조준점 적중 표시용)
         public event Action AttackHit;
 
@@ -188,8 +191,8 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
-            // 커서가 풀렸거나 스킬 시전으로 행동이 잠기면 들고 있던 물체를 놓고 입력을 받지 않음
-            if (Cursor.lockState != CursorLockMode.Locked || IsSuperpowerLocked)
+            // UI로 입력이 제한되거나 스킬 시전으로 행동이 잠기면 들고 있던 물체를 놓고 입력을 받지 않음
+            if (UIManager.Instance.IsUIClose == false || IsSuperpowerLocked)
             {
                 releaseRequested = true;
                 grabRequested = false;
@@ -231,15 +234,15 @@ namespace TeamOdd.Psychokinesis
             candidateCount = 0;
 #endif
 
-            // Update에서 받은 입력도 같은 프레임에 피격되거나 시전이 시작되면 실행하지 않는다.
-            if (IsHit || IsSuperpowerLocked || Cursor.lockState != CursorLockMode.Locked)
+            // Update에서 받은 입력도 같은 프레임에 UI가 열리거나 피격·시전이 시작되면 실행하지 않는다.
+            if (IsHit || IsSuperpowerLocked || UIManager.Instance.IsUIClose == false)
             {
                 InterruptForHit();
                 return;
             }
 
             if (heldObject == null)
-                SetFocus(Cursor.lockState == CursorLockMode.Locked ? FindFocus() : null);
+                SetFocus(FindFocus());
 
             if (grabRequested)
             {
@@ -439,10 +442,11 @@ namespace TeamOdd.Psychokinesis
             end = start + pickupDistance;
         }
 
-        private float GetTargetingDistance(Ray ray)
+        // 기본 공격이 닿는 거리. 타겟팅 구간처럼 플레이어 깊이에서 시작하고, 길이는 물체 잡는 거리 대신 사거리 스탯을 쓴다
+        private float GetAttackDistance(Ray ray)
         {
-            GetTargetingRange(ray, out _, out float end);
-            return end;
+            GetTargetingRange(ray, out float start, out _);
+            return start + AttackRange;
         }
 
         private void GetTargetingBox(out Ray ray, out Vector3 center, out Vector3 halfExtents)
@@ -488,7 +492,7 @@ namespace TeamOdd.Psychokinesis
         public bool TryFindAttackTarget(out Ray ray, out ICombatable target, out Collider hitCollider, out Vector3 end)
         {
             ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            float distance = GetTargetingDistance(ray);
+            float distance = GetAttackDistance(ray);
             int count = Physics.RaycastNonAlloc(ray, obstructionHits, distance, queryLayers, QueryTriggerInteraction.Ignore);
             hitCollider = null;
             target = null;

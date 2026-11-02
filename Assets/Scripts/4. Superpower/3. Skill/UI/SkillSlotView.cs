@@ -21,8 +21,11 @@ namespace TeamOdd.Superpower
         private static readonly Color HighlightColor = new(0.30f, 0.75f, 0.45f, 0.9f);
         private static readonly Color CooldownColor = new(0f, 0f, 0f, 0.65f);
         private static readonly Color EmptyNameColor = new(1f, 1f, 1f, 0.35f);
+        private static readonly Color FlashColor = new(1f, 0.85f, 0.45f, 0.95f);
+        private const float FlashDuration = 0.3f; // 반짝인 색에서 원래 배경색으로 돌아오는 시간
 
         private Image background;
+        private float flashRemaining; // 0보다 크면 반짝이는 중
         private Image icon;
         private Image cooldownFill;
         private Text cooldownText;
@@ -84,9 +87,14 @@ namespace TeamOdd.Superpower
         }
 
         // 슬롯에 든 칩을 그린다. null이면 빈 슬롯
+        // 칩이 바뀌면 이전 칩 스킬의 쿨타임 감소 알림은 끊고 새 칩 것을 받는다
         public void Show(OwnedChip chip)
         {
+            Unsubscribe();
             Chip = chip;
+            if (chip != null)
+                chip.Skill.CooldownReduced += Flash;
+
             icon.enabled = chip != null;
             if (chip != null)
                 icon.sprite = chip.Def.UnitSprite;
@@ -113,6 +121,34 @@ namespace TeamOdd.Superpower
 
         // 드래그 중에 놓을 수 있는 슬롯을 표시한다
         public void SetHighlight(bool on) => background.color = on ? HighlightColor : BackgroundColor;
+
+        // 아드레날린 과분비 칩처럼 쿨타임을 당겨 준 효과가 있으면 배경을 잠깐 밝혔다가 되돌린다
+        private void Flash()
+        {
+            flashRemaining = FlashDuration;
+        }
+
+        private void Update()
+        {
+            if (flashRemaining <= 0f)
+                return;
+
+            // 시간이 멈추는 스킬 중에도 반짝임은 끝나야 하므로 unscaled
+            flashRemaining = Mathf.Max(0f, flashRemaining - Time.unscaledDeltaTime);
+            background.color = Color.Lerp(BackgroundColor, FlashColor, flashRemaining / FlashDuration);
+        }
+
+        // 슬롯이 사라져도 칩은 남으므로 알림을 끊어 둔다
+        private void OnDestroy()
+        {
+            Unsubscribe();
+        }
+
+        private void Unsubscribe()
+        {
+            if (Chip != null)
+                Chip.Skill.CooldownReduced -= Flash;
+        }
 
         #region Input
 

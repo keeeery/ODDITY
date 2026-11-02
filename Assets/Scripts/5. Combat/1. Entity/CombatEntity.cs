@@ -26,11 +26,15 @@ namespace TeamOdd.Combat
         public int Hp => hp;
         public int Shield => Time.time < shieldEndTime ? shield : 0;
 
-        // true인 동안 피해를 받지 않는다 (시간 역행으로 되감는 중)
+        // true인 동안 피해를 받지 않는다 (시간 역행으로 되감는 중, 두 번째 심장으로 일어서는 중)
         public bool IsInvincible { get; set; }
 
-        // 피해를 체력에 적용하기 전에 물어볼 곳. 없으면 null (지금은 플레이어의 패시브 칩 실행기만 넣는다)
+        // 피해를 체력에 적용하기 전에 물어볼 곳. 없으면 null (플레이어는 Player가 구르기 무적과 패시브 칩을 묶어 답한다)
         public IDamageGuard Guard { get; set; }
+
+        // 무적과 Guard를 지나 이번 피해가 들어오기로 정해진 순간 한 번. 넉백 같은 피격 반응은 받는 쪽이 이걸 듣고 건다
+        // 보호막에 다 막혀도 맞은 것이므로 반응은 한다
+        public event Action<DamageEvent> Hit;
 
         public bool IsDead => hp <= 0;
         public GameObject GameObject => gameObject;
@@ -66,6 +70,8 @@ namespace TeamOdd.Combat
         {
             if (IsDead || IsInvincible) return 0;
             if (Guard != null && Guard.BlockDamage(@event)) return 0;
+
+            Hit?.Invoke(@event);
 
             int dmg = Mathf.Max(1, @event.Info.Damage - CurrentStats.Def);
 

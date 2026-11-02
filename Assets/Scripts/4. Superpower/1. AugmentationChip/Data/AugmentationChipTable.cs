@@ -62,7 +62,7 @@ namespace TeamOdd.Superpower
             Debug.Log(defs.Count);
         }
 
-        // StatChip.tsv: 공통 다섯 칸 + StatType, Value
+        // StatChip.tsv: 공통 여섯 칸 + StatType, Value
         private static List<StatChipDTO> ReadStatChips()
         {
             List<StatChipDTO> rows = new List<StatChipDTO>();
@@ -70,15 +70,15 @@ namespace TeamOdd.Superpower
             {
                 StatChipDTO chipDto = new();
                 ReadCommon(chipDto, cells);
-                chipDto.StatType = cells[5];
-                chipDto.Value = int.Parse(cells[6]);
+                chipDto.StatType = cells[6];
+                chipDto.Value = int.Parse(cells[7]);
                 rows.Add(chipDto);
             }
 
             return rows;
         }
 
-        // SkillChip.tsv: 공통 다섯 칸 + Category, SkillType, Cooldown, Cost, Params, PrefabKey
+        // SkillChip.tsv: 공통 여섯 칸 + Category, SkillType, Cooldown, Cost, Params, PrefabKey
         private static List<SkillChipDTO> ReadSkillChips()
         {
             List<SkillChipDTO> rows = new List<SkillChipDTO>();
@@ -86,15 +86,15 @@ namespace TeamOdd.Superpower
             {
                 SkillChipDTO chipDto = new();
                 ReadCommon(chipDto, cells);
-                chipDto.Category = cells[5];
-                chipDto.SkillType = cells[6];
+                chipDto.Category = cells[6];
+                chipDto.SkillType = cells[7];
                 // 소수점은 '.'으로 적는다.
-                chipDto.Cooldown = float.Parse(cells[7]);
-                chipDto.Cost = float.Parse(cells[8]);
+                chipDto.Cooldown = float.Parse(cells[8]);
+                chipDto.Cost = float.Parse(cells[9]);
                 // 매개변수가 없는 스킬은 비워 둔다. 줄 끝의 빈 칸이 잘려 있어도 빈 칸으로 본다
-                chipDto.Params = cells.Length > 9 ? cells[9] : "";
+                chipDto.Params = cells.Length > 10 ? cells[10] : "";
                 // 프리팹이 필요 없는 스킬은 비워 둔다. Resources 폴더 기준 경로 (예: Skill/PsychoOrb)
-                chipDto.PrefabKey = cells.Length > 10 ? cells[10] : "";
+                chipDto.PrefabKey = cells.Length > 11 ? cells[11] : "";
                 rows.Add(chipDto);
             }
 
@@ -122,7 +122,7 @@ namespace TeamOdd.Superpower
             return rows;
         }
 
-        // 두 표에 공통인 앞 다섯 칸
+        // 두 표에 공통인 앞 여섯 칸
         private static void ReadCommon(AugmentationChipDTO chipDto, string[] cells)
         {
             chipDto.ID = int.Parse(cells[0]);
@@ -130,6 +130,7 @@ namespace TeamOdd.Superpower
             chipDto.Description = cells[2];
             chipDto.CellCount = int.Parse(cells[3]);
             chipDto.UnitSpriteKey = cells[4];
+            chipDto.IconSpriteKey = cells[5];
         }
 
         // 공통 값을 Def로 옮긴다. 그림은 표에 적힌 경로로 찾아온다
@@ -139,6 +140,7 @@ namespace TeamOdd.Superpower
             def.Name = chipDto.Name;
             def.Description = chipDto.Description;
             def.UnitSprite = Resources.Load<Sprite>(chipDto.UnitSpriteKey);
+            def.IconSprite = Resources.Load<Sprite>(chipDto.IconSpriteKey);
             def.CellCount = chipDto.CellCount;
         }
 

@@ -47,11 +47,10 @@ namespace TeamOdd.Boss
         [Tooltip("지워지는 경계의 부드러운 폭(m), 클수록 흐릿하게 사라진다.")]
         [SerializeField, Min(0.01f)] private float wipeSoftness = 0.6f;
 
-        private readonly List<Mesh> bakedMeshes = new();
-        private readonly List<MeshRenderer> shellRenderers = new();
+        private readonly HologramShell hologram = new();
         private MaterialPropertyBlock properties;
-        private Transform shell;
-        private float halfHeight; // 구운 막의 절반 높이(m)
+        private Transform shell => hologram.Root;
+        private float halfHeight => hologram.HalfHeight;
         private float elapsed;
         private bool hasHiddenSource;
 
@@ -109,8 +108,6 @@ namespace TeamOdd.Boss
         {
             if (material == null) return;
 
-            Clear();
-
             if (Bake() == false) return;
 
             elapsed = 0f;
@@ -120,89 +117,7 @@ namespace TeamOdd.Boss
 
         #endregion
 
-        // 지금 자세를 구워 몸 중심에 둔 부모 아래 같은 자리에 놓음
-        private bool Bake()
-        {
-            Bounds bounds = default;
-            bool hasBounds = false;
-
-            foreach (Renderer source in GetSources())
-            {
-                if (hasBounds) bounds.Encapsulate(source.bounds);
-                else bounds = source.bounds;
-
-                hasBounds = true;
-            }
-
-            if (hasBounds == false) return false;
-
-            shell = new GameObject($"{name} Death Shed").transform;
-            halfHeight = bounds.extents.y;
-            shell.position = bounds.center;
-
-            foreach (Renderer source in GetSources())
-            {
-                GameObject part = new GameObject(source.name);
-                part.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
-
-                Mesh mesh;
-                if (source is SkinnedMeshRenderer skinned)
-                {
-                    // useScale은 렌더러 자신의 스케일만 구워 넣으므로, 부모(모델 루트 등)에 걸린 스케일은 놓을 때 곱함
-                    mesh = new Mesh { name = $"{source.name} Shed" };
-                    skinned.BakeMesh(mesh, true);
-                    bakedMeshes.Add(mesh);
-                    part.transform.localScale = GetParentScale(source.transform);
-                }
-                else
-                {
-                    // 일반 메시는 원본 메시를 그대로 쓰고 크기만 맞춤
-                    if (source.TryGetComponent(out MeshFilter filter) == false || filter.sharedMesh == null)
-                    {
-                        Destroy(part);
-                        continue;
-                    }
-
-                    mesh = filter.sharedMesh;
-                    part.transform.localScale = source.transform.lossyScale;
-                }
-
-                part.transform.SetParent(shell, true);
-                part.AddComponent<MeshFilter>().sharedMesh = mesh;
-
-                MeshRenderer meshRenderer = part.AddComponent<MeshRenderer>();
-                Material[] materials = new Material[mesh.subMeshCount];
-
-                for (int index = 0; index < materials.Length; index++) materials[index] = material;
-
-                meshRenderer.sharedMaterials = materials;
-                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                meshRenderer.receiveShadows = false;
-                shellRenderers.Add(meshRenderer);
-            }
-
-            return true;
-        }
-
-        private static Vector3 GetParentScale(Transform source)
-        {
-            Vector3 lossy = source.lossyScale;
-            Vector3 local = source.localScale;
-            return new Vector3(lossy.x / local.x, lossy.y / local.y, lossy.z / local.z);
-        }
-
-        private IEnumerable<Renderer> GetSources()
-        {
-            foreach (SkinnedMeshRenderer source in meshes)
-                if (IsVisible(source)) yield return source;
-
-            if (rigidMeshes == null) yield break;
-
-            foreach (MeshRenderer source in rigidMeshes)
-                if (IsVisible(source)) yield return source;
-        }
-
-        private static bool IsVisible(Renderer source) => source != null && source.enabled && source.gameObject.activeInHierarchy;
+        private bool Bake() => hologram.Bake($"{name} Death Shed", material, meshes, rigidMeshes);
 
         // 홀로그램이 다 나타난 뒤 원본을 꺼 보스가 홀로그램으로 바뀐 것처럼 보이게 함, 쓰러진 보스는 다시 보이지 않음
         private void HideSource()
@@ -254,19 +169,9 @@ namespace TeamOdd.Boss
             properties.SetVector(MaskSizeId, Vector3.one * MaskBoxSize);
             properties.SetFloat(MaskFalloffId, wipeSoftness);
 
-            foreach (MeshRenderer shellRenderer in shellRenderers) shellRenderer.SetPropertyBlock(properties);
+            hologram.SetPropertyBlock(properties);
         }
 
-        private void Clear()
-        {
-            if (shell != null) Destroy(shell.gameObject);
-
-            shell = null;
-            shellRenderers.Clear();
-
-            foreach (Mesh mesh in bakedMeshes) Destroy(mesh);
-
-            bakedMeshes.Clear();
-        }
+        private void Clear() => hologram.Clear();
     }
 }

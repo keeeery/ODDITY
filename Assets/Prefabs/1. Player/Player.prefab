@@ -189,6 +189,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4264485809676156296}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3846190275516204713}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -271,13 +274,13 @@ MonoBehaviour:
   rotateTowardMove: 1
   turnSpeed: 720
   rollDistance: 6
-  moveEndTime: 1
+  moveEndTime: 0.7
   speedCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0083351135
-      value: 0.98809814
+      time: 0.004840851
+      value: 1.1528625
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -517,10 +520,13 @@ MonoBehaviour:
   maxPlantDistance: 0.8
   moveBodyWithStep: 1
   maxBodyShift: 0.5
+  quickReleaseTime: 0.06
+  deathReleaseTime: 0.25
   groundFeet: 1
   rollGroundFrom: 0.5
   maxGroundDrop: 0.5
   groundDropReturnSpeed: 0.6
+  overshootReturnSpeed: 3
 --- !u!114 &6232883466832630808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -575,7 +581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
-  chipIds: df070000e0070000e1070000e2070000e3070000
+  chipIds: 6109000062090000630900006409000065090000
   grantOnStart: 1
   grantKey: 102
   inventory: {fileID: 288158857127106202}
@@ -591,6 +597,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bea77d00cdbace34591803178b6fe8ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.PassiveSkillRunner
+--- !u!114 &3846190275516204713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce199e5dc0b0621c3b6b770a809219e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.InGameDebugTool
+  damage: 999999
 --- !u!95 &1806036652689195332 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8074163760421901905, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}

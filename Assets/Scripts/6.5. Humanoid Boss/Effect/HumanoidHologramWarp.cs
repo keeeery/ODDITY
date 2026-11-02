@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TeamOdd.Boss;
 using UnityEngine;
 
@@ -46,13 +45,12 @@ namespace TeamOdd
             };
         }
 
-        private readonly List<Mesh> bakedMeshes = new();
-        private readonly List<MeshRenderer> shellRenderers = new();
+        private readonly HologramShell hologram = new();
         private MaterialPropertyBlock properties;
         private BossDeathShed source;
-        private Transform shell;
+        private Transform shell => hologram.Root;
         private Vector3 basePosition; // 구운 자리의 몸 중심
-        private float halfHeight;
+        private float halfHeight => hologram.HalfHeight;
 
         private void Awake() => properties = new MaterialPropertyBlock();
 
@@ -73,64 +71,10 @@ namespace TeamOdd
         // 지금 보이는 렌더러의 자세를 구움. 나타날 때는 원본이 숨겨진 채라 잠깐 보이게 한 같은 프레임에 불러야 함
         public bool Bake()
         {
-            Clear();
+            if (hologram.Bake($"{name} Hologram Warp", source.Material, source.SkinnedMeshes, source.RigidMeshes) == false)
+                return false;
 
-            Bounds bounds = default;
-            bool hasBounds = false;
-
-            foreach (Renderer renderer in GetSources())
-            {
-                if (hasBounds) bounds.Encapsulate(renderer.bounds);
-                else bounds = renderer.bounds;
-
-                hasBounds = true;
-            }
-
-            if (hasBounds == false) return false;
-
-            shell = new GameObject($"{name} Hologram Warp").transform;
-            basePosition = bounds.center;
-            halfHeight = bounds.extents.y;
-            shell.position = basePosition;
-
-            Material material = source.Material;
-            foreach (Renderer renderer in GetSources())
-            {
-                GameObject part = new GameObject(renderer.name);
-                part.transform.SetPositionAndRotation(renderer.transform.position, renderer.transform.rotation);
-
-                Mesh mesh;
-                if (renderer is SkinnedMeshRenderer skinned)
-                {
-                    mesh = new Mesh { name = $"{renderer.name} Warp" };
-                    skinned.BakeMesh(mesh, true);
-                    bakedMeshes.Add(mesh);
-                    part.transform.localScale = GetParentScale(renderer.transform);
-                }
-                else
-                {
-                    if (renderer.TryGetComponent(out MeshFilter filter) == false || filter.sharedMesh == null)
-                    {
-                        Destroy(part);
-                        continue;
-                    }
-
-                    mesh = filter.sharedMesh;
-                    part.transform.localScale = renderer.transform.lossyScale;
-                }
-
-                part.transform.SetParent(shell, true);
-                part.AddComponent<MeshFilter>().sharedMesh = mesh;
-
-                MeshRenderer meshRenderer = part.AddComponent<MeshRenderer>();
-                Material[] materials = new Material[mesh.subMeshCount];
-                for (int index = 0; index < materials.Length; index++) materials[index] = material;
-
-                meshRenderer.sharedMaterials = materials;
-                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                meshRenderer.receiveShadows = false;
-                shellRenderers.Add(meshRenderer);
-            }
+            basePosition = shell.position;
 
             Apply(0f, -1f, 0f, float.NegativeInfinity);
             return true;
@@ -216,39 +160,9 @@ namespace TeamOdd
             Clear();
         }
 
-        public void Clear()
-        {
-            if (shell != null) Destroy(shell.gameObject);
-
-            shell = null;
-            shellRenderers.Clear();
-
-            foreach (Mesh mesh in bakedMeshes) Destroy(mesh);
-
-            bakedMeshes.Clear();
-        }
+        public void Clear() => hologram.Clear();
 
         #endregion
-
-        private IEnumerable<Renderer> GetSources()
-        {
-            foreach (SkinnedMeshRenderer renderer in source.SkinnedMeshes)
-                if (IsVisible(renderer)) yield return renderer;
-
-            if (source.RigidMeshes == null) yield break;
-
-            foreach (MeshRenderer renderer in source.RigidMeshes)
-                if (IsVisible(renderer)) yield return renderer;
-        }
-
-        private static bool IsVisible(Renderer renderer) => renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy;
-
-        private static Vector3 GetParentScale(Transform target)
-        {
-            Vector3 lossy = target.lossyScale;
-            Vector3 local = target.localScale;
-            return new Vector3(lossy.x / local.x, lossy.y / local.y, lossy.z / local.z);
-        }
 
         // fade: 0~1, 사망 연출의 불투명도를 곱함 / offsetY: 구운 자리에서 위로 옮긴 높이(m)
         // wipeHeight 아래는 안 보이고 그 위 softness 폭에 걸쳐 보임, 음의 무한대면 마스크 없이 다 보임
@@ -263,7 +177,7 @@ namespace TeamOdd
             properties.SetVector(MaskSizeId, Vector3.one * MaskBoxSize);
             properties.SetFloat(MaskFalloffId, softness);
 
-            foreach (MeshRenderer shellRenderer in shellRenderers) shellRenderer.SetPropertyBlock(properties);
+            hologram.SetPropertyBlock(properties);
         }
     }
 }

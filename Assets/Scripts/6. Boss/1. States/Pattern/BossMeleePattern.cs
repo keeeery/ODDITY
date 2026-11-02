@@ -287,32 +287,19 @@ namespace TeamOdd.Boss
             return true;
         }
 
-        // 무적(구르기, 기상 직후)이 아니면 피격 반응과 피해를 함께 전달, hitCenter는 넉백 방향을 FromHitCenter로 정할 때 기준점
-        // 회피 패시브(조건 반사 칩)가 막으면 둘 다 보내지 않음. 피격 반응이 피해보다 먼저 들어가므로 반응 전에 물어봄
-        protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint)
+        // 피해·반응·밀어낼 방향을 피해 이벤트 하나로 보냄, 맞을지(무적·회피)와 넉백/넉다운 처리는 피격 대상이 담당
+        // hitCenter는 넉백 방향을 FromHitCenter로 정할 때 기준점, 보낸 쪽은 보스 전용 피격 처리(ICombatable)를 정리할 때까지 비워 둠
+        // unavoidable이면 구르기·회피 칩으로 피할 수 없는 확정 피격으로 보냄
+        protected void ApplyHit(Vector3 hitCenter, int damage, HitReaction reaction, HitPush push, Vector3 hitPoint, bool unavoidable = false)
         {
-            Player.PlayerController player = Player.Player.Instance.PlayerController;
-            if (player.IsInvincible) return;
-
-            CombatEntity playerEntity = player.GetComponent<CombatEntity>();
-            DamageEvent incoming = new DamageEvent(null, playerEntity, new DamageInfo(damage, hitPoint, playerEntity.Collider, reaction));
-            if (playerEntity.Guard != null && playerEntity.Guard.BlockDamage(incoming)) return;
-
-            player.ApplyHitReaction(reaction, push.GetDirection(root.transform, hitCenter, Target.position), push,
-                root.transform.position);
-            SendDamage(damage, reaction, hitPoint);
-        }
-
-        // 피해를 받을 수 있는 대상일 때만 전달, 보낸 쪽은 보스 전용 피격 처리(ICombatable)를 정리할 때까지 비워 둠
-        // 반응은 피해 정보에 담아 보내고, 넉백/넉다운 처리는 피격 대상이 담당
-        protected void SendDamage(int damage, HitReaction reaction, Vector3 hitPoint)
-        {
-            Debug.Log($"[{GetType().Name}] 피격, 피해 {damage}, 반응 {reaction}", this);
-
             ICombatable receiver = Target.GetComponentInParent<ICombatable>();
             if (receiver == null) return;
 
-            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, reaction);
+            Debug.Log($"[{GetType().Name}] 타격, 피해 {damage}, 반응 {reaction}", this);
+
+            Vector3 pushDirection = push.GetDirection(root.transform, hitCenter, Target.position);
+            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, reaction,
+                push: push, pushDirection: pushDirection, attackerPosition: root.transform.position, unavoidable: unavoidable);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(null, receiver, info));
         }
 

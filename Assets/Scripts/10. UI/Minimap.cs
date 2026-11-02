@@ -62,11 +62,8 @@ namespace TeamOdd.UI
 
         [Header("Colors")]
         [SerializeField] private Color backgroundColor = new(0f, 0f, 0f, 0.5f);
-        // 지형은 세부 없이 바닥 실루엣만 단색으로 채우고 경계에 외곽선을 두른다.
+        // 지형은 세부 없이 바닥 실루엣만 단색으로 채운다.
         [SerializeField] private Color groundFillColor = new(0.396f, 0.389f, 0.374f, 0.8f);
-        [SerializeField] private Color groundOutlineColor = new(0.9f, 0.87f, 0.82f, 1f);
-        // 지형 외곽선 두께(굽기 격자 칸)
-        [SerializeField, Range(0f, 4f)] private float groundOutlineWidth = 1.5f;
         [SerializeField] private Color playerColor = Color.white;
         [SerializeField] private Color bossColor = Color.red;
         [SerializeField] private Color objectColor = Color.cyan;
@@ -191,7 +188,7 @@ namespace TeamOdd.UI
             mapYaw = viewCamera != null ? viewCamera.eulerAngles.y : player.transform.eulerAngles.y;
             if (ground == null || walkable == null) return;
 
-            ground.SetStyle(backgroundColor, groundFillColor, groundOutlineColor, groundOutlineWidth);
+            ground.SetStyle(backgroundColor, groundFillColor);
             Vector3 position = player.transform.position;
             Vector2 center = new Vector2(
                 (position.x - walkable.Origin.x) / walkable.Size.x,

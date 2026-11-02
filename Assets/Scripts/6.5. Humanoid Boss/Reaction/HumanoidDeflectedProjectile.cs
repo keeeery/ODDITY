@@ -153,29 +153,25 @@ namespace TeamOdd
             body.ResetInertiaTensor();
         }
 
-        // 보스 투척과 같은 판정, 무적(구르기 등)이면 피해 없이 부서지기만 함
+        // 보스 투척과 같은 판정, 맞을지(무적·회피)와 넉백은 피격 대상이 정하고 여기서는 피해 이벤트만 보냄. 맞든 피하든 부서짐
         // 플레이어 몸(CharacterController)은 ClosestPoint로 맞은 면을 얻을 수 없어 파편이 몸과 겹쳐 생성이 막힐 수 있음 → 날아온 쪽으로 튀게 함
         private void Hit(Collider targetCollider)
         {
             Vector3 center = body.worldCenterOfMass;
             Vector3 hitPoint = targetCollider.ClosestPoint(center);
 
-            Player.PlayerController player = Player.Player.Instance.PlayerController;
-            if (player.IsInvincible == false)
-            {
-                player.ApplyHitReaction(reaction, push.GetDirection(transform, center, target.position), push, center);
-                SendDamage(hitPoint);
-            }
-
+            SendDamage(hitPoint, center);
             Break(center + flightDirection);
         }
 
-        private void SendDamage(Vector3 hitPoint)
+        // 밀어낼 방향과 바라볼 공격자 위치는 날아온 물체 중심(center) 기준
+        private void SendDamage(Vector3 hitPoint, Vector3 center)
         {
             ICombatable receiver = target.GetComponentInParent<ICombatable>();
             if (receiver == null) return;
 
-            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, reaction);
+            DamageInfo info = new DamageInfo(damage, hitPoint, receiver.Collider, reaction,
+                push: push, pushDirection: push.GetDirection(transform, center, target.position), attackerPosition: center);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(null, receiver, info));
         }
 

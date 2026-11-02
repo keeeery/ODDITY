@@ -177,24 +177,14 @@ namespace TeamOdd.UI
         {
             float glitchStart = afterAnimationDelay;
             float glitchEnd = glitchStart + glitchDuration;
-            float foldEnd = glitchEnd + foldDuration;
-            float shrinkEnd = foldEnd + shrinkDuration;
-            float offTime = shrinkEnd + dotFadeDuration;
             float messageTime = glitchEnd + messageDelay;
             float contentTime = messageTime + bandReveal.OpenDuration;
 
             sequence?.Kill();
             sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
 
-            // 글리치는 점점 세지다가 화면이 접히기 시작할 때 끊긴다
-            sequence.Insert(glitchStart, DOTween.To(() => ScreenGlitch.Glitch, value => ScreenGlitch.Glitch = value, 1f, glitchDuration)
-                .SetEase(Ease.InQuad));
+            float offTime = ScreenOffEffect.Insert(sequence, glitchStart, glitchDuration, foldDuration, shrinkDuration, dotFadeDuration);
             if (hudGlitch != null) sequence.InsertCallback(glitchStart, () => hudGlitch.Play(glitchDuration, 1f, true));
-            sequence.InsertCallback(glitchEnd, () => ScreenGlitch.Glitch = 0f);
-
-            sequence.Insert(glitchEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 1f, foldDuration).SetEase(Ease.InCubic));
-            sequence.Insert(foldEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 2f, shrinkDuration).SetEase(Ease.InCubic));
-            sequence.Insert(shrinkEnd, DOTween.To(() => ScreenGlitch.PowerOff, SetPowerOff, 3f, dotFadeDuration).SetEase(Ease.OutQuad));
 
             // 화면이 접히는 동안 문구 띠가 같은 가운데 선에서 열린다. 배경은 꺼지는 화면이 보이도록 투명하게 둔다
             sequence.InsertCallback(messageTime, () =>
@@ -248,8 +238,9 @@ namespace TeamOdd.UI
 
         private void Finish()
         {
-            Close();
+            // Close();
             Finished?.Invoke();
+            SceneLoadManager.Instance.LoadScene("02. Lobby");
         }
 
         private void SetBlackoutAlpha(float alpha)
@@ -259,8 +250,6 @@ namespace TeamOdd.UI
             color.a = alpha;
             blackout.color = color;
         }
-
-        private static void SetPowerOff(float value) => ScreenGlitch.PowerOff = value;
 
 #if UNITY_EDITOR
         private const string PanelName = "Panel";

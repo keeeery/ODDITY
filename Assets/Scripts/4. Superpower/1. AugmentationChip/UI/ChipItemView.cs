@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace TeamOdd.Superpower
 {
     /// <summary>
-    /// 트레이/그리드 위에 놓이는 칩 하나. 칩 모양(단위 칸, 외곽선, 이름)을 그리고 포인터 입력을 이벤트로 넘긴다.
+    /// 트레이/그리드 위에 놓이는 칩 하나. 칩 모양(단위 칸, 외곽선, 아이콘)을 그리고 포인터 입력을 이벤트로 넘긴다.
     /// 어디에 놓을지는 AugmentationChipPanel이 결정하고, 장착 기록은 Owned(OwnedChip)에 있다.
     /// 이 컴포넌트는 지금 화면에 그려진 방향(Cells/Rotation)만 들고 있다.
     /// </summary>
@@ -23,7 +23,7 @@ namespace TeamOdd.Superpower
 
         private readonly List<RectTransform> units = new();
         private RectTransform outlineRoot;
-        private RectTransform label;
+        private RectTransform icon;
         private RectTransform newBadge; // 아직 확인하지 않은 칩에만 있다. 확인하면 지우고 null
 
         public OwnedChip Owned { get; private set; }
@@ -78,18 +78,14 @@ namespace TeamOdd.Superpower
                 units.Add(unit);
             }
 
-            // 첫 칸에 칩 이름을 표시
-            label = CreateRect("Label", transform);
-            label.gameObject.layer = gameObject.layer;
-            label.sizeDelta = new Vector2(ChipGridMetrics.CellSize, ChipGridMetrics.CellSize);
+            // 첫 칸에 칩 아이콘을 표시
+            icon = CreateRect("Icon", transform);
+            icon.sizeDelta = new Vector2(ChipGridMetrics.CellSize, ChipGridMetrics.CellSize);
 
-            Text text = label.gameObject.AddComponent<Text>();
-            text.font = font;
-            text.fontSize = 36;
-            text.alignment = TextAnchor.MiddleCenter;
-            text.color = Color.black;
-            text.text = def.Name;
-            text.raycastTarget = false;
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.sprite = def.IconSprite;
+            iconImage.preserveAspect = true;
+            iconImage.raycastTarget = false;
 
             if (Owned.IsNew)
                 BuildNewBadge(font);
@@ -166,7 +162,7 @@ namespace TeamOdd.Superpower
         }
 
         // i번째 단위 칩을 Cells[i] 위치로 옮기고 외곽선을 다시 그린다
-        // 라벨은 Cells[0] 칸을 따라가고, 새로 그린 외곽선에 가리지 않게 맨 위로 올린다
+        // 아이콘은 Cells[0] 칸을 따라가고, 새로 그린 외곽선에 가리지 않게 맨 위로 올린다
         private void RefreshShape()
         {
             for (int i = 0; i < units.Count; i++)
@@ -174,12 +170,12 @@ namespace TeamOdd.Superpower
 
             BuildOutline();
 
-            label.anchoredPosition = ChipGridMetrics.CellPosition(Cells[0]);
-            label.SetAsLastSibling();
+            icon.anchoredPosition = ChipGridMetrics.CellPosition(Cells[0]);
+            icon.SetAsLastSibling();
 
             if (newBadge != null)
             {
-                newBadge.anchoredPosition = label.anchoredPosition + NewBadgeOffset;
+                newBadge.anchoredPosition = icon.anchoredPosition + NewBadgeOffset;
                 newBadge.SetAsLastSibling();
             }
         }

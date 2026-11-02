@@ -491,15 +491,13 @@ namespace TeamOdd
             ScreenGlitch.Desaturate = 0f;
         }
 
-        // 확정 피격: BossMeleePattern.ApplyHit의 무적 검사를 거치지 않고 반응과 피해를 직접 보냄
+        // 확정 피격: 구르기·회피 칩으로 피할 수 없는 피해(unavoidable)로 보냄, 넉다운 처리는 피격 대상이 담당
         private void HitTarget()
         {
             PlayerController player = PlayerController;
             if (player.IsRolling) player.EndRoll();
 
-            Vector3 bossPosition = root.transform.position;
-            player.ApplyHitReaction(HitReaction.Knockdown, push.GetDirection(root.transform, bossPosition, Target.position), push, bossPosition);
-            SendDamage(GetDamage(), HitReaction.Knockdown, Target.position + Vector3.up);
+            ApplyHit(root.transform.position, GetDamage(), HitReaction.Knockdown, push, Target.position + Vector3.up, unavoidable: true);
         }
 
         private int GetDamage()

@@ -215,7 +215,10 @@ namespace TeamOdd.Player
         public float MinimapFacingYaw => transform.eulerAngles.y - minimapYawOffset;
         public bool IsGrounded => controller.isGrounded;
         public bool IsRolling { get; private set; }
+        // 지금 구르기를 누가 시작했는지. 구르는 동안만 의미가 있다
+        public DodgeType RollType { get; private set; }
         public bool IsSprinting { get; private set; }
+        // 구르기·기상 직후 무적. 피해를 막을지는 Player.BlockDamage가 이 값을 보고 정한다
         public bool IsInvincible { get; private set; }
         public bool IsDead => isDead;
         // 염동 내려찍기처럼 시전 중 이동·구르기·공격·다른 스킬과 카메라 회전을 막는 동안
@@ -311,7 +314,7 @@ namespace TeamOdd.Player
             FaceSidestep();
             CheckRollInput();
 
-            Debug.Log("UI Close pc"+isUIClose);
+            //Debug.Log("UI Close pc"+isUIClose);
             
             heldObject = psychokinesisController.HeldObject;
             animator.SetLayerWeight(holdLayer, HoldTarget == null && IsAttackStance == false ? 0.0f : 1.0f);
@@ -462,11 +465,12 @@ namespace TeamOdd.Player
             OnRollRequested?.Invoke();
         }
 
-        public void InputRolling()
+        public void InputRolling(DodgeType type)
         {
             if (IsRolling) return;
 
             IsRolling = true;
+            RollType = type;
 
             // 구르기 방향 결정 (입력 방향 혹은 정면)
             Transform reference = moveReference != null ? moveReference : transform;
@@ -1355,8 +1359,6 @@ namespace TeamOdd.Player
                 if (toAttacker.sqrMagnitude < 0.0001f) hitDir = 0f;
 
                 animator.SetFloat(HitDir, hitDir);
-
-                // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
                 animator.SetInteger(HitMotion, motionIndex);
                 animator.SetTrigger(Hit);
 

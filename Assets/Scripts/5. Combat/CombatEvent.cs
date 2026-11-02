@@ -33,14 +33,27 @@ namespace TeamOdd.Combat
         public HitReaction Reaction { get; }
         // 무력화 피해, 받는 쪽에 무력화 수치가 있으면 그만큼 깎는다(보스 BossGroggy). 방어력은 적용하지 않음
         public int Groggy { get; }
-        
-        public DamageInfo(int damage, Vector3 hitPoint, Collider collider, HitReaction reaction = HitReaction.None, int groggy = 0)
+        // 밀어내는 거리·높이·시간. 기본값(0)이면 밀지 않고 피격 모션만 재생한다
+        public HitPush Push { get; }
+        // 밀려날 수평 방향. 공격자·판정 중심을 아는 보내는 쪽이 HitPush.GetDirection으로 구해 넣는다
+        public Vector3 PushDirection { get; }
+        // 맞는 순간 바라볼 공격자 위치
+        public Vector3 AttackerPosition { get; }
+        // true면 구르기·회피 칩으로 피할 수 없는 확정 피격. 시간 역행 같은 스킬 무적(CombatEntity.IsInvincible)은 그대로 막는다
+        public bool Unavoidable { get; }
+
+        public DamageInfo(int damage, Vector3 hitPoint, Collider collider, HitReaction reaction = HitReaction.None, int groggy = 0,
+            HitPush push = default, Vector3 pushDirection = default, Vector3 attackerPosition = default, bool unavoidable = false)
         {
             Damage = damage;
             HitPoint = hitPoint;
             Collider = collider;
             Reaction = reaction;
             Groggy = groggy;
+            Push = push;
+            PushDirection = pushDirection;
+            AttackerPosition = attackerPosition;
+            Unavoidable = unavoidable;
         }
     }
 

@@ -23,7 +23,8 @@ namespace TeamOdd
                 return;
 
             isLoading = true;
-            SceneManager.LoadScene(firstSceneName);
+            SceneLoadManager.Instance.LoadScene(firstSceneName);
+            // SceneManager.LoadScene(firstSceneName);
         }
 
         public void QuitGame()

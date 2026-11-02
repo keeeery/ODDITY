@@ -37,6 +37,16 @@ namespace TeamOdd.UI
         private CanvasGroup group;
         private Sequence sequence;
 
+        // 화면 가운데에서 글자 블록 왼쪽 끝까지 가로 거리, 화면 너비 비율. 루트가 화면 전체를 덮는다고 봄
+        public float HorizontalOffsetRatio
+        {
+            get
+            {
+                float width = ((RectTransform)transform).rect.width;
+                return width > 0f ? screenOffset.x / width : 0f;
+            }
+        }
+
         private void Awake()
         {
             group = GetComponent<CanvasGroup>();

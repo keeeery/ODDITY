@@ -11,7 +11,7 @@ namespace TeamOdd.Superpower.Development
     public class AugmentationChipGrantTester : MonoBehaviour
     {
         [Tooltip("넣을 칩의 Id (StatChip.tsv, SkillChip.tsv)")]
-        [SerializeField] private int[] chipIds = { 2006, 2007 };
+        [SerializeField] private int[] chipIds = { 2302, 2102 };
         [SerializeField] private bool grantOnStart = true;
         [SerializeField] private Key grantKey = Key.F9;
         [Tooltip("비어 있으면 같은 오브젝트에서 찾는다.")]
