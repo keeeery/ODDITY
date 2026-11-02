@@ -6,7 +6,7 @@ namespace TeamOdd
     // 시작 씬의 게임 시작 / 종료 버튼
     public class StartMenuUI : MonoBehaviour
     {
-        [SerializeField] private string firstSceneName = "1. Get mission 1";
+        [SerializeField] private string firstSceneName = "02. Lobby";
 
         private bool isLoading;
 

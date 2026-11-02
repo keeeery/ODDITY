@@ -1,11 +1,11 @@
 Id	Name	Description	CellCount	UnitSpriteKey	IconSpriteKey	StatType	Value
-1101	강화 근섬유 칩(S)	초능력의 기본 공격력이 5 증가합니다.	2	AugmentationChip/ChipUnit_Red	AugmentationChip/Icon/Stat/Stat_Atk_S	Atk	5
-1102	강화 근섬유 칩(M)	초능력의 기본 공격력이 10 증가합니다.	3	AugmentationChip/ChipUnit_Red	AugmentationChip/Icon/Stat/Stat_Atk_M	Atk	10
-1301	생체 증폭 칩(S)	최대 체력이 20 증가합니다.	2	AugmentationChip/ChipUnit_Green	AugmentationChip/Icon/Stat/Stat_MaxHp_S	MaxHp	20
-1302	생체 증폭 칩(M)	최대 체력이 40 증가합니다.	3	AugmentationChip/ChipUnit_Green	AugmentationChip/Icon/Stat/Stat_MaxHp_M	MaxHp	40
-1401	염동력 강화 칩(S)	염동력으로 들 수 있는 최대 질량이 5kg 증가합니다.	2	AugmentationChip/ChipUnit_Yellow	AugmentationChip/Icon/Stat/Stat_PsychoMaxMass_S	PsychoMaxMass	5
-1402	염동력 강화 칩(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	3	AugmentationChip/ChipUnit_Yellow	AugmentationChip/Icon/Stat/Stat_PsychoMaxMass_M	PsychoMaxMass	10
-1501	스태미나 강화 칩(S)	최대 스태미나가 20 증가합니다.	2	AugmentationChip/ChipUnit_Orange	AugmentationChip/Icon/Stat/Stat_MaxStamina_S	MaxStamina	20
-1502	스태미나 강화 칩(M)	최대 스태미나가 40 증가합니다.	3	AugmentationChip/ChipUnit_Orange	AugmentationChip/Icon/Stat/Stat_MaxStamina_M	MaxStamina	40
-1601	염동력 사거리 강화 칩(S)	염동력 기본 공격의 사거리가 2m 증가합니다.	2	AugmentationChip/ChipUnit_Cyan	AugmentationChip/Icon/Stat/Stat_AttackRange_S	AttackRange	2
-1602	염동력 사거리 강화 칩(M)	염동력 기본 공격의 사거리가 4m 증가합니다.	3	AugmentationChip/ChipUnit_Cyan	AugmentationChip/Icon/Stat/Stat_AttackRange_M	AttackRange	4
+1101	강화 근섬유(S)	초능력의 기본 공격력이 5 증가합니다.	2	AugmentationChip/ChipUnit_Red	AugmentationChip/Icon/Stat/Stat_Atk_S	Atk	5
+1102	강화 근섬유(M)	초능력의 기본 공격력이 10 증가합니다.	3	AugmentationChip/ChipUnit_Red	AugmentationChip/Icon/Stat/Stat_Atk_M	Atk	10
+1301	생체 증폭(S)	최대 체력이 20 증가합니다.	2	AugmentationChip/ChipUnit_Green	AugmentationChip/Icon/Stat/Stat_MaxHp_S	MaxHp	20
+1302	생체 증폭(M)	최대 체력이 40 증가합니다.	3	AugmentationChip/ChipUnit_Green	AugmentationChip/Icon/Stat/Stat_MaxHp_M	MaxHp	40
+1401	염동력 강화(S)	염동력으로 들 수 있는 최대 질량이 5kg 증가합니다.	2	AugmentationChip/ChipUnit_Yellow	AugmentationChip/Icon/Stat/Stat_PsychoMaxMass_S	PsychoMaxMass	5
+1402	염동력 강화(M)	염동력으로 들 수 있는 최대 질량이 10kg 증가합니다.	3	AugmentationChip/ChipUnit_Yellow	AugmentationChip/Icon/Stat/Stat_PsychoMaxMass_M	PsychoMaxMass	10
+1501	스태미나 강화(S)	최대 스태미나가 20 증가합니다.	2	AugmentationChip/ChipUnit_Orange	AugmentationChip/Icon/Stat/Stat_MaxStamina_S	MaxStamina	20
+1502	스태미나 강화(M)	최대 스태미나가 40 증가합니다.	3	AugmentationChip/ChipUnit_Orange	AugmentationChip/Icon/Stat/Stat_MaxStamina_M	MaxStamina	40
+1601	염동력 사거리 강화(S)	염동력 기본 공격의 사거리가 2m 증가합니다.	2	AugmentationChip/ChipUnit_Cyan	AugmentationChip/Icon/Stat/Stat_AttackRange_S	AttackRange	2
+1602	염동력 사거리 강화(M)	염동력 기본 공격의 사거리가 4m 증가합니다.	3	AugmentationChip/ChipUnit_Cyan	AugmentationChip/Icon/Stat/Stat_AttackRange_M	AttackRange	4

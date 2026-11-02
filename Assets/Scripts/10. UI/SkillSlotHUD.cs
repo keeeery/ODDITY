@@ -6,16 +6,18 @@ using TeamOdd.Superpower;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace TeamOdd.UI
 {
-    // 화면 하단 중앙의 액티브 스킬 슬롯(1~5번), 장착한 스킬 이름과 남은 쿨타임을 보여준다.
+    // 화면 하단 중앙의 액티브 스킬 슬롯(1~5번), 장착한 스킬 아이콘과 남은 쿨타임을 보여준다.
     // 슬롯 줄 위에는 넉다운 조기 기상의 쿨타임이 도는 동안만 같은 모양의 기상기 슬롯을 띄운다.
     // 슬롯은 씬에 배치해 두고 참조로 연결한다. 컴포넌트 우클릭 → "1. Build Skill Slot UI" 로 자식 슬롯을 만든다.
     // 장착·해제·순서 변경은 인벤토리의 SkillSlotsChanged로 다시 그리고, 쿨타임은 매 프레임 스킬에서 읽는다.
+    // 스킬 아이콘 이미지는 이미 배치된 씬과 프리팹에도 들어가도록 시작할 때 슬롯마다 만든다.
     public class SkillSlotHUD : MonoBehaviour
     {
         // 슬롯 하나에 붙는 그래픽과 글자
@@ -26,9 +28,11 @@ namespace TeamOdd.UI
             public TMP_Text Key;
             public TMP_Text Name;
             public TMP_Text Cooldown;
+            [NonSerialized] public Image Icon;
             [NonSerialized] public OwnedChip Chip;
             [NonSerialized] public bool WasCoolingDown;
             [NonSerialized] public Tween FlashTween;
+            [NonSerialized] public Tween PunchTween;
         }
 
         [Header("References")]
@@ -45,12 +49,18 @@ namespace TeamOdd.UI
         [Header("Style")]
         [Tooltip("모든 슬롯 그래픽에 같은 값을 넘긴다.")]
         [SerializeField] private SkillSlotStyle style = new();
-        [Tooltip("이름 앞에서부터 보여줄 글자 수, 아이콘이 생기기 전까지 이름 첫 단어로 슬롯을 구분한다.")]
-        [SerializeField, Min(1)] private int nameLength = 3;
+        [Tooltip("슬롯 테두리와 스킬 아이콘 사이 여백")]
+        [SerializeField, Min(0f)] private float iconPadding = 6f;
 
         [Header("Ready Flash")]
-        [Tooltip("쿨타임이 끝나는 순간 슬롯이 하얗게 번쩍였다 사라지는 시간(초)")]
+        [Tooltip("쿨타임이 끝나거나 당겨지는 순간 슬롯이 하얗게 번쩍였다 사라지는 시간(초)")]
         [SerializeField, Min(0.01f)] private float readyFlashDuration = 0.3f;
+
+        [Header("Cooldown Reduced Punch")]
+        [Tooltip("쿨타임이 당겨지는 순간 슬롯이 커지는 정도, 0.15면 1.15배까지 커졌다 돌아온다.")]
+        [SerializeField, Min(0f)] private float reducedPunchScale = 0.15f;
+        [Tooltip("커졌다 돌아오는 데 걸리는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float reducedPunchDuration = 0.25f;
 
         private void Awake()
         {
@@ -61,6 +71,7 @@ namespace TeamOdd.UI
                 Debug.LogWarning($"{name}: 배치된 스킬 슬롯이 {slots.Count}개로 {AugmentationChipInventory.SkillSlotCount}개와 다릅니다. '1. Build Skill Slot UI' 로 다시 만드세요.", this);
 
             ApplyStyle();
+            CreateIcons();
             UpdateWakeUpSlot();
         }
 
@@ -81,10 +92,16 @@ namespace TeamOdd.UI
             if (inventory != null) inventory.SkillSlotsChanged -= Refresh;
             foreach (Slot slot in slots)
             {
+                // 칩은 씬을 넘어 남으므로 쿨타임 감소 알림을 끊어 둔다.
+                if (slot.Chip != null) slot.Chip.Skill.CooldownReduced -= HandleCooldownReduced;
+                slot.Chip = null;
                 if (slot.Graphic == null) continue;
                 slot.FlashTween?.Kill();
                 slot.FlashTween = null;
                 slot.Graphic.FlashAlpha = 0f;
+                slot.PunchTween?.Kill();
+                slot.PunchTween = null;
+                slot.Graphic.transform.localScale = Vector3.one;
             }
         }
 
@@ -102,6 +119,30 @@ namespace TeamOdd.UI
             if (wakeUpSlot?.Graphic != null) wakeUpSlot.Graphic.SetStyle(style);
         }
 
+        // 아이콘은 슬롯 그래픽 위, 글자(키, 남은 초) 아래에 둔다.
+        private void CreateIcons()
+        {
+            foreach (Slot slot in slots)
+            {
+                if (slot.Graphic == null) continue;
+
+                GameObject iconObject = new GameObject("Icon", typeof(RectTransform));
+                iconObject.layer = slot.Graphic.gameObject.layer;
+                RectTransform rect = (RectTransform)iconObject.transform;
+                rect.SetParent(slot.Graphic.transform, false);
+                rect.SetAsFirstSibling();
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = new Vector2(iconPadding, iconPadding);
+                rect.offsetMax = new Vector2(-iconPadding, -iconPadding);
+
+                slot.Icon = iconObject.AddComponent<Image>();
+                slot.Icon.preserveAspect = true;
+                slot.Icon.raycastTarget = false;
+                slot.Icon.enabled = false;
+            }
+        }
+
         private void Refresh()
         {
             int count = Mathf.Min(slots.Count, inventory.SkillSlots.Count);
@@ -110,9 +151,13 @@ namespace TeamOdd.UI
                 Slot slot = slots[index];
                 if (slot.Graphic == null) continue;
 
+                // 아드레날린 과분비 칩처럼 쿨타임을 당겨 주는 효과가 있으면 슬롯을 번쩍이도록 지금 칩의 알림만 받는다.
+                if (slot.Chip != null) slot.Chip.Skill.CooldownReduced -= HandleCooldownReduced;
                 slot.Chip = inventory.SkillSlots[index];
+                if (slot.Chip != null) slot.Chip.Skill.CooldownReduced += HandleCooldownReduced;
                 slot.Graphic.HasSkill = slot.Chip != null;
-                slot.Name.text = slot.Chip != null ? GetShortName(slot.Chip.Def.Name) : "";
+                slot.Icon.enabled = slot.Chip != null;
+                if (slot.Chip != null) slot.Icon.sprite = slot.Chip.Def.IconSprite;
                 // 장착하는 순간 쿨타임이 이미 끝나 있으면 번쩍이는 연출 없이 바로 사용 가능 상태로 둔다.
                 slot.WasCoolingDown = slot.Chip != null && slot.Chip.Skill.IsReady == false;
                 slot.FlashTween?.Kill();
@@ -133,19 +178,38 @@ namespace TeamOdd.UI
             slot.Graphic.CooldownRatio = skill != null && skill.Cooldown > 0f ? remaining / skill.Cooldown : 0f;
             slot.Cooldown.text = coolingDown ? Mathf.CeilToInt(remaining).ToString() : "";
 
-            // 쿨타임 중에는 이름을 흐리게 깔고 남은 초를 위에 띄운다.
-            slot.Name.alpha = coolingDown ? 0.45f : 1f;
+            // 쿨타임 중에는 아이콘을 흐리게 깔고 남은 초를 위에 띄운다.
+            slot.Icon.color = new Color(1f, 1f, 1f, coolingDown ? 0.45f : 1f);
             slot.Key.alpha = slot.Chip != null ? 0.55f : 0.3f;
 
-            if (slot.WasCoolingDown && coolingDown == false)
-            {
-                slot.FlashTween?.Kill();
-                slot.Graphic.FlashAlpha = 1f;
-                slot.FlashTween = DOTween.To(() => slot.Graphic.FlashAlpha,
-                        value => slot.Graphic.FlashAlpha = value, 0f, readyFlashDuration)
-                    .SetEase(Ease.Linear).OnKill(() => slot.FlashTween = null);
-            }
+            if (slot.WasCoolingDown && coolingDown == false) Flash(slot);
             slot.WasCoolingDown = coolingDown;
+        }
+
+        // 쿨타임이 당겨진 스킬이 든 슬롯을 번쩍이고 살짝 커졌다 돌아오게 한다.
+        private void HandleCooldownReduced(SuperpowerSkill skill)
+        {
+            foreach (Slot slot in slots)
+            {
+                if (slot.Chip == null || slot.Chip.Skill != skill) continue;
+
+                Flash(slot);
+                // 연달아 맞아 펀치가 겹치면 크기가 어긋나므로 원래 크기로 돌려놓고 다시 시작한다.
+                slot.PunchTween?.Kill();
+                slot.Graphic.transform.localScale = Vector3.one;
+                slot.PunchTween = slot.Graphic.transform.DOPunchScale(Vector3.one * reducedPunchScale, reducedPunchDuration, 1, 0f)
+                    .OnKill(() => slot.PunchTween = null);
+            }
+        }
+
+        // 슬롯이 하얗게 번쩍였다 사라진다. 쿨타임이 끝날 때와 쿨타임이 당겨졌을 때 같이 쓴다.
+        private void Flash(Slot slot)
+        {
+            slot.FlashTween?.Kill();
+            slot.Graphic.FlashAlpha = 1f;
+            slot.FlashTween = DOTween.To(() => slot.Graphic.FlashAlpha,
+                    value => slot.Graphic.FlashAlpha = value, 0f, readyFlashDuration)
+                .SetEase(Ease.Linear).OnKill(() => slot.FlashTween = null);
         }
 
         // 기상기 슬롯은 조기 기상 쿨타임이 돌 때만 켠다.
@@ -161,13 +225,6 @@ namespace TeamOdd.UI
 
             wakeUpSlot.Graphic.CooldownRatio = player.MaxEarlyWakeUpCooldown > 0f ? remaining / player.MaxEarlyWakeUpCooldown : 0f;
             wakeUpSlot.Cooldown.text = Mathf.CeilToInt(remaining).ToString();
-        }
-
-        // "시간 정지 칩" → "시간", 첫 단어를 nameLength 글자까지
-        private string GetShortName(string chipName)
-        {
-            string firstWord = chipName.Trim().Split(' ')[0];
-            return firstWord.Length > nameLength ? firstWord[..nameLength] : firstWord;
         }
 
 #if UNITY_EDITOR
