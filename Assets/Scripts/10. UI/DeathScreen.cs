@@ -238,8 +238,9 @@ namespace TeamOdd.UI
 
         private void Finish()
         {
-            Close();
+            // Close();
             Finished?.Invoke();
+            SceneLoadManager.Instance.LoadScene("02. Lobby");
         }
 
         private void SetBlackoutAlpha(float alpha)

@@ -453,7 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af7916d01ebaca7a97177ca02552305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.StartMenuUI
-  firstSceneName: 1. Get mission 1
+  firstSceneName: Mission Lobby
 --- !u!1 &700000016
 GameObject:
   m_ObjectHideFlags: 0

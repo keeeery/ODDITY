@@ -34,11 +34,9 @@ namespace TeamOdd.Player
         private AnimStateEventListener eventListener;
 
         private bool isManuallyLocked = false;
-        
-        private void Awake()
+
+        protected override void OnInitialize()
         {
-            DontDestroyOnLoad(this);
-            
             CharacterController = GetComponent<CharacterController>();
             PlayerController = GetComponent<PlayerController>();
             eventListener = GetComponent<AnimStateEventListener>();
@@ -56,7 +54,7 @@ namespace TeamOdd.Player
 
         private void Update()
         {
-            Debug.Log("UI Close: " + UIManager.instance.IsUIClose);
+            //Debug.Log("UI Close: " + UIManager.instance.IsUIClose);
             
             // 칩을 빼서 최대치가 줄면 회복할 때 새 최대치로 맞춰진다
             if (Time.time >= lastConsumeTime + staminaRegenDelay && SimpleInput.GetKey(Key.LeftShift) == false)

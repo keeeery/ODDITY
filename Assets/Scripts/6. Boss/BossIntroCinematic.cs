@@ -43,6 +43,10 @@ namespace TeamOdd.Boss
         [SerializeField] private float lookHeight = 2.5f;
         [Tooltip("0보다 크면 연출이 끝나는 위치에서 보스가 화면 세로의 이 비율을 채우도록 거리·높이를 자동으로 맞춘다. 이때 shotDistance·shotHeight·lookHeight는 무시하고, 연출 시작 때 보스 메시의 지금 자세로 잰다.")]
         [SerializeField, Range(0f, 1f)] private float screenFill;
+        [Tooltip("켜면 이름 UI가 화면 가운데에서 오른쪽으로 치우친 만큼 보스를 왼쪽으로 치우치게 둔다. 이름 UI가 없거나 끄면 framingOffset을 씀")]
+        [SerializeField] private bool mirrorTitleOffset = true;
+        [Tooltip("화면에서 보스가 놓일 가로 위치, 화면 가운데 기준 화면 너비 비율. 음수면 왼쪽")]
+        [SerializeField, Range(-0.4f, 0.4f)] private float framingOffset = -0.08f;
 
         [Title("Shot Movement")]
         [Tooltip("연출 시작 때 shotDistance보다 이만큼(m) 더 떨어진 곳에서 출발해 천천히 다가섬")]
@@ -85,7 +89,11 @@ namespace TeamOdd.Boss
         private float[] hudAlphas;   // 숨기기 전 각 HUD의 알파, 나타날 때 이 값으로 돌림
         private Sequence hudSequence;
 
+        private float framingYaw;   // framingOffset만큼 보스를 옆으로 두려고 카메라를 더 돌리는 각도(도)
+
         private const int MAX_FRAME_POINTS = 4000;   // 화면 채움 계산에 쓰는 메시 점 수 상한
+
+        public string CurrentBossName => bossName;
 
         // 보스 Start보다 먼저 상태머신 시작을 막아야 하므로 Awake에서 처리
         private void Awake()
@@ -132,7 +140,9 @@ namespace TeamOdd.Boss
             HideHud();
             if (cameraController != null)
             {
-                if (screenFill > 0f) FitToScreen(cameraController.GetComponentInChildren<Camera>());
+                Camera viewCamera = cameraController.GetComponentInChildren<Camera>();
+                framingYaw = GetFramingYaw(viewCamera);
+                if (screenFill > 0f) FitToScreen(viewCamera);
 
                 shotTime = 0f;
                 cameraController.CutToShot(GetShotPosition(0f, out Quaternion rotation), rotation);
@@ -227,8 +237,18 @@ namespace TeamOdd.Boss
             float height = shotHeight + heightDrift * t;
             Vector3 position = bossTransform.position + forward * distance + right * shotSideOffset + Vector3.up * height;
             Vector3 look = bossTransform.position + Vector3.up * lookHeight;
-            rotation = Quaternion.LookRotation(look - position);
+            rotation = Quaternion.Euler(0f, framingYaw, 0f) * Quaternion.LookRotation(look - position);
             return position;
+        }
+
+        // 화면 가운데에서 이름 UI와 반대쪽(또는 framingOffset, 화면 너비 비율)만큼 옆에 보이도록 돌릴 각도, 카메라를 오른쪽으로 돌리면 보스는 왼쪽에 보임
+        private float GetFramingYaw(Camera viewCamera)
+        {
+            float offset = mirrorTitleOffset && title != null ? -title.HorizontalOffsetRatio : framingOffset;
+            if (viewCamera == null || Mathf.Approximately(offset, 0f)) return 0f;
+
+            float tanHalfHorizontal = Mathf.Tan(viewCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * viewCamera.aspect;
+            return -Mathf.Atan(offset * 2f * tanHalfHorizontal) * Mathf.Rad2Deg;
         }
 
         // 보스 메시를 지금 자세로 구워 화면 세로를 screenFill만큼 채우는 거리를 찾음

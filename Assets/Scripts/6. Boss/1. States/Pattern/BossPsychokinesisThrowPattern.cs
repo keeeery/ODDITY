@@ -251,6 +251,9 @@ namespace TeamOdd.Boss
             WallFragment fragment = fragmentSpawner.SpawnFragment(FragmentSize.Large, Origin.position, Random.rotation);
             if (fragment == null) return;
 
+            // 빗나가 떨어진 뒤 플레이어가 주워 던지면 다른 보스 파편처럼 벽에 부딪혀 파편화되도록 표시
+            if (fragment.TryGetComponent(out PsychokinesisObject psychokinesisObject)) psychokinesisObject.MarkSpawnedByBoss();
+
             heldBody = fragment.GetComponent<Rigidbody>();
             heldBody.isKinematic = true;
             ignoredColliders = fragment.GetComponentsInChildren<Collider>();

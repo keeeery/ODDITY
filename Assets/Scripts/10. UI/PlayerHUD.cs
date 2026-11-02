@@ -32,10 +32,12 @@ namespace TeamOdd.UI
 
         private CombatManager combatManager;
 
+        private Player.Player Local => Player.Player.Instance;
+
         private void Awake()
         {
             player ??= FindAnyObjectByType<Player.Player>();
-            combatEntity ??= player.GetComponent<CombatEntity>();
+            combatEntity ??= Local.GetComponent<CombatEntity>();
 
             // 잔상 색을 씬마다 맞추지 않도록 여기서 적용
             if (hpBar != null) hpBar.TrailColor = hpTrailColor;
@@ -70,9 +72,9 @@ namespace TeamOdd.UI
             // 강공격(Knockdown)만 체력바가 반응하고 비네팅도 더 진해진다.
             bool isHeavy = damageEvent.Info.Reaction == HitReaction.Knockdown;
             if (isHeavy && hpBar != null) hpBar.Flash();
-            if (isHeavy && player != null && player.CameraController != null)
+            if (isHeavy && Local != null && Local.CameraController != null)
             {
-                player.CameraController.AddTrauma(cameraShakeTrauma, cameraShakeDuration);
+                Local.CameraController.AddTrauma(cameraShakeTrauma, cameraShakeDuration);
             }
             HitStop.Request(isHeavy ? hitStopHeavy : hitStopNormal);
             if (damageVignette != null) damageVignette.Pulse(isHeavy);
@@ -95,9 +97,9 @@ namespace TeamOdd.UI
 
         private float GetStaminaRatio()
         {
-            if (player == null) return 0f;
+            if (Local == null) return 0f;
 
-            return player.MaxStamina > 0f ? player.Stamina / player.MaxStamina : 0f;
+            return Local.MaxStamina > 0f ? Local.Stamina / Local.MaxStamina : 0f;
         }
     }
 }
