@@ -13,7 +13,7 @@ Id	Name	Description	CellCount	UnitSpriteKey	Category	SkillType	Cooldown	Cost	Par
 2303	크기 조절 칩	들고 있거나 조준한 염동력 오브젝트의 크기와 무게를 1.5배로 키웁니다.	4	AugmentationChip/ChipUnit_Purple	Utility	Resize	10	0	Multiplier=1.5
 2304	시간 감속 칩	5초 동안 플레이어를 제외한 모든 것의 시간이 느리게 흐릅니다.	5	AugmentationChip/ChipUnit_Purple	Utility	TimeSlow	30	0	Duration=5;Multiplier=0.5	
 2401	두 번째 심장 칩	치명적인 피해를 입을 때마다 최대 체력의 30%로 부활합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	SecondHeart	999999	0	Amount=30	Skill/Effect/SecondHeartEffect
-2402	생명 착취 칩	적에게 피해를 입힐 때마다 최대 체력의 2%를 회복합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	LifeSteal	1	0	Amount=2
-2403	조건 반사 칩	피해를 받으려 할 때마다 자동으로 회피합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	ConditionedReflex	10	0
-2404	정당한 보복 칩	피해를 받을 때마다 공격력이 1% 증가합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	RightfulRevenge	1	0	Amount=1
-2405	아드레날린 과분비 칩	적에게 피해를 입힐 때마다 무작위 액티브 스킬 칩의 재사용 대기시간이 1초씩 줄어듭니다.	7	AugmentationChip/ChipUnit_Purple	Passive	AdrenalineHypersecretion	1	0	Amount=1
+2402	생명 착취 칩	적에게 피해를 입힐 때마다 최대 체력의 5%를 회복합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	LifeSteal	0.25	0	Amount=5
+2403	조건 반사 칩	피해를 받으려 할 때마다 자동으로 회피합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	ConditionedReflex	60	0
+2404	정당한 보복 칩	피해를 받을 때마다 공격력이 10% 증가합니다.	6	AugmentationChip/ChipUnit_Purple	Passive	RightfulRevenge	0.25	0	Amount=10
+2405	아드레날린 과분비 칩	적에게 피해를 입힐 때마다 무작위 액티브 스킬 하나의 재사용 대기시간이 1초씩 줄어듭니다.	6	AugmentationChip/ChipUnit_Purple	Passive	AdrenalineHypersecretion	0.25	0	Amount=1
