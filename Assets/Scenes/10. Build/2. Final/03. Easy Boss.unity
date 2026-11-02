@@ -78720,6 +78720,22 @@ PrefabInstance:
       propertyPath: NeedRollStamina
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: overridePsychoSlamDamage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: chipIds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: chipIds.Array.data[0]
+      value: 2302
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: chipIds.Array.data[1]
+      value: 2102
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -78727,15 +78743,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2147100001}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601080}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601079}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601081}
     - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2205336347470601082}
@@ -89630,26 +89637,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
---- !u!114 &2205336347470601079
+--- !u!114 &2205336347470601080 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc008deb0f4501a4493bb1dca1e730d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.SkillCaster
-  overridePsychoSlamDamage: 1
-  psychoSlamDamage: 120
-  psychoSlamGroggy: 60
---- !u!114 &2205336347470601080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 288158857127106202, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+  m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1572104909016154580}
   m_Enabled: 1
@@ -89657,22 +89648,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
---- !u!114 &2205336347470601081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
-  chipIds: fe08000036080000
-  grantOnStart: 1
-  grantKey: 102
-  inventory: {fileID: 2205336347470601080}
 --- !u!114 &2205336347470601082
 MonoBehaviour:
   m_ObjectHideFlags: 0
