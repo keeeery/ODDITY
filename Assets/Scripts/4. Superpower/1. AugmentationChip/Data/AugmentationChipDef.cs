@@ -4,7 +4,7 @@ using UnityEngine;
 namespace TeamOdd.Superpower
 {
     // 칩 표는 종류마다 하나다. 능력치 칩은 StatChip.tsv, 스킬 칩은 SkillChip.tsv에 적는다
-    // 두 표 모두 앞의 다섯 칸(Id, Name, Description, CellCount, UnitSpriteKey)이 같고, 그 뒤에 종류마다 필요한 칸만 있다
+    // 두 표 모두 앞의 여섯 칸(Id, Name, Description, CellCount, UnitSpriteKey, IconSpriteKey)이 같고, 그 뒤에 종류마다 필요한 칸만 있다
 
     // 두 표에 공통인 칸
     public abstract class AugmentationChipDTO
@@ -14,6 +14,7 @@ namespace TeamOdd.Superpower
         public string Description;
         public int CellCount;
         public string UnitSpriteKey;
+        public string IconSpriteKey;
     }
 
     // StatChip.tsv 한 줄
@@ -41,6 +42,7 @@ namespace TeamOdd.Superpower
         public string Name;
         public string Description;
         public Sprite UnitSprite;
+        public Sprite IconSprite; // 칩을 대표하는 그림
 
         // 칩이 차지하는 칸 수. 모양은 칩을 얻을 때마다 ChipShapeLibrary가 정해서 OwnedChip에 넣는다
         public int CellCount;
