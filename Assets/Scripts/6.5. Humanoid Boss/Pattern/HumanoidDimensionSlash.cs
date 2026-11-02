@@ -44,6 +44,8 @@ namespace TeamOdd
         [SerializeField] private float bodyRadius = 1.5f;
         [SerializeField] private LayerMask blockMask; // 순간이동 자리를 막는 레이어(벽), 막히면 거리만 줄임
         [SerializeField] private LayerMask groundMask;
+        [SerializeField] private float navMeshSnapDistance = 10f; // 나타날 자리가 NavMesh 밖이면 이 거리 안의 가장 가까운 NavMesh 위로 들임
+        [SerializeField] private float navMeshEdgePadding = 0.6f; // 들인 자리를 NavMesh 경계에서 이만큼 안쪽으로
 
         // 플레이어를 바라보며 천천히 걸어와 strikeDistance에서 멈춤 (칼끝이 플레이어를 지나가는 거리)
         [Title("Approach")]
@@ -157,8 +159,8 @@ namespace TeamOdd
 
             if (screen == null) screen = HumanoidSlashScreen.Create(screenSortingOrder);
 
-            // 세상이 멈춘 화면에 분신이 멈춘 채 남지 않도록 바로 없앰, 재소환 대기시간은 지금부터 셈
-            if (cloneSummon != null) cloneSummon.DismissClone(true);
+            // 세상이 멈춘 화면에 분신이 멈춘 채 남지 않도록 숨김, 깎인 체력은 그대로 두고 깨지는 순간 다시 나타남
+            if (cloneSummon != null) cloneSummon.SuspendClone();
 
             Begin();
             StartCoroutine(Run());
@@ -169,6 +171,7 @@ namespace TeamOdd
         {
             StopAllCoroutines();
             Release();
+            if (cloneSummon != null) cloneSummon.ResumeClone();
 
             screen.HideAll();
             if (warp != null) warp.Clear();
@@ -324,6 +327,11 @@ namespace TeamOdd
                 ? ground.point.y
                 : targetPosition.y;
 
+            // 플레이어가 벽 없는 맵 가장자리에서 바깥을 보고 있으면 NavMesh 밖(맵 바깥)에 나타나므로 가장 가까운 NavMesh 위로 들임
+            BossPathfinder pathfinder = root.Pathfinder;
+            if (pathfinder != null && pathfinder.TryGetNearestOnNavMesh(position, navMeshSnapDistance, navMeshEdgePadding, out Vector3 navMeshPos))
+                position = navMeshPos;
+
             Movement.Teleport(position, Quaternion.LookRotation(-forward));
         }
 
@@ -458,7 +466,7 @@ namespace TeamOdd
             }
         }
 
-        // 깨지는 순간 피해·넉다운을 주고, 세상·플레이어를 풀어 넉다운이 바로 보이게 함
+        // 깨지는 순간 피해·넉다운을 주고, 세상·플레이어를 풀어 넉다운이 바로 보이게 함, 숨겼던 분신도 이때 다시 나타남
         private void Shatter()
         {
             screen.HideSplit();
@@ -469,6 +477,7 @@ namespace TeamOdd
             if (cameraController != null) cameraController.AddTrauma(shakeTrauma, flashDuration);
 
             Release();
+            if (cloneSummon != null) cloneSummon.ResumeClone();
             HitTarget();
         }
 

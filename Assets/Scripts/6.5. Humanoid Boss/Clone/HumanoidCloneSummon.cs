@@ -54,10 +54,21 @@ namespace TeamOdd
             if (combatEntity != null) combatEntity.Died -= HandleBossDied;
         }
 
-        // instant: 세상을 멈추는 연출(A15)처럼 사라지는 연출을 기다릴 수 없을 때
+        // instant: 사라지는 연출을 기다릴 수 없을 때
         public void DismissClone(bool instant)
         {
             if (activeClone != null) activeClone.Vanish(instant);
+        }
+
+        // 세상을 멈추는 연출(A15) 동안 분신을 숨겼다가 다시 보이게 함, 깎인 체력과 재소환 대기시간은 그대로 둠
+        public void SuspendClone()
+        {
+            if (activeClone != null) activeClone.Suspend();
+        }
+
+        public void ResumeClone()
+        {
+            if (activeClone != null) activeClone.Resume();
         }
 
         // 애니메이션 트리거(cloneSummon)는 BossMeleePattern이 켬, 검이 정점일 때 OnCloneSummon

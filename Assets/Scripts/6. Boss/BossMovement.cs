@@ -74,6 +74,9 @@ namespace TeamOdd.Boss
         // 대상까지 남은 각도를 이 값으로 재야 이미 요청한 회전을 또 요청해 목표를 지나치지 않음
         public Quaternion Rotation => Quaternion.Euler(0f, pendingYaw, 0f) * body.rotation;
 
+        // 도약 중(BeginAirborne~EndAirborne)이면 구멍·벽을 넘어가는 중이라 NavMesh 밖이어도 정상
+        public bool IsAirborne => isAirborne;
+
         private bool CanSnapToNavMesh => constrainToNavMesh && pathfinder != null;
 
         // 몸체가 서 있는 바닥 높이, 쓰러진 몸을 들어 올린 높이(lift)는 빠짐

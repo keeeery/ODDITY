@@ -1,11 +1,14 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TeamOdd.Arena;
+using TeamOdd.Boss;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace TeamOdd.Environment
 {
@@ -15,6 +18,7 @@ namespace TeamOdd.Environment
         [SerializeField] private PsychokinesisObject[] prefabs;
         [SerializeField] private CombatEntity boss;
         [SerializeField] private NavMeshSurface surface;
+        [SerializeField] private BossIntroCinematic introCinematic;
 
         // 활성 개수를 Parent 자식으로 세므로 다른 풀과 Key, Parent를 공유하면 안 됨
         [Title("Pool")]
@@ -45,8 +49,17 @@ namespace TeamOdd.Environment
             isPoolReady = true;
         }
 
-        [Button]
-        public async UniTaskVoid Execute()
+        private void OnEnable()
+        {
+            introCinematic.OnCinematicEnded += Execute;
+        }
+
+        private void OnDisable()
+        {
+            introCinematic.OnCinematicEnded -= Execute;
+        }
+
+        public async void Execute()
         {
             if (isRunning) return;
             if (isPoolReady == false) return;

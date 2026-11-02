@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerStats
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.PlayerStats
   <MaxHp>k__BackingField: 100
-  <Atk>k__BackingField: 100000
+  <Atk>k__BackingField: 200
   <Def>k__BackingField: 0
   <PsychoMaxMass>k__BackingField: 20
   <MaxStamina>k__BackingField: 100
