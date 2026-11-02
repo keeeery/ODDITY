@@ -89,8 +89,9 @@ namespace TeamOdd.Psychokinesis
         private float bossShatterGraceEndTime = float.NegativeInfinity;
         private readonly HashSet<Collider> graceContacts = new();
 
-        // 보스 패턴(돌진, 투하)으로 생긴 오브젝트는 던졌을 때 처음 부딪힌 곳이 벽이면 파편화함
+        // 보스 패턴(돌진, 투하, 투척)으로 생긴 오브젝트는 던진 뒤 바닥에 닿기 전에 벽에 부딪히면 파편화함
         private int wallLayer;
+        private int groundLayer;
         private bool shatterOnWallHit;
 
         // 풀을 거치지 않고 맵에 배치된 오브젝트, 보스에게 밟혀도 파편화되지 않고 좌우로 밀려남
@@ -130,6 +131,7 @@ namespace TeamOdd.Psychokinesis
             subMeshCount = GetComponent<MeshFilter>().sharedMesh.subMeshCount;
             heldExcludeLayer = LayerMask.GetMask("Psychokinesis");
             wallLayer = LayerMask.NameToLayer("Wall");
+            groundLayer = LayerMask.NameToLayer("Ground");
             isPlacedInMap = TryGetComponent(out IObjectPoolItem _) == false;
         }
 
@@ -198,15 +200,25 @@ namespace TeamOdd.Psychokinesis
             graceContacts.Remove(other);
         }
 
-        // 던진 뒤 처음 부딪힌 대상만 보고, 바닥 등 다른 곳에 먼저 닿았으면 그 뒤로는 벽에 닿아도 그대로 둠
+        // 던진 뒤 바닥에 닿기 전 처음 부딪힌 벽에서만 파편화, 바닥에 먼저 닿았으면 그 뒤로는 벽에 닿아도 그대로 둠
+        // 날아가다 스친 다른 파편·플레이어 등은 무시해 판정이 끊기지 않게 함
         // 보스는 Psychokinesis 레이어와 물리 충돌하지 않으므로 보스를 맞힌 경우는 피격 트리거 쪽에서 처리됨
         private void OnCollisionEnter(Collision collision)
         {
             if (shatterOnWallHit == false) return;
 
-            shatterOnWallHit = false;
-            if (collision.collider.gameObject.layer != wallLayer || pendingDamage != null) return;
+            int layer = collision.collider.gameObject.layer;
+            if (layer == groundLayer)
+            {
+                shatterOnWallHit = false;
+                return;
+            }
 
+            if (layer != wallLayer) return;
+
+            // 보스 피해가 대기 중이어도 파편화, 대기 중인 피해는 CombatManager 큐에 남아 그대로 들어가고
+            // 비활성화(OnDisable)에서 결과 구독을 해제하므로 피해 처리 쪽에서 다시 파편화되지 않음
+            shatterOnWallHit = false;
             SetImpact(collision.GetContact(0).point);
             Shatter();
         }
