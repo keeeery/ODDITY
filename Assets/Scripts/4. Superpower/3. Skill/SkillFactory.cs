@@ -24,7 +24,7 @@ namespace TeamOdd.Superpower
             SuperpowerSkill skill = def.SkillType switch
             {
                 // 공격
-                SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Damage")),
+                SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Damage"), def.Prefab.GetComponent<ShockwaveEffect>()),
                 SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Damage"), p.GetInt("Groggy"), p.GetFloat("Range"), p.GetFloat("Angle")),
                 SkillType.PsychoRapidFire => new PsychoRapidFireSkill(name, cooldown, p.GetFloat("Radius"), p.GetInt("Count"), p.GetFloat("Interval"), p.GetFloat("Speed")),
                 SkillType.PsychoTempest => new PsychoTempestSkill(name, cooldown, p.GetFloat("Duration"), p.GetInt("DPS"), p.GetFloat("TrackSpeed"), p.GetFloat("Radius"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoTempest>()),

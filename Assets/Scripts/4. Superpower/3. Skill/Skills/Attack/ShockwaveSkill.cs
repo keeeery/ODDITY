@@ -9,6 +9,8 @@ namespace TeamOdd.Superpower
     // - 플레이어에서 Radius m 안의 적(MonsterRegistry에 등록된 것)에게 피해 Damage
     // - 같은 범위 안의 움직이는 Rigidbody(보스, 염동력 오브젝트 등)를 플레이어 반대쪽으로 Force m/s 속도만큼 밀어낸다
     //   무게와 상관없이 같은 속도로 밀리게 VelocityChange를 쓴다. 들고 있는 오브젝트와 시간이 멈춘 것(kinematic)은 밀리지 않는다
+    // - SkillChip.tsv의 PrefabKey로 불러온 폭발 이펙트를 시전한 자리에 띄우고, 투명한 반구가 Radius까지 커지게 반경을 넘긴다
+    //   플레이어를 따라다니지 않고, 지우는 건 프리팹이 한다
     public class ShockwaveSkill : SuperpowerSkill
     {
         private const float UpwardRatio = 0.3f; // 살짝 위로 띄워 바닥에 끌리지 않게 하는 비율
@@ -16,16 +18,18 @@ namespace TeamOdd.Superpower
         private readonly float radius;
         private readonly float force;
         private readonly int damage;
+        private readonly ShockwaveEffect effect; // SkillChip.tsv의 PrefabKey로 불러온 이펙트 프리팹
 
         // 콜라이더가 여러 개인 대상이 여러 번 맞지 않도록 이번에 처리한 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
         private readonly List<Rigidbody> pushedBodies = new List<Rigidbody>();
 
-        public ShockwaveSkill(string name, float cooldown, float radius, float force, int damage) : base(name, cooldown)
+        public ShockwaveSkill(string name, float cooldown, float radius, float force, int damage, ShockwaveEffect effect) : base(name, cooldown)
         {
             this.radius = radius;
             this.force = force;
             this.damage = damage;
+            this.effect = effect;
         }
 
         public override string Describe() => $"반경 {radius}m · 미는 힘 {force} · 피해 {damage}";
@@ -36,6 +40,8 @@ namespace TeamOdd.Superpower
             pushedBodies.Clear();
 
             Vector3 center = context.Caster.position;
+            Object.Instantiate(effect, center, Quaternion.identity).Play(radius);
+
             Collider[] colliders = Physics.OverlapSphere(center, radius, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 
             foreach (Collider collider in colliders)
