@@ -1621,21 +1621,34 @@ MonoBehaviour:
   distance: 4
   holdDistance: 4
   sprintDistance: 4
-  transitionSpeed: 10
+  transitionDuration: 0.45
+  transitionEase: 12
+  bossCloseEnterDistance: 3
+  bossCloseExitDistance: 4.5
+  bossClosePivotOffset: {x: 0, y: 1.9, z: 0}
+  bossCloseDistance: 4.6
+  bossCloseFovWiden: 5
   mouseSensitivity: 2
+  rotationSmoothSpeed: 30
   minPitch: -40
   maxPitch: 70
   minYaw: -40
   maxYaw: 70
-  focusTurnSpeed: 8
+  focusSmoothTime: 0.15
   collisionMask:
     serializedVersion: 2
     m_Bits: 656
   collisionRadius: 0.2
+  collisionRecoverSpeed: 6
+  shoulderClearance: 0.3
+  shoulderReturnMargin: 0.4
+  shoulderSwitchDuration: 0.4
   maxShakePosition: {x: 0.3, y: 0.3, z: 0}
   maxShakeRotation: {x: 3, y: 1.5, z: 5}
   shakeFrequency: 25
   traumaDecay: 1.7
+  shotReturnDuration: 0.6
+  shotReturnEase: 10
 --- !u!1 &1637217033
 GameObject:
   m_ObjectHideFlags: 0
