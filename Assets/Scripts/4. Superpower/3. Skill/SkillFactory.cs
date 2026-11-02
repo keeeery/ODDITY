@@ -44,7 +44,7 @@ namespace TeamOdd.Superpower
 
                 // 패시브. 쿨타임은 내부 쿨타임으로 쓴다
                 SkillType.SecondHeart => new SecondHeartSkill(name, cooldown, p.GetInt("Amount"), def.Prefab),
-                SkillType.LifeSteal => new LifeStealSkill(name, cooldown, p.GetInt("Amount")),
+                SkillType.LifeSteal => new LifeStealSkill(name, cooldown, p.GetFloat("Amount")),
                 SkillType.ConditionedReflex => new ConditionedReflexSkill(name, cooldown),
                 SkillType.RightfulRevenge => new RightfulRevengeSkill(name, cooldown, p.GetInt("Amount")),
                 SkillType.AdrenalineHypersecretion => new AdrenalineHypersecretionSkill(name, cooldown, p.GetFloat("Amount")),
