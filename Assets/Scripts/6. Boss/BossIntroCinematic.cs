@@ -93,6 +93,8 @@ namespace TeamOdd.Boss
 
         private const int MAX_FRAME_POINTS = 4000;   // 화면 채움 계산에 쓰는 메시 점 수 상한
 
+        public string CurrentBossName => bossName;
+
         // 보스 Start보다 먼저 상태머신 시작을 막아야 하므로 Awake에서 처리
         private void Awake()
         {

@@ -1,7 +1,10 @@
 using System;
 using Jay;
+using Study.MiniDefence;
 using Study.Utilities;
+using TeamOdd.Boss;
 using TeamOdd.CameraMove;
+using TeamOdd.Mission;
 using TeamOdd.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,9 +23,11 @@ namespace TeamOdd
         [SerializeField] private GameObject missionUI;
         [SerializeField] private GameObject skillUI;
         [SerializeField] private GameObject battleUI;
+        [SerializeField] private MissionListUI missionListUI;
         [SerializeField] private bool isUIClose = true;
 
         public bool IsUIClose => isUIClose;
+        public string CurrentBossName { get; private set; }
 
         private void Start()
         {
@@ -41,6 +46,17 @@ namespace TeamOdd
                           || SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right)))
                     LockCursor(true);
             }
+        }
+
+        public void SetBossName(string bossName)
+        {
+            CurrentBossName = bossName;
+        }
+
+        public void MissionListUpdate()
+        {
+            // 수락 목록만 지운다. 화면의 행은 로비의 MissionListUI 가 생길 때 남은 미션으로 다시 그린다.
+            MissionListUI.RemoveMission(CurrentBossName);
         }
 
         public void BattleUIActive(bool active)

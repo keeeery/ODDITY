@@ -107,6 +107,7 @@ namespace TeamOdd.Mission
 
             SceneLoadManager.Instance.LoadScene(selectedMission.NextStageName);
             UIManager.Instance.BattleUIActive(true);
+            UIManager.Instance.SetBossName(selectedMission.BossName);
             CloseUI();
         }
 
