@@ -1359,8 +1359,6 @@ namespace TeamOdd.Player
                 if (toAttacker.sqrMagnitude < 0.0001f) hitDir = 0f;
 
                 animator.SetFloat(HitDir, hitDir);
-
-                // 넘어지는 모션이 뒤로 쓰러지는 방향 하나뿐이므로, 공격자를 보게 돌려서 어느 방향에서 맞든 뒤로 날아가게 한다
                 animator.SetInteger(HitMotion, motionIndex);
                 animator.SetTrigger(Hit);
 
