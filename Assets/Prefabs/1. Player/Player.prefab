@@ -197,13 +197,7 @@ PrefabInstance:
       addedObject: {fileID: 3846190275516204713}
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6474464230969543606}
-    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 7476393363341704050}
-    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7604838971264483964}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -381,7 +375,7 @@ MonoBehaviour:
   attackLookBodyWeight: 0.3
   attackLookHeadWeight: 0.6
   attackLookBlendSpeed: 12
-  MaxEarlyWakeUpCooldown: 1
+  MaxEarlyWakeUpCooldown: 8
   WakeUpTime: 3
   InvincibleTime: 1.5
   maxHitAnimationWait: 3
@@ -409,7 +403,7 @@ MonoBehaviour:
   forceWave: {fileID: 5859343519902430467}
   pickupDistance: 10
   castHalfWidth: 2
-  attackInterval: 0.25
+  attackInterval: 0.75
   scaleAttackGroggy: 0
   attackGroggyScale: 0.27
   overrideObjectDamage: 0
@@ -658,18 +652,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.InGameDebugTool
   damage: 999999
   hp: 999999
---- !u!114 &6474464230969543606
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104908200295443}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
 --- !u!114 &7476393363341704050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,24 +667,6 @@ MonoBehaviour:
   overridePsychoSlamDamage: 0
   psychoSlamDamage: 120
   psychoSlamGroggy: 60
---- !u!114 &7604838971264483964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104908200295443}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
-  chipIds: fe08000036080000
-  grantOnStart: 1
-  grantKey: 102
-  grantAll: 0
-  grantAllToggleKey: 101
-  inventory: {fileID: 6474464230969543606}
 --- !u!95 &1806036652689195332 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8074163760421901905, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}

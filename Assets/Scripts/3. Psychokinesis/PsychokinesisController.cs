@@ -24,7 +24,7 @@ namespace TeamOdd.Psychokinesis
         [SerializeField, Min(0.1f)] private float castHalfWidth = 2f;
 
         [Header("Normal Attack")]
-        [SerializeField, Min(0.01f)] private float attackInterval = 0.25f;
+        [SerializeField, Min(0.01f)] private float attackInterval = 0.75f;
         [Tooltip("기본 공격의 무력화 피해를 현재 공격력에 비례해 계산한다.")]
         [SerializeField] private bool scaleAttackGroggy;
         [SerializeField, Min(0f)] private float attackGroggyScale = 0.27f;

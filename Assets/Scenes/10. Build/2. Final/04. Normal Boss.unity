@@ -10667,7 +10667,8 @@ PrefabInstance:
       propertyPath: combatEntity
       value: 
       objectReference: {fileID: 2205336347470601075}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1903406876403171718, guid: e69088331ca0943489ef809099f61476, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1294742555089240300, guid: e69088331ca0943489ef809099f61476, type: 3}
@@ -22124,6 +22125,7 @@ MonoBehaviour:
   icon: {fileID: 1372249901}
   chipIcon: {fileID: 1287193428}
   colorBorder: {fileID: 1969864377}
+  colorBack: {fileID: 91340153}
 --- !u!114 &744024688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43500,7 +43502,7 @@ PrefabInstance:
       objectReference: {fileID: 1433546535}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_Name
-      value: Perderos
+      value: "\uD398\uB974\uB370\uB85C\uC2A4"
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
@@ -61501,6 +61503,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1982781878}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: throwSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: attackInterval
       value: 0.75
       objectReference: {fileID: 0}
@@ -61580,18 +61586,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: 'chipIds.Array.data[0]'
-      value: 2302
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: 'chipIds.Array.data[1]'
-      value: 2102
-      objectReference: {fileID: 0}
     - target: {fileID: 2920962985299418174, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -61612,23 +61606,21 @@ PrefabInstance:
       propertyPath: NeedRollStamina
       value: 25
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3846190275516204713, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+    - {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+    - {fileID: 7604838971264483964, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+    - {fileID: 6232883466832630808, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2147100001}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601082}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
 --- !u!114 &1902345672 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b5985590a6d9534680215d927cad10c, type: 3}
@@ -68507,7 +68499,7 @@ MonoBehaviour:
   hudGroups:
   - {fileID: 2010411292}
   bossName: "\uD398\uB974\uB370\uB85C\uC2A4"
-  epithet: "\uACA9\uB0A9\uACE0\uC758 \uD3ED\uAD70"
+  epithet: "\uD3ED\uC8FC\uD55C \uAC15\uD654 \uC2E4\uD5D8\uCCB4"
   shotDistance: 12
   shotHeight: 2.5
   shotSideOffset: 0
@@ -69718,21 +69710,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipToggle
   panel: {fileID: 0}
   inventory: {fileID: 2205336347470601080}
---- !u!114 &2147100001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b21c34011bf4e4fa48e4fefaa6d81ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.WallFragmentRaycastTest
-  aimCamera: {fileID: 1982781878}
-  fragmentSpawner: {fileID: 1433546535}
-  rayDistance: 100
 --- !u!143 &677289072525654882 stripped
 CharacterController:
   m_CorrespondingSourceObject: {fileID: 677289072813033125, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
@@ -69742,11 +69719,6 @@ CharacterController:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5776060604607352620, guid: 29be5d2129810b3824c2771116e58928, type: 3}
   m_PrefabInstance: {fileID: 4985697743227530137}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1572104909016154580 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2205336347470601070 stripped
 Transform:
@@ -69758,7 +69730,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eede01cf483a496388ffc51f31974940, type: 3}
@@ -69769,7 +69741,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
@@ -69780,26 +69752,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 288158857127106202, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
---- !u!114 &2205336347470601082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f57aef2672441a68bdc748a3364b3b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipEquipTester
-  chipIds: d6070000d7070000
-  inventory: {fileID: 2205336347470601080}
 --- !u!1001 &4985697743227530137
 PrefabInstance:
   m_ObjectHideFlags: 0

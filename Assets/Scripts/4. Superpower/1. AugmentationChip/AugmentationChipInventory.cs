@@ -21,7 +21,10 @@ namespace TeamOdd.Superpower
         private static readonly List<OwnedChip> chips = new();
         private static readonly OwnedChip[] skillSlots = new OwnedChip[SkillSlotCount]; // 빈 슬롯은 null
         // 저장 데이터에서 불러온 장착 기록 (칩, 스킬 슬롯). 스탯을 더할 플레이어가 생기면(Start) 장착한다
+        // 플레이어가 이미 살아 있으면(메인 화면으로 돌아갔다가 이어하기) 다음 씬이 열릴 때 장착한다
         private static readonly List<(OwnedChip chip, int slot)> pendingEquips = new();
+        // Start까지 간 살아 있는 플레이어의 인벤토리. 중복으로 파괴되는 플레이어는 Start 전에 사라지므로 여기 들어오지 않는다
+        private static AugmentationChipInventory live;
         private CombatEntity owner;
         private SkillCaster skillCaster;
 
@@ -54,12 +57,25 @@ namespace TeamOdd.Superpower
         // (불러온 장착 기록은 아직 IsEquipped가 아니라 겹치지 않는다. 스킬 칩은 static 슬롯에 그대로 남아 있다)
         private void Start()
         {
+            live = this;
+
             foreach (OwnedChip chip in chips)
             {
                 if (chip.IsEquipped && chip.Def is StatChipDef stat)
                     owner.CurrentStats.Add(stat.StatType, stat.Value);
             }
 
+            ApplyPendingEquips();
+        }
+
+        private void OnDestroy()
+        {
+            if (live == this)
+                live = null;
+        }
+
+        private void ApplyPendingEquips()
+        {
             foreach ((OwnedChip chip, int slot) in pendingEquips)
                 Equip(chip, chip.Origin, chip.Rotation, slot);
             pendingEquips.Clear();
@@ -104,6 +120,8 @@ namespace TeamOdd.Superpower
         public static OwnedChip Restore(AugmentationChipDef def, Vector2Int[] cells, bool equipped, Vector2Int origin, int rotation, int skillSlot)
         {
             SuperpowerSkill skill = def is SkillChipDef skillDef ? SkillFactory.Create(skillDef) : null;
+            // 살아 있는 플레이어의 Awake는 이미 지나갔으므로 설명용 시전자를 여기서 붙인다
+            if (live != null && skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(live.skillCaster);
             OwnedChip chip = new OwnedChip(def, cells, skill, chips.Count) { IsNew = false, Origin = origin, Rotation = rotation };
             chips.Add(chip);
             if (equipped)
@@ -112,11 +130,24 @@ namespace TeamOdd.Superpower
         }
 
         // 보유 칩과 스킬 슬롯을 모두 비운다 (메인 화면의 새 게임·이어하기 직전)
+        // 메인 화면으로 돌아와도 플레이어는 살아 있으므로, 장착해 둔 능력치 칩의 보너스를 먼저 뺀다
+        // 저장은 부르지 않는다 (불러오는 도중에 빈 목록으로 저장 파일을 덮지 않게)
         public static void ResetAll()
         {
+            if (live != null)
+            {
+                foreach (OwnedChip chip in chips)
+                {
+                    if (chip.IsEquipped && chip.Def is StatChipDef stat)
+                        live.owner.CurrentStats.Remove(stat.StatType, stat.Value);
+                }
+            }
+
             chips.Clear();
             Array.Clear(skillSlots, 0, skillSlots.Length);
             pendingEquips.Clear();
+            if (live != null)
+                live.SkillSlotsChanged?.Invoke();
         }
 
         // 스킬 칩은 빈 스킬 슬롯이 있어야 장착할 수 있다
@@ -181,6 +212,11 @@ namespace TeamOdd.Superpower
         // 해제해 둔 칩도 멈춘 쿨타임을 들고 다음 씬으로 가지 않게 한다
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            // 메인 화면에서 이어하기를 눌렀으면 이미 Start가 지난 살아 있는 플레이어가 여기서 장착한다
+            // 새 씬의 Awake·OnEnable 뒤에 불리므로 스킬 슬롯 HUD도 이미 구독해 있다
+            if (live == this)
+                ApplyPendingEquips();
+
             foreach (OwnedChip chip in chips)
             {
                 if (chip.Skill == null)
