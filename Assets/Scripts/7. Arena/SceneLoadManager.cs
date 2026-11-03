@@ -41,18 +41,59 @@ namespace TeamOdd
         // 켜진 뒤 남은 글리치가 사그라드는 시간과 세기
         [SerializeField, Min(0.01f)] private float settleDuration = 0.6f;
         [SerializeField, Range(0f, 1f)] private float settleGlitch = 0.5f;
-        
+
+        [Title("Loading Grace (초, 실제 시간)")]
+        // 새 씬을 불러온 뒤 다 꺼진 화면을 적어도 이만큼은 유지한다
+        [SerializeField, Min(0f)] private float minBlackHold = 0.2f;
+        // 첫 몇 프레임은 셰이더 준비·Start 처리로 길게 걸려, 그대로 켜면 켜짐 연출과 BGM 페이드가 한 번에 건너뛰어진다.
+        // 이 길이보다 짧은 프레임이 stableFrameCount 번 연달아 나오고 BGM 데이터가 준비되면 켠다
+        [SerializeField, Min(0.001f)] private float stableFrameTime = 0.05f;
+        [SerializeField, Min(1)] private int stableFrameCount = 5;
+        // 느린 PC에서 안정되지 않아도 이 시간이 지나면 켠다 (화면이 꺼진 채 멈추지 않게)
+        [SerializeField, Min(0f)] private float maxSettleWait = 2.5f;
+
+        [Title("Loading Icon (다 꺼진 동안 우하단 점 세 개, 일시정지 아이콘과 같은 자리)")]
+        // 캔버스 기준 해상도(1920x1080) 우하단에서의 위치, 아이콘 오른쪽 아래 모서리 기준
+        [SerializeField] private Vector2 loadingIconPosition = new(-64f, 56f);
+        [SerializeField, Min(1f)] private float loadingDotSize = 10f;
+        [SerializeField, Min(0f)] private float loadingDotSpacing = 10f;
+        // 나타날 때 오른쪽에서 밀려 들어오는 거리와 나타나고 사라지는 시간
+        [SerializeField] private float loadingIconSlide = 32f;
+        [SerializeField, Min(0.01f)] private float loadingIconFade = 0.2f;
+        // 점이 하나씩 차례로 밝아지며 살짝 떠오르는 물결
+        [SerializeField, Min(0.01f)] private float loadingDotPulse = 0.3f;
+        [SerializeField, Min(0f)] private float loadingDotStagger = 0.15f;
+        [SerializeField, Min(0f)] private float loadingDotRest = 0.2f;
+        [SerializeField] private float loadingDotRise = 4f;
+        [SerializeField, Range(0f, 1f)] private float loadingDotDimAlpha = 0.25f;
+
+        [Title("UI Fade In (실제 초, 보스 조우 연출과 같은 방식)")]
+        // 새 씬 UI는 숨겨 두었다가 화면이 다 켜진 뒤 이만큼 기다렸다 서서히 나타나게 한다
+        [SerializeField, Min(0f)] private float uiFadeDelay = 0.2f;
+        [SerializeField, Min(0.01f)] private float uiFadeDuration = 0.6f;
+
         private Sequence sequence;
         private bool isLoading;
         // 위·아래·왼쪽·오른쪽 띠, 처음 전환할 때 만든다
         private RectTransform[] maskBars;
         // 전환하는 동안 누르는 UI와 원래 위치·크기
         private readonly List<(RectTransform rect, Vector3 position, Vector3 scale)> squashedUI = new();
+        // 로딩 아이콘, 처음 쓸 때 만든다
+        private CanvasGroup loadingIcon;
+        private RectTransform[] loadingDots;
+        private Sequence loadingIconFadeMotion;
+        private Sequence loadingDotsMotion;
+        // 화면이 켜질 때까지 숨겨 둔 새 씬 UI와 원래 알파
+        private readonly List<(CanvasGroup group, float alpha)> hiddenUI = new();
+        private Sequence uiMotion;
 
         public event Action<string> OnFadeOutStarted;
         public event Action<string> OnFadeOutCompleted;
         public event Action<string> OnSceneLoaded;
         public event Action<string> OnFadeInCompleted;
+
+        // 씬 이동 연출 중인지 (꺼지기 시작 ~ 다 켜질 때까지)
+        public bool IsLoading => isLoading;
 
         private float FadeOutDuration => glitchDuration + foldDuration + shrinkDuration + dotFadeDuration;
 
@@ -60,6 +101,9 @@ namespace TeamOdd
         {
             base.OnDestroy();
             sequence?.Kill();
+            loadingIconFadeMotion?.Kill();
+            loadingDotsMotion?.Kill();
+            uiMotion?.Kill();
             if (isLoading) ScreenGlitch.Clear();
             RestoreUI();
         }
@@ -91,9 +135,11 @@ namespace TeamOdd
 
             // 이전 씬 UI는 씬이 내려갈 때까지 점으로 눌린 채 둔다. 씬을 넘어 남는 UI는 PlayFadeIn 이 같은 프레임에 되돌렸다 다시 누른다
             await PlayFadeOut();
+            ShowLoadingIcon();
             OnFadeOutCompleted?.Invoke(sceneName);
 
             await SceneManager.LoadSceneAsync(sceneName);
+            HideSceneUI();
             // 구독한 쪽(BGM 등)에서 예외가 나도 화면을 켜지 않으면 꺼진 채로 남으므로 로그만 남기고 이어 간다
             try
             {
@@ -104,9 +150,12 @@ namespace TeamOdd
                 Debug.LogException(exception, this);
             }
 
-            // 새 씬 UI가 Start에서 자리를 잡은 뒤의 위치를 기억하도록 한 프레임 기다린다 (그동안은 fadeScreen 이 덮고 있음)
-            await UniTask.NextFrame();
+            // 새 씬이 자리를 잡을 때까지 꺼진 채 기다린다 (그동안은 fadeScreen 이 덮고 있음).
+            // 적어도 몇 프레임은 지나므로 새 씬 UI도 Start에서 자리를 잡은 뒤의 위치로 기억된다
+            await WaitUntilSettled(sceneName);
+            HideLoadingIcon();
             await PlayFadeIn();
+            FadeInSceneUI();
             OnFadeInCompleted?.Invoke(sceneName);
 
             RestoreUI();
@@ -142,12 +191,37 @@ namespace TeamOdd
             ScreenGlitch.Clear();
 
             await PlayFadeOut();
+            ShowLoadingIcon();
             await UniTask.Delay(TimeSpan.FromSeconds(blackHold), DelayType.Realtime);
+            HideLoadingIcon();
             await PlayFadeIn();
 
             RestoreUI();
             canvas.enabled = false;
             isLoading = false;
+        }
+
+        // 프레임 시간이 고르게 짧아지고 새 BGM 데이터가 메모리에 올라올 때까지 기다린다. 최소·최대 시간은 실제 시간 기준
+        private async UniTask WaitUntilSettled(string sceneName)
+        {
+            float startTime = Time.realtimeSinceStartup;
+            int stableFrames = 0;
+
+            while (true)
+            {
+                await UniTask.NextFrame();
+
+                float elapsed = Time.realtimeSinceStartup - startTime;
+                stableFrames = Time.unscaledDeltaTime <= stableFrameTime ? stableFrames + 1 : 0;
+                bool bgmReady = SoundManager.IsInitialized == false || SoundManager.Instance.IsBGMLoading == false;
+
+                if (elapsed >= minBlackHold && stableFrames >= stableFrameCount && bgmReady) return;
+                if (elapsed >= maxSettleWait)
+                {
+                    Debug.LogWarning($"[SceneLoadManager] {sceneName} 로딩 후 {maxSettleWait}초 안에 안정되지 않아 그대로 화면을 켭니다. (안정 프레임 {stableFrames}/{stableFrameCount}, BGM 준비 {bgmReady})", this);
+                    return;
+                }
+            }
         }
 
         // 글리치가 세지다 끊김 → 가로 선으로 접힘 → 점으로 줄어듦 → 점이 사라짐 → 검은 화면으로 UI 까지 덮음
@@ -188,6 +262,9 @@ namespace TeamOdd
         {
             canvas.sortingOrder = sortingOrder;
             canvas.enabled = true;
+            // 씬에 꺼진 채 놓여 있으면 다 꺼진 동안 새 씬 UI가 검은 화면 위로 비치므로 여기서 켠다.
+            // (이전 씬 연출이 ScreenGlitch.Clear 로 PowerOff 를 0으로 되돌리면 검은 띠도 열려 버린다)
+            fadeScreen.gameObject.SetActive(true);
             CaptureUI();
             ApplyPowerOffToUI(0f);
         }
@@ -271,6 +348,149 @@ namespace TeamOdd
                 image.raycastTarget = false;
                 maskBars[i] = (RectTransform)bar.transform;
             }
+        }
+
+        // 새 씬의 화면 UI(최상위 오버레이·카메라 공간 캔버스)를 모두 숨긴다. 화면이 다 켜진 뒤 FadeInSceneUI 가 되살린다.
+        // 월드 공간 캔버스는 월드와 함께 켜지므로 두고, 원래 알파가 0인 캔버스(닫힌 창 등)는 제 스크립트가 열도록 둔다.
+        // 보스 씬의 HUD(UI Canvas)는 BossIntroCinematic 이 숨겼다가 카메라가 돌아올 때 직접 되살리므로, 알파가 엇갈리지 않게 건드리지 않는다
+        private void HideSceneUI()
+        {
+            uiMotion?.Kill();
+            hiddenUI.Clear();
+
+            Boss.BossIntroCinematic intro = FindAnyObjectByType<Boss.BossIntroCinematic>();
+            bool hasIntro = intro != null && intro.isActiveAndEnabled;
+
+            Scene scene = SceneManager.GetActiveScene();
+            foreach (Canvas other in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+            {
+                if (other == canvas || other.isRootCanvas == false) continue;
+                if (other.renderMode == RenderMode.WorldSpace) continue;
+                // 씬을 넘어 남는 UI(일시정지 메뉴 등)는 이번 씬 것이 아니므로 뺀다
+                if (other.gameObject.scene != scene) continue;
+                if (hasIntro && IsIntroHud(other)) continue;
+
+                if (other.TryGetComponent(out CanvasGroup group) == false) group = other.gameObject.AddComponent<CanvasGroup>();
+                if (group.alpha <= 0f) continue;
+
+                hiddenUI.Add((group, group.alpha));
+                group.alpha = 0f;
+            }
+        }
+
+        // BossIntroCinematic 이 숨기는 캔버스: 스킬 슬롯 HUD나 보스 이름 UI(BossIntroTitle)가 든 최상위 캔버스
+        private static bool IsIntroHud(Canvas root)
+        {
+            return root.GetComponentInChildren<SkillSlotHUD>(true) != null
+                   || root.GetComponentInChildren<BossIntroTitle>(true) != null;
+        }
+
+        // 숨기기 전 알파로 서서히 되돌린다. 그사이 다른 스크립트가 알파를 바꿨으면(창을 열었다 등) 그쪽에 맡긴다
+        private void FadeInSceneUI()
+        {
+            if (hiddenUI.Count == 0) return;
+
+            uiMotion?.Kill();
+            uiMotion = DOTween.Sequence().SetUpdate(true).SetDelay(uiFadeDelay);
+            foreach ((CanvasGroup group, float alpha) in hiddenUI)
+                if (group != null && group.alpha <= 0f)
+                    uiMotion.Join(group.DOFade(alpha, uiFadeDuration).SetEase(Ease.OutSine));
+            hiddenUI.Clear();
+        }
+
+        // 다 꺼진 화면 우하단에 점 세 개를 밀어 넣고, 점이 차례로 밝아지며 떠오르는 물결을 되풀이한다
+        private void ShowLoadingIcon()
+        {
+            EnsureLoadingIcon();
+            loadingIconFadeMotion?.Kill();
+            loadingDotsMotion?.Kill();
+
+            RectTransform iconRect = (RectTransform)loadingIcon.transform;
+            // fadeScreen 보다 위에 그린다
+            iconRect.SetAsLastSibling();
+            loadingIcon.gameObject.SetActive(true);
+            loadingIcon.alpha = 0f;
+            iconRect.anchoredPosition = loadingIconPosition + Vector2.right * loadingIconSlide;
+
+            loadingIconFadeMotion = DOTween.Sequence().SetUpdate(true)
+                .Join(loadingIcon.DOFade(1f, loadingIconFade).SetEase(Ease.OutQuad))
+                .Join(iconRect.DOAnchorPos(loadingIconPosition, loadingIconFade * 1.5f).SetEase(Ease.OutCubic));
+
+            // 모든 점이 한 바퀴를 같은 길이로 돌도록 한 시퀀스에 넣는다
+            float cycle = (loadingDots.Length - 1) * loadingDotStagger + loadingDotPulse * 2f + loadingDotRest;
+            loadingDotsMotion = DOTween.Sequence().SetUpdate(true).SetLoops(-1);
+            for (int i = 0; i < loadingDots.Length; i++)
+            {
+                RectTransform dot = loadingDots[i];
+                Image image = dot.GetComponent<Image>();
+                SetDotAlpha(image, loadingDotDimAlpha);
+                dot.anchoredPosition = new Vector2(dot.anchoredPosition.x, 0f);
+
+                float start = i * loadingDotStagger;
+                loadingDotsMotion.Insert(start, image.DOFade(1f, loadingDotPulse).SetEase(Ease.OutQuad));
+                loadingDotsMotion.Insert(start, dot.DOAnchorPosY(loadingDotRise, loadingDotPulse).SetEase(Ease.OutQuad));
+                loadingDotsMotion.Insert(start + loadingDotPulse, image.DOFade(loadingDotDimAlpha, loadingDotPulse).SetEase(Ease.InQuad));
+                loadingDotsMotion.Insert(start + loadingDotPulse, dot.DOAnchorPosY(0f, loadingDotPulse).SetEase(Ease.InQuad));
+            }
+            loadingDotsMotion.InsertCallback(cycle, () => { });
+        }
+
+        // 화면이 켜지기 시작할 때 옅게 사라진다. 그동안 주변은 아직 검은 띠가 덮고 있다
+        private void HideLoadingIcon()
+        {
+            if (loadingIcon == null || loadingIcon.gameObject.activeSelf == false) return;
+
+            loadingIconFadeMotion?.Kill();
+            loadingIconFadeMotion = DOTween.Sequence().SetUpdate(true)
+                .Join(loadingIcon.DOFade(0f, loadingIconFade).SetEase(Ease.InQuad))
+                .OnComplete(() =>
+                {
+                    loadingDotsMotion?.Kill();
+                    loadingIcon.gameObject.SetActive(false);
+                });
+        }
+
+        private void EnsureLoadingIcon()
+        {
+            if (loadingIcon != null) return;
+
+            GameObject icon = new GameObject("Loading Icon", typeof(RectTransform), typeof(CanvasGroup));
+            RectTransform iconRect = (RectTransform)icon.transform;
+            iconRect.SetParent(canvas.transform, false);
+            // 일시정지 아이콘처럼 오른쪽 아래 모서리를 기준으로 둔다
+            iconRect.anchorMin = new Vector2(1f, 0f);
+            iconRect.anchorMax = new Vector2(1f, 0f);
+            iconRect.pivot = new Vector2(1f, 0f);
+            iconRect.sizeDelta = new Vector2(loadingDotSize * 3f + loadingDotSpacing * 2f, 38f);
+
+            loadingIcon = icon.GetComponent<CanvasGroup>();
+            loadingIcon.blocksRaycasts = false;
+            loadingIcon.interactable = false;
+
+            loadingDots = new RectTransform[3];
+            for (int i = 0; i < loadingDots.Length; i++)
+            {
+                GameObject dot = new GameObject($"Dot {i}", typeof(RectTransform), typeof(Image));
+                RectTransform dotRect = (RectTransform)dot.transform;
+                dotRect.SetParent(iconRect, false);
+                dotRect.anchorMin = dotRect.anchorMax = new Vector2(0.5f, 0.5f);
+                dotRect.sizeDelta = Vector2.one * loadingDotSize;
+                dotRect.anchoredPosition = new Vector2((i - 1) * (loadingDotSize + loadingDotSpacing), 0f);
+
+                Image image = dot.GetComponent<Image>();
+                image.color = Color.white;
+                image.raycastTarget = false;
+                loadingDots[i] = dotRect;
+            }
+
+            icon.SetActive(false);
+        }
+
+        private static void SetDotAlpha(Image image, float alpha)
+        {
+            Color color = image.color;
+            color.a = alpha;
+            image.color = color;
         }
 
         private static void SetAnchors(RectTransform rect, Vector2 min, Vector2 max)

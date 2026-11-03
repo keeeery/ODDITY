@@ -86,6 +86,7 @@ namespace TeamOdd.Reward
             }
 
             IsOpen = true;
+            closeButton.interactable = true;
             // 보상창 뒤에서는 플레이어가 느린 채로 남지 않고, 하던 동작을 마친 뒤 대기 자세로 돌아간다.
             if (SlowMotion.IsSlowed) SlowMotion.Resume();
             uiManager = UIManager.Instance;
@@ -100,18 +101,24 @@ namespace TeamOdd.Reward
             reveal = DOVirtual.DelayedCall(revealDelay, BeginReveal, true);
         }
 
+        // 확인으로 닫으면 패널을 띄운 채 바로 씬 전환 연출을 시작해 화면과 함께 꺼지게 한다.
         public void Close()
         {
             ResetReveal();
             if (tooltip != null) tooltip.Hide();
-            if (panelRoot != null) panelRoot.SetActive(false);
-            if (IsOpen == false) return;
+            if (IsOpen == false)
+            {
+                if (panelRoot != null) panelRoot.SetActive(false);
+                return;
+            }
             uiManager.MissionListUpdate();
-            
+
             IsOpen = false;
+            // 화면이 꺼지는 동안 다시 누르지 않게 막는다
+            if (closeButton != null) closeButton.interactable = false;
             if (SlowMotion.IsSlowed) SlowMotion.Resume();
             if (uiManager != null) uiManager.LockCursor(true);
-            
+
             SceneLoadManager.Instance.LoadScene("02. Lobby");
         }
 
