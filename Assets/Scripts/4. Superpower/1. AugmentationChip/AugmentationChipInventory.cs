@@ -20,11 +20,20 @@ namespace TeamOdd.Superpower
 
         private static readonly List<OwnedChip> chips = new();
         private static readonly OwnedChip[] skillSlots = new OwnedChip[SkillSlotCount]; // 빈 슬롯은 null
+        // 저장 데이터에서 불러온 장착 기록 (칩, 스킬 슬롯). 스탯을 더할 플레이어가 생기면(Start) 장착한다
+        private static readonly List<(OwnedChip chip, int slot)> pendingEquips = new();
         private CombatEntity owner;
         private SkillCaster skillCaster;
 
         public IReadOnlyList<OwnedChip> Chips => chips;
         public IReadOnlyList<OwnedChip> SkillSlots => skillSlots;
+
+        // 저장(GameSave)이 플레이어 없이 읽는다
+        public static IReadOnlyList<OwnedChip> AllChips => chips;
+        public static IReadOnlyList<OwnedChip> AllSkillSlots => skillSlots;
+
+        // 칩을 얻거나 장착·해제·스킬 슬롯 순서가 바뀌면 알린다 (GameSave가 듣고 저장한다)
+        public static event Action Changed;
 
         // 패널이 현재 스탯과 칩 보너스를 보여줄 때 읽는다
         public RuntimeStats Stats => owner.CurrentStats;
@@ -38,6 +47,14 @@ namespace TeamOdd.Superpower
             skillCaster = GetComponent<SkillCaster>();
             foreach (OwnedChip chip in chips)
                 if (chip.Skill is PsychoSlamSkill slam) slam.BindDescriptionCaster(skillCaster);
+        }
+
+        // 불러온 장착 기록은 CombatEntity가 Awake에서 스탯을 만든 뒤에 반영해야 하므로 Start에서 장착한다
+        private void Start()
+        {
+            foreach ((OwnedChip chip, int slot) in pendingEquips)
+                Equip(chip, chip.Origin, chip.Rotation, slot);
+            pendingEquips.Clear();
         }
 
         // 플레이어는 씬을 넘어 살아 있으므로 한 번 구독하면 모든 씬 전환을 듣는다
@@ -71,7 +88,27 @@ namespace TeamOdd.Superpower
             // 칩은 버리지 않으므로 지금까지 얻은 개수가 곧 얻은 순서다
             OwnedChip chip = new OwnedChip(def, cells, skill, chips.Count);
             chips.Add(chip);
+            Changed?.Invoke();
             return chip;
+        }
+
+        // 저장 데이터의 칩 한 장을 보유 목록에 넣는다 (메인 화면의 이어하기). 장착 기록은 플레이어가 생길 때 반영한다
+        public static OwnedChip Restore(AugmentationChipDef def, Vector2Int[] cells, bool equipped, Vector2Int origin, int rotation, int skillSlot)
+        {
+            SuperpowerSkill skill = def is SkillChipDef skillDef ? SkillFactory.Create(skillDef) : null;
+            OwnedChip chip = new OwnedChip(def, cells, skill, chips.Count) { IsNew = false, Origin = origin, Rotation = rotation };
+            chips.Add(chip);
+            if (equipped)
+                pendingEquips.Add((chip, skillSlot));
+            return chip;
+        }
+
+        // 보유 칩과 스킬 슬롯을 모두 비운다 (메인 화면의 새 게임·이어하기 직전)
+        public static void ResetAll()
+        {
+            chips.Clear();
+            Array.Clear(skillSlots, 0, skillSlots.Length);
+            pendingEquips.Clear();
         }
 
         // 스킬 칩은 빈 스킬 슬롯이 있어야 장착할 수 있다
@@ -106,6 +143,7 @@ namespace TeamOdd.Superpower
                 SkillSlotsChanged?.Invoke();
             }
 
+            Changed?.Invoke();
             return true;
         }
 
@@ -126,6 +164,8 @@ namespace TeamOdd.Superpower
                 skillSlots[GetSkillSlot(chip)] = null;
                 SkillSlotsChanged?.Invoke();
             }
+
+            Changed?.Invoke();
         }
 
         // 마을에서 아레나로, 아레나에서 마을로 씬이 바뀔 때마다 부른다
@@ -155,6 +195,7 @@ namespace TeamOdd.Superpower
 
             (skillSlots[from], skillSlots[to]) = (skillSlots[to], skillSlots[from]);
             SkillSlotsChanged?.Invoke();
+            Changed?.Invoke();
         }
 
         private int FindEmptySkillSlot() => Array.IndexOf(skillSlots, null);

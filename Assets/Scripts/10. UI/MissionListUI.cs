@@ -87,6 +87,13 @@ namespace TeamOdd.Mission
             return true;
         }
 
+        // 저장 데이터를 불러오거나 새 게임을 시작할 때 수락 목록을 통째로 바꾼다 (메인 화면에서 호출, 행은 로비의 Awake 에서 다시 그린다)
+        public static void RestoreMissions(IEnumerable<MissionDef> missions)
+        {
+            acceptedMissions.Clear();
+            acceptedMissions.AddRange(missions);
+        }
+
         private void CreateRow(MissionDef missionDef, int number)
         {
             GameObject row = Instantiate(questRowPrefab, questContent);
