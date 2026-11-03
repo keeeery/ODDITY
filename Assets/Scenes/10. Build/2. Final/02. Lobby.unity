@@ -6837,6 +6837,11 @@ MonoBehaviour:
     alpha: 0.7
     holdDuration: 0.4
     fadeDuration: 1.4
+  healColor: {r: 0.1, g: 0.75, b: 0.25, a: 1}
+  heal:
+    alpha: 0.45
+    holdDuration: 0.15
+    fadeDuration: 0.8
   lowHealthRatio: 0.3
   lowHealthMinAlpha: 0.2
   lowHealthMaxAlpha: 0.5
@@ -15851,7 +15856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.BGMPlayer
   bgm:
     clipName: BGM/For Test/bgm-test-02
-    volume: 0.5
+    volume: 0.1
   fadeTime: 0.5
 --- !u!1001 &2025007292
 PrefabInstance:

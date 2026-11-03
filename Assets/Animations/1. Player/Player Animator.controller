@@ -585,11 +585,11 @@ MonoBehaviour:
   - time: 0.36
     sound:
       clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
-      volume: 0.75
+      volume: 0.3
   - time: 0.87
     sound:
       clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
-      volume: 0.75
+      volume: 0.3
 --- !u!1101 &-91263837108623531
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1485,11 +1485,11 @@ MonoBehaviour:
   - time: 0.26
     sound:
       clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
-      volume: 0.75
+      volume: 0.3
   - time: 0.8
     sound:
       clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
-      volume: 0.75
+      volume: 0.3
 --- !u!1102 &5446206025688810471
 AnimatorState:
   serializedVersion: 6
