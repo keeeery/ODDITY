@@ -19,8 +19,9 @@ namespace TeamOdd.UI
         private static SystemMessage current;
 
         [SerializeField] private TMP_Text text;
-        [SerializeField] private Color normalColor = new(0.84705883f, 0.8235294f, 0.76862746f, 1f);
-        [SerializeField] private Color warningColor = new(0.7686275f, 0.5764706f, 0.2901961f, 1f);
+        // 조작 안내(KeyHintBuilder.TextColor)와 같은 백색, 경고는 채도를 올린 주황
+        [SerializeField] private Color normalColor = new(1f, 1f, 1f, 1f);
+        [SerializeField] private Color warningColor = new(1f, 0.68f, 0.2f, 1f);
 
         [Header("Timing (초, 실제 시간)")]
         [SerializeField, Min(0f)] private float fadeInDuration = 0.15f;

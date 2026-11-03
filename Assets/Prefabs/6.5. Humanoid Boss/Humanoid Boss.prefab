@@ -1385,6 +1385,10 @@ MonoBehaviour:
   shakeTrauma: 0.8
   releaseFadeDuration: 0.3
   idleCrossFade: 0.4
+  shatterSound:
+    clipName: Humanoid/dimension crash
+    volume: 0.7
+  shatterSoundLead: 0.09
   damageRatio: 1
   minHpRatio: 0.2
   push:

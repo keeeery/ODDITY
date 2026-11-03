@@ -4,6 +4,7 @@ using TeamOdd.CameraMove;
 using TeamOdd.Combat;
 using TeamOdd.Player;
 using TeamOdd.TimeControl;
+using TeamOdd.UI;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
@@ -62,6 +63,7 @@ namespace TeamOdd.Superpower
             if (target != null) return true;
 
             Debug.Log($"[{Name}] 사거리 {range}m · 각도 ±{angle}도 안에 보스가 없습니다.");
+            SystemMessage.Show("사거리 안에 대상이 없습니다.", SystemMessage.Tone.Warning);
             return false;
         }
 

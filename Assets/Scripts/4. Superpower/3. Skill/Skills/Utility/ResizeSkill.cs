@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.UI;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
@@ -40,6 +41,7 @@ namespace TeamOdd.Superpower
             if (target == null)
             {
                 Debug.Log($"[{Name}] 들고 있거나 조준한 염동력 오브젝트가 없습니다.");
+                SystemMessage.Show("들고 있거나 조준한 염동력 오브젝트가 없습니다.", SystemMessage.Tone.Warning);
                 return false;
             }
 
@@ -51,6 +53,7 @@ namespace TeamOdd.Superpower
             if (target.Body.mass * multiplier > maxMass)
             {
                 Debug.Log($"[{Name}] 더 커지면 들 수 없습니다. (질량 {target.Body.mass:F1} × {multiplier} > {maxMass})");
+                SystemMessage.Show("더 커지면 들 수 없습니다.", SystemMessage.Tone.Warning);
                 PlayRefuse(target);
                 target = null;
                 return false;

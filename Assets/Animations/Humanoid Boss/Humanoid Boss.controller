@@ -39,6 +39,7 @@ AnimatorState:
   - {fileID: 7793388217162369793}
   m_StateMachineBehaviours:
   - {fileID: 3870192950862364257}
+  - {fileID: 2209645264559739668}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -198,6 +199,7 @@ AnimatorState:
   - {fileID: 7357804335195558918}
   m_StateMachineBehaviours:
   - {fileID: -6104628966359247535}
+  - {fileID: -5440917029830838412}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -268,6 +270,31 @@ BlendTree:
   m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
   m_BlendType: 0
+--- !u!114 &-8674752357276642370
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.485
+    sound:
+      clipName: Humanoid/gs1_v10_double_layer
+      volume: 0.7
+  - time: 0.53
+    sound:
+      clipName: Humanoid/gs1_impact_ground
+      volume: 0.2
+  - time: 0.911
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-8598677864230829959
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -424,6 +451,27 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
+--- !u!114 &-8285429988520336057
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.15
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.75
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-8140381696788890149
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -463,6 +511,7 @@ AnimatorState:
   - {fileID: -7674158115664986561}
   m_StateMachineBehaviours:
   - {fileID: -540435068837071813}
+  - {fileID: -857818522191945880}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -491,6 +540,7 @@ AnimatorState:
   - {fileID: 5153580615753990363}
   m_StateMachineBehaviours:
   - {fileID: -3808797689806360524}
+  - {fileID: 153456100718416363}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -710,6 +760,7 @@ AnimatorState:
   - {fileID: 576986317573352617}
   m_StateMachineBehaviours:
   - {fileID: 5800662961351035102}
+  - {fileID: -6758967138034746489}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -902,7 +953,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 3554177482488469769}
   - {fileID: -5823128895240825755}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -8850284962799037772}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -917,6 +969,27 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-6758967138034746489
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.205
+    sound:
+      clipName: Humanoid/gs1_v12_airy_roll
+      volume: 0.65
+  - time: 0.14
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-6680905841127634781
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -942,6 +1015,47 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-6574561590725211863
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.115
+    sound:
+      clipName: Humanoid/gs1_v05_quick_swing
+      volume: 0.6
+  - time: 0.3
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
+  - time: 0.615
+    sound:
+      clipName: Humanoid/gs1_v11_heavy_quick
+      volume: 0.7
+  - time: 0.29
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.48
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.542
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.949
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-6567254064543028970
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1168,6 +1282,7 @@ AnimatorState:
   - {fileID: 971835545440660344}
   m_StateMachineBehaviours:
   - {fileID: -2069466135640970945}
+  - {fileID: 3336445905696673761}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1182,6 +1297,43 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-6215428038713078983
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.33
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
+  - time: 0.41
+    sound:
+      clipName: Humanoid/gs1_v05_quick_swing
+      volume: 0.6
+  - time: 0.61
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7
+  - time: 0.192
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.31
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.805
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-6191972728539709345
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1306,6 +1458,35 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-5934008158047703184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.29
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.65
+  - time: 0.35
+    sound:
+      clipName: Humanoid/gs1_impact_ground
+      volume: 0.2
+  - time: 0.477
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.778
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!114 &-5905703886006510836
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1345,6 +1526,7 @@ AnimatorState:
   - {fileID: -3047299171210625351}
   m_StateMachineBehaviours:
   - {fileID: 3612832436351194718}
+  - {fileID: 530621537250702377}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1429,6 +1611,7 @@ AnimatorState:
   - {fileID: 7726967127141221306}
   m_StateMachineBehaviours:
   - {fileID: 2794616486787327527}
+  - {fileID: -6574561590725211863}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1457,7 +1640,8 @@ AnimatorState:
   - {fileID: 2525158581438336736}
   - {fileID: 3821937893321956875}
   - {fileID: 1540911421887182695}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 4608449428409100928}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1536,7 +1720,8 @@ AnimatorState:
   - {fileID: 958954158648706127}
   - {fileID: -8140381696788890149}
   - {fileID: -1436499183311615184}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -3744852311743586895}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1621,6 +1806,79 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-5440917029830838412
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.078
+    sound:
+      clipName: Humanoid/gs1_v05_quick_swing
+      volume: 0.6
+  - time: 0.29
+    sound:
+      clipName: Humanoid/gs1_v12_airy_roll
+      volume: 0.65
+  - time: 0.35
+    sound:
+      clipName: Humanoid/gs1_v03_lighter
+      volume: 0.6
+  - time: 0.43
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
+  - time: 0.59
+    sound:
+      clipName: Humanoid/gs1_v08_tumbling
+      volume: 0.65
+  - time: 0.725
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7
+  - time: 0.209
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.261
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.35
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.388
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.495
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.536
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.673
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.775
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.944
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-5204885784026321446
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1762,7 +2020,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: -6845208014083293690}
   - {fileID: 5050366559015395653}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -3265603383896830295}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1816,6 +2075,7 @@ AnimatorState:
   - {fileID: -3500940737433731992}
   m_StateMachineBehaviours:
   - {fileID: -4285063998406245641}
+  - {fileID: -3457744273634543101}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1994,6 +2254,7 @@ AnimatorState:
   - {fileID: 3767745260848749137}
   m_StateMachineBehaviours:
   - {fileID: 8286392216133412381}
+  - {fileID: 2128749168111767341}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2044,6 +2305,7 @@ AnimatorState:
   - {fileID: 519152863101722241}
   m_StateMachineBehaviours:
   - {fileID: 5187794365136413643}
+  - {fileID: 2608845347835966911}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2072,7 +2334,8 @@ AnimatorState:
   - {fileID: -682440891309473615}
   - {fileID: -8804462301894910317}
   - {fileID: 8211226521761458049}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 2431651138594789709}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2156,7 +2419,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 4566755722992220474}
   - {fileID: 1406184404105367616}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 1929799199933090462}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2274,6 +2538,48 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-3476968092437059693
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0
+    sound:
+      clipName: Humanoid/gs1_impact_crash
+      volume: 0.8
+--- !u!114 &-3457744273634543101
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.02
+    sound:
+      clipName: Humanoid/gs1_spin_whirl
+      volume: 0.65
+  - time: 0.626
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.909
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-3353993409973605568
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -2345,6 +2651,35 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-3228902403106107536
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.075
+    sound:
+      clipName: Humanoid/gs1_v12_airy_roll
+      volume: 0.65
+  - time: 0.445
+    sound:
+      clipName: Humanoid/gs1_v06_sub_boost
+      volume: 0.7
+  - time: 0.458
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.879
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1102 &-3139079645166924793
 AnimatorState:
   serializedVersion: 6
@@ -2359,6 +2694,7 @@ AnimatorState:
   - {fileID: -4552254521132435261}
   m_StateMachineBehaviours:
   - {fileID: 8249903223224385193}
+  - {fileID: -5934008158047703184}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2765,6 +3101,7 @@ AnimatorState:
   - {fileID: -594700929840912841}
   m_StateMachineBehaviours:
   - {fileID: 6622162355423028755}
+  - {fileID: 4802444055066341562}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2934,6 +3271,7 @@ AnimatorState:
   - {fileID: -386938723753148852}
   m_StateMachineBehaviours:
   - {fileID: 824991070108728251}
+  - {fileID: 2967510718184281339}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -3212,6 +3550,31 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
+--- !u!114 &-1497797482117253528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.43
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.65
+  - time: 0.271
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.93
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &-1436499183311615184
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -3272,7 +3635,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 1193834240902458198}
   - {fileID: -7612510528191547750}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 9073091252075475364}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -3334,6 +3698,64 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-857818522191945880
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.065
+    sound:
+      clipName: Humanoid/gs1_v05_quick_swing
+      volume: 0.6
+  - time: 0.355
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
+  - time: 0.715
+    sound:
+      clipName: Humanoid/gs1_v04_slow_swing
+      volume: 0.65
+  - time: 0.092
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.229
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.849
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-832404427688841212
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.23
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7
+  - time: 0.25
+    sound:
+      clipName: Humanoid/gs1_dimension_cut
+      volume: 0.6
 --- !u!1102 &-824408937027242927
 AnimatorState:
   serializedVersion: 6
@@ -3348,6 +3770,7 @@ AnimatorState:
   - {fileID: 7925594035785040278}
   m_StateMachineBehaviours:
   - {fileID: -5059621961382677726}
+  - {fileID: -8674752357276642370}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -3439,7 +3862,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8612049853769615280}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -3476968092437059693}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -4038,6 +4462,52 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &153456100718416363
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.165
+    sound:
+      clipName: Humanoid/gs1_v07_gritty_kwaak
+      volume: 0.7
+  - time: 0.192
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.5
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &160998909897487781
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.025
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.45
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &204151557547033331
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -4098,6 +4568,97 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &522608035321918803
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.32
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7
+  - time: 0.38
+    sound:
+      clipName: Humanoid/gs1_impact_ground
+      volume: 0.2
+  - time: 0.45
+    sound:
+      clipName: Humanoid/gs1_impact_ground
+      volume: 0.075
+  - time: 0.52
+    sound:
+      clipName: Humanoid/gs1_impact_ground
+      volume: 0.05
+  - time: 0.869
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &530621537250702377
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.3
+    sound:
+      clipName: Humanoid/gs1_v11_heavy_quick
+      volume: 0.65
+  - time: 0
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.37
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.682
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &548023448509688730
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.3
+    sound:
+      clipName: Humanoid/gs1_v08_tumbling
+      volume: 0.7
+  - time: 0
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.262
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.904
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &553706733630819260
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -4228,7 +4789,8 @@ AnimatorState:
   - {fileID: -6431641210780312276}
   - {fileID: 6978294209750811027}
   - {fileID: -65430619300990029}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 160998909897487781}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -4647,7 +5209,8 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -2078289430369471732}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -4785,6 +5348,7 @@ AnimatorState:
   - {fileID: -401987881478300534}
   m_StateMachineBehaviours:
   - {fileID: 3036383699297340348}
+  - {fileID: 4274318902065815132}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -4824,6 +5388,27 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
+--- !u!114 &2128749168111767341
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.205
+    sound:
+      clipName: Humanoid/gs1_v12_airy_roll
+      volume: 0.65
+  - time: 0.14
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1101 &2137919574840351573
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -4849,6 +5434,47 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
+--- !u!114 &2209645264559739668
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.16
+    sound:
+      clipName: Humanoid/gs1_v08_tumbling
+      volume: 0.65
+  - time: 0.37
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
+  - time: 0.44
+    sound:
+      clipName: Humanoid/gs1_v05_quick_swing
+      volume: 0.6
+  - time: 0.62
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7
+  - time: 0.094
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.335
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.809
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1102 &2254135931323621268
 AnimatorState:
   serializedVersion: 6
@@ -4862,7 +5488,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 2040263287696433417}
   - {fileID: 5788345316132099261}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -8285429988520336057}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -4954,7 +5581,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 5797293442406515259}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 2755227490416526184}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -4991,6 +5619,31 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &2608845347835966911
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.34
+    sound:
+      clipName: Humanoid/gs1_v03_lighter
+      volume: 0.65
+  - time: 0.316
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.937
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!1102 &2614782315188903431
 AnimatorState:
   serializedVersion: 6
@@ -5032,6 +5685,7 @@ AnimatorState:
   - {fileID: 6134232005232779505}
   m_StateMachineBehaviours:
   - {fileID: -2444398189275730088}
+  - {fileID: 548023448509688730}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -5154,6 +5808,7 @@ AnimatorState:
   - {fileID: -2661731535718890344}
   m_StateMachineBehaviours:
   - {fileID: -497513947523487880}
+  - {fileID: 6310072351779437646}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -5263,6 +5918,39 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &3336445905696673761
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.19
+    sound:
+      clipName: Humanoid/gs1_v03_lighter
+      volume: 0.6
+  - time: 0.285
+    sound:
+      clipName: Humanoid/gs1_v11_heavy_quick
+      volume: 0.7
+  - time: 0.066
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.269
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.665
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
 --- !u!206 &3344490970066737536
 BlendTree:
   m_ObjectHideFlags: 1
@@ -5307,6 +5995,7 @@ AnimatorState:
   m_Transitions: []
   m_StateMachineBehaviours:
   - {fileID: 4988801935982670036}
+  - {fileID: -832404427688841212}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -5321,52 +6010,6 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &7395120846613027481
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: DimensionSlashDiagonal
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours:
-  - {fileID: 6182047395510372943}
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: fbb0deca098b8c04090df31f66c37d68, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!114 &6182047395510372943
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c46e119bc76b2f7489ff2e29721aec11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.AnimStateEventSender
-  events:
-  - name: OnDimensionCut
-    time: 0.385
-    parameter: 
-  - name: OnDimensionFreeze
-    time: 0.42
-    parameter: 
 --- !u!1101 &3416325038931127759
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -5481,6 +6124,7 @@ AnimatorState:
   - {fileID: 3304993917551621632}
   m_StateMachineBehaviours:
   - {fileID: 1410719546538925273}
+  - {fileID: -8331829710676716911}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -5846,7 +6490,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: -5612067606800155032}
   - {fileID: 6181554882191612412}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 5538697406368155550}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -5914,6 +6559,27 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
+--- !u!114 &4802444055066341562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.385
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.65
+  - time: 0.43
+    sound:
+      clipName: Humanoid/gs1_impact_ground
+      volume: 0.2
 --- !u!1101 &4823506788353990654
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -6019,6 +6685,7 @@ AnimatorState:
   - {fileID: 6891022734316782088}
   m_StateMachineBehaviours:
   - {fileID: -1726590212235023474}
+  - {fileID: -3461829498655778307}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -6047,6 +6714,7 @@ AnimatorState:
   - {fileID: 1974888047937157418}
   m_StateMachineBehaviours:
   - {fileID: 1036477990149114379}
+  - {fileID: -6215428038713078983}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -6190,7 +6858,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: -9049611260619386716}
   - {fileID: 3416325038931127759}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 2457511234927956811}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -6375,6 +7044,7 @@ AnimatorState:
   - {fileID: -5982705122115418658}
   m_StateMachineBehaviours:
   - {fileID: -7785246262272131043}
+  - {fileID: -1078840597087027879}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -6554,6 +7224,67 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &6182047395510372943
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c46e119bc76b2f7489ff2e29721aec11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.AnimStateEventSender
+  events:
+  - name: OnDimensionCut
+    time: 0.385
+    parameter: 
+  - name: OnDimensionFreeze
+    time: 0.42
+    parameter: 
+--- !u!114 &6252857286715274798
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.36
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7
+  - time: 0.385
+    sound:
+      clipName: Humanoid/gs1_dimension_cut
+      volume: 0.6
+  - time: 0.36
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &6310072351779437646
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.18
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
 --- !u!1101 &6390898778272845509
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -6592,7 +7323,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: -7785676683871229786}
   - {fileID: -4287290414994671843}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -1407908936237279421}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -6696,6 +7428,7 @@ AnimatorState:
   - {fileID: -5629821753122633535}
   m_StateMachineBehaviours:
   - {fileID: 1922534682207628593}
+  - {fileID: -3228902403106107536}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -6904,6 +7637,34 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!1102 &7395120846613027481
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DimensionSlashDiagonal
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours:
+  - {fileID: 6182047395510372943}
+  - {fileID: 6252857286715274798}
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: fbb0deca098b8c04090df31f66c37d68, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &7632194790175687803
 AnimatorState:
   serializedVersion: 6
@@ -6918,7 +7679,8 @@ AnimatorState:
   - {fileID: 4543890567771094201}
   - {fileID: 5128270786861485405}
   - {fileID: -8598677864230829959}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 8163657551005328103}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -7140,7 +7902,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: -2050987002837608707}
   - {fileID: -7828030376474894029}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -1657035602561351971}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -7297,6 +8060,7 @@ AnimatorState:
   - {fileID: -1079045234017038721}
   m_StateMachineBehaviours:
   - {fileID: 4875736778400654719}
+  - {fileID: -8591818386956643820}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -7378,6 +8142,7 @@ AnimatorState:
   - {fileID: 6798694545686981539}
   m_StateMachineBehaviours:
   - {fileID: -5905703886006510836}
+  - {fileID: -1497797482117253528}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -7428,6 +8193,7 @@ AnimatorState:
   - {fileID: -6382553955857780821}
   m_StateMachineBehaviours:
   - {fileID: 2354139990095412135}
+  - {fileID: 522608035321918803}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -7508,7 +8274,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 8436039619326885390}
   - {fileID: -6680905841127634781}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 5323023414065234458}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -7554,3 +8321,408 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &2431651138594789709
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.285
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.785
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-3265603383896830295
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.375
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.875
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-8850284962799037772
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.375
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.875
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-2078289430369471732
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.15
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.75
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &2755227490416526184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.15
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.75
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &5538697406368155550
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.91
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &5323023414065234458
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.5
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.93
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &9073091252075475364
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.365
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &1929799199933090462
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.77
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-1657035602561351971
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.77
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &2457511234927956811
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.275
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.7
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-1407908936237279421
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.275
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.7
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-3744852311743586895
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.2
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.9
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &8163657551005328103
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.175
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.475
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &4608449428409100928
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.27
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+  - time: 0.575
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &-8331829710676716911
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.489
+    sound:
+      clipName: Humanoid/step
+      volume: 0.075
+--- !u!114 &2967510718184281339
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.2
+    sound:
+      clipName: Humanoid/gs1_v03_lighter
+      volume: 0.6
+--- !u!114 &-1078840597087027879
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.105
+    sound:
+      clipName: Humanoid/gs1_v11_heavy_quick
+      volume: 0.7
+  - time: 0.49
+    sound:
+      clipName: Humanoid/gs1_v04_slow_swing
+      volume: 0.6
+--- !u!114 &-8591818386956643820
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.28
+    sound:
+      clipName: Humanoid/gs1_v04_slow_swing
+      volume: 0.6
+--- !u!114 &4274318902065815132
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.18
+    sound:
+      clipName: Humanoid/greatsword_1
+      volume: 0.65
+--- !u!114 &-3461829498655778307
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
+  sounds:
+  - time: 0.4
+    sound:
+      clipName: Humanoid/gs1_v02_very_heavy
+      volume: 0.7

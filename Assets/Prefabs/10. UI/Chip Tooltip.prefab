@@ -540,7 +540,7 @@ MonoBehaviour:
   maxCellSize: 10
   cellGap: 2
   cellColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 1}
-  borderColor: {r: 0.1176471, g: 0.1058824, b: 0.09019608, a: 1}
+  borderColor: {r: 0.93, g: 0.91, b: 0.87, a: 0.85}
   borderWidth: 1
   antiAliasPixels: 1
 --- !u!1 &1799553542
