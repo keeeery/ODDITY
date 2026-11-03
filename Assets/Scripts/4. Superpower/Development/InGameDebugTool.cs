@@ -13,8 +13,10 @@ namespace TeamOdd.Superpower.Development
     {
         private const Key ResetCooldownKey = Key.F10;
         private const Key SelfDamageKey = Key.F11;
+        private const Key PlusMaxHPKey = Key.F12;
 
         [SerializeField] private int damage = 999999;
+        [SerializeField] private int hp = 999999; 
 
         private CombatEntity owner;
         private AugmentationChipInventory inventory;
@@ -32,6 +34,14 @@ namespace TeamOdd.Superpower.Development
 
             if (SelfDamageKey.GetKeyDown())
                 DamageSelf();
+
+            if (PlusMaxHPKey.GetKeyDown())
+            {
+                owner.CurrentStats.Add(StatType.MaxHp, hp);
+                HealEvent healEvent = new HealEvent(owner, owner, hp);
+                owner.TakeHeal(healEvent);
+            }
+
         }
 
         private void ResetAllCooldowns()

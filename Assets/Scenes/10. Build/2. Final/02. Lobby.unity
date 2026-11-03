@@ -5997,6 +5997,8 @@ PrefabInstance:
     - {fileID: 5360483855478606247, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
     - {fileID: 2199142773454136, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
     - {fileID: 9157952339030082830, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
+    - {fileID: 3280929024193793348, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
+    - {fileID: 6289237648108704499, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5826861370956797690, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
     m_AddedGameObjects: []
@@ -6329,7 +6331,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1640213436}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1640213438}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eede01cf483a496388ffc51f31974940, type: 3}
@@ -10932,22 +10934,15 @@ PrefabInstance:
       propertyPath: speedCurve.m_Curve.Array.data[0].value
       value: 1.1528625
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6232883466832630808, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1640213444}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
 --- !u!4 &1640213437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2205336347187439273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1640213436}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1640213438 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1640213436}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1640213439 stripped
@@ -10955,7 +10950,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1640213436}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1640213438}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b5985590a6d9534680215d927cad10c, type: 3}
@@ -10966,21 +10961,6 @@ CharacterController:
   m_CorrespondingSourceObject: {fileID: 677289072813033125, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1640213436}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1640213444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1640213438}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b21c34011bf4e4fa48e4fefaa6d81ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.WallFragmentRaycastTest
-  aimCamera: {fileID: 0}
-  fragmentSpawner: {fileID: 0}
-  rayDistance: 100
 --- !u!1001 &1658571604
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30749,8 +30729,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2547672222768463650, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
-    - {fileID: 8978000970806910343, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
-    - {fileID: 5360483855478606247, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
     - {fileID: 2199142773454136, guid: db30c82cb2167aac50c1d6ce8bc629d0, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -30770,6 +30748,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3400000390}
+  - component: {fileID: 3400000500}
   m_Layer: 0
   m_Name: Training Props
   m_TagString: Untagged
@@ -32115,6 +32094,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5696970864472666323, guid: 31f63438770f64c2aa5b2c04a222aaf5, type: 3}
   m_PrefabInstance: {fileID: 3400000451}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3400000500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3400000389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86da1cb772af4fb29e4fa68754ec73e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Arena.PsychokinesisPropRespawner
+  respawnDelay: 3
 --- !u!1001 &1544137916010267471
 PrefabInstance:
   m_ObjectHideFlags: 0
