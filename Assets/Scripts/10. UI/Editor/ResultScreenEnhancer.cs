@@ -143,7 +143,7 @@ namespace TeamOdd.UI
             return true;
         }
 
-        // 보상 칸: 칩 색 외곽선 + 검은 바탕 + 칩 대표 아이콘. 칸 그림(Icon)은 투명하게 두고 툴팁 영역으로만 쓴다.
+        // 보상 칸: 칩 계열색 외곽선 + 바탕(스킬 칩은 칸 색, 스탯 칩은 검정) + 칩 대표 아이콘. 칸 그림(Icon)은 투명하게 두고 툴팁 영역으로만 쓴다.
         // 런타임에 이 칸을 복제해 늘리므로 하나만 고치면 된다.
         private static void EnhanceRewardSlot(Transform dim)
         {
@@ -186,7 +186,7 @@ namespace TeamOdd.UI
             image.preserveAspect = true;
             image.raycastTarget = false;
 
-            Wire(slot, ("chipIcon", image), ("colorBorder", borderImage));
+            Wire(slot, ("chipIcon", image), ("colorBorder", borderImage), ("colorBack", backImage));
         }
 
         private static void Stretch(RectTransform rect, float inset)
