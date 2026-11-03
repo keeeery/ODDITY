@@ -43,6 +43,10 @@ namespace TeamOdd.UI
         // 잔상이 줄어드는 속도(초당 전체 대비 비율)
         [SerializeField, Min(0.01f)] private float trailSpeed = 0.6f;
 
+        [Header("Extra")]
+        // 채움 오른쪽에 덧붙여 그리는 구간 색 (보호막 등)
+        [SerializeField] private Color extraColor = Color.white;
+
         [Header("Rise")]
         [SerializeField] private bool useRise;
         // 차오르는 속도(초당 전체 대비 비율)
@@ -67,6 +71,34 @@ namespace TeamOdd.UI
         private Tweener riseTween;
         private float flashAlpha;
         private Vector3 shakeOffset;
+        private float extraAmount;   // 채움 오른쪽에 덧붙이는 구간 길이 (바 전체 대비, 배율 적용 후)
+        private float displayScale = 1f; // 채움·잔상을 그릴 때 곱하는 배율, 덧붙인 구간까지 바 안에 들어가도록 줄일 때 씀
+
+        // 채움 오른쪽에 extraColor로 덧붙여 그리는 구간. 채움·잔상 값과 따로 놀아서 잔상·차오름 연출에 영향이 없다
+        public float ExtraAmount
+        {
+            get => extraAmount;
+            set
+            {
+                float clamped = Mathf.Clamp01(value);
+                if (Mathf.Approximately(extraAmount, clamped)) return;
+                extraAmount = clamped;
+                SetVerticesDirty();
+            }
+        }
+
+        // 채움·잔상을 바 전체 대비 이 배율로 줄여 그린다. 값 자체를 바꾸지 않으므로 줄어도 잔상이 생기지 않는다
+        public float DisplayScale
+        {
+            get => displayScale;
+            set
+            {
+                float clamped = Mathf.Clamp01(value);
+                if (Mathf.Approximately(displayScale, clamped)) return;
+                displayScale = clamped;
+                SetVerticesDirty();
+            }
+        }
 
         public bool UseTrail
         {
@@ -234,15 +266,19 @@ namespace TeamOdd.UI
             Rect inner = new Rect(rect.x + fillPadding, rect.y + fillPadding,
                 rect.width - fillPadding * 2f, rect.height - fillPadding * 2f);
             float innerRadius = Mathf.Max(0f, Mathf.Min(radius, rect.height * 0.5f) - fillPadding);
-            if (useTrail) AddInnerFill(vh, inner, innerRadius, trailAmount, trailColor, antiAlias);
-            AddInnerFill(vh, inner, innerRadius, fillAmount, fillColor, antiAlias);
+            // 덧붙인 구간은 채움 뒤에 채움+구간 길이로 깔아서, 채움 오른쪽 끝부터 이어져 보이게 한다.
+            float shownFill = fillAmount * displayScale;
+            if (useTrail) AddInnerFill(vh, inner, innerRadius, trailAmount * displayScale, trailColor, antiAlias);
+            if (extraAmount > 0f)
+                AddInnerFill(vh, inner, innerRadius, Mathf.Min(1f, shownFill + extraAmount), extraColor, antiAlias);
+            AddInnerFill(vh, inner, innerRadius, shownFill, fillColor, antiAlias);
 
             // 잔상 구간까지 함께 밝힌다.
             if (flashAlpha > 0.001f)
             {
                 Color overlay = flashColor;
                 overlay.a *= flashAlpha;
-                AddInnerFill(vh, inner, innerRadius, useTrail ? trailAmount : fillAmount, overlay, antiAlias);
+                AddInnerFill(vh, inner, innerRadius, (useTrail ? trailAmount : fillAmount) * displayScale, overlay, antiAlias);
             }
         }
 

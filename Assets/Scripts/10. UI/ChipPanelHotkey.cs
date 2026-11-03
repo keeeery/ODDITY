@@ -38,6 +38,8 @@ namespace TeamOdd.UI
         private const float ReferenceHeight = 1080f;
 
         private CanvasGroup group;
+        // 열린 창 여부에 따른 자기 알파, 씬 전환 뒤에는 SceneLoadManager.UIRevealAlpha 를 곱해 다른 UI와 함께 나타난다
+        private float shown;
 
         private bool IsOpen => panel != null && panel.gameObject.activeSelf;
 
@@ -97,8 +99,9 @@ namespace TeamOdd.UI
             bool visible = panel != null && IsOpen == false && UIManager.Instance.IsUIClose;
 
             float blend = 1f - Mathf.Exp(-fadeSpeed * Time.unscaledDeltaTime);
-            group.alpha = Mathf.Lerp(group.alpha, visible ? 1f : 0f, blend);
-            if (visible == false && group.alpha < 0.01f) group.alpha = 0f;
+            shown = Mathf.Lerp(shown, visible ? 1f : 0f, blend);
+            if (visible == false && shown < 0.01f) shown = 0f;
+            group.alpha = shown * SceneLoadManager.UIRevealAlpha;
         }
     }
 }

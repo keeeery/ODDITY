@@ -72,6 +72,7 @@ namespace TeamOdd.UI
         private void Update()
         {
             UpdateFill(hpBar, GetHpRatio());
+            UpdateShield();
             UpdateFill(staminaBar, GetStaminaRatio());
             if (damageVignette != null) damageVignette.HealthRatio = GetHpRatio();
         }
@@ -96,6 +97,26 @@ namespace TeamOdd.UI
             if (bar == null) return;
 
             bar.FillAmount = ratio;
+        }
+
+        // 보호막을 체력바 채움 오른쪽에 흰색으로 덧붙인다
+        // 체력+보호막이 최대 체력을 넘으면 그 합을 바 전체로 보고 매 프레임 비율을 다시 잡는다
+        private void UpdateShield()
+        {
+            if (hpBar == null || combatEntity == null) return;
+
+            int maxHp = combatEntity.CurrentStats.MaxHp;
+            int shield = combatEntity.Shield;
+            int total = Mathf.Max(maxHp, combatEntity.Hp + shield);
+            if (total <= 0)
+            {
+                hpBar.DisplayScale = 1f;
+                hpBar.ExtraAmount = 0f;
+                return;
+            }
+
+            hpBar.DisplayScale = (float)maxHp / total;
+            hpBar.ExtraAmount = (float)shield / total;
         }
 
         private float GetHpRatio()

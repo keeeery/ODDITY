@@ -72,6 +72,10 @@ namespace TeamOdd
         [SerializeField, Min(0f)] private float uiFadeDelay = 0.2f;
         [SerializeField, Min(0.01f)] private float uiFadeDuration = 0.6f;
 
+        [Title("Sound (실제 초)")]
+        // 소리 전체는 화면이 꺼지는 시간 동안 줄이고, 새 씬을 불러온 뒤 이 시간 동안 원래 마스터 볼륨으로 되돌린다
+        [SerializeField, Min(0f)] private float soundFadeInDuration = 0.5f;
+
         private Sequence sequence;
         private bool isLoading;
         // 위·아래·왼쪽·오른쪽 띠, 처음 전환할 때 만든다
@@ -86,6 +90,8 @@ namespace TeamOdd
         // 화면이 켜질 때까지 숨겨 둔 새 씬 UI와 원래 알파
         private readonly List<(CanvasGroup group, float alpha)> hiddenUI = new();
         private Sequence uiMotion;
+        private float uiReveal = 1f;
+        private Tween masterVolumeFade;
 
         public event Action<string> OnFadeOutStarted;
         public event Action<string> OnFadeOutCompleted;
@@ -94,6 +100,10 @@ namespace TeamOdd
 
         // 씬 이동 연출 중인지 (꺼지기 시작 ~ 다 켜질 때까지)
         public bool IsLoading => isLoading;
+
+        // 새 씬 UI가 드러난 정도(0~1). 새 씬을 불러오면 0이 되고, 화면이 다 켜진 뒤 다른 UI와 같은 박자로 1까지 오른다.
+        // 알파를 스스로 매 프레임 정하는 UI(ChipPanelHotkey 등)는 자기 알파에 이 값을 곱해 다른 UI와 함께 나타난다
+        public static float UIRevealAlpha => IsInitialized ? Instance.uiReveal : 1f;
 
         private float FadeOutDuration => glitchDuration + foldDuration + shrinkDuration + dotFadeDuration;
 
@@ -104,6 +114,9 @@ namespace TeamOdd
             loadingIconFadeMotion?.Kill();
             loadingDotsMotion?.Kill();
             uiMotion?.Kill();
+            masterVolumeFade?.Kill();
+            // 전환 도중 사라지면 소리가 꺼진 채 남지 않게 설정 볼륨으로 되돌린다
+            if (isLoading) AudioListener.volume = GameSettings.MasterVolume;
             if (isLoading) ScreenGlitch.Clear();
             RestoreUI();
         }
@@ -130,15 +143,19 @@ namespace TeamOdd
 
             OnFadeOutStarted?.Invoke(sceneName);
 
-            // 화면이 꺼지는 동안 지금 BGM을 줄여 다 꺼졌을 때는 조용하게 함, 새 BGM은 OnSceneLoaded에서 BGMPlayer가 키우며 틂
-            SoundManager.Instance.StopBGM(FadeOutDuration);
+            // 화면이 꺼지는 동안 들리는 소리 전체(마스터 볼륨)를 줄인다. BGM만 줄이면 씬에 놓인 환경음 루프 등은
+            // 원래 볼륨으로 나다가 씬이 내려가는 순간 뚝 끊긴다. 다 꺼진 뒤 이전 BGM은 멈추고, 새 BGM은 OnSceneLoaded에서 BGMPlayer가 키우며 튼다
+            FadeMasterVolume(0f, FadeOutDuration);
 
             // 이전 씬 UI는 씬이 내려갈 때까지 점으로 눌린 채 둔다. 씬을 넘어 남는 UI는 PlayFadeIn 이 같은 프레임에 되돌렸다 다시 누른다
             await PlayFadeOut();
+            SoundManager.Instance.StopBGM(0f);
             ShowLoadingIcon();
             OnFadeOutCompleted?.Invoke(sceneName);
 
             await SceneManager.LoadSceneAsync(sceneName);
+            // 새 씬의 환경음 등은 검은 화면 뒤에서 짧게 키워 둔다 (새 BGM은 제 페이드로 0에서부터 커짐)
+            FadeMasterVolume(GameSettings.MasterVolume, soundFadeInDuration);
             HideSceneUI();
             // 구독한 쪽(BGM 등)에서 예외가 나도 화면을 켜지 않으면 꺼진 채로 남으므로 로그만 남기고 이어 간다
             try
@@ -350,6 +367,14 @@ namespace TeamOdd
             }
         }
 
+        // 리스너 볼륨(GameSettings의 마스터 볼륨이 들어가는 곳)을 실제 시간으로 바꾼다
+        private void FadeMasterVolume(float target, float duration)
+        {
+            masterVolumeFade?.Kill();
+            masterVolumeFade = DOTween.To(() => AudioListener.volume, value => AudioListener.volume = value, target, duration)
+                .SetUpdate(true);
+        }
+
         // 새 씬의 화면 UI(최상위 오버레이·카메라 공간 캔버스)를 모두 숨긴다. 화면이 다 켜진 뒤 FadeInSceneUI 가 되살린다.
         // 월드 공간 캔버스는 월드와 함께 켜지므로 두고, 원래 알파가 0인 캔버스(닫힌 창 등)는 제 스크립트가 열도록 둔다.
         // 보스 씬의 HUD(UI Canvas)는 BossIntroCinematic 이 숨겼다가 카메라가 돌아올 때 직접 되살리므로, 알파가 엇갈리지 않게 건드리지 않는다
@@ -357,6 +382,7 @@ namespace TeamOdd
         {
             uiMotion?.Kill();
             hiddenUI.Clear();
+            uiReveal = 0f;
 
             Boss.BossIntroCinematic intro = FindAnyObjectByType<Boss.BossIntroCinematic>();
             bool hasIntro = intro != null && intro.isActiveAndEnabled;
@@ -388,10 +414,11 @@ namespace TeamOdd
         // 숨기기 전 알파로 서서히 되돌린다. 그사이 다른 스크립트가 알파를 바꿨으면(창을 열었다 등) 그쪽에 맡긴다
         private void FadeInSceneUI()
         {
-            if (hiddenUI.Count == 0) return;
-
             uiMotion?.Kill();
-            uiMotion = DOTween.Sequence().SetUpdate(true).SetDelay(uiFadeDelay);
+            uiMotion = DOTween.Sequence().SetUpdate(true).SetDelay(uiFadeDelay)
+                // 끊겨도 UI가 숨은 채 남지 않게 끝까지 드러낸다
+                .OnKill(() => uiReveal = 1f);
+            uiMotion.Join(DOTween.To(() => uiReveal, value => uiReveal = value, 1f, uiFadeDuration).SetEase(Ease.OutSine));
             foreach ((CanvasGroup group, float alpha) in hiddenUI)
                 if (group != null && group.alpha <= 0f)
                     uiMotion.Join(group.DOFade(alpha, uiFadeDuration).SetEase(Ease.OutSine));

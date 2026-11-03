@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TeamOdd.UI;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
@@ -48,6 +49,8 @@ namespace TeamOdd.Superpower
             {
                 inventory.Add(def, ChipShapeLibrary.Roll(def.CellCount, ChipGridMetrics.GridSize));
             }
+
+            SystemMessage.Show($"칩 {defs.Count}종을 획득했습니다.");
 
             dispensed = true;
             Destroy(gameObject);

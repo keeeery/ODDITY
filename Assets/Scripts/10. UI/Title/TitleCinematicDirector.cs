@@ -222,12 +222,12 @@ namespace TeamOdd
 
         // 암전이 걷히면 먼지 입자만 떠 있는 어둠 → 홀로그램과 빛 번짐·박동 링 → 로고 → 메뉴 항목·버전 순서로 하나씩 나타남
         [Title("Menu Reveal (초)")]
-        [SerializeField] private Vector2 blackoutFadeTime = new(0.2f, 1.2f); // (시작, 길이) 걷히면 먼지 입자만 보임
-        [SerializeField] private Vector2 hologramTime = new(1.3f, 1.4f); // 홀로그램, 뒤의 빛 번짐·박동 링
-        [SerializeField] private Vector2 titleTime = new(2.6f, 1.1f);
-        [SerializeField] private Vector2 buttonTime = new(3.6f, 0.6f);
-        [SerializeField] private float buttonStagger = 0.15f;
-        [SerializeField] private Vector2 footerTime = new(3.9f, 0.7f);
+        [SerializeField] private Vector2 blackoutFadeTime = new(0.2f, 0.9f); // (시작, 길이) 걷히면 먼지 입자만 보임
+        [SerializeField] private Vector2 hologramTime = new(0.9f, 1.1f); // 홀로그램, 뒤의 빛 번짐·박동 링
+        [SerializeField] private Vector2 titleTime = new(1.8f, 0.8f);
+        [SerializeField] private Vector2 buttonTime = new(2.5f, 0.45f);
+        [SerializeField] private float buttonStagger = 0.1f;
+        [SerializeField] private Vector2 footerTime = new(2.8f, 0.5f);
 
         private bool isReleased;
         private MeshFilter projectileMesh; // 회전된 상자 기준으로 카메라에서 가장 가까운 표면까지 잼
