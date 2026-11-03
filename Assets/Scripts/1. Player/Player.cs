@@ -114,6 +114,7 @@ namespace TeamOdd.Player
                 AttackSoundType.Throw  => throwSound,
                 _ => null
             };
+            
             sound?.Play();
         }
 

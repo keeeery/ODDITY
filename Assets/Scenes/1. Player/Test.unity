@@ -1090,6 +1090,8 @@ MonoBehaviour:
   antiAliasPixels: 1
   highlightOnHover: 0
   highlightBorderColor: {r: 0.93, g: 0.91, b: 0.87, a: 0.9}
+  highlightTrackColor: {r: 0.93, g: 0.91, b: 0.87, a: 0}
+  highlightFadeDuration: 0.12
   flashColor: {r: 1, g: 1, b: 1, a: 0.7}
 --- !u!222 &32935197
 CanvasRenderer:
@@ -30341,11 +30343,11 @@ MonoBehaviour:
   playerEntity: {fileID: 2205336347470601075}
   panelRoot: {fileID: 1079069744}
   bandReveal: {fileID: 1755353925}
-  bandGlitch: {fileID: 32935194}
   bandContent: {fileID: 32935193}
   messageText: {fileID: 855340754}
   countdownText: {fileID: 520547310}
   hudGlitch: {fileID: 2010411291}
+  banner: {fileID: 0}
   message: YOU DIED
   countdownFormat: "{0}\uCD08 \uB4A4 \uC815\uBE44\uC18C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4."
   movingMessage: "\uC815\uBE44\uC18C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4."
@@ -30364,8 +30366,6 @@ MonoBehaviour:
   shrinkDuration: 0.25
   dotFadeDuration: 0.3
   messageDelay: 1
-  messageGlitchDuration: 0.35
-  messageGlitchStrength: 0.6
   countdownSeconds: 5
   movingHold: 1
 --- !u!224 &779195587
@@ -35117,6 +35117,11 @@ MonoBehaviour:
     alpha: 0.7
     holdDuration: 0.4
     fadeDuration: 1.4
+  healColor: {r: 0.1, g: 0.75, b: 0.25, a: 1}
+  heal:
+    alpha: 0.45
+    holdDuration: 0.15
+    fadeDuration: 0.8
   lowHealthRatio: 0.3
   lowHealthMinAlpha: 0.2
   lowHealthMaxAlpha: 0.5
@@ -55544,7 +55549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6508351681074504637, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8452123745059249488, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: waves.Array.data[0].reaction
