@@ -1,5 +1,7 @@
 using System;
 using TeamOdd.Combat;
+using TeamOdd.Mission;
+using TeamOdd.UI;
 using Study.Utilities;
 using UnityEngine;
 
@@ -117,8 +119,10 @@ namespace TeamOdd.Psychokinesis
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
         private bool IsSuperpowerLocked => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsSuperpowerLocked;
         private bool IsHit => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsHit;
+        // 정비소에서는 기본 공격과 염동력을 쓰지 않고, 우클릭은 NPC 상호작용(MissionNPC)에 넘긴다
+        private bool IsInRepairShop => RepairShopZone.Contains(player.transform.position);
 
-        public bool CanNormalAttack => heldObject == null && IsHit == false && IsSuperpowerLocked == false;
+        public bool CanNormalAttack => heldObject == null && IsHit == false && IsSuperpowerLocked == false && IsInRepairShop == false;
 
         // 피격 순간 입력 예약과 발사 준비를 버리고, 물체는 투척 피해 없이 즉시 내려놓는다.
         public void InterruptForHit()
@@ -205,6 +209,19 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
+            if (IsInRepairShop)
+            {
+                releaseRequested = true;
+                grabRequested = false;
+                throwRequested = false;
+                attackRequested = false;
+
+                if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
+                    SystemMessage.Show(RepairShopZone.AttackBlockedMessage, SystemMessage.Tone.Warning);
+
+                return;
+            }
+
             bool rightHeld = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right) &&
                              Player.Player.Instance.PlayerController.IsHit == false;
 
@@ -238,7 +255,8 @@ namespace TeamOdd.Psychokinesis
 #endif
 
             // Update에서 받은 입력도 같은 프레임에 UI가 열리거나 피격·시전이 시작되면 실행하지 않는다.
-            if (IsHit || IsSuperpowerLocked || UIManager.Instance.IsUIClose == false)
+            // 정비소에 들어서면 들고 있던 물체를 놓고 외곽선도 끈다.
+            if (IsHit || IsSuperpowerLocked || UIManager.Instance.IsUIClose == false || IsInRepairShop)
             {
                 InterruptForHit();
                 return;

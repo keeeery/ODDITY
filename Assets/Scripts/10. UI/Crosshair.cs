@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TeamOdd.Mission;
 using TeamOdd.Psychokinesis;
 using UnityEngine;
 using UnityEngine.UI;
@@ -121,7 +122,9 @@ namespace TeamOdd.UI
 
             PsychokinesisObject held = psychokinesis != null ? psychokinesis.HeldObject : null;
             PsychokinesisObject focused = PsychokinesisObject.OutlinedObject;
-            bool showRing = held == null && focused != null && focused.IsFocusAvailable;
+            // 염동력 대상이 없으면 말을 걸 수 있는 NPC에도 같은 링을 띄운다 (외곽선과 같은 우선순위)
+            MissionNPC npc = focused == null ? MissionNPC.OutlinedNPC : null;
+            bool showRing = held == null && ((focused != null && focused.IsFocusAvailable) || npc != null);
             bool canAttack = psychokinesis != null && psychokinesis.CanNormalAttack;
             bool hasEnemy = canAttack && psychokinesis.HasAttackTarget;
 
@@ -130,7 +133,7 @@ namespace TeamOdd.UI
             currentRingRadius = Mathf.Lerp(currentRingRadius, showRing ? ringRadius : hiddenRadius, blend);
             ringAlpha = Mathf.Lerp(ringAlpha, showRing ? 1f : 0f, blend);
 
-            if (showRing) ringColor = focused.OutlineColor;
+            if (showRing) ringColor = focused != null ? focused.OutlineColor : npc.OutlineColor;
 
             SetVerticesDirty();
         }
