@@ -12,12 +12,14 @@ namespace TeamOdd.Superpower
     /// 이 컴포넌트는 지금 화면에 그려진 방향(Cells/Rotation)만 들고 있다.
     /// </summary>
     // 휠(IScrollHandler)은 구현하지 않아야 부모 ScrollRect로 그대로 전달된다
-    public class ChipItemView : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class ChipItemView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         // 런타임에 AddComponent로 붙이므로 인스펙터 값 대신 상수로 둔다
-        private static readonly Color OutlineColor = Color.white;
-        private const float OutlineThickness = 9f;
-        private static readonly Color NewBadgeColor = new Color(1f, 0.8f, 0.1f);
+        // 외곽선·NEW 표시는 HUD 글자색과 그로기 바 금색을 쓴다
+        private static readonly Color OutlineColor = new Color(0.93f, 0.91f, 0.87f, 0.85f);
+        private const float OutlineThickness = 6f;
+        private static readonly Color NewBadgeColor = new Color(0.7686275f, 0.5764706f, 0.2901961f, 1f);
+        private static readonly Color DarkTextColor = new Color(0.06f, 0.05f, 0.04f, 1f);
         private static readonly Vector2 NewBadgeSize = new Vector2(108f, 48f);
         private static readonly Vector2 NewBadgeOffset = new Vector2(12f, -12f); // 첫 칸 좌상단에서 외곽선 안쪽으로
 
@@ -35,7 +37,9 @@ namespace TeamOdd.Superpower
         public int Height { get; private set; }
         public int Rotation { get; private set; } // 시계 방향 90도 회전 횟수 (0~3)
 
-        public event Action<ChipItemView> PointerEntered;
+        public event Action<ChipItemView, PointerEventData> PointerEntered;
+        public event Action<ChipItemView, PointerEventData> PointerMoved;
+        public event Action<ChipItemView> PointerExited;
         public event Action<ChipItemView> RightClicked;
         public event Action<ChipItemView, PointerEventData> DragBegan;
         public event Action<ChipItemView, PointerEventData> Dragged;
@@ -109,9 +113,8 @@ namespace TeamOdd.Superpower
             Text text = textRect.gameObject.AddComponent<Text>();
             text.font = font;
             text.fontSize = 32;
-            text.fontStyle = FontStyle.Bold;
             text.alignment = TextAnchor.MiddleCenter;
-            text.color = Color.black;
+            text.color = DarkTextColor;
             text.text = "NEW";
             text.raycastTarget = false;
         }
@@ -185,8 +188,12 @@ namespace TeamOdd.Superpower
         public void OnPointerEnter(PointerEventData eventData)
         {
             MarkSeen();
-            PointerEntered?.Invoke(this);
+            PointerEntered?.Invoke(this, eventData);
         }
+
+        public void OnPointerMove(PointerEventData eventData) => PointerMoved?.Invoke(this, eventData);
+
+        public void OnPointerExit(PointerEventData eventData) => PointerExited?.Invoke(this);
 
         public void OnPointerClick(PointerEventData eventData)
         {

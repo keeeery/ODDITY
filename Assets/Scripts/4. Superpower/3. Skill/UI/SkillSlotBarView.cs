@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -19,6 +20,7 @@ namespace TeamOdd.Superpower
         private AugmentationChipInventory inventory;
         private RectTransform root; // 드래그 중인 고스트를 올려두는 최상단 (패널)
         private Font font;
+        private TooltipView tooltip; // 슬롯에 마우스를 올리면 칩 툴팁을 띄운다. 없으면 띄우지 않는다
 
         private SkillSlotView dragFrom; // 들고 있는 슬롯
         private OwnedChip draggedChip;  // 들어 올릴 때 그 슬롯에 있던 칩
@@ -27,16 +29,14 @@ namespace TeamOdd.Superpower
 
         public bool IsDragging => dragFrom != null;
 
-        // 슬롯에 포인터를 올리면 그 칩 정보를 보여주도록 패널에 알린다
-        public event Action<OwnedChip> ChipHovered;
-
         // 패널을 열 때마다 부른다. 슬롯은 처음 열 때 한 번 만든다
-        public void Open(AugmentationChipInventory inventory, RectTransform root, Font font)
+        public void Open(AugmentationChipInventory inventory, RectTransform root, Font font, TooltipView tooltip = null)
         {
             Close();
             this.inventory = inventory;
             this.root = root;
             this.font = font;
+            this.tooltip = tooltip;
 
             if (slots.Count == 0)
                 Build();
@@ -82,6 +82,8 @@ namespace TeamOdd.Superpower
                 SkillSlotView slot = SkillSlotView.Create(i, transform, slotSize, font, interactive: true);
                 slot.Rect.anchoredPosition = new Vector2(i * (slotSize.x + slotGap), 0f);
                 slot.PointerEntered += OnPointerEntered;
+                slot.PointerMoved += OnPointerMoved;
+                slot.PointerExited += OnPointerExited;
                 slot.DragBegan += OnBeginDrag;
                 slot.Dragged += OnDrag;
                 slot.DragEnded += OnEndDrag;
@@ -95,10 +97,23 @@ namespace TeamOdd.Superpower
                 slots[i].Show(inventory.SkillSlots[i]);
         }
 
-        private void OnPointerEntered(SkillSlotView slot)
+        // 들고 있는 동안에는 툴팁을 띄우지 않는다
+        private void OnPointerEntered(SkillSlotView slot, PointerEventData eventData)
         {
             if (slot.Chip != null && dragFrom == null)
-                ChipHovered?.Invoke(slot.Chip);
+                ChipTooltip.Show(tooltip, slot, slot.Chip, eventData.position, ChipTooltip.GetEquipStatus(slot.Chip, inventory));
+        }
+
+        private void OnPointerMoved(SkillSlotView slot, PointerEventData eventData)
+        {
+            if (tooltip != null)
+                tooltip.SetScreenPosition(slot, eventData.position);
+        }
+
+        private void OnPointerExited(SkillSlotView slot)
+        {
+            if (tooltip != null)
+                tooltip.Hide(slot);
         }
 
         #region Drag
@@ -119,7 +134,8 @@ namespace TeamOdd.Superpower
             ghost.Rect.SetAsLastSibling();
 
             dragOffset = ghost.Rect.anchoredPosition - ScreenToLocal(root, eventData.position);
-            ChipHovered?.Invoke(slot.Chip);
+            if (tooltip != null)
+                tooltip.Hide();
         }
 
         private void OnDrag(SkillSlotView slot, PointerEventData eventData)

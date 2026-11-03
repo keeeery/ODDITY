@@ -26,7 +26,6 @@ namespace TeamOdd.Superpower
     ///   │                          └─────────────────┘ │
     ///   │ ┌ SkillBar (스킬 슬롯 1~5) ─────────────────┐ │ ← skillBarGap
     ///   │ └───────────────────────────────────────────┘ │
-    ///   │ Info                                          │
     ///   └───────────────────────────────────────────────┘
     /// </summary>
     public class AugmentationChipLayoutBuilder : MonoBehaviour
@@ -34,6 +33,7 @@ namespace TeamOdd.Superpower
         // 필터 토글을 새로 만들 때 쓰는 순서와 글자
         private static readonly ChipFilter[] Filters = { ChipFilter.Attack, ChipFilter.Defense, ChipFilter.Utility, ChipFilter.Passive, ChipFilter.Stat };
         private static readonly string[] FilterLabels = { "공격", "방어", "유틸", "패시브", "스탯" };
+        private const string AllFilterLabel = "전체";
 
         // 정렬 버튼의 기준 순서와 글자
         private static readonly ChipSortKey[] SortKeys = { ChipSortKey.Recent, ChipSortKey.Type, ChipSortKey.Size, ChipSortKey.Name };
@@ -72,14 +72,11 @@ namespace TeamOdd.Superpower
         [SerializeField] private float headerHeight = 192f; // 패널 위쪽 ~ 그리드/트레이 위쪽 (제목 영역)
         [SerializeField] private float titleTop = 48f;
         [SerializeField] private float titleHeight = 96f;
-        [SerializeField] private float infoGap = 30f;       // 본문 아래 ~ 정보 텍스트
-        [SerializeField] private float infoHeight = 192f;
 
         [Header("References")]
         [SerializeField] private ChipGridView grid;
         [SerializeField] private ChipTrayView tray;
         [SerializeField] private RectTransform title;
-        [SerializeField] private RectTransform info;
         [SerializeField] private SkillSlotBarView skillBar; // 비워두면 Build Layout이 만든다
 
 #if UNITY_EDITOR
@@ -100,13 +97,14 @@ namespace TeamOdd.Superpower
             EnsureSkillBar();
             EnsureSortButtons();
             EnsureFilterToggles();
+            EnsureAllToggle();
 
             float gridLength = ChipGridMetrics.Length(gridSize);
             Vector2 traySize = new Vector2(GetTrayMinWidth() + trayPadding, Mathf.Max(gridLength, trayMinHeight));
             LayoutTray(traySize);
 
             float width = padding + gridLength + spacing + traySize.x + padding;
-            float height = headerHeight + traySize.y + skillBarGap + skillBarHeight + infoGap + infoHeight + padding;
+            float height = headerHeight + traySize.y + skillBarGap + skillBarHeight + padding;
 
             RectTransform root = (RectTransform)transform;
             root.anchorMin = root.anchorMax = root.pivot = new Vector2(0.5f, 0.5f);
@@ -119,7 +117,6 @@ namespace TeamOdd.Superpower
             SetTopLeft((RectTransform)grid.transform, new Vector2(padding, -headerHeight), new Vector2(gridLength, gridLength));
             SetTopLeft((RectTransform)tray.transform, new Vector2(padding + gridLength + spacing, -headerHeight), traySize);
             SetTopLeft((RectTransform)skillBar.transform, new Vector2(padding, -skillBarTop), new Vector2(innerWidth, skillBarHeight));
-            SetTopLeft(info, new Vector2(padding, -(skillBarTop + skillBarHeight + infoGap)), new Vector2(innerWidth, infoHeight));
         }
 
         // 스킬 슬롯 줄이 없으면 패널 아래에 만들고 빌더와 패널(같은 오브젝트)에 연결한다
@@ -254,7 +251,7 @@ namespace TeamOdd.Superpower
 
         // 필터 토글을 Filters 순서로 맞춰 ChipTrayView에 연결한다. 이미 있는 토글은 그대로 쓰고, 없는 필터의 토글만 새로 만든다
         // 배치(LayoutFilterToggles)는 배열 순서대로 왼쪽부터 놓으므로 배열을 Filters 순서로 다시 쓴다
-        // 새 토글은 처음엔 꺼 둔다 (모두 꺼져 있으면 모든 칩을 보여준다)
+        // 새 토글은 켜 둔다 (모두 켜져 있으면 전체, 모든 칩을 보여준다)
         private void EnsureFilterToggles()
         {
             SerializedObject so = new SerializedObject(tray);
@@ -294,7 +291,7 @@ namespace TeamOdd.Superpower
                     toggles[i] = CreateFilterToggle(out labels[i]);
 
                 toggles[i].name = $"Filter_{Filters[i]}";
-                toggles[i].isOn = false;
+                toggles[i].isOn = true;
                 labels[i].text = FilterLabels[i];
             }
 
@@ -307,6 +304,23 @@ namespace TeamOdd.Superpower
                 element.FindPropertyRelative("text").objectReferenceValue = labels[i];
             }
 
+            so.ApplyModifiedProperties();
+        }
+
+        // 전체 토글이 없으면 첫 필터 토글을 복제해 만든다. 배치는 LayoutFilterToggles가 필터 토글 맨 앞에 한다
+        private void EnsureAllToggle()
+        {
+            if (tray.AllToggle != null)
+                return;
+
+            Toggle toggle = CloneFilterToggle(tray.GetFilterToggle(0), out Text label);
+            toggle.name = "Filter_All";
+            toggle.isOn = true;
+            label.text = AllFilterLabel;
+
+            SerializedObject so = new SerializedObject(tray);
+            so.FindProperty("allToggle").objectReferenceValue = toggle;
+            so.FindProperty("allLabel").objectReferenceValue = label;
             so.ApplyModifiedProperties();
         }
 
@@ -325,7 +339,7 @@ namespace TeamOdd.Superpower
         private Toggle CreateFilterToggle(out Text label)
         {
             Text sortLabel = tray.GetSortLabelRect(0).GetComponent<Text>();
-            Image sortBackground = tray.GetSortButtonRect(0).GetComponent<Image>();
+            Graphic sortBackground = tray.GetSortButtonRect(0).GetComponent<Graphic>();
 
             RectTransform toggleRect = CreateChild("Filter", tray.transform);
 
@@ -353,23 +367,26 @@ namespace TeamOdd.Superpower
             return toggle;
         }
 
-        // 토글 개수만큼 폭을 똑같이 나누고, 각 토글 안에서 왼쪽에 체크 상자, 오른쪽에 글자를 놓는다
+        // 전체 토글을 맨 앞에 두고 토글 개수만큼 폭을 똑같이 나눈다. 각 토글 안에서 왼쪽에 체크 상자, 오른쪽에 글자를 놓는다
         private void LayoutFilterToggles(float width)
         {
-            int count = tray.FilterToggleCount;
+            int count = tray.FilterToggleCount + 1;
             float toggleWidth = (width - filterToggleGap * (count - 1)) / count;
-            float boxSize = filterToggleHeight;
-            for (int i = 0; i < count; i++)
-            {
-                Toggle toggle = tray.GetFilterToggle(i);
-                SetTopLeft((RectTransform)toggle.transform,
-                    new Vector2(trayInnerPadding + i * (toggleWidth + filterToggleGap), -filterToggleTop),
-                    new Vector2(toggleWidth, filterToggleHeight));
-                SetTopLeft(toggle.targetGraphic.rectTransform, Vector2.zero, new Vector2(boxSize, boxSize));
+            LayoutFilterToggle(tray.AllToggle, tray.AllLabelRect, 0, toggleWidth);
+            for (int i = 0; i < tray.FilterToggleCount; i++)
+                LayoutFilterToggle(tray.GetFilterToggle(i), tray.GetFilterLabelRect(i), i + 1, toggleWidth);
+        }
 
-                float labelX = boxSize + filterLabelGap;
-                SetTopLeft(tray.GetFilterLabelRect(i), new Vector2(labelX, 0f), new Vector2(toggleWidth - labelX, filterToggleHeight));
-            }
+        private void LayoutFilterToggle(Toggle toggle, RectTransform label, int slot, float toggleWidth)
+        {
+            float boxSize = filterToggleHeight;
+            SetTopLeft((RectTransform)toggle.transform,
+                new Vector2(trayInnerPadding + slot * (toggleWidth + filterToggleGap), -filterToggleTop),
+                new Vector2(toggleWidth, filterToggleHeight));
+            SetTopLeft(toggle.targetGraphic.rectTransform, Vector2.zero, new Vector2(boxSize, boxSize));
+
+            float labelX = boxSize + filterLabelGap;
+            SetTopLeft(label, new Vector2(labelX, 0f), new Vector2(toggleWidth - labelX, filterToggleHeight));
         }
 
         // 버튼 개수만큼 폭을 똑같이 나눈다

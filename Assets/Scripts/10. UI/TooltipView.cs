@@ -36,7 +36,8 @@ namespace TeamOdd.UI
         [SerializeField] private Image iconImage;
         [Tooltip("헤더 오른쪽 끝의 빈 슬롯, ITooltipAccessory가 채운다. 채우지 않으면 숨긴다.")]
         [SerializeField] private RectTransform accessorySlot;
-        [SerializeField, Min(0f)] private float pointerPadding = 16f;
+        [Tooltip("커서에서 툴팁 모서리까지의 거리, 툴팁 자신의 단위라 캔버스 해상도·인스턴스 스케일과 상관없이 같은 간격으로 보인다.")]
+        [SerializeField] private Vector2 pointerOffset = new Vector2(14f, 18f);
 
         private Canvas rootCanvas;
         private object activeOwner;
@@ -79,6 +80,7 @@ namespace TeamOdd.UI
             if (tooltipRect != null) tooltipRect.gameObject.SetActive(false);
         }
 
+        // 툴팁 모서리를 커서 옆에 붙인다. 기본은 오른쪽 아래, 화면을 넘치는 방향만 반대로 뒤집고 피벗도 그 모서리로 옮긴다.
         public void SetScreenPosition(object owner, Vector2 screenPosition)
         {
             if (activeOwner != owner || rootCanvas == null) return;
@@ -88,17 +90,25 @@ namespace TeamOdd.UI
                 RectTransformUtility.WorldToScreenPoint(uiCamera, corners[3]));
             float height = Vector2.Distance(RectTransformUtility.WorldToScreenPoint(uiCamera, corners[0]),
                 RectTransformUtility.WorldToScreenPoint(uiCamera, corners[1]));
+            float pixelsPerUnit = tooltipRect.rect.width > 0f ? width / tooltipRect.rect.width : 1f;
+            Vector2 offset = pointerOffset * pixelsPerUnit;
 
             Rect bounds = rootCanvas.pixelRect;
-            bool right = screenPosition.x + pointerPadding + width <= bounds.xMax;
-            bool below = screenPosition.y - pointerPadding - height >= bounds.yMin;
+            bool right = screenPosition.x + offset.x + width <= bounds.xMax;
+            bool below = screenPosition.y - offset.y - height >= bounds.yMin;
+            tooltipRect.pivot = new Vector2(right ? 0f : 1f, below ? 1f : 0f);
+
             Vector2 position = new Vector2(
-                screenPosition.x + (right ? 1f : -1f) * (pointerPadding + width * 0.5f),
-                screenPosition.y + (below ? -1f : 1f) * (pointerPadding + height * 0.5f));
-            float halfWidth = Mathf.Min(width, bounds.width) * 0.5f;
-            float halfHeight = Mathf.Min(height, bounds.height) * 0.5f;
-            position.x = Mathf.Clamp(position.x, bounds.xMin + halfWidth, bounds.xMax - halfWidth);
-            position.y = Mathf.Clamp(position.y, bounds.yMin + halfHeight, bounds.yMax - halfHeight);
+                screenPosition.x + (right ? offset.x : -offset.x),
+                screenPosition.y + (below ? -offset.y : offset.y));
+            // 양쪽 다 넘칠 만큼 크면 화면 안으로 밀어 넣는다. 정수 픽셀에 맞춰 글자가 흔들리지 않게 한다.
+            position.x = right
+                ? Mathf.Clamp(position.x, bounds.xMin, Mathf.Max(bounds.xMin, bounds.xMax - width))
+                : Mathf.Clamp(position.x, Mathf.Min(bounds.xMax, bounds.xMin + width), bounds.xMax);
+            position.y = below
+                ? Mathf.Clamp(position.y, Mathf.Min(bounds.yMax, bounds.yMin + height), bounds.yMax)
+                : Mathf.Clamp(position.y, bounds.yMin, Mathf.Max(bounds.yMin, bounds.yMax - height));
+            position = new Vector2(Mathf.Round(position.x), Mathf.Round(position.y));
 
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
                 (RectTransform)tooltipRect.parent, position, uiCamera, out Vector3 worldPosition))

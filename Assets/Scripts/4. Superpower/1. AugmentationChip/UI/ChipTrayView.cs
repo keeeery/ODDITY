@@ -14,7 +14,8 @@ namespace TeamOdd.Superpower
 
     /// <summary>
     /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
-    /// 필터 토글은 모두 꺼진 채 시작하고 그때는 모든 칩을 보여준다. 하나라도 켜면 켜진 묶음의 칩만 보여준다.
+    /// 필터 토글은 모두 켜진 채(전체) 시작하고, 켜진 묶음의 칩만 보여준다. 모두 끄면 아무 칩도 보이지 않는다.
+    /// 전체 토글은 "필터가 모두 켜져 있음"을 체크로 보여준다. 켜고 끄면 필터를 모두 같이 켜고 끈다.
     /// 트레이 크기와 필터 토글/정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
     /// </summary>
     public class ChipTrayView : MonoBehaviour
@@ -38,6 +39,8 @@ namespace TeamOdd.Superpower
 
         [SerializeField] private RectTransform content;
         [SerializeField] private FilterToggle[] filterToggles; // 빠진 필터는 Build Layout이 만든다
+        [SerializeField] private Toggle allToggle; // 필터 토글 맨 앞. 없으면 Build Layout이 만든다
+        [SerializeField] private Text allLabel;
         [SerializeField] private SortButton[] sortButtons; // 기준과 순서는 Build Layout이 맞춘다
         // content 안쪽 여백이자 칩 사이 간격
         [SerializeField] private float chipSpacing = 36f;
@@ -56,6 +59,8 @@ namespace TeamOdd.Superpower
         public int FilterToggleCount => filterToggles.Length;
         public Toggle GetFilterToggle(int index) => filterToggles[index].toggle;
         public RectTransform GetFilterLabelRect(int index) => filterToggles[index].text.rectTransform;
+        public Toggle AllToggle => allToggle;
+        public RectTransform AllLabelRect => allLabel.rectTransform;
 
         private void Awake()
         {
@@ -65,12 +70,18 @@ namespace TeamOdd.Superpower
                 sortButton.button.onClick.AddListener(() => OnClickSort(key));
             }
 
-            // 필터는 모두 꺼진 채(모든 칩 보기) 시작한다. 프리팹에 켜진 채 저장돼 있어도 여기서 끈다
+            // 필터는 모두 켜진 채(전체) 시작한다. 프리팹에 꺼진 채 저장돼 있어도 여기서 켠다
             // 토글을 켜고 끌 때마다 보이는 칩을 다시 배치한다
             foreach (FilterToggle filterToggle in filterToggles)
             {
-                filterToggle.toggle.isOn = false;
+                filterToggle.toggle.isOn = true;
                 filterToggle.toggle.onValueChanged.AddListener(OnFilterChanged);
+            }
+
+            if (allToggle != null)
+            {
+                allToggle.isOn = true;
+                allToggle.onValueChanged.AddListener(OnAllChanged);
             }
 
             RefreshSortLabels();
@@ -133,26 +144,38 @@ namespace TeamOdd.Superpower
             Layout();
         }
 
-        private void OnFilterChanged(bool isOn) => Layout();
+        // 필터를 바꾸면 전체 토글은 모든 필터가 켜져 있을 때만 켜 둔다
+        private void OnFilterChanged(bool isOn)
+        {
+            if (allToggle != null)
+                allToggle.SetIsOnWithoutNotify(AllFiltersOn());
+            Layout();
+        }
 
-        // 켜진 토글이 하나도 없으면 필터가 없는 것과 같으므로 모든 칩을 보여준다
-        // 하나라도 켜져 있으면 켜진 묶음의 칩만 보여준다
+        // 전체를 켜고 끄면 필터를 모두 같이 켜고 끈다
+        private void OnAllChanged(bool isOn)
+        {
+            foreach (FilterToggle filterToggle in filterToggles)
+                filterToggle.toggle.SetIsOnWithoutNotify(isOn);
+            Layout();
+        }
+
+        private bool AllFiltersOn()
+        {
+            foreach (FilterToggle filterToggle in filterToggles)
+                if (filterToggle.toggle.isOn == false)
+                    return false;
+            return true;
+        }
+
+        // 켜진 묶음의 칩만 보여준다
         private bool IsShown(AugmentationChipDef def)
         {
             ChipFilter filter = GetFilter(def);
-            bool anyOn = false;
-            bool ownOn = false;
             foreach (FilterToggle filterToggle in filterToggles)
-            {
-                if (filterToggle.toggle.isOn == false)
-                    continue;
-
-                anyOn = true;
                 if (filterToggle.filter == filter)
-                    ownOn = true;
-            }
-
-            return anyOn == false || ownOn;
+                    return filterToggle.toggle.isOn;
+            return true;
         }
 
         private static ChipFilter GetFilter(AugmentationChipDef def)
