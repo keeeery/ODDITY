@@ -206,10 +206,10 @@ namespace TeamOdd
         [SerializeField] private GameObject menuHologram;
         [Tooltip("글리치 때 보스 대신 잠깐 비치는 플레이어 홀로그램, 비워 두면 바뀌지 않음")]
         [SerializeField] private GameObject menuPlayerHologram;
-        [SerializeField, Range(0f, 1f)] private float menuScreenX = 0.72f; // 홀로그램 가운데가 올 화면 가로 위치, 왼쪽 제목·메뉴의 오른쪽
+        [SerializeField, Range(0.1f, 0.9f)] private float menuAreaWidth = 0.45f; // 오른쪽 스캔 영역(돌아가는 홀로그램 + HUD 괄호)이 차지하는 화면 폭 비율, 괄호 여백까지 더하면 절반쯤
         [Tooltip("메뉴가 뜰 때 연출용 볼륨(아레나 노출 +1.44 등)을 모두 끄고 대신 쓸 후처리, 로비 홀로그램과 같은 Mission Lobby Profile을 써야 홀로그램 표면이 하얗게 타지 않음")]
         [SerializeField] private VolumeProfile menuProfile;
-        [SerializeField, Range(0f, 0.3f)] private float menuScreenMargin = 0.03f; // 돌아가는 팔 끝이 화면 오른쪽 가장자리에서 떨어질 여유(화면 폭 비율) // 홀로그램 가운데가 올 화면 가로 위치, 메뉴 항목 오른쪽
+        [SerializeField, Range(0f, 0.3f)] private float menuScreenMargin = 0.03f; // 돌아가는 팔 끝이 화면 오른쪽 가장자리에서 떨어질 여유(화면 폭 비율)
         [SerializeField] private CanvasGroup menuGroup; // 입력을 받는 버튼 묶음
         [SerializeField] private CanvasGroup titleGroup;
         [SerializeField] private CanvasGroup[] buttons;
@@ -267,6 +267,7 @@ namespace TeamOdd
         private Volume impactVolume;
         private DepthOfField depthOfField;
         private float focusDistance;
+        private readonly List<AudioSource> mutedSources = new(); // 연출 동안 꺼 둔 효과음 소스, 메뉴로 넘어가면 되살림
         private bool isFocusOnProjectile; // 받아친 물체가 다가오는 동안은 초점을 물체에 붙임
         private float impactPulse;
 
@@ -310,6 +311,7 @@ namespace TeamOdd
         {
             if (bossEvents != null) bossEvents.OnOccursAnimStateEvent -= OnBossEvent;
             Time.timeScale = 1f;
+            UnmuteEffects(); // SoundManager는 씬을 넘어 남으므로 연출 도중 씬을 떠나도 꼭 되살림
         }
 
         private void OnDestroy()
@@ -329,6 +331,7 @@ namespace TeamOdd
             currentHandheld = handheldAngle;
             HideMenu();
             SetAlpha(blackout, 1f);
+            MuteEffects();
 
             bossAnimator.SetBool(BossAnimParams.IS_GUARDING, false);
             projectile.position = VirtualPlayer;
@@ -806,6 +809,7 @@ namespace TeamOdd
             yield return new WaitForSecondsRealtime(blackHold * 0.5f);
 
             cinematicWorld.SetActive(false);
+            UnmuteEffects(); // 메뉴 버튼 소리는 들려야 함
             RenderSettings.fog = false;
             UseMenuVolume();
             ShowMenuHologram();
@@ -819,7 +823,28 @@ namespace TeamOdd
             yield return RevealMenu();
         }
 
-        // 배치해 둔 홀로그램 보스를 켜고, 메뉴 항목 오른쪽(menuScreenX)에 오도록 카메라를 옆으로 비켜 세움
+        // 연출 동안은 배경음만 들리게 함
+        // - 맵에 딸려 온 기지 앰비언스·장비음 (하드 보스 맵을 복사해 옴)
+        // - 보스 애니메이터 상태에 달린 AnimStateSoundSender 소리 (원본 보스 컨트롤러를 그대로 씀)
+        // 보스 소리는 SoundManager 본체의 소스로 나오고, 배경음 소스는 자식 오브젝트에 있으므로 본체에 붙은 소스만 끔
+        // pause가 아닌 mute로 꺼야 연출 중 요청된 소리가 쌓였다가 메뉴에서 한꺼번에 터지지 않음
+        private void MuteEffects()
+        {
+            if (cinematicWorld != null) mutedSources.AddRange(cinematicWorld.GetComponentsInChildren<AudioSource>(true));
+            if (SoundManager.IsInitialized) mutedSources.AddRange(SoundManager.Instance.GetComponents<AudioSource>());
+
+            mutedSources.RemoveAll(source => source.mute); // 원래 꺼져 있던 소스는 되살릴 때 켜지 않음
+            foreach (AudioSource source in mutedSources) source.mute = true;
+        }
+
+        private void UnmuteEffects()
+        {
+            foreach (AudioSource source in mutedSources)
+                if (source != null) source.mute = false;
+            mutedSources.Clear();
+        }
+
+        // 배치해 둔 홀로그램 보스를 켜고, 화면 오른쪽 스캔 영역(menuAreaWidth)에 오도록 카메라를 옆으로 비켜 세움
         private void ShowMenuHologram()
         {
             if (menuHologram == null)
@@ -845,7 +870,7 @@ namespace TeamOdd
                 item => item.enabled && item is MeshRenderer or SkinnedMeshRenderer));
         }
 
-        // 홀로그램 정면에서 키가 화면을 menuFill만큼 채우는 거리로 물러선 뒤, 정면을 그대로 본 채 왼쪽으로 비켜 홀로그램이 오른쪽에 오게 함
+        // 홀로그램 정면에서 스캔 영역에 맞는 거리로 물러선 뒤, 정면을 그대로 본 채 왼쪽으로 비켜 홀로그램이 오른쪽에 오게 함
         private void FrameMenu(Transform target, Bounds bounds)
         {
             Vector3 front = Vector3.ProjectOnPlane(target.forward, Vector3.up).normalized;
@@ -853,13 +878,15 @@ namespace TeamOdd
             float horizontalFov = Camera.VerticalToHorizontalFieldOfView(menuFov, viewCamera.aspect);
             float tanHalfWidth = Mathf.Tan(horizontalFov * 0.5f * Mathf.Deg2Rad);
 
-            // 키가 화면을 menuFill만큼 채우는 거리, 다만 T-포즈로 돌며 팔이 가장 멀리 뻗는 반지름까지 화면 오른쪽 안에 들어오도록 더 물러설 수 있음
+            // T-포즈로 돌며 팔이 가장 멀리 뻗는 원기둥 지름(스캔 HUD 괄호 폭)이 화면 오른쪽 menuAreaWidth 안에 들어오는 거리,
+            // 키가 menuFill을 넘으면 더 물러섬. 원기둥 가운데는 그 영역 가운데에 둠
             float radius = new Vector2(bounds.size.x, bounds.size.z).magnitude * 0.5f;
-            float rightRoom = Mathf.Max(1f - menuScreenMargin - menuScreenX, 0.05f);
+            float areaWidth = Mathf.Max(menuAreaWidth, 0.05f);
+            float screenX = 1f - menuScreenMargin - areaWidth * 0.5f;
             float distance = Mathf.Max(
                 halfHeight / (Mathf.Tan(menuFov * 0.5f * Mathf.Deg2Rad) * menuFill),
-                radius / (2f * tanHalfWidth * rightRoom));
-            float side = distance * tanHalfWidth * (menuScreenX * 2f - 1f);
+                radius / (tanHalfWidth * areaWidth));
+            float side = distance * tanHalfWidth * (screenX * 2f - 1f);
 
             Quaternion rotation = Quaternion.LookRotation(-front);
             Vector3 position = bounds.center + front * distance - rotation * Vector3.right * side + Vector3.up * (halfHeight * menuLookOffset);
