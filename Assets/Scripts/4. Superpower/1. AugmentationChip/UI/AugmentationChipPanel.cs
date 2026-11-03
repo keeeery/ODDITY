@@ -28,6 +28,8 @@ namespace TeamOdd.Superpower
         [SerializeField] private TooltipView tooltip; // 비워두면 같은 캔버스에서 찾는다. Augmentation Chip Canvas에 Chip Tooltip 프리팹이 있다
         [SerializeField] private Text countText;      // 제목 줄 오른쪽의 보유 칩 수
         [SerializeField] private Font labelFont;
+        [SerializeField] private SoundData equipSound;   // 칩을 그리드에 붙일 때. 후보는 Resources/Audios/UI/Chip/Equip
+        [SerializeField] private SoundData unequipSound; // 칩을 그리드에서 뗄 때. 후보는 Resources/Audios/UI/Chip/Unequip
 
         private static int totalChipCount = -1; // 칩 테이블 크기. 처음 열 때 한 번 읽는다
 
@@ -200,6 +202,7 @@ namespace TeamOdd.Superpower
                 return false;
 
             grid.Place(chip, origin);
+            equipSound.Play();
             return true;
         }
 
@@ -207,6 +210,7 @@ namespace TeamOdd.Superpower
         {
             grid.Remove(chip);
             inventory.Unequip(chip.Owned);
+            unequipSound.Play();
         }
 
         private void OnRightClick(ChipItemView chip)

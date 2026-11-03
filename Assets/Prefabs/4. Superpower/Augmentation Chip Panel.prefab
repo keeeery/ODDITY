@@ -5528,6 +5528,12 @@ MonoBehaviour:
   tooltip: {fileID: 0}
   countText: {fileID: 5931879163006072293}
   labelFont: {fileID: 12800000, guid: a03d76becccac4f4582d875bad498e75, type: 3}
+  equipSound:
+    clipName: UI/Chip/Equip/SCI FI GUI - Mellow Tone 1
+    volume: 0.5
+  unequipSound:
+    clipName: UI/Chip/Unequip/SCI FI GUI - Sharp Tone 1
+    volume: 0.4
 --- !u!114 &4815162342108765432
 MonoBehaviour:
   m_ObjectHideFlags: 0
