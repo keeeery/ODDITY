@@ -49,6 +49,11 @@ namespace TeamOdd.Superpower
             Cooldown = cooldown;
         }
 
+        // 공격 스킬 피해는 공격력의 몇 %인지(power)로 정한다. 300이면 공격력의 3배
+        // 피해가 들어가는 순간의 공격력을 읽으므로 증강칩·정당한 보복으로 오른 공격력이 평타처럼 반영된다
+        // 지속 피해는 초당 배율 × 틱 간격(초)을 넘긴다
+        public static int PowerToDamage(CombatEntity owner, float power) => Mathf.RoundToInt(owner.CurrentStats.Atk * power / 100f);
+
         // 쿨타임이 남았거나 지금 쓸 수 없으면(대상이 없는 등) 쓰지 않고 false
         public bool TryUse(SkillContext context)
         {

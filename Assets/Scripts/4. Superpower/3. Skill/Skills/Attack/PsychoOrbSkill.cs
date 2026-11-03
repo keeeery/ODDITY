@@ -3,11 +3,11 @@ using UnityEngine;
 namespace TeamOdd.Superpower
 {
     // 바라보는 방향으로 염동력 구체를 던진다. 적에 닿으면 크게 느려져 천천히 통과하며 피해를 준다.
-    // 매개변수 6개: Speed(float), SlowSpeed(float), Range(float), Radius(float), DPS(int), TickInterval(float)
+    // 매개변수 6개: Speed(float), SlowSpeed(float), Range(float), Radius(float), PowerPerSecond(int), TickInterval(float)
     // - 진행: 플레이어 가슴 높이에서 화면 중앙 조준점을 향해 날아가고, 날아간 거리가 Range m가 되면 사라진다
     //         방향은 던지는 순간 한 번만 정하므로 날아가는 중에 카메라를 돌려도 바뀌지 않는다
     // - 속도: 구체 반경 Radius m 안에 적이 하나라도 있으면 초당 SlowSpeed m, 없으면 초당 Speed m
-    // - 피해: 적과 닿아 있는 동안 TickInterval초마다 반경 안의 모든 적에게 DPS × TickInterval 피해. 처음 닿은 순간 바로 한 번 준다
+    // - 피해: 적과 닿아 있는 동안 TickInterval초마다 반경 안의 모든 적에게 공격력 × PowerPerSecond% × TickInterval 피해. 처음 닿은 순간 바로 한 번 준다
     // - 벽이나 바닥은 무시하고 지나간다
     // 이 클래스는 값과 쿨타임을 들고 구체 프리팹을 띄우기만 한다. 날아가며 피해를 주는 일은 프리팹의 PsychoOrb가 한다
     public class PsychoOrbSkill : SuperpowerSkill
@@ -20,22 +20,22 @@ namespace TeamOdd.Superpower
         private readonly float slowSpeed;
         private readonly float range;
         private readonly float radius;
-        private readonly int dps;
+        private readonly int powerPerSecond; // 초당 피해 배율 (공격력의 %)
         private readonly float tickInterval;
         private readonly PsychoOrb prefab; // SkillChip.tsv의 PrefabKey로 불러온 프리팹
 
-        public PsychoOrbSkill(string name, float cooldown, float speed, float slowSpeed, float range, float radius, int dps, float tickInterval, PsychoOrb prefab) : base(name, cooldown)
+        public PsychoOrbSkill(string name, float cooldown, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval, PsychoOrb prefab) : base(name, cooldown)
         {
             this.speed = speed;
             this.slowSpeed = slowSpeed;
             this.range = range;
             this.radius = radius;
-            this.dps = dps;
+            this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
             this.prefab = prefab;
         }
 
-        public override string Describe() => $"속도 {speed}m/s (적에 닿으면 {slowSpeed}m/s) · 사거리 {range}m · 반경 {radius}m · 초당 피해 {dps} · 간격 {tickInterval}초";
+        public override string Describe() => $"속도 {speed}m/s (적에 닿으면 {slowSpeed}m/s) · 사거리 {range}m · 반경 {radius}m · 초당 피해 공격력의 {powerPerSecond}% · 간격 {tickInterval}초";
 
         protected override void Execute(SkillContext context)
         {
@@ -43,7 +43,7 @@ namespace TeamOdd.Superpower
             Vector3 direction = GetCrosshairDirection(spawn, context.Caster);
 
             PsychoOrb orb = Object.Instantiate(prefab, spawn, Quaternion.identity);
-            orb.Init(direction, context.Owner, speed, slowSpeed, range, radius, dps, tickInterval);
+            orb.Init(direction, context.Owner, speed, slowSpeed, range, radius, powerPerSecond, tickInterval);
         }
 
         // 구체가 생기는 곳에서 화면 중앙 조준점으로 가는 방향. 구체가 카메라와 다른 곳에서 출발해도 조준점에 맞도록 카메라 방향 대신 사용

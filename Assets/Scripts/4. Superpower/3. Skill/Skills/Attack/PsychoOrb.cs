@@ -25,7 +25,7 @@ namespace TeamOdd.Superpower
         private float slowSpeed;
         private float range;
         private float radius;
-        private int dps;
+        private int powerPerSecond;
         private float tickInterval;
 
         // 지금 트리거 안에 들어와 있는 적 콜라이더. 들어오고 나갈 때 OnTriggerEnter/Exit가 고친다
@@ -34,7 +34,7 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int dps, float tickInterval)
+        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval)
         {
             this.direction = direction;
             this.owner = owner;
@@ -42,7 +42,7 @@ namespace TeamOdd.Superpower
             this.slowSpeed = slowSpeed;
             this.range = range;
             this.radius = radius;
-            this.dps = dps;
+            this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
 
             transform.localScale = Vector3.one * radius * 2f;
@@ -135,7 +135,7 @@ namespace TeamOdd.Superpower
         private void DamageTouching()
         {
             hitTargets.Clear();
-            int damage = Mathf.RoundToInt(dps * tickInterval);
+            int damage = SuperpowerSkill.PowerToDamage(owner, powerPerSecond * tickInterval);
 
             foreach (Collider collider in touching)
             {

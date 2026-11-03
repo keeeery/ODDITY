@@ -31,7 +31,7 @@ namespace TeamOdd.Superpower
         private CameraController cameraController;
         private float duration;
         private float range;
-        private int dps;
+        private int powerPerSecond;
         private float tickInterval;
 
         private PsychoBeamPose pose; // 쏘는 동안 플레이어에 붙여 시전 애니메이션을 틀고 상체와 손을 레이저 쪽으로 맞추는 자세
@@ -43,13 +43,13 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(Transform caster, CombatEntity owner, float duration, float range, int dps, float tickInterval)
+        public void Init(Transform caster, CombatEntity owner, float duration, float range, int powerPerSecond, float tickInterval)
         {
             this.caster = caster;
             this.owner = owner;
             this.duration = duration;
             this.range = range;
-            this.dps = dps;
+            this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
 
             playerController = caster.GetComponent<PlayerController>();
@@ -188,7 +188,7 @@ namespace TeamOdd.Superpower
         private bool DamageTouching()
         {
             hitTargets.Clear();
-            int damage = Mathf.RoundToInt(dps * tickInterval);
+            int damage = SuperpowerSkill.PowerToDamage(owner, powerPerSecond * tickInterval);
 
             // 사라지거나 꺼진 콜라이더는 OnTriggerExit가 오지 않으므로 여기서 뺀다. 빼면서 돌기 위해 뒤에서부터 돈다
             for (int i = touching.Count - 1; i >= 0; i--)

@@ -9,7 +9,8 @@ using UnityEngine;
 namespace TeamOdd.Superpower
 {
     // 조준 방향의 보스 하나의 시간을 멈추고 염동력으로 들어 올렸다가 바닥에 내려찍어 피해를 준다.
-    // 매개변수 5개: Duration(float), Height(float), Damage(int), Range(float), Angle(float)
+    // 매개변수 6개: Duration(float), Height(float), Power(int), Groggy(int), Range(float), Angle(float)
+    // - 피해: 공격력 × Power%. 무력화는 공격력과 상관없이 Groggy
     // - 대상: 플레이어에서 Range m 안, 조준 방향에서 좌우 Angle도 안에 있는 가장 가까운 보스. 없으면 쓰지 않고 쿨타임도 돌지 않는다
     // - 진행: Duration초 동안 보스를 멈춘 채 Height m까지 들어 올리고, 마지막 slamTime초에 원래 바닥으로 내려찍은 뒤 정지를 푼다
     // - 그동안 플레이어는 염동력 홀딩 자세로 보스 몸통 쪽에 팔을 뻗어, 보스를 따라 팔이 올라갔다 내려찍힌다
@@ -21,7 +22,7 @@ namespace TeamOdd.Superpower
 
         private readonly float duration;
         private readonly float height;
-        private readonly int damage;
+        private readonly int power; // 피해 배율 (공격력의 %)
         private readonly int groggy;
         private readonly float range;
         private readonly float angle;
@@ -29,11 +30,11 @@ namespace TeamOdd.Superpower
         private BossMonster target; // CanExecute에서 고른 대상, Execute에서 씀
         private SkillCaster descriptionCaster;
 
-        public PsychoSlamSkill(string name, float cooldown, float duration, float height, int damage, int groggy, float range, float angle) : base(name, cooldown)
+        public PsychoSlamSkill(string name, float cooldown, float duration, float height, int power, int groggy, float range, float angle) : base(name, cooldown)
         {
             this.duration = duration;
             this.height = height;
-            this.damage = damage;
+            this.power = power;
             this.groggy = groggy;
             this.range = range;
             this.angle = angle;
@@ -41,14 +42,16 @@ namespace TeamOdd.Superpower
 
         public void BindDescriptionCaster(SkillCaster caster) => descriptionCaster = caster;
 
+        // 씬 오버라이드가 켜져 있으면 피해가 고정값으로 바뀌므로 그 값을 보여 준다. 꺼져 있으면 overriddenDamage가 0 그대로 남는다
         public override string Describe()
         {
-            int appliedDamage = damage;
+            int overriddenDamage = 0;
             int appliedGroggy = groggy;
             if (descriptionCaster != null)
-                descriptionCaster.ApplyPsychoSlamDamageOverride(ref appliedDamage, ref appliedGroggy);
+                descriptionCaster.ApplyPsychoSlamDamageOverride(ref overriddenDamage, ref appliedGroggy);
 
-            return $"보스 정지 {duration}초 · 높이 {height}m · 피해 {appliedDamage} · 무력화 {appliedGroggy} · 사거리 {range}m";
+            string damageText = overriddenDamage > 0 ? $"{overriddenDamage}" : $"공격력의 {power}%";
+            return $"보스 정지 {duration}초 · 높이 {height}m · 피해 {damageText} · 무력화 {appliedGroggy} · 사거리 {range}m";
         }
 
         protected override bool CanExecute(SkillContext context)
@@ -193,7 +196,7 @@ namespace TeamOdd.Superpower
                 return;
             }
 
-            int appliedDamage = damage;
+            int appliedDamage = PowerToDamage(owner, power);
             int appliedGroggy = groggy;
             if (owner != null && owner.TryGetComponent(out SkillCaster caster))
                 caster.ApplyPsychoSlamDamageOverride(ref appliedDamage, ref appliedGroggy);
