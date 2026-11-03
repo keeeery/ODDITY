@@ -9,11 +9,22 @@ namespace TeamOdd.UI
     public sealed class VectorShape
     {
         private const float DuplicateDistance = 0.001f;
+        // 그림자를 흐리게 쌓는 고리 수와 모서리를 둥글게 돌 때 한 칸의 각도
+        private const int ShadowRings = 16;
+        private const float ShadowCornerStep = 15f;
+        // 창·바·슬롯마다 정한 그림자 크기와 진하기에 공통으로 곱하는 값. 프리팹 값을 하나씩 고치지 않고 전체 그림자 느낌을 맞춘다
+        private const float ShadowSpreadScale = 2f;
+        private const float ShadowAlphaScale = 0.85f;
+        // 바깥으로 갈수록 (1 - t)^이 값으로 옅어진다. 클수록 창 옆에서 빨리 옅어지고 끝은 더 길고 희미하게 사라진다
+        private const float ShadowFalloffPower = 3f;
 
         private static readonly float[] arcRadii = new float[4];
         private static readonly Color32[] arcColors = new Color32[4];
 
         private readonly List<Vector2> points = new();
+        // FillShadow가 매 프레임 쓰는 바깥 둘레의 점과 번지는 방향
+        private readonly List<Vector2> shadowOrigins = new();
+        private readonly List<Vector2> shadowDirections = new();
 
         public void Clear() => points.Clear();
 
@@ -118,6 +129,81 @@ namespace TeamOdd.UI
                 vh.AddTriangle(current, current + 1, next + 1);
                 vh.AddTriangle(current, next + 1, next);
             }
+        }
+
+        // 도형 바깥으로 start부터 spread 폭만큼 번지는 그림자.
+        // Fill의 직선 페더는 끝나는 곳에 선이 보여서, 여러 겹의 고리를 (1 - t)^ShadowFalloffPower로 옅어지게 쌓는다.
+        // 창 바로 옆에서 빠르게 옅어지고 바깥쪽은 기울기가 0에 가까워지며 사라져 끝나는 곳이 눈에 띄지 않는다.
+        // 모서리는 둥글게 돌아 사각형 그림자 모서리에 생기던 대각선 주름도 없앤다. 볼록 도형 기준이다.
+        public void FillShadow(VertexHelper vh, Vector2 center, float start, float spread, Color32 shadowColor)
+        {
+            int count = points.Count;
+            if (count < 3 || spread <= 0f) return;
+
+            spread *= ShadowSpreadScale;
+            shadowColor.a = (byte)Mathf.RoundToInt(shadowColor.a * ShadowAlphaScale);
+            float orientation = GetSignedArea() >= 0f ? 1f : -1f;
+            shadowOrigins.Clear();
+            shadowDirections.Clear();
+            for (int index = 0; index < count; index++)
+            {
+                Vector2 point = points[index];
+                Vector2 from = GetEdgeNormal(points[(index - 1 + count) % count], point, orientation);
+                Vector2 to = GetEdgeNormal(point, points[(index + 1) % count], orientation);
+                float angle = Vector2.SignedAngle(from, to);
+                int steps = Mathf.CeilToInt(Mathf.Abs(angle) / ShadowCornerStep);
+
+                // 둥근 사각형처럼 이미 촘촘한 점은 두 법선의 가운데 하나로 충분하다
+                if (steps <= 1)
+                {
+                    shadowOrigins.Add(point);
+                    shadowDirections.Add((from + to).normalized);
+                    continue;
+                }
+
+                for (int step = 0; step <= steps; step++)
+                {
+                    shadowOrigins.Add(point);
+                    shadowDirections.Add(Rotate(from, angle * step / steps));
+                }
+            }
+
+            int samples = shadowOrigins.Count;
+            int startIndex = vh.currentVertCount;
+            vh.AddVert(center, shadowColor, default);
+
+            for (int ring = 0; ring <= ShadowRings; ring++)
+            {
+                float t = (float)ring / ShadowRings;
+                Color32 ringColor = shadowColor;
+                ringColor.a = (byte)Mathf.RoundToInt(shadowColor.a * Mathf.Pow(1f - t, ShadowFalloffPower));
+                float distance = start + spread * t;
+                for (int sample = 0; sample < samples; sample++)
+                    vh.AddVert(shadowOrigins[sample] + shadowDirections[sample] * distance, ringColor, default);
+            }
+
+            for (int sample = 0; sample < samples; sample++)
+                vh.AddTriangle(startIndex, startIndex + 1 + sample, startIndex + 1 + (sample + 1) % samples);
+
+            for (int ring = 0; ring < ShadowRings; ring++)
+            {
+                int inner = startIndex + 1 + ring * samples;
+                int outer = inner + samples;
+                for (int sample = 0; sample < samples; sample++)
+                {
+                    int next = (sample + 1) % samples;
+                    vh.AddTriangle(inner + sample, outer + sample, outer + next);
+                    vh.AddTriangle(inner + sample, outer + next, inner + next);
+                }
+            }
+        }
+
+        private static Vector2 Rotate(Vector2 direction, float angle)
+        {
+            float radian = angle * Mathf.Deg2Rad;
+            float sin = Mathf.Sin(radian);
+            float cos = Mathf.Cos(radian);
+            return new Vector2(direction.x * cos - direction.y * sin, direction.x * sin + direction.y * cos);
         }
 
         // 반지름 radius를 중심으로 width 두께의 호(고리 일부), 안팎 가장자리를 feather 폭만큼 투명하게 풀어 그린다.

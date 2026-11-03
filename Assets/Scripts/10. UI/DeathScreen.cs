@@ -11,11 +11,12 @@ using UnityEditor;
 
 namespace TeamOdd.UI
 {
-    // 플레이어가 죽으면 신호가 끊기듯 화면이 꺼지고 "작전 실패"와 정비소 이동 카운트다운을 띄우는 연출
+    // 플레이어가 죽으면 신호가 끊기듯 화면이 꺼지고 "임무 실패"와 정비소 이동 카운트다운을 띄우는 연출
     // 히트스탑·슬로모션 → 채도가 빠지고 가장자리가 어두워짐 → 사망 애니메이션이 거의 끝나면 화면 전체와 HUD가 강하게 지직거리다 HUD가 사라짐
-    // → 화면이 가로 선으로 접혔다가 점으로 꺼짐 → 검은 화면에 띠가 선에서 열리며 문구가 짧게 지직거리며 켜짐 → 카운트다운
+    // → 화면이 가로 선으로 접혔다가 점으로 꺼짐 → 검은 화면에 문구가 차례로 켜짐 → 카운트다운
     // - 화면 전체 효과: ScreenGlitch(PC_Renderer의 Screen Glitch 렌더러 기능)
-    // - 띠·문구: 보상 화면과 같은 부품(UILineReveal·UIGlitch·UIStaggerReveal)을 세기만 다르게 쓴다.
+    // - 문구: 화면을 가로지르는 띠·선 없이, 글자에도 지직거림 없이 UIStaggerReveal로만 켠다.
+    //   문구 영역(BandReveal)은 마스크로 쓰던 자리라 열린 상태로만 둔다.
     // UI Canvas 아래 빈 오브젝트에 붙이고, 컴포넌트 우클릭 → "1. Build Death Screen UI" 로 자식 UI 를 만든다.
     // 입력 잠금은 PlayerController.DeathAnimation이 맡는다. 연출은 실제 시간 기준이다.
     [RequireComponent(typeof(RectTransform))]
@@ -26,15 +27,16 @@ namespace TeamOdd.UI
         [SerializeField] private CombatEntity playerEntity;
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private UILineReveal bandReveal;
-        [SerializeField] private UIGlitch bandGlitch;
         [SerializeField] private UIStaggerReveal bandContent;
         [SerializeField] private TMP_Text messageText;
         [SerializeField] private TMP_Text countdownText;
         // 사망 순간 함께 지직거리다 사라질 HUD, 빌드할 때 부모 캔버스에 붙여 연결한다
         [SerializeField] private UIGlitch hudGlitch;
+        // 윗줄·장식 선·카운트다운 막대 강조, Tools → Team Odd → Enhance Result Screens 가 만들어 연결한다
+        [SerializeField] private ResultBanner banner;
 
         [Header("Message")]
-        [SerializeField] private string message = "작전 실패";
+        [SerializeField] private string message = "임무 실패";
         // {0}에 남은 초가 들어간다
         [SerializeField] private string countdownFormat = "{0}초 뒤 정비소로 이동합니다.";
         [SerializeField] private string movingMessage = "정비소로 이동합니다.";
@@ -65,10 +67,8 @@ namespace TeamOdd.UI
         [SerializeField, Min(0.01f)] private float dotFadeDuration = 0.3f;
 
         [Header("Message Timing")]
-        // 화면이 접히기 시작한 뒤 문구 띠가 열리기 시작할 때까지 (0이면 꺼지는 연출과 동시에)
-        [SerializeField, Min(0f)] private float messageDelay = 0f;
-        [SerializeField, Min(0.01f)] private float messageGlitchDuration = 0.35f;
-        [SerializeField, Range(0f, 1f)] private float messageGlitchStrength = 0.6f;
+        // 화면 글리치가 끝난 뒤 문구가 켜지기 시작할 때까지. 화면이 접히는 동안 가운데에 문구가 나타난다
+        [SerializeField, Min(0f)] private float messageDelay = 0.3f;
         [SerializeField, Min(1)] private int countdownSeconds = 5;
         // 이동 문구를 보여 준 뒤 넘어가기까지
         [SerializeField, Min(0f)] private float movingHold = 1f;
@@ -172,13 +172,12 @@ namespace TeamOdd.UI
             BeginSignalLost();
         }
 
-        // 화면 전체 글리치 → 선으로 접힘 → 점으로 꺼짐 → 문구 띠 → 카운트다운
+        // 화면 전체 글리치 → 선으로 접힘 → 점으로 꺼짐 → 문구 → 카운트다운
         private void BeginSignalLost()
         {
             float glitchStart = afterAnimationDelay;
             float glitchEnd = glitchStart + glitchDuration;
-            float messageTime = glitchEnd + messageDelay;
-            float contentTime = messageTime + bandReveal.OpenDuration;
+            float contentTime = glitchEnd + messageDelay;
 
             sequence?.Kill();
             sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
@@ -186,13 +185,14 @@ namespace TeamOdd.UI
             float offTime = ScreenOffEffect.Insert(sequence, glitchStart, glitchDuration, foldDuration, shrinkDuration, dotFadeDuration);
             if (hudGlitch != null) sequence.InsertCallback(glitchStart, () => hudGlitch.Play(glitchDuration, 1f, true));
 
-            // 화면이 접히는 동안 문구 띠가 같은 가운데 선에서 열린다. 배경은 꺼지는 화면이 보이도록 투명하게 둔다
-            sequence.InsertCallback(messageTime, () =>
+            // 화면이 접히는 동안 문구가 가운데에 켜진다. 배경은 꺼지는 화면이 보이도록 투명하게 둔다
+            sequence.InsertCallback(contentTime, () =>
             {
                 SetBlackoutAlpha(0f);
                 panelRoot.SetActive(true);
                 if (bandContent != null) bandContent.HideAll();
-                bandReveal.Open();
+                if (banner != null) banner.Snap(false);
+                bandReveal.Snap(true);
             });
             // 다 꺼진 뒤에는 검은 배경으로 덮고 화면 효과를 걷어 둔다
             sequence.InsertCallback(offTime, () =>
@@ -205,7 +205,11 @@ namespace TeamOdd.UI
             {
                 countdownText.text = string.Format(countdownFormat, countdownSeconds);
                 if (bandContent != null) bandContent.Play();
-                if (bandGlitch != null) bandGlitch.Play(messageGlitchDuration, messageGlitchStrength);
+                if (banner != null)
+                {
+                    banner.Play();
+                    banner.PlayProgress(countdownSeconds);
+                }
             });
 
             for (int second = 1; second < countdownSeconds; second++)
@@ -227,7 +231,7 @@ namespace TeamOdd.UI
             waitRoutine = null;
             ScreenGlitch.Clear();
             if (hudGlitch != null) hudGlitch.Stop();
-            if (bandGlitch != null) bandGlitch.Stop();
+            if (banner != null) banner.Snap(true);
             SetBlackoutAlpha(1f);
             if (panelRoot != null) panelRoot.SetActive(false);
             if (isShowing == false) return;
@@ -253,7 +257,6 @@ namespace TeamOdd.UI
 
 #if UNITY_EDITOR
         private const string PanelName = "Panel";
-        private static readonly Color HighlightColor = new(0.93f, 0.91f, 0.87f, 0.9f);
         private static readonly Color TextColor = new(0.847f, 0.824f, 0.769f, 1f);
 
         [ContextMenu("1. Build Death Screen UI")]
@@ -286,23 +289,17 @@ namespace TeamOdd.UI
             blackout.color = Color.black;
             blackout.raycastTarget = false;
 
-            // 선에서 펼쳐지는 문구 띠
+            // 문구 영역, 띠 바탕과 가운데 선 없이 열린 채로 쓴다
             GameObject reveal = NewUI("BandReveal", panel.transform);
             SetRect((RectTransform)reveal.transform,
                 new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(0f, 140f));
             reveal.AddComponent<RectMask2D>();
             UILineReveal lineReveal = reveal.AddComponent<UILineReveal>();
-            // 꺼진 화면 뒤라 보상 화면보다 천천히 연다
-            SetValue(lineReveal, "lineDuration", 0.35f);
-            SetValue(lineReveal, "openDuration", 0.45f);
-            SetValue(lineReveal, "lineFadeDuration", 0.35f);
 
             GameObject band = NewUI("Band", reveal.transform);
             Stretch((RectTransform)band.transform);
-            band.AddComponent<VectorPanel>().raycastTarget = false;
             band.AddComponent<CanvasGroup>();
-            UIGlitch glitch = band.AddComponent<UIGlitch>();
             UIStaggerReveal content = band.AddComponent<UIStaggerReveal>();
             // 제목이 자리 잡은 뒤 안내 문구가 켜지도록 간격을 둔다
             SetValue(content, "interval", 0.25f);
@@ -315,16 +312,6 @@ namespace TeamOdd.UI
             subColor.a = 0.55f;
             TMP_Text countdown = NewText("CountdownText", band.transform, textFont, string.Format(countdownFormat, countdownSeconds), 18f, subColor,
                 new Vector2(0f, -26f), new Vector2(1000f, 30f));
-
-            // 띠가 열리기 전 가운데 1px 선, 마스크에 가려지지 않게 띠 밖에 둔다
-            GameObject line = NewUI("BandLine", panel.transform);
-            ((RectTransform)line.transform).sizeDelta = new Vector2(0f, 1f);
-            Image lineImage = line.AddComponent<Image>();
-            lineImage.color = HighlightColor;
-            lineImage.raycastTarget = false;
-
-            SetReference(lineReveal, "line", lineImage);
-            SetReferences(glitch, "splitGraphics", title);
 
             // 부모 캔버스(HUD)의 다른 자식들을 함께 지직거리게 한다
             UIGlitch hud = null;
@@ -347,7 +334,6 @@ namespace TeamOdd.UI
             Undo.RecordObject(this, "Build Death Screen UI");
             panelRoot = panel;
             bandReveal = lineReveal;
-            bandGlitch = glitch;
             bandContent = content;
             messageText = title;
             countdownText = countdown;
@@ -371,7 +357,6 @@ namespace TeamOdd.UI
             Undo.RecordObject(this, "Clear Death Screen UI");
             panelRoot = null;
             bandReveal = null;
-            bandGlitch = null;
             bandContent = null;
             messageText = null;
             countdownText = null;

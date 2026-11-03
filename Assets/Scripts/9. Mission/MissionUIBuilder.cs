@@ -535,7 +535,9 @@ namespace Study.Utilities
             scrollRect.viewport = viewport.GetComponent<RectTransform>();
             scrollRect.content = content.GetComponent<RectTransform>();
             scrollRect.verticalScrollbar = scrollbar;
-            scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+            // 목록이 짧으면 스크롤바를 숨기고 뷰포트를 넓힌다.
+            scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+            scrollRect.verticalScrollbarSpacing = 16f;
 
             return content.transform;
         }

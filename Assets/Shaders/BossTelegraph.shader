@@ -3,7 +3,7 @@ Shader "TeamOdd/Boss Telegraph"
     // 보스 공격 범위(원/부채꼴/사각형)를 바닥면에 투영해 그리는 화면 공간 데칼 셰이더
     // AttackTelegraph의 상자(바닥 근처 높이만 덮음)를 그리면서, 장면 깊이(_CameraDepthTexture)로 그 픽셀에 보이는 표면 위치를 되살려
     // 상자 안에 있고 위를 향한 면에만, 그 표면의 수평 위치로 모양을 그린다. 그래서 단차 위에도 틈 없이 붙고 벽 옆면·구멍 아래에는 그리지 않는다.
-    // 플레이어 몸(_TelegraphExclude 발바닥 위 원기둥)과, TelegraphMaskFeature가 스텐실 128로 표시한 보스·플레이어 몸 픽셀에는 그리지 않는다.
+    // 플레이어 몸(_TelegraphExclude 발바닥 위 원기둥)과, TelegraphMaskFeature가 스텐실 128로 표시한 바닥(Ground 레이어) 외 물체·보스·플레이어 몸 픽셀에는 그리지 않는다.
     // 모양, 크기, 진행도는 AttackTelegraph가 MaterialPropertyBlock으로 넘긴다.
     Properties
     {

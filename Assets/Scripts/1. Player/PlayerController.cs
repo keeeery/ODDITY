@@ -5,6 +5,7 @@ using DG.Tweening;
 using Study.Utilities;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -1385,11 +1386,15 @@ namespace TeamOdd.Player
                     float elapsed = 0f;
                     while (elapsed < WakeUpTime)
                     {
-                        if (CanWakeUp && earlyWakeUpCooldown <= 0f && SimpleInput.GetKeyDown(Key.Space))
+                        if (CanWakeUp && SimpleInput.GetKeyDown(Key.Space))
                         {
-                            earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
-                            CanWakeUp = false;
-                            break;
+                            if (earlyWakeUpCooldown <= 0f)
+                            {
+                                earlyWakeUpCooldown = MaxEarlyWakeUpCooldown;
+                                CanWakeUp = false;
+                                break;
+                            }
+                            SystemMessage.Show("기상기 재사용 대기시간 중입니다.", SystemMessage.Tone.Warning);
                         }
                         MoveDuringHit(Vector3.zero);
                         elapsed += PlayerDeltaTime;

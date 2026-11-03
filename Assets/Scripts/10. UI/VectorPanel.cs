@@ -7,6 +7,7 @@ namespace TeamOdd.UI
     // 체력바·스킬 슬롯과 같은 방식(그림자, 1px 테두리, 반투명 트랙)으로 그리는 각진 패널
     // 툴팁·보상 슬롯·버튼 배경처럼 HUD 밖의 화면도 같은 생김새로 맞출 때 쓴다.
     // 마우스 반응을 켜면 올렸을 때 테두리가 스킬 슬롯의 사용 가능 상태처럼 밝아진다. 자식 위에 올려도 반응한다.
+    // 밝아지고 어두워지는 전환은 highlightFadeDuration 동안 실제 시간 기준으로 부드럽게 이어진다.
     // 기본값은 SkillSlotHUD의 씬 설정과 맞춘 값
     [RequireComponent(typeof(CanvasRenderer))]
     public class VectorPanel : MaskableGraphic, IPointerEnterHandler, IPointerExitHandler
@@ -24,12 +25,16 @@ namespace TeamOdd.UI
         [Header("Hover")]
         [SerializeField] private bool highlightOnHover;
         [SerializeField] private Color highlightBorderColor = new(0.93f, 0.91f, 0.87f, 0.9f);
+        [Tooltip("올렸을 때 트랙 위에 더하는 색, 알파가 0이면 테두리만 밝아짐")]
+        [SerializeField] private Color highlightTrackColor = new(0.93f, 0.91f, 0.87f, 0f);
+        [SerializeField, Min(0f)] private float highlightFadeDuration = 0.12f;
 
         [Header("Flash")]
         [SerializeField] private Color flashColor = new(1f, 1f, 1f, 0.7f);
 
         private readonly VectorShape shape = new();
         private bool highlighted;
+        private float highlightAmount;
         private float flashAlpha;
 
         public bool Highlighted
@@ -39,7 +44,7 @@ namespace TeamOdd.UI
             {
                 if (highlighted == value) return;
                 highlighted = value;
-                SetVerticesDirty();
+                if (highlightFadeDuration <= 0f || Application.isPlaying == false) SetHighlightAmount(value ? 1f : 0f);
             }
         }
 
@@ -67,9 +72,23 @@ namespace TeamOdd.UI
             if (highlightOnHover) Highlighted = false;
         }
 
+        private void Update()
+        {
+            float target = highlighted ? 1f : 0f;
+            if (Mathf.Approximately(highlightAmount, target)) return;
+            SetHighlightAmount(Mathf.MoveTowards(highlightAmount, target, Time.unscaledDeltaTime / Mathf.Max(0.0001f, highlightFadeDuration)));
+        }
+
+        private void SetHighlightAmount(float amount)
+        {
+            highlightAmount = amount;
+            SetVerticesDirty();
+        }
+
         protected override void OnDisable()
         {
             highlighted = false;
+            highlightAmount = 0f;
             flashAlpha = 0f;
             base.OnDisable();
         }
@@ -82,14 +101,20 @@ namespace TeamOdd.UI
             if (rect.width <= 0f || rect.height <= 0f) return;
 
             float antiAlias = VectorShape.PixelsToUnits(canvas, antiAliasPixels);
-            Color border = highlighted ? highlightBorderColor : borderColor;
+            Color border = Color.Lerp(borderColor, highlightBorderColor, highlightAmount);
 
             shape.SetRoundedRect(rect, 0f, 1);
             if (shadowSize > 0f)
-                shape.Fill(vh, rect.center, borderWidth + shadowSize * 0.5f, shadowSize, shadowColor * color);
+                shape.FillShadow(vh, rect.center, borderWidth, shadowSize, shadowColor * color);
             if (borderWidth > 0f)
                 shape.Fill(vh, rect.center, borderWidth, antiAlias, border * color);
             shape.Fill(vh, rect.center, 0f, antiAlias, trackColor * color);
+            if (highlightAmount > 0.001f && highlightTrackColor.a > 0f)
+            {
+                Color hover = highlightTrackColor;
+                hover.a *= highlightAmount;
+                shape.Fill(vh, rect.center, 0f, antiAlias, hover * color);
+            }
 
             if (flashAlpha > 0.001f)
             {

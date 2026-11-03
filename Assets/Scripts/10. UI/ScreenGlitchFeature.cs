@@ -29,7 +29,8 @@ namespace TeamOdd.UI
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (ScreenGlitch.IsActive == false || shader == null) return;
+            // 연출 도중 플레이를 멈추면 static 값이 남아 에디터 Game 뷰가 꺼진 채로 보이므로 플레이 중에만 그린다
+            if (Application.isPlaying == false || ScreenGlitch.IsActive == false || shader == null) return;
 
             // 화면에 바로 나가는 게임 카메라만, 미니맵처럼 텍스처에 그리는 카메라와 씬 뷰는 건너뜀
             Camera camera = renderingData.cameraData.camera;

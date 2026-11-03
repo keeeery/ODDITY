@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TeamOdd.Combat;
+using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -14,6 +15,8 @@ namespace TeamOdd.Superpower
     /// 드래그로 트레이 ↔ 그리드를 오가게 하고, 그리드에 놓으면 inventory.Equip, 들어 올리면 inventory.Unequip을 부른다.
     /// 마우스 오른쪽 클릭은 빠른 장착/해제다. 트레이 칩은 그리드의 빈 자리에 바로 넣고, 그리드 칩은 트레이로 돌려보낸다.
     /// 스킬 칩은 스킬 슬롯 수(5개)까지만 장착된다. 그리드에 놓으면 인벤토리가 빈 스킬 슬롯에 넣고, 아래 스킬 슬롯 줄(SkillSlotBarView)에서 순서를 바꾼다.
+    /// 칩·스킬 슬롯에 마우스를 올리면 칩 툴팁(TooltipView)을 띄우고, 안내·장착 실패·스탯 변화는 HUD의 SystemMessage로 알린다.
+    /// 모은 칩 종류 수는 패널 위쪽 오른쪽(countText)에 늘 보여 준다.
     /// 패널은 테이블도 플레이어도 모른다. 여는 쪽(AugmentationChipToggle, 정비소 등)이 인벤토리를 넘겨준다.
     /// </summary>
     public class AugmentationChipPanel : MonoBehaviour
@@ -23,14 +26,15 @@ namespace TeamOdd.Superpower
         [SerializeField] private ChipGridView grid;
         [SerializeField] private ChipTrayView tray;
         [SerializeField] private SkillSlotBarView skillBar; // 비워두면 자식에서 찾는다. AugmentationChipLayoutBuilder의 Build Layout이 만든다
-        [SerializeField] private Text infoText;
+        [SerializeField] private TooltipView tooltip; // 비워두면 같은 캔버스에서 찾는다. Augmentation Chip Canvas에 Chip Tooltip 프리팹이 있다
+        [SerializeField] private Text countText;      // 제목 줄 오른쪽의 보유 칩 수
         [SerializeField] private Font labelFont;
+
+        private static int totalChipCount = -1; // 칩 테이블 크기. 처음 열 때 한 번 읽는다
 
         private readonly List<ChipItemView> chips = new();
         private AugmentationChipInventory inventory;
         private RectTransform root;  // 드래그 중인 칩을 올려두는 최상단
-        private string guideText;    // 프리팹에 적어 둔 안내 문구. 열 때마다 이걸로 되돌린다
-        private OwnedChip shownChip; // 정보 텍스트에 보여주고 있는 칩. 스킬 순서가 바뀌면 다시 보여준다
 
         private ChipItemView dragging;
         private Vector2 dragOffset; // 드래그 중인 칩 위치 - 포인터 위치
@@ -58,6 +62,21 @@ namespace TeamOdd.Superpower
             }
         }
 
+        // 패널이 꺼진 채로 Open이 먼저 불릴 수 있으므로 SkillBar와 같이 쓸 때 찾는다
+        private TooltipView Tooltip
+        {
+            get
+            {
+                if (tooltip == null)
+                {
+                    Canvas canvas = GetComponentInParent<Canvas>(true);
+                    if (canvas != null)
+                        tooltip = canvas.rootCanvas.GetComponentInChildren<TooltipView>(true);
+                }
+                return tooltip;
+            }
+        }
+
         public void IsActivePanel(bool isActive, AugmentationChipInventory inventory)
         {
             if(inventory != null && isActive) Open(inventory);
@@ -66,15 +85,8 @@ namespace TeamOdd.Superpower
         
         public void Open(AugmentationChipInventory inventory)
         {
-            // 다른 인벤토리로 다시 열 수도 있으므로 지난번 구독을 먼저 끊는다
-            if (this.inventory != null)
-                this.inventory.SkillSlotsChanged -= OnSkillSlotsChanged;
-
             this.inventory = inventory;
             root = (RectTransform)transform;
-            guideText ??= infoText.text;
-            infoText.text = guideText;
-            shownChip = null;
 
             // 지난번에 그린 칩을 버리고 인벤토리 기준으로 다시 그린다
             foreach (ChipItemView chip in chips)
@@ -89,19 +101,19 @@ namespace TeamOdd.Superpower
             tray.Layout();
 
             // 칩을 다시 그리다가 해제된 스킬 칩이 있을 수 있으므로 슬롯 줄은 그 뒤에 연다
-            inventory.SkillSlotsChanged += OnSkillSlotsChanged;
             if (SkillBar != null)
             {
-                SkillBar.ChipHovered -= ShowInfo;
-                SkillBar.ChipHovered += ShowInfo;
-                SkillBar.Open(inventory, root, labelFont);
+                SkillBar.Open(inventory, root, labelFont, Tooltip);
             }
             else
             {
                 Debug.LogWarning("[AugmentationChipPanel] 스킬 슬롯 줄이 없습니다. 프리팹에서 AugmentationChipLayoutBuilder → Build Layout을 실행해 주세요.", this);
             }
 
+            RefreshCounts();
             gameObject.SetActive(true);
+            // 제목 오른쪽 조작 안내. 처음 열 때만 만든다
+            ChipControlHint.Attach(transform);
         }
 
         // 드래그 중에 닫아도 된다. 들고 있던 칩과 그리드 미리보기는 CancelDrag가 정리한다
@@ -110,9 +122,9 @@ namespace TeamOdd.Superpower
             CancelDrag();
             if (SkillBar != null)
                 SkillBar.Close();
-            // 시작할 때 닫힌 채로 부르는 Close는 아직 인벤토리가 없어 건너뛴다
-            if (inventory != null)
-                inventory.SkillSlotsChanged -= OnSkillSlotsChanged;
+            // 툴팁은 패널 밖(캔버스)에 있어서 패널을 꺼도 같이 꺼지지 않는다
+            if (Tooltip != null)
+                Tooltip.Hide();
 
             gameObject.SetActive(false);
         }
@@ -128,6 +140,8 @@ namespace TeamOdd.Superpower
         {
             ChipItemView chip = ChipItemView.Create(owned, tray.Content, labelFont);
             chip.PointerEntered += OnPointerEntered;
+            chip.PointerMoved += OnPointerMoved;
+            chip.PointerExited += OnPointerExited;
             chip.RightClicked += OnRightClick;
             chip.DragBegan += OnBeginDrag;
             chip.Dragged += OnDrag;
@@ -150,14 +164,33 @@ namespace TeamOdd.Superpower
             tray.Add(chip);
         }
 
-        private void OnPointerEntered(ChipItemView chip) => ShowInfo(chip.Owned);
+        #region Tooltip
 
-        // 스킬 순서가 바뀌면 정보 텍스트의 스킬 번호도 맞춘다
-        private void OnSkillSlotsChanged()
+        // 칩이나 스킬 슬롯을 들고 있는 동안에는 지나가는 칩의 툴팁을 띄우지 않는다
+        private void OnPointerEntered(ChipItemView chip, PointerEventData eventData)
         {
-            if (shownChip != null)
-                ShowInfo(shownChip);
+            if (IsDragging == false)
+                ShowTooltip(chip, eventData.position);
         }
+
+        private void OnPointerMoved(ChipItemView chip, PointerEventData eventData)
+        {
+            if (Tooltip != null)
+                Tooltip.SetScreenPosition(chip, eventData.position);
+        }
+
+        private void OnPointerExited(ChipItemView chip)
+        {
+            if (Tooltip != null)
+                Tooltip.Hide(chip);
+        }
+
+        private void ShowTooltip(ChipItemView chip, Vector2 screenPosition)
+        {
+            ChipTooltip.Show(Tooltip, chip, chip.Owned, screenPosition, ChipTooltip.GetEquipStatus(chip.Owned, inventory));
+        }
+
+        #endregion
 
         #region Equip
 
@@ -192,17 +225,20 @@ namespace TeamOdd.Superpower
             else if (inventory.CanEquip(chip.Owned) == false)
             {
                 // 장착 안 된 칩을 거절하는 경우는 스킬 슬롯이 가득 찼을 때뿐이다. 자리를 찾지 않고 돌리지도 않는다
-                ShowInfo(chip.Owned, SkillSlotsFullMessage);
+                SystemMessage.Show(SkillSlotsFullMessage, SystemMessage.Tone.Warning);
                 return;
             }
             else if (TryQuickEquip(chip) == false)
             {
-                ShowInfo(chip.Owned, "장착할 자리가 없습니다.");
+                SystemMessage.Show("장착할 자리가 없습니다.", SystemMessage.Tone.Warning);
                 return;
             }
 
             tray.Layout();
-            ShowInfo(chip.Owned);
+            // 칩이 포인터 아래에서 다른 곳으로 옮겨 갔으므로 툴팁을 닫는다. 다음에 올라간 칩이 새로 띄운다
+            if (Tooltip != null)
+                Tooltip.Hide(chip);
+            SystemMessage.Show(GetStatSummary());
         }
 
         // 지금 방향부터 시계 방향으로 돌려 가며 들어갈 자리를 찾는다
@@ -251,7 +287,8 @@ namespace TeamOdd.Superpower
 
             Vector2 pointer = ScreenToLocal(root, pointerPosition);
             dragOffset = chip.Rect.anchoredPosition - pointer;
-            ShowInfo(chip.Owned);
+            if (Tooltip != null)
+                Tooltip.Hide();
         }
 
         private void OnDrag(ChipItemView chip, PointerEventData eventData)
@@ -280,8 +317,15 @@ namespace TeamOdd.Superpower
             // 트레이로 돌아오거나 빠져나간 자리를 메우도록 다시 정렬한다
             tray.Layout();
 
-            // 놓을 자리는 맞았는데 스킬 슬롯이 가득 차서 트레이로 돌아온 경우 알려준다
-            ShowInfo(chip.Owned, fits && equipped == false ? SkillSlotsFullMessage : null);
+            // 놓을 자리는 맞았는데 스킬 슬롯이 가득 차서 트레이로 돌아온 경우 알려준다. 아니면 바뀐 스탯을 보여준다
+            if (fits && equipped == false)
+                SystemMessage.Show(SkillSlotsFullMessage, SystemMessage.Tone.Warning);
+            else
+                SystemMessage.Show(GetStatSummary());
+
+            // 내려놓은 뒤에도 포인터가 칩 위에 있으면 바뀐 장착 상태로 툴팁을 다시 띄운다
+            if (RectTransformUtility.RectangleContainsScreenPoint(chip.Rect, eventData.position, null))
+                ShowTooltip(chip, eventData.position);
         }
 
         // 잡고 있는 지점이 포인터 아래에 그대로 남도록 칩을 회전시킨다
@@ -333,55 +377,31 @@ namespace TeamOdd.Superpower
 
         #endregion
 
-        private void ShowInfo(OwnedChip info) => ShowInfo(info, null);
-
-        // 정보 텍스트는 세 줄: 칩 이름·설명·장착 상태 / 효과 / 장착 현황
-        // notice(장착 실패 안내 등)가 있으면 칸 밖으로 잘리지 않도록 장착 현황 대신 셋째 줄에 쓴다
-        private void ShowInfo(OwnedChip info, string notice)
+        // 모은 칩 종류 수 / 전체 칩 종류 수. 같은 칩을 여러 장 가져도 한 종류로 센다
+        private void RefreshCounts()
         {
-            shownChip = info;
+            if (countText == null)
+                return;
 
-            AugmentationChipDef def = info.Def;
-            string state = info.IsEquipped ? $"장착됨 ({info.Origin.x}, {info.Origin.y})" : "미장착";
-            int skillSlot = inventory.GetSkillSlot(info);
-            if (skillSlot >= 0)
-                state += $" · 스킬 {skillSlot + 1}번";
+            HashSet<int> owned = new();
+            foreach (OwnedChip chip in inventory.Chips)
+                owned.Add(chip.Def.ID);
 
-            // 능력치 칩은 오르는 스탯, 스킬 칩은 쿨타임·스태미나 소모량과 스킬마다 다른 매개변수를 스킬이 직접 설명한다
-            string effect = def switch
+            if (totalChipCount < 0)
             {
-                StatChipDef stat => $"능력치  {stat.StatType} +{stat.Value}",
-                SkillChipDef skill => $"스킬({GetCategoryLabel(skill.Category)})  {skill.SkillType} · 쿨타임 {skill.Cooldown}초 · 스태미나 {skill.Cost} · {info.Skill.Describe()}",
-                _ => "",
-            };
+                AugmentationChipTable table = new();
+                table.Load();
+                totalChipCount = table.Count;
+            }
 
-            infoText.text = $"[{def.ID}] {def.Name} - {def.Description}  |  {state}\n{effect}\n{notice ?? GetSummary()}";
+            countText.text = $"보유 {owned.Count} / 전체 {totalChipCount}";
         }
 
-        private static string GetCategoryLabel(SkillCategory category) => category switch
+        // 장착이 바뀔 때 SystemMessage로 띄우는 스탯 한 줄. 칩 수는 countText가 보여 준다
+        private string GetStatSummary()
         {
-            SkillCategory.Attack => "공격",
-            SkillCategory.Defense => "방어",
-            SkillCategory.Utility => "유틸",
-            SkillCategory.Passive => "패시브",
-            _ => "",
-        };
-
-        private string GetSummary()
-        {
-            int equipped = 0;
-            foreach (OwnedChip owned in inventory.Chips)
-                if (owned.IsEquipped)
-                    equipped++;
-
-            int skills = 0;
-            foreach (OwnedChip slot in inventory.SkillSlots)
-                if (slot != null)
-                    skills++;
-
             RuntimeStats stats = inventory.Stats;
-            return $"장착 칩 {equipped}/{inventory.Chips.Count}  |  스킬 {skills}/{AugmentationChipInventory.SkillSlotCount}  |  " +
-                   $"MaxHp {stats.MaxHp}(+{stats.GetBonus(StatType.MaxHp)})  Atk {stats.Atk}(+{stats.GetBonus(StatType.Atk)})  Def {stats.Def}(+{stats.GetBonus(StatType.Def)})";
+            return $"MaxHp {stats.MaxHp}(+{stats.GetBonus(StatType.MaxHp)})  Atk {stats.Atk}(+{stats.GetBonus(StatType.Atk)})  Def {stats.Def}(+{stats.GetBonus(StatType.Def)})";
         }
 
         // Screen Space - Overlay 캔버스 전제라 카메라 없이(null) 변환한다

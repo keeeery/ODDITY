@@ -97,6 +97,9 @@ namespace TeamOdd.Psychokinesis
         // 풀을 거치지 않고 맵에 배치된 오브젝트, 보스에게 밟혀도 파편화되지 않고 좌우로 밀려남
         private bool isPlacedInMap;
         public bool IsPlacedInMap => isPlacedInMap;
+
+        // Resize로 누적된 크기 배율, 등급 피해는 원래 질량으로 등급을 정하고 이 배율을 곱함
+        private float sizeFactor = 1f;
         public bool IsSpawnedByBoss { get; private set; }
 
         // 파편화 위치, 바깥쪽 방향, 질량, 파편 머티리얼(없으면 null)
@@ -151,6 +154,7 @@ namespace TeamOdd.Psychokinesis
             ResizeHitTrigger(false);
             activeObjects.Add(this);
             ClearBossShatterGrace();
+            sizeFactor = 1f;
             IsSpawnedByBoss = false;
             shatterOnWallHit = false;
         }
@@ -316,7 +320,7 @@ namespace TeamOdd.Psychokinesis
             float momentum = body.mass * speed;
             if (damageSender != null && damageSender.GameObject != null &&
                 damageSender.GameObject.TryGetComponent(out PsychokinesisController controller) &&
-                controller.TryCalculateObjectDamage(body.mass, out int overriddenDamage, out groggy))
+                controller.TryCalculateObjectDamage(body.mass / sizeFactor, sizeFactor, out int overriddenDamage, out groggy))
                 return overriddenDamage;
 
             int damage = Mathf.RoundToInt(momentum * scale);
@@ -511,6 +515,7 @@ namespace TeamOdd.Psychokinesis
         {
             transform.localScale *= factor;
             body.mass *= factor;
+            sizeFactor *= factor;
             ResizeHitTrigger(IsHeld);
         }
 

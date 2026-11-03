@@ -1,6 +1,8 @@
 using Study.Utilities;
 using TeamOdd.Combat;
+using TeamOdd.Mission;
 using TeamOdd.Player;
+using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -66,6 +68,9 @@ namespace TeamOdd.Superpower
                 return;
             }
 
+            // 채널링 중에 정비소로 들어서면 그 자리에서 멈춘다
+            bool inRepairShop = RepairShopZone.Contains(transform.position);
+
             for (int i = 0; i < count; i++)
             {
                 // Key.None은 Keyboard.current[]에서 예외가 나므로 비워 둔 키는 건너뛴다
@@ -74,7 +79,7 @@ namespace TeamOdd.Superpower
 
                 if (SimpleInput.GetKeyDown(SlotKeys[i]))
                     Use(i);
-                else if (SimpleInput.GetKeyUp(SlotKeys[i]))
+                else if (inRepairShop || SimpleInput.GetKeyUp(SlotKeys[i]))
                     Release(i);
             }
         }
@@ -96,6 +101,12 @@ namespace TeamOdd.Superpower
             if (playerController != null && (playerController.IsHit || playerController.IsSuperpowerLocked))
                 return;
 
+            if (RepairShopZone.Contains(transform.position))
+            {
+                SystemMessage.Show(RepairShopZone.SkillBlockedMessage, SystemMessage.Tone.Warning);
+                return;
+            }
+
             // 염동 연사처럼 시전이 이어지는 스킬이 있으면 끝날 때까지 다른 스킬을 쓰지 않는다
             for (int i = 0; i < AugmentationChipInventory.SkillSlotCount; i++)
             {
@@ -110,7 +121,7 @@ namespace TeamOdd.Superpower
             OwnedChip chip = inventory.SkillSlots[slot];
             if (chip == null)
             {
-                Debug.Log($"[SkillCaster] {slot + 1}번 슬롯이 비어 있습니다.");
+                SystemMessage.Show("장착된 스킬이 없습니다.", SystemMessage.Tone.Warning);
                 return;
             }
 
@@ -120,7 +131,7 @@ namespace TeamOdd.Superpower
 
             if (chip.Skill.IsReady == false)
             {
-                Debug.Log($"[SkillCaster] {chip.Skill.Name} 쿨타임 {chip.Skill.RemainingCooldown:0.0}초 남음");
+                SystemMessage.Show("재사용 대기시간 중입니다.", SystemMessage.Tone.Warning);
                 return;
             }
 
@@ -128,7 +139,7 @@ namespace TeamOdd.Superpower
             float cost = ((SkillChipDef)chip.Def).Cost;
             if (player != null && player.Stamina < cost)
             {
-                Debug.Log($"[SkillCaster] {chip.Skill.Name} 스태미나 부족 (필요 {cost}, 남은 양 {player.Stamina:0.0})");
+                SystemMessage.Show("스태미나가 부족합니다.", SystemMessage.Tone.Warning);
                 return;
             }
 

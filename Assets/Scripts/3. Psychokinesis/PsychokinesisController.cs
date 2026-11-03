@@ -1,6 +1,9 @@
 using System;
 using TeamOdd.Combat;
+using TeamOdd.Mission;
+using TeamOdd.UI;
 using Study.Utilities;
+using TeamOdd.Player;
 using UnityEngine;
 
 namespace TeamOdd.Psychokinesis
@@ -117,8 +120,10 @@ namespace TeamOdd.Psychokinesis
         private bool IsPreparingThrow => throwPrepareStartTime >= 0f;
         private bool IsSuperpowerLocked => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsSuperpowerLocked;
         private bool IsHit => playerStatus != null && playerStatus.PlayerController != null && playerStatus.PlayerController.IsHit;
+        // 정비소에서는 기본 공격과 염동력을 쓰지 않고, 우클릭은 NPC 상호작용(MissionNPC)에 넘긴다
+        private bool IsInRepairShop => RepairShopZone.Contains(player.transform.position);
 
-        public bool CanNormalAttack => heldObject == null && IsHit == false && IsSuperpowerLocked == false;
+        public bool CanNormalAttack => heldObject == null && IsHit == false && IsSuperpowerLocked == false && IsInRepairShop == false;
 
         // 피격 순간 입력 예약과 발사 준비를 버리고, 물체는 투척 피해 없이 즉시 내려놓는다.
         public void InterruptForHit()
@@ -161,7 +166,8 @@ namespace TeamOdd.Psychokinesis
         public int CalculateAttackGroggy(int damage, int fallback)
             => scaleAttackGroggy ? Mathf.RoundToInt(damage * attackGroggyScale) : fallback;
 
-        public bool TryCalculateObjectDamage(float mass, out int damage, out int groggy)
+        // mass는 크기 조절 전 질량(등급 판정용), sizeFactor는 크기 조절 칩으로 누적된 배율
+        public bool TryCalculateObjectDamage(float mass, float sizeFactor, out int damage, out int groggy)
         {
             damage = 0;
             groggy = 0;
@@ -172,7 +178,7 @@ namespace TeamOdd.Psychokinesis
             else if (mass >= objectMassThresholds.x) atkScale = mediumObjectAtkScale;
             else atkScale = smallObjectAtkScale;
             // 평타처럼 공격력 칩 보너스까지 반영하도록 쓸 때마다 읽음
-            damage = Mathf.Max(1, Mathf.RoundToInt(combatEntity.CurrentStats.Atk * atkScale));
+            damage = Mathf.Max(1, Mathf.RoundToInt(combatEntity.CurrentStats.Atk * atkScale * sizeFactor));
             groggy = Mathf.RoundToInt(damage * objectGroggyScale);
             return true;
         }
@@ -204,21 +210,40 @@ namespace TeamOdd.Psychokinesis
                 return;
             }
 
+            if (IsInRepairShop)
+            {
+                releaseRequested = true;
+                grabRequested = false;
+                throwRequested = false;
+                attackRequested = false;
+
+                if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
+                    SystemMessage.Show(RepairShopZone.AttackBlockedMessage, SystemMessage.Tone.Warning);
+
+                return;
+            }
+
             bool rightHeld = SimpleInput.GetMouseButton(SimpleInput.MouseButton.Right) &&
                              Player.Player.Instance.PlayerController.IsHit == false;
 
             if (rightHeld == false) releaseRequested = true;
             else if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right))
             {
+                Player.Player.Instance.PlayAttackSound(AttackSoundType.Hold);
                 grabRequested = true;
                 releaseRequested = false;
             }
 
             if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
             {
-                if (heldObject == null) attackRequested = true;
+                if (heldObject == null)
+                {
+                    Player.Player.Instance.PlayAttackSound(AttackSoundType.Normal);
+                    attackRequested = true;
+                }
                 else if (rightHeld)
                 {
+                    Player.Player.Instance.PlayAttackSound(AttackSoundType.Pull);
                     swingActiveUntil = float.NegativeInfinity;
                     throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - GetHoldOrigin();
                     throwPrepareStartTime = Time.time;
@@ -227,7 +252,10 @@ namespace TeamOdd.Psychokinesis
             }
 
             if (IsPreparingThrow && rightHeld && SimpleInput.GetMouseButtonUp(SimpleInput.MouseButton.Left))
+            {
+                Player.Player.Instance.PlayAttackSound(AttackSoundType.Throw);
                 throwRequested = true;
+            }
         }
 
         private void LateUpdate()
@@ -237,7 +265,8 @@ namespace TeamOdd.Psychokinesis
 #endif
 
             // Update에서 받은 입력도 같은 프레임에 UI가 열리거나 피격·시전이 시작되면 실행하지 않는다.
-            if (IsHit || IsSuperpowerLocked || UIManager.Instance.IsUIClose == false)
+            // 정비소에 들어서면 들고 있던 물체를 놓고 외곽선도 끈다.
+            if (IsHit || IsSuperpowerLocked || UIManager.Instance.IsUIClose == false || IsInRepairShop)
             {
                 InterruptForHit();
                 return;

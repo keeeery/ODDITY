@@ -135,6 +135,8 @@ namespace TeamOdd.UI
         {
             ghost.gameObject.SetActive(visible);
             ghost.rectTransform.anchoredPosition = source.rectTransform.anchoredPosition + offset;
+            // 원본이 커지거나 뒤집히는 연출 중이어도 같은 모양으로 겹친다
+            ghost.rectTransform.localScale = source.rectTransform.localScale;
         }
 
         // 원본 바로 뒤(먼저 그려지는 쪽)에 그래픽만 남긴 복사본을 만든다.

@@ -71,7 +71,7 @@ namespace TeamOdd.Mission
             selectedMission = mission;
 
             foreach (Button row in rows)
-                row.image.color = row == selectedRow ? rowSelectedColor : rowNormalColor;
+                row.targetGraphic.color = row == selectedRow ? rowSelectedColor : rowNormalColor;
 
             bool hasMission = mission != null;
             moveButton.interactable = hasMission;

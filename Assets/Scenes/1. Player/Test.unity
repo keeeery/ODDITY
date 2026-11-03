@@ -32736,8 +32736,6 @@ MonoBehaviour:
   objectDotSize: 6
   backgroundColor: {r: 0.1019608, g: 0.09411765, b: 0.07843137, a: 0.6}
   groundFillColor: {r: 0.396, g: 0.389, b: 0.374, a: 0.8}
-  groundOutlineColor: {r: 0.9, g: 0.87, b: 0.82, a: 1}
-  groundOutlineWidth: 1.5
   playerColor: {r: 0.9294118, g: 0.9019608, b: 0.8392157, a: 1}
   bossColor: {r: 0.7607843, g: 0.2313725, b: 0.2117647, a: 1}
   objectColor: {r: 0.5607843, g: 0.7019608, b: 0.7294118, a: 1}
@@ -68318,8 +68316,10 @@ MonoBehaviour:
     shadowSize: 3
     readyBorderWidth: 1
     antiAliasPixels: 1
-  nameLength: 3
+  iconPadding: 6
   readyFlashDuration: 0.3
+  reducedPunchScale: 0.15
+  reducedPunchDuration: 0.25
 --- !u!1001 &1700922224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -75940,14 +75940,6 @@ PrefabInstance:
       propertyPath: CameraController
       value: 
       objectReference: {fileID: 1982781881}
-    - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: PlayerController
-      value: 
-      objectReference: {fileID: 1902345672}
-    - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: CharacterController
-      value: 
-      objectReference: {fileID: 677289072525654882}
     - target: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Name
       value: Player
@@ -75956,18 +75948,6 @@ PrefabInstance:
       propertyPath: aimCamera
       value: 
       objectReference: {fileID: 1982781878}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: pickupDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: queryLayers.m_Bits
-      value: 320
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: holdStaminaCostPerSecond
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 2205336347187439273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -76008,54 +75988,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: <Stats>k__BackingField
-      value: 
-      objectReference: {fileID: 11400000, guid: 30c34b21faf23ff4cb88cd0231f02440, type: 2}
-    - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: <Collider>k__BackingField
-      value: 
-      objectReference: {fileID: 677289072525654882}
-    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: NeedRunStamina
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: NeedRollStamina
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: MaxEarlyWakeUpCooldown
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2147100001}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601080}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601079}
-    - targetCorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2205336347470601081}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
---- !u!114 &1902345672 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1902345671}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b5985590a6d9534680215d927cad10c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Study3D.FpsGame.Player.PlayerMovement
 --- !u!1001 &1903112740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86043,31 +85980,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipToggle
   panel: {fileID: 0}
   inventory: {fileID: 2205336347470601080}
---- !u!114 &2147100001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b21c34011bf4e4fa48e4fefaa6d81ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Psychokinesis.WallFragmentRaycastTest
-  aimCamera: {fileID: 1982781878}
-  fragmentSpawner: {fileID: 1433546535}
-  rayDistance: 100
---- !u!143 &677289072525654882 stripped
-CharacterController:
-  m_CorrespondingSourceObject: {fileID: 677289072813033125, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1902345671}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1572104909016154580 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1572104908200295443, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-  m_PrefabInstance: {fileID: 1902345671}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2205336347470601070 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2205336347187439273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
@@ -86078,7 +85990,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eede01cf483a496388ffc51f31974940, type: 3}
@@ -86089,55 +86001,23 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
   m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f676465bfd7c4e0bbf57fbf8ab91ecc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
---- !u!114 &2205336347470601079
+--- !u!114 &2205336347470601080 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6474464230969543606, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+  m_PrefabInstance: {fileID: 1902345671}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc008deb0f4501a4493bb1dca1e730d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.SkillCaster
-  overridePsychoSlamDamage: 0
-  psychoSlamDamage: 120
-  psychoSlamGroggy: 60
---- !u!114 &2205336347470601080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
---- !u!114 &2205336347470601081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572104909016154580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
-  chipIds: fe08000036080000
-  grantOnStart: 1
-  grantKey: 102
-  inventory: {fileID: 2205336347470601080}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

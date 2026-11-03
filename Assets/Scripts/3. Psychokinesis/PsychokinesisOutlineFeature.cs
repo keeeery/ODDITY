@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using TeamOdd.Mission;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
@@ -21,10 +23,9 @@ namespace TeamOdd.Psychokinesis
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (PsychokinesisObject.OutlinedObject == null) return;
             Camera camera = renderingData.cameraData.camera;
             if (camera.cameraType != CameraType.Game && camera.cameraType != CameraType.SceneView) return;
-            if ((camera.cullingMask & (1 << PsychokinesisObject.OutlinedObject.gameObject.layer)) == 0) return;
+            if (pass.CollectTarget(camera.cullingMask) == false) return;
             renderer.EnqueuePass(pass);
         }
 
@@ -45,9 +46,15 @@ namespace TeamOdd.Psychokinesis
             private sealed class MaskData
             {
                 public Material Material;
-                public Renderer Renderer;
-                public int SubMeshCount;
+                public readonly List<Renderer> Renderers = new();
+                public readonly List<int> SubMeshCounts = new();
             }
+
+            // 이번 카메라에서 외곽선을 그릴 렌더러들. 염동력 대상이 우선이고, 없으면 상호작용 가능한 NPC를 같은 방식으로 그린다
+            private readonly List<Renderer> renderers = new();
+            private readonly List<int> subMeshCounts = new();
+            private Color outlineColor;
+            private float outlineWidthPixels;
 
             private sealed class CompositeData
             {
@@ -62,10 +69,41 @@ namespace TeamOdd.Psychokinesis
                 ConfigureInput(ScriptableRenderPassInput.Depth);
             }
 
+            public bool CollectTarget(int cullingMask)
+            {
+                renderers.Clear();
+                subMeshCounts.Clear();
+
+                PsychokinesisObject target = PsychokinesisObject.OutlinedObject;
+                if (target != null)
+                {
+                    AddRenderer(target.OutlineRenderer, target.SubMeshCount, cullingMask);
+                    outlineColor = target.OutlineColor;
+                    outlineWidthPixels = target.OutlineWidthPixels;
+                }
+                else if (MissionNPC.OutlinedNPC != null)
+                {
+                    MissionNPC npc = MissionNPC.OutlinedNPC;
+                    for (int index = 0; index < npc.OutlineRenderers.Count; index++)
+                        AddRenderer(npc.OutlineRenderers[index], npc.OutlineSubMeshCounts[index], cullingMask);
+                    outlineColor = npc.OutlineColor;
+                    outlineWidthPixels = npc.OutlineWidthPixels;
+                }
+
+                return renderers.Count > 0;
+            }
+
+            private void AddRenderer(Renderer target, int subMeshCount, int cullingMask)
+            {
+                if (target == null || target.enabled == false || target.gameObject.activeInHierarchy == false) return;
+                if ((cullingMask & (1 << target.gameObject.layer)) == 0) return;
+                renderers.Add(target);
+                subMeshCounts.Add(subMeshCount);
+            }
+
             public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
             {
-                PsychokinesisObject target = PsychokinesisObject.OutlinedObject;
-                if (target == null || target.OutlineRenderer.enabled == false) return;
+                if (renderers.Count == 0) return;
                 UniversalResourceData resources = frameData.Get<UniversalResourceData>();
                 UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
                 TextureDesc descriptor = renderGraph.GetTextureDesc(resources.activeColorTexture);
@@ -83,22 +121,31 @@ namespace TeamOdd.Psychokinesis
                 using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<MaskData>("Psychokinesis silhouette", out MaskData data))
                 {
                     data.Material = material;
-                    data.Renderer = target.OutlineRenderer;
-                    data.SubMeshCount = target.SubMeshCount;
+                    // 렌더 그래프가 데이터 객체를 재사용하므로 매번 비우고 채운다
+                    data.Renderers.Clear();
+                    data.Renderers.AddRange(renderers);
+                    data.SubMeshCounts.Clear();
+                    data.SubMeshCounts.AddRange(subMeshCounts);
                     builder.UseTexture(resources.cameraDepthTexture, AccessFlags.Read);
                     builder.SetRenderAttachment(mask, 0, AccessFlags.Write);
                     builder.SetGlobalTextureAfterPass(mask, MaskId);
                     builder.SetRenderFunc(static (MaskData data, RasterGraphContext context) =>
                     {
-                        for (int index = 0; index < data.SubMeshCount; index++)
-                            context.cmd.DrawRenderer(data.Renderer, data.Material, index, 0);
+                        for (int rendererIndex = 0; rendererIndex < data.Renderers.Count; rendererIndex++)
+                        {
+                            for (int index = 0; index < data.SubMeshCounts[rendererIndex]; index++)
+                                context.cmd.DrawRenderer(data.Renderers[rendererIndex], data.Material, index, 0);
+                        }
                     });
                 }
 
                 properties.Clear();
-                properties.SetColor(ColorId, target.OutlineColor);
-                properties.SetFloat(WidthId, target.OutlineWidthPixels);
-                properties.SetVector(RectId, GetScreenRect(cameraData, target.OutlineRenderer.bounds));
+                Bounds bounds = renderers[0].bounds;
+                for (int index = 1; index < renderers.Count; index++)
+                    bounds.Encapsulate(renderers[index].bounds);
+                properties.SetColor(ColorId, outlineColor);
+                properties.SetFloat(WidthId, outlineWidthPixels);
+                properties.SetVector(RectId, GetScreenRect(cameraData, bounds));
                 using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<CompositeData>("Psychokinesis screen outline", out CompositeData data))
                 {
                     data.Material = material;

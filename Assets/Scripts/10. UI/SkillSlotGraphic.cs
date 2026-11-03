@@ -102,7 +102,7 @@ namespace TeamOdd.UI
 
             shape.SetRoundedRect(rect, 0f, 1);
             if (style.shadowSize > 0f)
-                shape.Fill(vh, rect.center, borderWidth + style.shadowSize * 0.5f, style.shadowSize, style.shadowColor * color);
+                shape.FillShadow(vh, rect.center, borderWidth, style.shadowSize, style.shadowColor * color);
             if (borderWidth > 0f)
                 shape.Fill(vh, rect.center, borderWidth, antiAlias, borderColor * color);
             shape.Fill(vh, rect.center, 0f, antiAlias, (hasSkill ? style.trackColor : style.emptyTrackColor) * color);
