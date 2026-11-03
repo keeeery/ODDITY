@@ -44,6 +44,9 @@ namespace TeamOdd.Player
 
         private bool isManuallyLocked = false;
 
+        // 씬마다 놓인 플레이어를 쓴다. 씬이 바뀌면 같이 파괴되고 새 씬의 플레이어가 위치·체력을 처음부터 시작한다
+        protected override bool PersistAcrossScenes => false;
+
         protected override void OnInitialize()
         {
             CharacterController = GetComponent<CharacterController>();

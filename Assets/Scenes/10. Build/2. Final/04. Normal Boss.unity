@@ -6710,7 +6710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.BGMPlayer
   bgm:
     clipName: BGM/Normal Boss/Crash That Beat
-    volume: 0.6
+    volume: 0.1
   fadeTime: 0.5
 --- !u!4 &222251825
 Transform:
@@ -15780,6 +15780,7 @@ MonoBehaviour:
   bgms:
   - {fileID: 222251824}
   - {fileID: 1762976343}
+  switchDelay: 0.6
 --- !u!4 &496746993
 Transform:
   m_ObjectHideFlags: 0
@@ -43471,8 +43472,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5367694399455952834, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: maxHpOverride
-      value: 500
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5367694399455952834, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
+      propertyPath: <Stats>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: bc0175b467326904fabc5d7a59046fce, type: 2}
     - target: {fileID: 5374203458365668163, guid: 2739026322f40c84a9a576543ebf53e3, type: 3}
       propertyPath: hits.Array.data[0].damage
       value: 9
@@ -57464,7 +57469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.BGMPlayer
   bgm:
     clipName: BGM/Normal Boss/Piano In The Dark
-    volume: 0.6
+    volume: 0.1
   fadeTime: 0.5
 --- !u!4 &1762976344
 Transform:

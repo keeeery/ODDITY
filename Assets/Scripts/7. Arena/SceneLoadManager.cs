@@ -41,10 +41,7 @@ namespace TeamOdd
         // 켜진 뒤 남은 글리치가 사그라드는 시간과 세기
         [SerializeField, Min(0.01f)] private float settleDuration = 0.6f;
         [SerializeField, Range(0f, 1f)] private float settleGlitch = 0.5f;
-
-        [Title("SFX Settings")]
-        [SerializeField] private SoundData fadeInSound;
-
+        
         private Sequence sequence;
         private bool isLoading;
         // 위·아래·왼쪽·오른쪽 띠, 처음 전환할 때 만든다
@@ -166,8 +163,6 @@ namespace TeamOdd
         // 꺼진 화면에서 점이 켜짐 → 가로 선으로 늘어남 → 위아래로 펼쳐짐 → 남은 글리치가 사그라듦
         private UniTask PlayFadeIn()
         {
-            fadeInSound.Play();
-            
             float dotEnd = dotAppearDuration;
             float expandEnd = dotEnd + expandDuration;
             float unfoldEnd = expandEnd + unfoldDuration;

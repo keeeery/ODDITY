@@ -35,8 +35,7 @@ namespace TeamOdd.UI
             [NonSerialized] public Tween PunchTween;
         }
 
-        // 플레이어는 씬을 넘어 살아 있고 새 씬에 놓인 플레이어는 중복으로 파괴되므로, 살아 있는 플레이어(Player.Instance)를 먼저 쓴다.
-        // 아래 참조는 살아 있는 플레이어가 아직 없을 때만 쓴다.
+        // 지금 씬의 플레이어(Player.Instance)를 먼저 쓴다. 아래 참조는 플레이어 인스턴스가 아직 없을 때만 쓴다.
         [Header("References")]
         [Tooltip("살아 있는 플레이어가 없을 때 쓴다. 비어 있으면 씬에서 찾는다.")]
         [SerializeField] private AugmentationChipInventory inventory;

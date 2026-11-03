@@ -23417,7 +23417,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.BGMPlayer
   bgm:
     clipName: BGM/Easy Boss/tim
-    volume: 0.115
+    volume: 0.1
   fadeTime: 0.5
 --- !u!4 &598615621
 Transform:

@@ -36,9 +36,11 @@ namespace Jay
                     {
                         var singletonObject = new GameObject(typeof(T).Name);
                         instance = singletonObject.AddComponent<T>();
-                        DontDestroyOnLoad(singletonObject);
                     }
 
+                    // 씬에서 찾은 경우에도 Awake 경로와 똑같이 유지 여부를 정한다.
+                    // (어느 쪽이 먼저 불리느냐에 따라 씬을 넘어 남기도 하고 아니기도 하면 빌드에서만 터진다)
+                    (instance as SingletonBase<T>)?.MakePersistent();
                     (instance as SingletonBase<T>)?.OnInitialize();
                     isInitialized = true;
 
@@ -47,14 +49,24 @@ namespace Jay
             }
         }
 
+        // 씬을 넘어 유지할지. 씬마다 따로 놓이는 오브젝트(Player 등)는 false로 덮어써서 씬과 함께 파괴되게 한다
+        protected virtual bool PersistAcrossScenes => true;
+
+        private void MakePersistent()
+        {
+            if (PersistAcrossScenes == false) return;
+
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+        }
+
         protected virtual void Awake()
         {
             if (instance == null)
             {
                 instance = this as T;
 
-                transform.SetParent(null);
-                DontDestroyOnLoad(gameObject);
+                MakePersistent();
 
                 OnInitialize();
                 isInitialized = true;

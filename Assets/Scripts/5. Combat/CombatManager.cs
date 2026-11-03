@@ -12,7 +12,10 @@ namespace TeamOdd.Combat
         public event Action<HealEvent, int> OnHealEventExecuted;
 
         private readonly Queue<CombatEvent> eventQueue = new();
-        
+
+        // 보스 씬마다 놓인 매니저를 쓴다. 이전 씬의 매니저가 남으면 새 씬에서 캐싱한 쪽과 어긋나 이벤트가 처리되지 않는다
+        protected override bool PersistAcrossScenes => false;
+
         private void Update()
         {
             int eventCount = eventQueue.Count;

@@ -16,7 +16,7 @@ namespace TeamOdd
     [Serializable]
     public class SoundData
     {
-        [ValueDropdown(nameof(GetClipNames))]
+        [ValueDropdown("GetClipNames")]
         [SerializeField] private string clipName;
         [SerializeField, Range(0f, 1f)] private float volume = 1f;
 

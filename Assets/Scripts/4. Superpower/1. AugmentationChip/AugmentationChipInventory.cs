@@ -50,14 +50,22 @@ namespace TeamOdd.Superpower
         }
 
         // 불러온 장착 기록은 CombatEntity가 Awake에서 스탯을 만든 뒤에 반영해야 하므로 Start에서 장착한다
+        // 플레이어는 씬마다 새로 생기므로, 이전 씬에서 장착해 둔 스탯 칩 보너스도 새 플레이어 스탯에 다시 더한다
+        // (불러온 장착 기록은 아직 IsEquipped가 아니라 겹치지 않는다. 스킬 칩은 static 슬롯에 그대로 남아 있다)
         private void Start()
         {
+            foreach (OwnedChip chip in chips)
+            {
+                if (chip.IsEquipped && chip.Def is StatChipDef stat)
+                    owner.CurrentStats.Add(stat.StatType, stat.Value);
+            }
+
             foreach ((OwnedChip chip, int slot) in pendingEquips)
                 Equip(chip, chip.Origin, chip.Rotation, slot);
             pendingEquips.Clear();
         }
 
-        // 플레이어는 씬을 넘어 살아 있으므로 한 번 구독하면 모든 씬 전환을 듣는다
+        // 씬마다 새 플레이어가 구독하고, 새 씬 오브젝트의 OnEnable 뒤에 sceneLoaded가 오므로 그 씬 전환을 듣는다
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
