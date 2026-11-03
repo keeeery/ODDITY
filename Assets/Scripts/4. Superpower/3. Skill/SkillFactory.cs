@@ -24,12 +24,12 @@ namespace TeamOdd.Superpower
             SuperpowerSkill skill = def.SkillType switch
             {
                 // 공격
-                SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Power"), def.Prefab.GetComponent<ShockwaveEffect>()),
-                SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Power"), p.GetInt("Groggy"), p.GetFloat("Range"), p.GetFloat("Angle")),
+                SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Power"), p.GetInt("GroggyRate", 0), def.Prefab.GetComponent<ShockwaveEffect>()),
+                SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Power"), p.GetInt("GroggyRate"), p.GetFloat("Range"), p.GetFloat("Angle")),
                 SkillType.PsychoRapidFire => new PsychoRapidFireSkill(name, cooldown, p.GetFloat("Radius"), p.GetInt("Count"), p.GetFloat("Interval"), p.GetFloat("Speed")),
-                SkillType.PsychoTempest => new PsychoTempestSkill(name, cooldown, p.GetFloat("Duration"), p.GetInt("PowerPerSecond"), p.GetFloat("TrackSpeed"), p.GetFloat("Radius"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoTempest>()),
-                SkillType.PsychoOrb => new PsychoOrbSkill(name, cooldown, p.GetFloat("Speed"), p.GetFloat("SlowSpeed"), p.GetFloat("Range"), p.GetFloat("Radius"), p.GetInt("PowerPerSecond"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoOrb>()),
-                SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("PowerPerSecond"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoBeam>()),
+                SkillType.PsychoTempest => new PsychoTempestSkill(name, cooldown, p.GetFloat("Duration"), p.GetInt("PowerPerSecond"), p.GetFloat("TrackSpeed"), p.GetFloat("Radius"), p.GetFloat("TickInterval"), p.GetInt("GroggyRate", 0), def.Prefab.GetComponent<PsychoTempest>()),
+                SkillType.PsychoOrb => new PsychoOrbSkill(name, cooldown, p.GetFloat("Speed"), p.GetFloat("SlowSpeed"), p.GetFloat("Range"), p.GetFloat("Radius"), p.GetInt("PowerPerSecond"), p.GetFloat("TickInterval"), p.GetInt("GroggyRate", 0), def.Prefab.GetComponent<PsychoOrb>()),
+                SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("PowerPerSecond"), p.GetFloat("TickInterval"), p.GetInt("GroggyRate", 0), def.Prefab.GetComponent<PsychoBeam>()),
 
                 // 방어
                 SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),

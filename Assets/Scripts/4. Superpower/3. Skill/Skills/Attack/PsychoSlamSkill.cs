@@ -1,4 +1,5 @@
 using System.Collections;
+using TeamOdd.Arena;
 using TeamOdd.Boss;
 using TeamOdd.CameraMove;
 using TeamOdd.Combat;
@@ -10,9 +11,9 @@ using UnityEngine;
 namespace TeamOdd.Superpower
 {
     // 조준 방향의 보스 하나의 시간을 멈추고 염동력으로 들어 올렸다가 바닥에 내려찍어 피해를 준다.
-    // 매개변수 6개: Duration(float), Height(float), Power(int), Groggy(int), Range(float), Angle(float)
-    // - 피해: 공격력 × Power%. 무력화는 공격력과 상관없이 Groggy
-    // - 대상: 플레이어에서 Range m 안, 조준 방향에서 좌우 Angle도 안에 있는 가장 가까운 보스. 없으면 쓰지 않고 쿨타임도 돌지 않는다
+    // 매개변수 6개: Duration(float), Height(float), Power(int), GroggyRate(int), Range(float), Angle(float)
+    // - 피해: 공격력 × Power%. 무력화는 그 피해의 GroggyRate% (씬 오버라이드로 피해가 고정값이 되면 그 피해 기준)
+    // - 대상: 플레이어에서 Range m 안, 조준 방향에서 좌우 Angle도 안에 있는 가장 가까운 보스(수련장 허수아비 포함). 없으면 쓰지 않고 쿨타임도 돌지 않는다
     // - 진행: Duration초 동안 보스를 멈춘 채 Height m까지 들어 올리고, 마지막 slamTime초에 원래 바닥으로 내려찍은 뒤 정지를 푼다
     // - 그동안 플레이어는 염동력 홀딩 자세로 보스 몸통 쪽에 팔을 뻗어, 보스를 따라 팔이 올라갔다 내려찍힌다
     // - 그동안 플레이어의 이동·구르기·염동력·다른 스킬이 막히고, 카메라는 홀딩 줌인 거리 그대로 보스를 화면 중앙에 두는 시점으로 고정된다. 내려찍을 때 연출은 보스 피격 연출(BossHitFeedback)이 맡음
@@ -26,19 +27,36 @@ namespace TeamOdd.Superpower
         private readonly float duration;
         private readonly float height;
         private readonly int power; // 피해 배율 (공격력의 %)
-        private readonly int groggy;
+        private readonly int groggyRate; // 무력화 배율 (준 피해의 %)
         private readonly float range;
         private readonly float angle;
 
-        private BossMonster target; // CanExecute에서 고른 대상, Execute에서 씀
+        // 내려찍을 대상, 보스와 수련장 허수아비(BossMonster가 없음)를 함께 다루려고 필요한 것만 묶음
+        private readonly struct SlamTarget
+        {
+            public readonly Component Root; // 대상이 사라졌는지 확인하는 기준
+            public readonly TimeFreezable Clock;
+            public readonly Rigidbody Body;
+
+            public SlamTarget(Component root, TimeFreezable clock, Rigidbody body)
+            {
+                Root = root;
+                Clock = clock;
+                Body = body;
+            }
+
+            public bool IsValid => Root != null && Clock != null && Body != null;
+        }
+
+        private SlamTarget target; // CanExecute에서 고른 대상, Execute에서 씀
         private SkillCaster descriptionCaster;
 
-        public PsychoSlamSkill(string name, float cooldown, float duration, float height, int power, int groggy, float range, float angle) : base(name, cooldown)
+        public PsychoSlamSkill(string name, float cooldown, float duration, float height, int power, int groggyRate, float range, float angle) : base(name, cooldown)
         {
             this.duration = duration;
             this.height = height;
             this.power = power;
-            this.groggy = groggy;
+            this.groggyRate = groggyRate;
             this.range = range;
             this.angle = angle;
         }
@@ -49,18 +67,17 @@ namespace TeamOdd.Superpower
         public override string Describe()
         {
             int overriddenDamage = 0;
-            int appliedGroggy = groggy;
             if (descriptionCaster != null)
-                descriptionCaster.ApplyPsychoSlamDamageOverride(ref overriddenDamage, ref appliedGroggy);
+                descriptionCaster.ApplyPsychoSlamDamageOverride(ref overriddenDamage);
 
             string damageText = overriddenDamage > 0 ? $"{overriddenDamage}" : $"공격력의 {power}%";
-            return $"보스 정지 {duration}초 · 높이 {height}m · 피해 {damageText} · 무력화 {appliedGroggy} · 사거리 {range}m";
+            return $"보스 정지 {duration}초 · 높이 {height}m · 피해 {damageText}{GroggyText(groggyRate)} · 사거리 {range}m";
         }
 
         protected override bool CanExecute(SkillContext context)
         {
             target = FindTarget(context);
-            if (target != null) return true;
+            if (target.IsValid) return true;
 
             Debug.Log($"[{Name}] 사거리 {range}m · 각도 ±{angle}도 안에 보스가 없습니다.");
             SystemMessage.Show("사거리 안에 대상이 없습니다.", SystemMessage.Tone.Warning);
@@ -71,39 +88,47 @@ namespace TeamOdd.Superpower
         {
             context.Caster.TryGetComponent(out PlayerController holder);
             TimeFreezeManager.Instance.StartCoroutine(Slam(target, context.Owner, holder));
-            target = null;
+            target = default;
         }
 
-        private BossMonster FindTarget(SkillContext context)
+        private SlamTarget FindTarget(SkillContext context)
         {
-            BossMonster closest = null;
+            SlamTarget closest = default;
             float closestDistance = range;
 
             foreach (BossMonster boss in Object.FindObjectsByType<BossMonster>(FindObjectsSortMode.None))
-            {
-                if (boss.TryGetComponent(out CombatEntity entity) && entity.IsDead) continue;
+                Consider(new SlamTarget(boss, boss.Clock, boss.Body));
 
-                Vector3 offset = boss.transform.position - context.Caster.position;
+            foreach (TrainingDummy dummy in Object.FindObjectsByType<TrainingDummy>(FindObjectsSortMode.None))
+                Consider(new SlamTarget(dummy, dummy.Clock, dummy.Body));
+
+            return closest;
+
+            void Consider(SlamTarget candidate)
+            {
+                if (candidate.IsValid == false) return;
+                if (candidate.Root.TryGetComponent(out CombatEntity entity) && entity.IsDead) return;
+
+                Vector3 offset = candidate.Root.transform.position - context.Caster.position;
                 offset.y = 0f;
 
                 float distance = offset.magnitude;
-                if (distance > closestDistance) continue;
-                if (distance > 0.01f && Vector3.Angle(context.AimDirection, offset) > angle) continue;
+                if (distance > closestDistance) return;
+                if (distance > 0.01f && Vector3.Angle(context.AimDirection, offset) > angle) return;
 
-                closest = boss;
+                closest = candidate;
                 closestDistance = distance;
             }
-
-            return closest;
         }
 
         // 보스는 멈춰서 kinematic이므로 물리 스텝마다 MovePosition으로 옮긴다
         // 시전하는 동안 플레이어는 다른 행동이 막히고 카메라는 보스 몸통을 바라보는 고정 시점이 됨
         // 보스가 중간에 사라져도 플레이어 홀딩 자세와 행동 잠금은 풀리도록 finally에서 정리
-        private IEnumerator Slam(BossMonster boss, CombatEntity owner, PlayerController holder)
+        private IEnumerator Slam(SlamTarget slamTarget, CombatEntity owner, PlayerController holder)
         {
-            TimeFreezable clock = boss.Clock;
-            Rigidbody body = boss.Body;
+            Component boss = slamTarget.Root;
+            TimeFreezable clock = slamTarget.Clock;
+            Rigidbody body = slamTarget.Body;
             Transform holdPoint = CreateHoldPoint(body);
             CameraController view = holder != null && holder.TryGetComponent(out Player.Player player) ? player.CameraController : null;
             clock.Freeze();
@@ -119,7 +144,7 @@ namespace TeamOdd.Superpower
                 yield return Lift(boss, body);
                 if (boss == null) yield break;
 
-                SendDamage(boss, owner, body.position);
+                SendDamage(boss, owner);
                 clock.DiscardSavedMotion();
                 clock.Unfreeze();
             }
@@ -145,7 +170,7 @@ namespace TeamOdd.Superpower
         }
 
         // 들어 올렸다가 바닥까지 내려찍음, 보스가 중간에 사라지면 그대로 끝
-        private IEnumerator Lift(BossMonster boss, Rigidbody body)
+        private IEnumerator Lift(Component boss, Rigidbody body)
         {
             Vector3 start = body.position;
             Vector3 ground = FindGround(start);
@@ -206,7 +231,7 @@ namespace TeamOdd.Superpower
                 : start;
         }
 
-        private void SendDamage(BossMonster boss, CombatEntity owner, Vector3 hitPoint)
+        private void SendDamage(Component boss, CombatEntity owner)
         {
             ICombatable receiver = boss.GetComponent<ICombatable>();
             if (receiver == null)
@@ -216,10 +241,12 @@ namespace TeamOdd.Superpower
             }
 
             int appliedDamage = PowerToDamage(owner, power);
-            int appliedGroggy = groggy;
             if (owner != null && owner.TryGetComponent(out SkillCaster caster))
-                caster.ApplyPsychoSlamDamageOverride(ref appliedDamage, ref appliedGroggy);
+                caster.ApplyPsychoSlamDamageOverride(ref appliedDamage);
+            int appliedGroggy = DamageToGroggy(appliedDamage, groggyRate);
 
+            // 보스 기준점은 발이라 히트 이펙트가 발밑에 나오므로 몸 가운데를 넘겨 BossHitFeedback이 몸 표면에 붙이게 함
+            Vector3 hitPoint = receiver.Collider != null ? HitPoint.GetBodyBounds(receiver, receiver.Collider).center : boss.transform.position;
             DamageInfo info = new DamageInfo(appliedDamage, hitPoint, receiver.Collider, HitReaction.Knockdown, appliedGroggy);
             CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, receiver, info));
         }

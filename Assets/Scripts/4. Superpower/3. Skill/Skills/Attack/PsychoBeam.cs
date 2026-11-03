@@ -33,6 +33,8 @@ namespace TeamOdd.Superpower
         private float range;
         private int powerPerSecond;
         private float tickInterval;
+        private int groggyRate;     // 무력화 배율 (준 피해의 %)
+        private float groggyCarry;  // 틱마다 버린 무력화 소수점, 다음 틱에 더한다
 
         private AudioSource loop; // 쏘는 동안 반복하는 소리 (SkillChip.tsv의 Loop)
         private PsychoBeamPose pose; // 쏘는 동안 플레이어에 붙여 시전 애니메이션을 틀고 상체와 손을 레이저 쪽으로 맞추는 자세
@@ -44,7 +46,7 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(Transform caster, CombatEntity owner, float duration, float range, int powerPerSecond, float tickInterval, SkillSounds sounds)
+        public void Init(Transform caster, CombatEntity owner, float duration, float range, int powerPerSecond, float tickInterval, int groggyRate, SkillSounds sounds)
         {
             loop = sounds.PlayLoop("Loop");
 
@@ -54,6 +56,7 @@ namespace TeamOdd.Superpower
             this.range = range;
             this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
+            this.groggyRate = groggyRate;
 
             playerController = caster.GetComponent<PlayerController>();
             playerController.IsMoveBlocked = true;
@@ -195,6 +198,7 @@ namespace TeamOdd.Superpower
         {
             hitTargets.Clear();
             int damage = SuperpowerSkill.PowerToDamage(owner, powerPerSecond * tickInterval);
+            int groggy = -1;
 
             // 사라지거나 꺼진 콜라이더는 OnTriggerExit가 오지 않으므로 여기서 뺀다. 빼면서 돌기 위해 뒤에서부터 돈다
             for (int i = touching.Count - 1; i >= 0; i--)
@@ -210,11 +214,20 @@ namespace TeamOdd.Superpower
                 if (hitTargets.Contains(target)) continue;
 
                 hitTargets.Add(target);
-                DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(transform.position), collider);
+                // 무력화는 틱마다 한 번 계산해 이번 틱에 맞은 적 모두에게 같은 양을 준다. 아무도 안 맞은 틱은 소수점도 쌓지 않음
+                if (groggy < 0) groggy = SuperpowerSkill.DamageToGroggy(damage, groggyRate, ref groggyCarry);
+                DamageInfo info = new DamageInfo(damage, GetHitPoint(target, collider), collider, groggy: groggy);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, target, info));
             }
 
             return hitTargets.Count > 0;
+        }
+
+        // 시작점에서 재면 겨눈 곳과 상관없이 어깨 높이에 나오므로, 레이저 선 위에서 몸 가운데에 가장 가까운 점을 넘김
+        // 길이는 localScale.z (콜라이더가 z 0~1)
+        private Vector3 GetHitPoint(ICombatable target, Collider collider)
+        {
+            return HitPoint.OnLineNearBody(target, collider, transform.position, transform.forward, transform.localScale.z);
         }
     }
 }

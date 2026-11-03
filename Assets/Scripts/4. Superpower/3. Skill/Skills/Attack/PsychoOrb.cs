@@ -27,6 +27,8 @@ namespace TeamOdd.Superpower
         private float radius;
         private int powerPerSecond;
         private float tickInterval;
+        private int groggyRate;     // 무력화 배율 (준 피해의 %)
+        private float groggyCarry;  // 틱마다 버린 무력화 소수점, 다음 틱에 더한다
         private SkillSounds sounds;
         private AudioSource hum; // 날아가는 동안 반복하는 웅웅거림 (SkillChip.tsv의 Hum)
 
@@ -36,7 +38,7 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval, SkillSounds sounds)
+        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval, int groggyRate, SkillSounds sounds)
         {
             this.direction = direction;
             this.owner = owner;
@@ -46,6 +48,7 @@ namespace TeamOdd.Superpower
             this.radius = radius;
             this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
+            this.groggyRate = groggyRate;
             this.sounds = sounds;
 
             transform.localScale = Vector3.one * radius * 2f;
@@ -150,6 +153,7 @@ namespace TeamOdd.Superpower
         {
             hitTargets.Clear();
             int damage = SuperpowerSkill.PowerToDamage(owner, powerPerSecond * tickInterval);
+            int groggy = -1;
 
             foreach (Collider collider in touching)
             {
@@ -157,7 +161,9 @@ namespace TeamOdd.Superpower
                 if (hitTargets.Contains(target)) continue;
 
                 hitTargets.Add(target);
-                DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(transform.position), collider);
+                // 무력화는 틱마다 한 번 계산해 이번 틱에 맞은 적 모두에게 같은 양을 준다. 아무도 안 맞은 틱은 소수점도 쌓지 않음
+                if (groggy < 0) groggy = SuperpowerSkill.DamageToGroggy(damage, groggyRate, ref groggyCarry);
+                DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(transform.position), collider, groggy: groggy);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, target, info));
             }
 

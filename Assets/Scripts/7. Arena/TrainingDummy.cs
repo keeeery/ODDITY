@@ -1,5 +1,6 @@
 using TeamOdd.Boss;
 using TeamOdd.Combat;
+using TeamOdd.TimeControl;
 using UnityEngine;
 
 namespace TeamOdd.Arena
@@ -22,6 +23,10 @@ namespace TeamOdd.Arena
 
         public CombatEntity CombatEntity { get; private set; }
 
+        // 염동 내려찍기가 들어 올리고 멈출 때 쓰는 몸체와 시계, BossMonster가 없어 허수아비가 대신 내어 줌
+        public Rigidbody Body { get; private set; }
+        public TimeFreezable Clock { get; private set; }
+
         private BossGroggy groggy;
         private Transform player;
         private float lastHitTime = float.NegativeInfinity;
@@ -30,6 +35,8 @@ namespace TeamOdd.Arena
         {
             CombatEntity = GetComponent<CombatEntity>();
             groggy = GetComponent<BossGroggy>();
+            Body = GetComponent<Rigidbody>();
+            Clock = TimeFreezable.GetOrAdd(gameObject);
         }
 
         private void OnEnable()

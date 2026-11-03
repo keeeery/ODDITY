@@ -42,6 +42,9 @@ namespace TeamOdd.Superpower
         // 쓴 뒤에도 한동안 시전이 이어지는 스킬(염동 연사 등)이 그동안 true로 둔다. 이 동안 SkillCaster는 다른 스킬을 쓰지 않는다
         public virtual bool IsCasting => false;
 
+        // 전투당 한 번만 발동하는 스킬(두 번째 심장)이 true로 둔다. 쿨타임은 999999로 막아 두기만 한 값이라 슬롯에 남은 초를 띄우지 않고 툴팁에도 쓰지 않는다
+        public virtual bool IsOncePerBattle => false;
+
         // 효과로 쿨타임이 당겨졌을 때. 어느 스킬인지 넘겨서 게임 화면 스킬 바(SkillSlotHUD)가 그 슬롯을 반짝인다
         public event Action<SuperpowerSkill> CooldownReduced;
 
@@ -56,6 +59,22 @@ namespace TeamOdd.Superpower
         // 피해가 들어가는 순간의 공격력을 읽으므로 증강칩·정당한 보복으로 오른 공격력이 평타처럼 반영된다
         // 지속 피해는 초당 배율 × 틱 간격(초)을 넘긴다
         public static int PowerToDamage(CombatEntity owner, float power) => Mathf.RoundToInt(owner.CurrentStats.Atk * power / 100f);
+
+        // 무력화 피해는 준 피해의 몇 %인지(groggyRate, SkillChip.tsv의 GroggyRate)로 정한다. 100이면 피해와 같은 양, 0이면 없음
+        // 평타(피해의 27%)·투척(120%)과 같은 방식이라 공격력이 오르면 무력화도 같이 오른다
+        public static int DamageToGroggy(int damage, int groggyRate) => Mathf.RoundToInt(damage * groggyRate / 100f);
+
+        // 지속 피해용. 틱 피해는 작아서 매번 반올림하면 비율이 크게 틀어지므로 버린 소수점을 carry에 모아 다음 틱에 더한다
+        public static int DamageToGroggy(int damage, int groggyRate, ref float carry)
+        {
+            carry += damage * groggyRate / 100f;
+            int groggy = Mathf.FloorToInt(carry + 0.0001f); // 1.6 + 0.4가 1.9999…로 떨어지는 오차 보정
+            carry -= groggy;
+            return groggy;
+        }
+
+        // 스킬 설명에 붙일 무력화 문구. 무력화가 없으면 빈 문자열
+        protected static string GroggyText(int groggyRate) => groggyRate > 0 ? $" · 무력화 피해의 {groggyRate}%" : "";
 
         // 쿨타임이 남았거나 지금 쓸 수 없으면(대상이 없는 등) 쓰지 않고 false
         public bool TryUse(SkillContext context)

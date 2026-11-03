@@ -27,6 +27,8 @@ namespace TeamOdd.Superpower
 
         // 꺼낼 때 원하는 타입으로 바꾼다
         public int GetInt(string key) => int.Parse(values[key]);
+        // 적지 않아도 되는 키. 없으면 fallback
+        public int GetInt(string key, int fallback) => values.TryGetValue(key, out string value) ? int.Parse(value) : fallback;
         public float GetFloat(string key) => float.Parse(values[key]);
         public bool GetBool(string key) => bool.Parse(values[key]);
         public string GetString(string key) => values[key];

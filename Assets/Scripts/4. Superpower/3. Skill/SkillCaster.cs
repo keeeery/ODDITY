@@ -25,16 +25,14 @@ namespace TeamOdd.Superpower
         private PlayerController playerController;
 
         [Header("Psycho Slam Override")]
-        [Tooltip("이 플레이어의 내려찍기에 씬 전용 피해·무력화 값을 사용한다.")]
+        [Tooltip("이 플레이어의 내려찍기에 씬 전용 피해 값을 사용한다. 무력화는 이 피해에 SkillChip.tsv의 GroggyRate를 곱해 정한다.")]
         [SerializeField] private bool overridePsychoSlamDamage;
         [SerializeField, Min(1)] private int psychoSlamDamage = 120;
-        [SerializeField, Min(0)] private int psychoSlamGroggy = 60;
 
-        public void ApplyPsychoSlamDamageOverride(ref int damage, ref int groggy)
+        public void ApplyPsychoSlamDamageOverride(ref int damage)
         {
             if (overridePsychoSlamDamage == false) return;
             damage = psychoSlamDamage;
-            groggy = psychoSlamGroggy;
         }
 
         // 슬롯 UI에 쓸 키 이름 ("1", "Q" 등 키보드 배열에 맞는 이름). 키가 없으면 빈 문자열
