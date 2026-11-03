@@ -229,7 +229,6 @@ namespace TeamOdd.Psychokinesis
             if (rightHeld == false) releaseRequested = true;
             else if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right))
             {
-                Player.Player.Instance.PlayAttackSound(AttackSoundType.Hold);
                 grabRequested = true;
                 releaseRequested = false;
             }
@@ -238,7 +237,6 @@ namespace TeamOdd.Psychokinesis
             {
                 if (heldObject == null)
                 {
-                    Player.Player.Instance.PlayAttackSound(AttackSoundType.Normal);
                     attackRequested = true;
                 }
                 else if (rightHeld)
@@ -279,6 +277,7 @@ namespace TeamOdd.Psychokinesis
             {
                 if (heldObject == null && focusedObject != null && CanGrab(focusedObject) && HasGrabStamina())
                 {
+                    Player.Player.Instance.PlayAttackSound(AttackSoundType.Hold);
                     heldObject = focusedObject;
                     Ray grabRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f));
                     holdDirection = GetCameraAlignedDirection(grabRay, holdDistance);
@@ -512,6 +511,7 @@ namespace TeamOdd.Psychokinesis
         {
             if (Time.time < nextAttackTime) return;
 
+            Player.Player.Instance.PlayAttackSound(AttackSoundType.Normal);
             nextAttackTime = Time.time + attackInterval;
 
             // 조준·피해는 염동탄이 손을 떠나고 닿는 순간에 PsychokinesisForceWave가 처리
