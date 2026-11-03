@@ -1,4 +1,5 @@
 using TeamOdd.Combat;
+using TeamOdd.Superpower;
 using UnityEngine;
 
 namespace TeamOdd.UI
@@ -53,11 +54,19 @@ namespace TeamOdd.UI
 
             combatManager = CombatManager.Instance;
             combatManager.OnDamageEventExecuted += HandleDamageExecuted;
+            HealSkill.OnHealed += HandleHealed;
         }
 
         private void OnDestroy()
         {
             if (combatManager != null) combatManager.OnDamageEventExecuted -= HandleDamageExecuted;
+            HealSkill.OnHealed -= HandleHealed;
+        }
+
+        // 회복 스킬은 이펙트 없이 초록 비네트로만 보여준다
+        private void HandleHealed()
+        {
+            if (damageVignette != null) damageVignette.HealPulse();
         }
 
         private void Update()

@@ -96,6 +96,17 @@ namespace TeamOdd.Superpower
             if (playerController != null && (playerController.IsHit || playerController.IsSuperpowerLocked))
                 return;
 
+            // 염동 연사처럼 시전이 이어지는 스킬이 있으면 끝날 때까지 다른 스킬을 쓰지 않는다
+            for (int i = 0; i < AugmentationChipInventory.SkillSlotCount; i++)
+            {
+                OwnedChip slotChip = inventory.SkillSlots[i];
+                if (slotChip != null && slotChip.Skill.IsCasting)
+                {
+                    Debug.Log($"[SkillCaster] {slotChip.Skill.Name} 시전 중");
+                    return;
+                }
+            }
+
             OwnedChip chip = inventory.SkillSlots[slot];
             if (chip == null)
             {

@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Player.DodgeAfterimage
   material: {fileID: 2100000, guid: 633bcf8ac73efe74c8d606ae0f464ce1, type: 2}
-  color: {r: 0.25, g: 0.5, b: 1, a: 0.6}
+  color: {r: 0.25098038, g: 0.77533346, b: 1, a: 0.80784315}
   duration: 0.4

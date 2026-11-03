@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace TeamOdd.Superpower
 {
     // Duration초 전의 자리·체력·스태미나로 되돌아간다. 매개변수 1개: Duration(float)
@@ -6,7 +8,12 @@ namespace TeamOdd.Superpower
     // - 기록하고 되감는 일은 TimeReverseRecorder, 되감는 동안의 화면 효과는 TimeReverseEffect가 한다 (둘 다 플레이어 프리팹에 붙어 있다)
     public class TimeReverseSkill : SuperpowerSkill
     {
+        private const float RewindSoundFadeTime = 0.1f; // 되감기가 끝날 때 소리가 잦아드는 시간 (초)
+
         private readonly float duration; // 되돌아갈 시간 (초)
+
+        private TimeReverseRecorder recorder; // 지금 되감는 플레이어의 기록. 되감기가 끝나면 소리를 멈추려고 기억한다
+        private AudioSource rewindSound;
 
         public TimeReverseSkill(string name, float cooldown, float duration) : base(name, cooldown)
         {
@@ -24,7 +31,19 @@ namespace TeamOdd.Superpower
 
         protected override void Execute(SkillContext context)
         {
-            context.Caster.GetComponent<TimeReverseRecorder>().Rewind(duration);
+            recorder = context.Caster.GetComponent<TimeReverseRecorder>();
+
+            // 테이프 되감는 소리(SkillChip.tsv의 Rewind)를 반복해서 틀다가 되감기가 끝나면 멈춘다. 그래서 되감는 길이가 달라도 소리가 맞는다
+            rewindSound = Sounds.PlayLoop("Rewind");
+            recorder.RewindFinished += OnRewindFinished;
+
+            recorder.Rewind(duration);
+        }
+
+        private void OnRewindFinished()
+        {
+            recorder.RewindFinished -= OnRewindFinished;
+            SkillSounds.StopLoop(rewindSound, RewindSoundFadeTime);
         }
     }
 }

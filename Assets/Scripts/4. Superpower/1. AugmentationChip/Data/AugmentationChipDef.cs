@@ -33,6 +33,7 @@ namespace TeamOdd.Superpower
         public float Cost;
         public string Params;
         public string PrefabKey;
+        public string Sounds;
     }
 
     // 모든 칩에 공통인 값. 칩 종류마다 자식 클래스가 자기 값만 더한다
@@ -65,5 +66,6 @@ namespace TeamOdd.Superpower
         public float Cost; // 스킬을 쓸 때마다 줄어드는 스태미나
         public SkillParams Params;
         public GameObject Prefab; // 스킬을 쓰면 띄우는 프리팹 (겉모습과 진행을 맡는다). 프리팹이 없는 스킬은 null
+        public SkillSounds Sounds; // 스킬이 트는 소리. 소리가 없는 스킬은 비어 있다
     }
 }

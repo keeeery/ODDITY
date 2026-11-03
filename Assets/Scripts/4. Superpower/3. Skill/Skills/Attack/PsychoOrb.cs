@@ -8,21 +8,16 @@ namespace TeamOdd.Superpower
     // 염동 구체 프리팹(Resources/Skill/Projectile/PsychoOrb)에 붙어 구체를 날리고 피해를 준다. 규칙은 PsychoOrbSkill 주석에 있다
     // PsychoOrbSkill이 Instantiate하고 Init으로 값을 넘기면 혼자 날아가고, 다 날아가면 안으로 쪼그라든 뒤 터지며 사라진다
     // 프리팹 = 피해 판정용 트리거 SphereCollider(반경 0.5) + 키네마틱 Rigidbody + 블랙홀 이펙트(자식, 반복 재생)
-    // 프리팹 전체 크기를 반경에 맞춰 코드가 바꾸므로 지름 1 기준으로 만든다
+    //          + 중력렌즈(자식 GravityLens, 구 둘레의 배경을 휘게 보이는 사각형. 셰이더가 카메라를 보게 세운다)
+    // 프리팹 전체 크기를 반경에 맞춰 코드가 바꾸므로 지름 1 기준으로 만든다. 렌즈도 함께 커지고 쪼그라든다
     // 구체는 Ignore Raycast 레이어라 다른 레이캐스트에 걸리지 않는다
-    // 날아가는 동안 작아지는 검은 구 잔상(PsychoOrbAfterimage)을 ObjectPoolManager의 풀에서 꺼내 남긴다
-    // 씬의 ObjectPoolManager에 AfterimagePoolKey 키로 잔상 프리팹 풀이 등록되어 있어야 하고, 없으면 잔상 없이 날아간다
     public class PsychoOrb : MonoBehaviour
     {
-        private const string AfterimagePoolKey = "PsychoOrbAfterimage";
-        private const float AfterimageInterval = 0.03f; // 잔상을 남기는 간격 (초)
         private const float CollapseTime = 0.15f;       // 끝날 때 안으로 쪼그라드는 시간 (초)
         private const float CollapseScale = 0.15f;      // 다 쪼그라들었을 때 크기 (처음 크기 대비)
         private const float BurstLifetime = 1f;         // 터지는 이펙트를 지우기까지 기다리는 시간 (초)
 
         [SerializeField] private GameObject burstPrefab; // 쪼그라든 뒤 터지는 이펙트 (Resources/Skill/Effect/PsychoOrbBurst)
-
-        private bool isAfterimagePoolMissing; // 풀이 없다고 한 번 알렸으면 true, 이후로는 잔상을 꺼내지 않는다
 
         private Vector3 direction;
         private CombatEntity owner;
@@ -30,8 +25,10 @@ namespace TeamOdd.Superpower
         private float slowSpeed;
         private float range;
         private float radius;
-        private int dps;
+        private int powerPerSecond;
         private float tickInterval;
+        private SkillSounds sounds;
+        private AudioSource hum; // 날아가는 동안 반복하는 웅웅거림 (SkillChip.tsv의 Hum)
 
         // 지금 트리거 안에 들어와 있는 적 콜라이더. 들어오고 나갈 때 OnTriggerEnter/Exit가 고친다
         private readonly List<Collider> touching = new List<Collider>();
@@ -39,7 +36,7 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int dps, float tickInterval)
+        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval, SkillSounds sounds)
         {
             this.direction = direction;
             this.owner = owner;
@@ -47,11 +44,19 @@ namespace TeamOdd.Superpower
             this.slowSpeed = slowSpeed;
             this.range = range;
             this.radius = radius;
-            this.dps = dps;
+            this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
+            this.sounds = sounds;
 
             transform.localScale = Vector3.one * radius * 2f;
+            hum = sounds.PlayLoop("Hum");
             StartCoroutine(Run());
+        }
+
+        // 다 날기 전에 씬이 바뀌어 사라져도 소리가 남지 않게 끈다
+        private void OnDestroy()
+        {
+            SkillSounds.StopLoop(hum);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -70,18 +75,10 @@ namespace TeamOdd.Superpower
         private IEnumerator Run()
         {
             float tickTimer = tickInterval; // 처음 닿은 순간 바로 피해를 주도록 가득 채워 둔다
-            float afterimageTimer = 0f;
 
             for (float traveled = 0f; traveled < range; )
             {
                 tickTimer += Time.deltaTime;
-
-                afterimageTimer += Time.deltaTime;
-                if (afterimageTimer >= AfterimageInterval)
-                {
-                    afterimageTimer = 0f;
-                    LeaveAfterimage();
-                }
 
                 bool isTouching = RemoveGoneAndCheckTouching();
                 if (isTouching && tickTimer >= tickInterval)
@@ -100,30 +97,14 @@ namespace TeamOdd.Superpower
             yield return Collapse();
         }
 
-        // 지금 자리에 구체와 같은 지름의 잔상을 남긴다
-        // ObjectPoolManager가 없거나 풀이 등록되지 않은 씬(스킬 테스트 씬 등)에서는 한 번만 알리고 잔상 없이 날아간다
-        private void LeaveAfterimage()
-        {
-            if (isAfterimagePoolMissing) return;
-
-            PsychoOrbAfterimage afterimage = null;
-            if (ObjectPoolManager.Instance != null)
-                afterimage = ObjectPoolManager.Instance.GetObjectOrNull(AfterimagePoolKey) as PsychoOrbAfterimage;
-
-            if (afterimage == null)
-            {
-                Debug.LogWarning($"{name}: ObjectPoolManager에 '{AfterimagePoolKey}' 키의 잔상 풀이 없어 잔상을 남기지 않습니다.", this);
-                isAfterimagePoolMissing = true;
-                return;
-            }
-
-            afterimage.Show(transform.position, radius * 2f);
-        }
-
         // 제자리에서 점점 빠르게 쪼그라든 뒤 터지는 이펙트를 남기고 사라진다. 이때는 피해를 주지 않는다
         private IEnumerator Collapse()
         {
             Vector3 startScale = transform.localScale;
+
+            // 웅웅거림도 쪼그라드는 동안 줄인다. 줄이는 중에 OnDestroy가 다시 끄지 않도록 비워 둔다
+            SkillSounds.StopLoop(hum, CollapseTime);
+            hum = null;
 
             for (float elapsed = 0f; elapsed < CollapseTime; elapsed += Time.deltaTime)
             {
@@ -168,7 +149,7 @@ namespace TeamOdd.Superpower
         private void DamageTouching()
         {
             hitTargets.Clear();
-            int damage = Mathf.RoundToInt(dps * tickInterval);
+            int damage = SuperpowerSkill.PowerToDamage(owner, powerPerSecond * tickInterval);
 
             foreach (Collider collider in touching)
             {
@@ -179,6 +160,9 @@ namespace TeamOdd.Superpower
                 DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(transform.position), collider);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, target, info));
             }
+
+            // 적이 여럿이어도 틱마다 한 번만 탁
+            sounds.Play("Tick");
         }
     }
 }

@@ -17,9 +17,10 @@ namespace TeamOdd.Superpower
 
         private CombatEntity owner;
         private float duration;
-        private int dps;
+        private int powerPerSecond;
         private float trackSpeed;
         private float tickInterval; // 피해를 주는 간격 (초)
+        private AudioSource loop;   // 폭풍이 도는 동안 반복하는 소리 (SkillChip.tsv의 Loop)
 
         // 지금 트리거 안에 들어와 있는 적 콜라이더. 들어오고 나갈 때 OnTriggerEnter/Exit가 고친다
         private readonly List<Collider> touching = new List<Collider>();
@@ -27,16 +28,23 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(CombatEntity owner, float duration, int dps, float trackSpeed, float radius, float tickInterval)
+        public void Init(CombatEntity owner, float duration, int powerPerSecond, float trackSpeed, float radius, float tickInterval, SkillSounds sounds)
         {
             this.owner = owner;
             this.duration = duration;
-            this.dps = dps;
+            this.powerPerSecond = powerPerSecond;
             this.trackSpeed = trackSpeed;
             this.tickInterval = tickInterval;
 
             transform.localScale = Vector3.one * radius * 2f;
+            loop = sounds.PlayLoop("Loop");
             StartCoroutine(Run());
+        }
+
+        // 다 돌기 전에 씬이 바뀌어 사라져도 소리가 남지 않게 끈다
+        private void OnDestroy()
+        {
+            SkillSounds.StopLoop(loop);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -83,6 +91,10 @@ namespace TeamOdd.Superpower
             foreach (ParticleSystem particle in GetComponentsInChildren<ParticleSystem>())
                 particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
 
+            // 소리도 이펙트와 함께 서서히 줄인다. 줄이는 중에 OnDestroy가 다시 끄지 않도록 비워 둔다
+            SkillSounds.StopLoop(loop, FadeOutTime);
+            loop = null;
+
             Destroy(gameObject, FadeOutTime);
         }
 
@@ -121,7 +133,7 @@ namespace TeamOdd.Superpower
         private void DamageTouching()
         {
             hitTargets.Clear();
-            int damage = Mathf.RoundToInt(dps * tickInterval);
+            int damage = SuperpowerSkill.PowerToDamage(owner, powerPerSecond * tickInterval);
 
             // 사라지거나 꺼진 콜라이더는 OnTriggerExit가 오지 않으므로 여기서 뺀다. 빼면서 돌기 위해 뒤에서부터 돈다
             for (int i = touching.Count - 1; i >= 0; i--)

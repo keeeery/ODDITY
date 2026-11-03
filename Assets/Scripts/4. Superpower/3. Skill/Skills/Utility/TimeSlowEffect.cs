@@ -219,6 +219,7 @@ namespace TeamOdd.Superpower
             holdVolume.weight = holdWeight;
             pulseVolume.weight = pulseWeight;
             ApplyGlitch(pulseGlitch * pulseWeight);
+            SoundManager.Instance.SetLowPass(holdWeight); // 감속 화면과 같은 세기로 소리도 먹먹하게
 
             // 시간 역행 효과가 먼저 끝나며 Post Processing을 꺼도 다시 켜 둔다
             SetPostProcessing(isOn: true);
@@ -245,6 +246,9 @@ namespace TeamOdd.Superpower
             holdVolume.weight = 0f;
             pulseVolume.weight = 0f;
             ApplyGlitch(0f);
+
+            // 감속 중에 꺼져도(OnDisable) 소리가 먹먹한 채로 남지 않게 한다. 게임 종료 중에 SoundManager를 새로 만들지 않도록 있을 때만
+            if (SoundManager.IsInitialized) SoundManager.Instance.SetLowPass(0f);
 
             if (isShowing == false) return;
 

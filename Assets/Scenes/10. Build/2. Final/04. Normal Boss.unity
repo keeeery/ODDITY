@@ -61919,6 +61919,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: overridePsychoSlamDamage
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: CameraController
       value: 
@@ -62019,18 +62023,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: chipIds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: 'chipIds.Array.data[0]'
+      value: 2302
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: 'chipIds.Array.data[1]'
+      value: 2102
+      objectReference: {fileID: 0}
     - target: {fileID: 2920962985299418174, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: maxHpOverride
-      value: 1000
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Stats>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 96facd5f2705d4946a19e1f684e974ca, type: 2}
+      objectReference: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Collider>k__BackingField
       value: 
@@ -62038,22 +62054,6 @@ PrefabInstance:
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: NeedRollStamina
       value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: overridePsychoSlamDamage
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.data[0]
-      value: 2302
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.data[1]
-      value: 2102
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

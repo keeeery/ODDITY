@@ -77,12 +77,13 @@ namespace TeamOdd.Superpower
             Sequence sequence = CreateSequence(resized);
             AppendTwitch(sequence, resizedTransform, startScale);
 
-            // 뿅: 목표보다 조금 더 커졌다가 목표 크기로 돌아옴
+            // 뿅: 목표보다 조금 더 커졌다가 목표 크기로 돌아옴. 커지기 시작할 때 성공 소리(SkillChip.tsv의 Success)
+            sequence.AppendCallback(PlaySuccessSound);
             sequence.Append(resizedTransform.DOScale(endScale * (1f + PopOvershoot), PopDuration * 0.4f).SetEase(Ease.OutQuad));
             sequence.Append(resizedTransform.DOScale(endScale, PopDuration * 0.6f).SetEase(Ease.InOutQuad));
         }
 
-        private static void PlayRefuse(PsychokinesisObject refused)
+        private void PlayRefuse(PsychokinesisObject refused)
         {
             Transform refusedTransform = refused.transform;
             Vector3 startScale = refusedTransform.localScale;
@@ -93,7 +94,8 @@ namespace TeamOdd.Superpower
             Sequence sequence = CreateSequence(refused);
             AppendTwitch(sequence, refusedTransform, startScale);
 
-            // 부르르: 살짝 부풀어 오른 채로 떨다가
+            // 부르르: 살짝 부풀어 오른 채로 떨다가. 떨기 시작할 때 실패 소리(SkillChip.tsv의 Fail)
+            sequence.AppendCallback(PlayFailSound);
             sequence.Append(refusedTransform.DOScale(strainedScale, RefuseShakeDuration));
             for (int i = 0; i < RefuseShakeCount; i++)
             {
@@ -108,6 +110,10 @@ namespace TeamOdd.Superpower
             // 연출 동안 외곽선을 "잡을 수 없음" 색(빨간색)으로 보여 줌
             refused.FlashUnavailable(sequence.Duration());
         }
+
+        // 연출 중간에 소리를 내려고 DOTween의 AppendCallback에 넘기는 메서드
+        private void PlaySuccessSound() => Sounds.Play("Success");
+        private void PlayFailSound() => Sounds.Play("Fail");
 
         // 움찔: 살짝 줄었다 돌아오기를 반복하며 점점 세게
         private static void AppendTwitch(Sequence sequence, Transform scaled, Vector3 startScale)

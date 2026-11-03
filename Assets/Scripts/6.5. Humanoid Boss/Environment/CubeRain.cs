@@ -34,6 +34,7 @@ namespace TeamOdd.Environment
         [SerializeField] private float spawnHeight = 10f;
         [SerializeField] private float sampleDistance = 1f;
         [SerializeField] private int maxSpawnAttempts = 10;
+        [SerializeField] private float maxTiltAngle = 25f;
 
         [Title("Runtime State")]
         [ShowInInspector, ReadOnly] private bool isRunning = false;
@@ -134,7 +135,7 @@ namespace TeamOdd.Environment
         private void Spawn()
         {
             PsychokinesisObject prefab = prefabs[Random.Range(0, prefabs.Length)];
-            Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+            Quaternion rotation = GetRandomRotation();
 
             if (TryGetSpawnPos(prefab, rotation, out Vector3 spawnPos) == false) return;
             if (PoolManager.GetObjectOrNull(pool.Key) is not WallFragment cube) return;
@@ -148,6 +149,18 @@ namespace TeamOdd.Environment
                 psychokinesisObject.MarkSpawnedByBoss();
         }
 
+        // 수평 임의 축으로 기울여 무작위로 떨어지는 느낌을 줌 (완전 무작위는 모서리로 서서 떨어지는 경우가 잦음)
+        private Quaternion GetRandomRotation()
+        {
+            Quaternion yaw = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+
+            Vector2 dir = Random.insideUnitCircle.normalized;
+            Vector3 axis = new(dir.x, 0f, dir.y);
+            Quaternion tilt = Quaternion.AngleAxis(Random.Range(0f, maxTiltAngle), axis);
+
+            return tilt * yaw;
+        }
+
         private bool TryGetSpawnPos(PsychokinesisObject prefab, Quaternion rotation, out Vector3 result)
         {
             result = Vector3.zero;
@@ -156,6 +169,12 @@ namespace TeamOdd.Environment
             Vector3 scale = prefab.transform.localScale;
             Vector3 halfExtents = Vector3.Scale(box.size * 0.5f, scale);
             Vector3 centerOffset = rotation * Vector3.Scale(box.center, scale);
+
+            // 기울어진 박스는 세로 반높이가 halfExtents.y보다 커지므로 회전된 축들의 세로 성분으로 다시 계산
+            float extentY =
+                Mathf.Abs((rotation * Vector3.right).y) * halfExtents.x +
+                Mathf.Abs((rotation * Vector3.up).y) * halfExtents.y +
+                Mathf.Abs((rotation * Vector3.forward).y) * halfExtents.z;
 
             NavMeshData data = surface.navMeshData;
             Bounds bounds = data.sourceBounds;
@@ -187,7 +206,7 @@ namespace TeamOdd.Environment
                 if (delta.sqrMagnitude > sampleDistance * sampleDistance) continue;
 
                 // 바닥에서 spawnHeight만큼 띄운 위치에서 바닥에 닿을 때까지 내려가며 검사
-                Vector3 spawnPos = hit.position + Vector3.up * (spawnHeight + halfExtents.y);
+                Vector3 spawnPos = hit.position + Vector3.up * (spawnHeight + extentY);
                 Vector3 boxCenter = spawnPos + centerOffset;
 
                 // BoxCast는 시작 지점에서 이미 겹친 콜라이더를 잡지 못하므로 따로 검사

@@ -36,6 +36,12 @@ namespace TeamOdd.Superpower
         public bool IsReady => remainingCooldown <= 0f;
         public float RemainingCooldown => remainingCooldown;
 
+        // SkillChip.tsv의 Sounds 칸. 어떤 이름의 소리를 언제 틀지는 자식 클래스가 정한다
+        protected SkillSounds Sounds { get; private set; }
+
+        // 쓴 뒤에도 한동안 시전이 이어지는 스킬(염동 연사 등)이 그동안 true로 둔다. 이 동안 SkillCaster는 다른 스킬을 쓰지 않는다
+        public virtual bool IsCasting => false;
+
         // 효과로 쿨타임이 당겨졌을 때. 어느 스킬인지 넘겨서 게임 화면 스킬 바(SkillSlotHUD)가 그 슬롯을 반짝인다
         public event Action<SuperpowerSkill> CooldownReduced;
 
@@ -45,6 +51,11 @@ namespace TeamOdd.Superpower
             Name = name;
             Cooldown = cooldown;
         }
+
+        // 공격 스킬 피해는 공격력의 몇 %인지(power)로 정한다. 300이면 공격력의 3배
+        // 피해가 들어가는 순간의 공격력을 읽으므로 증강칩·정당한 보복으로 오른 공격력이 평타처럼 반영된다
+        // 지속 피해는 초당 배율 × 틱 간격(초)을 넘긴다
+        public static int PowerToDamage(CombatEntity owner, float power) => Mathf.RoundToInt(owner.CurrentStats.Atk * power / 100f);
 
         // 쿨타임이 남았거나 지금 쓸 수 없으면(대상이 없는 등) 쓰지 않고 false
         public bool TryUse(SkillContext context)
@@ -69,6 +80,12 @@ namespace TeamOdd.Superpower
         {
             remainingCooldown = Mathf.Max(0f, remainingCooldown - seconds);
             CooldownReduced?.Invoke(this);
+        }
+
+        // 모든 스킬에 공통이라 생성자 대신 SkillFactory가 만든 직후에 넣는다
+        public void BindSounds(SkillSounds sounds)
+        {
+            Sounds = sounds;
         }
 
         // 쿨타임을 바로 끝낸다. 마을과 아레나 사이를 오갈 때 인벤토리가 부른다

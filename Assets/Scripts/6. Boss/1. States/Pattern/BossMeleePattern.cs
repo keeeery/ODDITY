@@ -80,6 +80,9 @@ namespace TeamOdd.Boss
         [SerializeField] private MeleeHit[] hits = { new MeleeHit() };
         [Tooltip("타격 후 범위 표시가 사라지는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f), ShowIf(nameof(UsesMeleeHits))] private float hitFadeDuration = 0.3f;
+        
+        [Title("Sound")]
+        [SerializeField] SoundData soundData;
 
         private float readyTime;
         private float trackEndTime;

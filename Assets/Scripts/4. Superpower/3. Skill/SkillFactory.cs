@@ -24,15 +24,15 @@ namespace TeamOdd.Superpower
             SuperpowerSkill skill = def.SkillType switch
             {
                 // 공격
-                SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Damage"), def.Prefab.GetComponent<ShockwaveEffect>()),
-                SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Damage"), p.GetInt("Groggy"), p.GetFloat("Range"), p.GetFloat("Angle")),
+                SkillType.Shockwave => new ShockwaveSkill(name, cooldown, p.GetFloat("Radius"), p.GetFloat("Force"), p.GetInt("Power"), def.Prefab.GetComponent<ShockwaveEffect>()),
+                SkillType.PsychoSlam => new PsychoSlamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Height"), p.GetInt("Power"), p.GetInt("Groggy"), p.GetFloat("Range"), p.GetFloat("Angle")),
                 SkillType.PsychoRapidFire => new PsychoRapidFireSkill(name, cooldown, p.GetFloat("Radius"), p.GetInt("Count"), p.GetFloat("Interval"), p.GetFloat("Speed")),
-                SkillType.PsychoTempest => new PsychoTempestSkill(name, cooldown, p.GetFloat("Duration"), p.GetInt("DPS"), p.GetFloat("TrackSpeed"), p.GetFloat("Radius"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoTempest>()),
-                SkillType.PsychoOrb => new PsychoOrbSkill(name, cooldown, p.GetFloat("Speed"), p.GetFloat("SlowSpeed"), p.GetFloat("Range"), p.GetFloat("Radius"), p.GetInt("DPS"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoOrb>()),
-                SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("DPS"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoBeam>()),
+                SkillType.PsychoTempest => new PsychoTempestSkill(name, cooldown, p.GetFloat("Duration"), p.GetInt("PowerPerSecond"), p.GetFloat("TrackSpeed"), p.GetFloat("Radius"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoTempest>()),
+                SkillType.PsychoOrb => new PsychoOrbSkill(name, cooldown, p.GetFloat("Speed"), p.GetFloat("SlowSpeed"), p.GetFloat("Range"), p.GetFloat("Radius"), p.GetInt("PowerPerSecond"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoOrb>()),
+                SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("PowerPerSecond"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoBeam>()),
 
                 // 방어
-                SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount"), def.Prefab),
+                SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),
                 SkillType.Barrier => new BarrierSkill(name, cooldown, p.GetInt("Shield"), p.GetFloat("Duration"), def.Prefab),
                 SkillType.TimeReverse => new TimeReverseSkill(name, cooldown, p.GetFloat("Duration")),
 
@@ -53,8 +53,12 @@ namespace TeamOdd.Superpower
             };
 
             if (skill == null)
+            {
                 Debug.LogError($"[SkillFactory] {def.ID}번 칩의 스킬 {def.SkillType}을(를) 만드는 코드가 없습니다.");
+                return null;
+            }
 
+            skill.BindSounds(def.Sounds);
             return skill;
         }
     }
