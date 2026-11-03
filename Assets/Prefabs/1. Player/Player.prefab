@@ -393,12 +393,11 @@ MonoBehaviour:
   scaleAttackGroggy: 0
   attackGroggyScale: 0.27
   overrideObjectDamage: 0
-  objectMassThresholds: {x: 4.5, y: 9, z: 12}
-  smallObjectDamage: 25
-  mediumObjectDamage: 60
-  largeObjectDamage: 110
-  tankObjectDamage: 150
-  objectGroggyScale: 0.3
+  objectMassThresholds: {x: 4.5, y: 9}
+  smallObjectAtkScale: 3
+  mediumObjectAtkScale: 5
+  largeObjectAtkScale: 7
+  objectGroggyScale: 1.2
   swingMinSpeed: 17.5
   swingActivationSpeed: 180
   swingActiveDuration: 0.12
