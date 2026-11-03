@@ -4,6 +4,7 @@ using TeamOdd.Combat;
 using TeamOdd.Mission;
 using TeamOdd.Superpower;
 using TeamOdd.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,6 +33,14 @@ namespace TeamOdd.Reward
         [SerializeField, Min(0f)] private float revealDelay = 1f;
         [SerializeField, Min(0.01f)] private float glitchDuration = 0.25f;
         [SerializeField, Range(0f, 1f)] private float glitchStrength = 0.35f;
+
+        [Header("Accent")]
+        [Tooltip("윗줄·제목·장식 선 강조, Tools → Team Odd → Enhance Result Screens 가 만들어 연결한다")]
+        [SerializeField] private ResultBanner banner;
+        [Tooltip("보상 칸 위에 받은 칩 수를 보여 줄 글자, 비워 두면 쓰지 않음")]
+        [SerializeField] private TMP_Text rewardCountText;
+        [Tooltip("{0}에 받은 칩 수가 들어간다")]
+        [SerializeField] private string rewardCountFormat = "증강 칩 {0}개를 획득했습니다.";
 
         private readonly List<RewardIconView> icons = new();
         private UIManager uiManager;
@@ -67,6 +76,7 @@ namespace TeamOdd.Reward
                 icons.Add(Instantiate(iconTemplate, iconTemplate.transform.parent));
             for (int i = 0; i < icons.Count; i++)
                 icons[i].Show(i < rewards.Count ? rewards[i] : null);
+            if (rewardCountText != null) rewardCountText.text = string.Format(rewardCountFormat, rewards.Count);
 
             // 이미 열려 있으면 내용만 바꾼다. 나타나기를 기다리는 중이면 그대로 기다린다.
             if (IsOpen)
@@ -114,6 +124,7 @@ namespace TeamOdd.Reward
             Canvas.ForceUpdateCanvases();
 
             if (slots != null) slots.HideAll();
+            if (banner != null) banner.Snap(false);
             float opened = 0f;
             if (lineReveal != null)
             {
@@ -123,6 +134,7 @@ namespace TeamOdd.Reward
 
             Sequence sequence = DOTween.Sequence().SetUpdate(true).SetTarget(this);
             reveal = sequence;
+            if (banner != null) sequence.InsertCallback(opened, () => banner.Play());
             if (glitch != null) sequence.InsertCallback(opened, () => glitch.Play(glitchDuration, glitchStrength));
             if (slots != null) sequence.InsertCallback(opened, () => slots.Play());
             sequence.OnComplete(() => reveal = null);
@@ -137,6 +149,7 @@ namespace TeamOdd.Reward
             if (lineReveal != null) lineReveal.Snap(true);
             if (glitch != null) glitch.Stop();
             if (slots != null) slots.ShowAll();
+            if (banner != null) banner.Snap(true);
         }
     }
 }
