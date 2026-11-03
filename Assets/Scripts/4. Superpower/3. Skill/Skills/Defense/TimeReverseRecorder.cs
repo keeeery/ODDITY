@@ -47,6 +47,7 @@ namespace TeamOdd.Superpower
         private Player.Player player;
         private CharacterController controller;
         private Animator animator;
+        private int holdLayer; // 염동력 들기·조준 레이어 번호, 되감는 동안에는 끈다
         private float prevAnimatorSpeed; // 되감는 동안 애니메이터를 멈춰 두었다가 되돌릴 빠르기
         private float nextRecordTime;
 
@@ -65,6 +66,7 @@ namespace TeamOdd.Superpower
             player = GetComponent<Player.Player>();
             controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
+            holdLayer = animator.GetLayerIndex(Player.PlayerController.HoldLayerName);
         }
 
         private void Update()
@@ -183,10 +185,18 @@ namespace TeamOdd.Superpower
         }
 
         // 적어 둔 장면으로 애니메이터를 맞춘다. 되감는 동안 애니메이터 빠르기가 0이라 이 장면에서 멈춰 보인다
+        // 염동력 레이어는 끈다. 그 손 모양은 PlayerController가 손가락 굽힘을 줄여야 자연스러운데, 되감는 동안에는 PlayerController가 꺼져 있어 왼손이 과하게 굽어 보인다
+        // (끝나면 PlayerController가 들고 있는지에 따라 레이어 무게를 다시 정한다)
         private void ApplyAnimation(AnimationSample[] samples)
         {
             for (int i = 0; i < samples.Length; i++)
             {
+                if (i == holdLayer)
+                {
+                    animator.SetLayerWeight(i, 0f);
+                    continue;
+                }
+
                 animator.SetLayerWeight(i, samples[i].Weight);
                 animator.Play(samples[i].StateHash, i, samples[i].NormalizedTime);
             }

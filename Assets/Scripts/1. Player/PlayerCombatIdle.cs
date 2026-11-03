@@ -1,4 +1,5 @@
 ﻿using TeamOdd.Combat;
+using TeamOdd.Superpower;
 using UnityEngine;
 
 namespace TeamOdd.Player
@@ -49,8 +50,6 @@ namespace TeamOdd.Player
         [SerializeField, Min(0f)] private float stepHeight = 0.07f; // 옮기는 동안 발을 드는 최고 높이(m)
         [Tooltip("대기 전환이 이만큼 진행된 뒤부터 발을 옮김, 그 전에는 대기 자세 자리가 아직 많이 움직이므로 고정만 함")]
         [SerializeField, Range(0f, 1f)] private float stepStartProgress = 0.4f;
-        [Tooltip("대기 중 몸이 돌거나 밀려 앞발이 대기 자세 자리에서 이 거리(m)보다 벗어나면 다시 한 걸음 딛음")]
-        [SerializeField, Min(0.05f)] private float restepDistance = 0.3f;
         [Tooltip("이 거리(m)보다 벌어지면 걷지 않고 바로 다시 딛음 (되감기·순간 이동)")]
         [SerializeField, Min(0.1f)] private float maxPlantDistance = 0.8f;
         [Tooltip("뒷발을 옮기는 동안 몸(캡슐)도 앞발 쪽으로 옮겨, 다 디뎠을 때 두 발이 대기 자세처럼 몸 아래에 오게 함")]
@@ -59,6 +58,12 @@ namespace TeamOdd.Player
         [Tooltip("구르기·피격으로 넘어갈 때 발 고정을 푸는 시간(초), 길면 몸만 나가고 발이 남아 다리가 늘어나 보임")]
         [SerializeField, Min(0.01f)] private float quickReleaseTime = 0.06f;
         [SerializeField, Min(0.01f)] private float deathReleaseTime = 0.25f; // 사망으로 넘어갈 때 발 고정을 푸는 시간(초)
+
+        [Header("제자리 회전")]
+        [Tooltip("대기 중 몸이 초당 이 각도(도)보다 빨리 돌면 제자리 회전으로 보고 발 IK를 끔")]
+        [SerializeField, Min(0f)] private float turnSpeedThreshold = 30f;
+        [SerializeField, Min(0.01f)] private float turnReleaseTime = 0.08f; // 회전을 시작할 때 발 IK를 푸는 시간(초)
+        [SerializeField, Min(0f)] private float turnSettleTime = 0.15f; // 회전이 멈춘 뒤 다시 발 IK를 켜기까지 기다리는 시간(초)
 
         [Header("착지 보정")]
         [SerializeField] private bool groundFeet = true;
@@ -76,6 +81,7 @@ namespace TeamOdd.Player
         private Transform leftFoot;
         private Transform rightFoot;
         private CharacterController characterController;
+        private TimeReverseRecorder rewindRecorder;
         private float standingFootHeight = -1f; // 대기 중 낮은 쪽 발 뼈의 캐릭터 기준 높이, 음수면 아직 못 잼
         private float standingHipsHeight = -1f; // 대기 중 골반 높이, 누운 자세를 바닥 아래로 끌어내리지 않는 하한 계산용
         private float groundDrop; // 지금 골반을 내리고 있는 거리, 보정이 끝나도 한 번에 0으로 튀지 않게 이어서 줄임
@@ -96,6 +102,8 @@ namespace TeamOdd.Player
         private Vector3 pendingBodyShift; // IK에서 정한 몸 이동, 다음 프레임 애니메이션 전에 캡슐에 적용
         private bool isWalking;
         private bool isIdleSettled;
+        private float lastYaw;
+        private float turnHoldTimer; // 남아 있으면 제자리 회전 중으로 봄, 회전이 멈춰도 잠깐 유지해 발이 다시 붙었다 떨어지지 않게 함
         private float swayTime;
         private float breathTime;
         private Vector3 noiseSeed;
@@ -111,8 +119,10 @@ namespace TeamOdd.Player
             leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
             rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
             characterController = GetComponent<CharacterController>();
+            rewindRecorder = GetComponent<TimeReverseRecorder>();
             psychokinesisLayer = animator.GetLayerIndex(psychokinesisLayerName);
             noiseSeed = new Vector3(Random.value, Random.value, Random.value) * 100f;
+            lastYaw = transform.eulerAngles.y;
         }
 
         private void Update()
@@ -130,7 +140,10 @@ namespace TeamOdd.Player
             leanWeight = Mathf.MoveTowards(leanWeight, state == IdleState ? free : 0f, fadeSpeed * deltaTime);
             // 걷기 폭은 전환이 끝난 뒤에만 잼, 대기 진입 중 발 폭은 OnAnimatorIK에서 맞추고 여기서는 벗어날 때 서서히 푼다
             bool settled = animator.IsInTransition(0) == false;
-            footWidthWeight = Mathf.MoveTowards(footWidthWeight, state == IdleState ? 1f : 0f, fadeSpeed * deltaTime);
+            // 제자리 회전 중에는 발 IK를 빠르게 끔
+            bool turning = IsTurningInPlace;
+            footWidthWeight = Mathf.MoveTowards(footWidthWeight, state == IdleState && turning == false ? 1f : 0f,
+                (turning ? 1f / turnReleaseTime : fadeSpeed) * deltaTime);
             isWalking = settled && state == WalkState;
             isIdleSettled = settled && state == IdleState;
 
@@ -219,6 +232,21 @@ namespace TeamOdd.Player
 
         private void OnAnimatorIK(int layerIndex)
         {
+            // 시간 역행 중에는 기록한 장면을 그대로 보여 주도록 모든 레이어에서 IK를 끄고, 끝나면 그 자리에서 딛지 않고 다시 고정한다
+            // 되감는 동안 PlayerController가 꺼져 염동력 왼팔 IK 가중치가 남을 수 있어서, 늘 켜져 있는 이 컴포넌트에서 손 IK도 함께 끈다
+            if (rewindRecorder != null && rewindRecorder.IsRewinding)
+            {
+                footWidthWeight = 0f;
+                groundDrop = 0f;
+                isPlanted = false;
+                skipStanceStep = true;
+                turnHoldTimer = 0f;
+                lastYaw = transform.eulerAngles.y; // 되감으며 돈 각도를 제자리 회전으로 세지 않음
+                SetFootIKWeight(0f);
+                ClearHandIK();
+                return;
+            }
+
             // IK 목표는 누적되지 않으므로 멈춘 프레임에도 적용한다 (건너뛰면 풀릴 때 발이 튐)
             if (layerIndex != 0) return;
 
@@ -228,6 +256,8 @@ namespace TeamOdd.Player
                 SetFootIKWeight(0f);
                 return;
             }
+
+            UpdateTurnInPlace();
 
             Vector3 left = animator.GetIKPosition(AvatarIKGoal.LeftFoot);
             Vector3 right = animator.GetIKPosition(AvatarIKGoal.RightFoot);
@@ -250,7 +280,7 @@ namespace TeamOdd.Player
             {
                 if (wasEnteringIdle == false) enterIdleWidth = Mathf.Lerp(rightX - leftX, width, footWidthWeight);
                 width = Mathf.Lerp(enterIdleWidth, width, animator.GetAnimatorTransitionInfo(0).normalizedTime);
-                footWidthWeight = 1f;
+                if (IsTurningInPlace == false) footWidthWeight = 1f;
             }
 
             wasEnteringIdle = enteringIdle;
@@ -276,7 +306,7 @@ namespace TeamOdd.Player
 
             if (stepFeet)
             {
-                // 대기 중에는 발을 고정하고 앞발 기준으로 뒷발만 옮기며, 벗어날 때는 가중치만 푼다
+                // 대기 중에는 발을 고정하고 앞발 기준으로 뒷발만 옮기며, 벗어날 때는 고정을 놓고 발 폭 가중치만 서서히 푼다
                 // 걷기·달리기·구르기에서 멈출 때는 대기에 다 들어간 뒤부터 고정한다
                 // 달리기·구르기에서 멈출 때는 고정한 자리에 그대로 서고 뒷발을 딛지 않는다
                 int state = BaseStateHash();
@@ -288,7 +318,18 @@ namespace TeamOdd.Player
                 if (fromRunOrRoll) skipStanceStep = true;
                 bool planting = state == IdleState && settling == false;
                 if (settling) isPlanted = false; // 직전 대기에서 고정해 둔 발 자리에 끌리지 않게 놓음
-                if (planting && isPlanted == false)
+
+                // 걷기·달리기로 넘어가면 바로 놓아 다리가 걷기 동작을 따라가게 함 (붙잡아 두면 짧게 움직일 때 상체만 나가고 발이 남음)
+                if (state == WalkState || state == RunState) isPlanted = false;
+
+                // 제자리 회전 중에는 발을 놓아 몸과 함께 돌게 하고, 멈추면 그 자리에 딛지 않고 바로 고정한다
+                if (IsTurningInPlace)
+                {
+                    isPlanted = false;
+                    skipStanceStep = true;
+                }
+
+                if (planting && isPlanted == false && IsTurningInPlace == false)
                 {
                     leftPlant = new FootPlant(leftTarget, leftRotation);
                     rightPlant = new FootPlant(rightTarget, rightRotation);
@@ -350,8 +391,22 @@ namespace TeamOdd.Player
             SetFootIKWeight(1f);
         }
 
+        // 대기 중 몸이 빠르게 돌면 제자리 회전으로 봄, 걷기·달리기 중 회전은 제외
+        private void UpdateTurnInPlace()
+        {
+            float yaw = transform.eulerAngles.y;
+            float deltaTime = Time.deltaTime * SlowMotion.PlayerRelativeScale;
+            if (deltaTime > 0f)
+            {
+                bool turning = BaseStateHash() == IdleState && Mathf.Abs(Mathf.DeltaAngle(lastYaw, yaw)) / deltaTime > turnSpeedThreshold;
+                turnHoldTimer = turning ? turnSettleTime : Mathf.Max(turnHoldTimer - deltaTime, 0f);
+            }
+
+            lastYaw = yaw;
+        }
+
         // 앞발은 두고 뒷발만 대기 자세 간격만큼 떨어진 자리로 옮긴다, 전환 초반은 간격이 흔들려 기다림
-        // 대기 중 앞발이 많이 벗어나면 앞발을 다시 골라 한 걸음 딛는다
+        // 대기에 들어갈 때 한 번만 딛고, 대기 중에는 다시 딛지 않는다
         private void UpdateFootPlants(Vector3 leftTarget, Quaternion leftRotation, Vector3 rightTarget, Quaternion rightRotation, float progress)
         {
             float deltaTime = Time.deltaTime * SlowMotion.PlayerRelativeScale / stepDuration;
@@ -364,7 +419,6 @@ namespace TeamOdd.Player
             rightPlant.Advance(rightGoal, rightRotation, deltaTime);
             if (backWasStepping) AccumulateBodyShift(frontTarget, backFrom, BackPlant.IsStepping ? BackPlant.StepProgress : 1f);
 
-            Quaternion frontRotation = leftIsFront ? leftRotation : rightRotation;
             Vector3 backGoal = leftIsFront ? rightGoal : leftGoal;
             Quaternion backRotation = leftIsFront ? rightRotation : leftRotation;
 
@@ -379,18 +433,10 @@ namespace TeamOdd.Player
 
             if (leftPlant.IsStepping || rightPlant.IsStepping || progress < stepStartProgress) return;
 
-            if (stanceStepped == false)
-            {
-                if (BackPlant.Error(backGoal) > stepThreshold || BackPlant.IsTurned(backRotation, stepTurnThreshold)) BackPlant.BeginStep();
-                stanceStepped = true;
-                return;
-            }
+            if (stanceStepped) return;
 
-            if (FrontPlant.IsTurned(frontRotation, stepTurnThreshold) || FrontPlant.Error(frontTarget) > restepDistance)
-            {
-                ChooseFrontFoot(leftPlant.Position, rightPlant.Position);
-                stanceStepped = false;
-            }
+            if (BackPlant.Error(backGoal) > stepThreshold || BackPlant.IsTurned(backRotation, stepTurnThreshold)) BackPlant.BeginStep();
+            stanceStepped = true;
         }
 
         // 뒷발을 옮기는 동안 앞발의 고정 자리와 대기 자리 차이만큼 몸을 걸음 진행에 맞춰 옮긴다 (남은 차이를 매 프레임 다시 잼)
@@ -525,6 +571,20 @@ namespace TeamOdd.Player
             animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, weight);
             animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, weight);
         }
+
+        // 염동력 왼팔·공격 조준 LookAt 등 다른 컴포넌트가 준 손·상체 IK를 끈다
+        private void ClearHandIK()
+        {
+            animator.SetLookAtWeight(0f);
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0f);
+            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0f);
+            animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0f);
+            animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0f);
+            animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, 0f);
+            animator.SetIKHintPositionWeight(AvatarIKHint.RightElbow, 0f);
+        }
+
+        private bool IsTurningInPlace => turnHoldTimer > 0f;
 
         // 애니메이터가 포즈를 새로 쓰지 않는 프레임(되감기 등)은 뼈 회전이 누적되므로 건너뜀
         private bool IsAnimatorPaused => animator.enabled == false || animator.speed <= 0f || Time.deltaTime <= 0f;

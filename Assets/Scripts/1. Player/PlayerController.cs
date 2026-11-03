@@ -5,6 +5,7 @@ using DG.Tweening;
 using Study.Utilities;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.Superpower;
 using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,7 +26,7 @@ namespace TeamOdd.Player
         private static readonly int KnockdownState = Animator.StringToHash("Knockdown Blend Tree");
         private static readonly int WakeupState = Animator.StringToHash("Wakeup Blend Tree");
         private const float UpperLayerFadeDuration = 0.25f; // 대기 자세로 돌아갈 때 들기·조준 상체 레이어를 내리는 시간
-        private const string HoldLayerName = "Psycokinesis"; // 들기·조준 상체 레이어
+        public const string HoldLayerName = "Psycokinesis"; // 들기·조준 상체 레이어
 
         [Header("이동")]
         [SerializeField] private float walkSpeed = 4f;
@@ -153,6 +154,7 @@ namespace TeamOdd.Player
 
         private CharacterController controller;
         private PsychokinesisController psychokinesisController;
+        private TimeReverseRecorder rewindRecorder;
         private Vector3 velocity;
         private Coroutine hitRoutine;
         private float savedHitStepOffset;
@@ -249,6 +251,7 @@ namespace TeamOdd.Player
             controller = GetComponent<CharacterController>();
             psychokinesisController = GetComponent<PsychokinesisController>();
             animator = GetComponent<Animator>();
+            rewindRecorder = GetComponent<TimeReverseRecorder>();
 
             rollStateHash = Animator.StringToHash(rollStateName);
             holdLayer = animator.GetLayerIndex(HoldLayerName);
@@ -419,6 +422,16 @@ namespace TeamOdd.Player
         
         private void OnAnimatorIK(int layerIndex)
         {
+            // 시간 역행 중에는 기록한 장면만 보이도록 IK를 모두 끔 (되감는 동안 이 컴포넌트가 꺼져도 OnAnimatorIK는 불림)
+            if (rewindRecorder != null && rewindRecorder.IsRewinding)
+            {
+                animator.SetLookAtWeight(0f);
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0f);
+                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0f);
+                animator.SetIKHintPositionWeight(AvatarIKHint.LeftElbow, 0f);
+                return;
+            }
+
             // 상체 비틀기는 Base Layer, 팔 IK는 들기 레이어에서만 (Base Layer도 발 IK로 IK Pass를 씀)
             if (layerIndex == 0) UpdateAttackLookAt();
 

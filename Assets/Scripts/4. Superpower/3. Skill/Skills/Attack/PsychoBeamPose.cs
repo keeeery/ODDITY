@@ -27,6 +27,7 @@ namespace TeamOdd.Superpower
         private static readonly Vector3 ElbowHint = new Vector3(0.5f, 0.9f, 0f);
 
         private Animator animator;
+        private TimeReverseRecorder rewindRecorder;
         private Vector3 handCenter; // 두 손을 모을 가운데 (레이저 시작점)
         private Vector3 direction;  // 레이저 방향
         private float weight;       // 0이면 애니메이션 자세 그대로, 1이면 손을 다 뻗은 자세
@@ -35,6 +36,7 @@ namespace TeamOdd.Superpower
         private void Awake()
         {
             animator = GetComponent<Animator>();
+            rewindRecorder = GetComponent<TimeReverseRecorder>();
             animator.SetTrigger(BeamTrigger);
             animator.SetBool(IsBeam, true);
         }
@@ -61,6 +63,15 @@ namespace TeamOdd.Superpower
         {
             if (layerIndex != 0) return;
 
+            // 시간 역행 중에는 기록한 장면만 보이도록 IK를 모두 끈다 (이 컴포넌트가 가장 나중에 불려 PlayerController에서 끈 것을 덮어쓰므로 여기서도 끈다)
+            if (rewindRecorder != null && rewindRecorder.IsRewinding)
+            {
+                animator.SetLookAtWeight(0f);
+                ClearHand(AvatarIKGoal.LeftHand, AvatarIKHint.LeftElbow);
+                ClearHand(AvatarIKGoal.RightHand, AvatarIKHint.RightElbow);
+                return;
+            }
+
             // 상체와 머리를 조준 쪽으로 돌린다. LookAt은 손 IK보다 먼저 풀려서, 상체가 기운 뒤에 손이 레이저 시작점으로 간다
             // PlayerController도 Base Layer에서 LookAt 가중치를 주지만, 이 컴포넌트가 나중에 붙어 뒤에 불리므로 덮어쓴다
             animator.SetLookAtPosition(handCenter + direction * LookDistance);
@@ -73,6 +84,14 @@ namespace TeamOdd.Superpower
             // IK 가중치는 다시 줄 때까지 남으므로 0으로 돌려놓은 이 자리에서 사라진다
             if (isReleased && weight <= 0f)
                 Destroy(this);
+        }
+
+        // 손과 팔꿈치 IK를 꺼 애니메이션 자세로 둔다
+        private void ClearHand(AvatarIKGoal goal, AvatarIKHint hint)
+        {
+            animator.SetIKPositionWeight(goal, 0f);
+            animator.SetIKRotationWeight(goal, 0f);
+            animator.SetIKHintPositionWeight(hint, 0f);
         }
 
         // 손을 target으로 옮긴다. 애니메이션의 팔 방향에서 새 팔 방향으로 돌린 만큼 손도 돌려 손목 모양을 지킨다
