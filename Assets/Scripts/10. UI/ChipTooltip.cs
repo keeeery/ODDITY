@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using TeamOdd.Superpower;
 using UnityEngine;
 
@@ -29,39 +28,22 @@ namespace TeamOdd.UI
             if (def is SkillChipDef skill)
             {
                 List<string> costs = new List<string>();
-                if (IsZero(skill.Cooldown) == false) costs.Add($"쿨타임 {Accent($"{skill.Cooldown:0.#}초")}");
+                // 자동 발동 스킬은 키로 다시 쓰는 게 아니라 다시 발동하기까지의 시간이다
+                string cooldownLabel = chip.Skill is PassiveSkill ? "재발동 대기시간" : "재사용 대기시간";
+                if (chip.Skill.IsOncePerBattle) costs.Add($"전투당 {Accent("1회")}만 발동");
+                else if (IsZero(skill.Cooldown) == false) costs.Add($"{cooldownLabel} {Accent($"{skill.Cooldown:0.#}초")}");
                 if (IsZero(skill.Cost) == false) costs.Add($"스태미나 {Accent($"{skill.Cost:0.#}")}");
                 if (costs.Count > 0) lines.Add(string.Join(" · ", costs));
-                string detail = WithoutZeroParts(chip.Skill.Describe());
-                if (string.IsNullOrEmpty(detail) == false) lines.Add(detail);
             }
+            // 세부 수치는 스킬 설명에 이미 적혀 있어 따로 쓰지 않는다.
             // 능력치 칩은 설명에 오르는 스탯과 수치가 이미 적혀 있어 따로 쓰지 않는다
 
             string body = lines.Count > 0 ? $"{def.Description}\n\n{string.Join("\n", lines)}" : def.Description;
             return new TooltipContent(def.Name, type, body, def.IconSprite);
         }
 
-        private static readonly Regex Number = new Regex(@"\d+(\.\d+)?");
-
         // 툴팁에 찍히는 자릿수(소수 한 자리)로 0이면 0으로 본다.
         private static bool IsZero(float value) => $"{value:0.#}" == "0";
-
-        // 스킬 설명은 " · "로 이은 항목들이라, 숫자가 있는데 모두 0인 항목(간격 0초 등)만 뺀다. 숫자가 없는 문장은 그대로 둔다.
-        private static string WithoutZeroParts(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return text;
-
-            List<string> kept = new List<string>();
-            foreach (string part in text.Split(" · "))
-            {
-                MatchCollection numbers = Number.Matches(part);
-                bool allZero = numbers.Count > 0;
-                foreach (Match number in numbers)
-                    if (float.Parse(number.Value, System.Globalization.CultureInfo.InvariantCulture) != 0f) allZero = false;
-                if (allZero == false) kept.Add(part);
-            }
-            return string.Join(" · ", kept);
-        }
 
         // 본문 속 수치를 HUD 강조 금색(0.769, 0.576, 0.290)으로 칠한다.
         private static string Accent(string value) => $"<color=#C4934A>{value}</color>";

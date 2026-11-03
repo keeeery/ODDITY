@@ -15,7 +15,7 @@ namespace TeamOdd.UI
         public Color borderColor = new(0.1176471f, 0.1058824f, 0.09019608f, 1f);
         public Color shadowColor = new(0f, 0f, 0f, 0.35f);
         [Tooltip("쿨타임이 남은 부분을 덮는 색")]
-        public Color cooldownColor = new(0f, 0f, 0f, 0.6f);
+        public Color cooldownColor = new(0f, 0f, 0f, 0.8f);
         [Tooltip("사용 가능할 때 테두리 색, HUD 글자와 어울리는 따뜻한 흰색")]
         public Color readyBorderColor = new(0.93f, 0.91f, 0.87f, 0.9f);
         [Tooltip("쿨타임이 끝나는 순간 슬롯 안쪽이 잠깐 번쩍이는 색")]

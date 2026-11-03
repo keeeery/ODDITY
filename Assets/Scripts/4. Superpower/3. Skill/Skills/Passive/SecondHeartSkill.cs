@@ -20,6 +20,8 @@ namespace TeamOdd.Superpower
 
         public override PassiveTrigger Trigger => PassiveTrigger.BeforeDeath;
 
+        public override bool IsOncePerBattle => true;
+
         public override string Describe() => $"부활 체력 최대 체력의 {amount}%";
 
         // 체력은 바로 채우지 않고 부활 연출에 넘긴다. 쓰러지는 동안 0에 가깝게 보이다가 일어설 때 확 찬다

@@ -64,6 +64,10 @@ namespace TeamOdd.UI
         [Tooltip("장착한 칩의 칸 스프라이트(UnitSprite)에 맞춰 슬롯 바탕을 칠할 색, 목록에 없는 칩은 Style의 Track Color로 칠한다.")]
         [SerializeField] private List<SkillColor> skillColors = new();
 
+        [Header("Cooldown Text")]
+        [Tooltip("쿨타임 중 아이콘 투명도, 낮을수록 남은 초가 잘 보인다.")]
+        [SerializeField, Range(0f, 1f)] private float cooldownIconAlpha = 0.35f;
+
         [Header("Ready Flash")]
         [Tooltip("쿨타임이 끝나거나 당겨지는 순간 슬롯이 하얗게 번쩍였다 사라지는 시간(초)")]
         [SerializeField, Min(0.01f)] private float readyFlashDuration = 0.3f;
@@ -225,10 +229,11 @@ namespace TeamOdd.UI
             bool coolingDown = remaining > 0f;
 
             slot.Graphic.CooldownRatio = skill != null && skill.Cooldown > 0f ? remaining / skill.Cooldown : 0f;
-            slot.Cooldown.text = coolingDown ? Mathf.CeilToInt(remaining).ToString() : "";
+            // 전투당 한 번인 스킬은 쓴 뒤 덮개와 흐린 아이콘만 남기고 남은 초는 띄우지 않는다.
+            slot.Cooldown.text = coolingDown && skill.IsOncePerBattle == false ? Mathf.CeilToInt(remaining).ToString() : "";
 
             // 쿨타임 중에는 아이콘을 흐리게 깔고 남은 초를 위에 띄운다.
-            slot.Icon.color = new Color(1f, 1f, 1f, coolingDown ? 0.45f : 1f);
+            slot.Icon.color = new Color(1f, 1f, 1f, coolingDown ? cooldownIconAlpha : 1f);
             slot.Key.alpha = slot.Chip != null ? 0.55f : 0.3f;
 
             if (slot.WasCoolingDown && coolingDown == false) Flash(slot);
@@ -279,15 +284,14 @@ namespace TeamOdd.UI
 #if UNITY_EDITOR
         private const string SkillSlotPrefix = "SkillSlot_";
         private const string WakeUpSlotName = "WakeUpSlot";
-        private const string WakeUpName = "기상";
         private static readonly Vector2 SlotSize = new(54f, 54f);
         private const float SlotGap = 8f;
-        private const float WakeUpSlotGap = 54f;
+        private const float WakeUpSlotGap = 30f;
         private static readonly Vector2 WakeUpSlotSize = new(36f, 36f);
         private static readonly Color TextColor = new(0.84705883f, 0.8235294f, 0.76862746f, 1f);
         private const float KeyFontSize = 11f;
         private const float NameFontSize = 13f;
-        private const float CooldownFontSize = 15f;
+        private const float CooldownFontSize = 20f;
 
         public bool HasBuiltSlots => slots.Count > 0 || wakeUpSlot?.Graphic != null;
 
@@ -327,10 +331,11 @@ namespace TeamOdd.UI
             wakeUpRect.sizeDelta = WakeUpSlotSize;
             wakeUp.Graphic.HasSkill = true;
             wakeUp.Key.text = Keyboard.current != null ? Keyboard.current[Key.Space].displayName : Key.Space.ToString();
+            // 기상기 슬롯은 이름 없이 키만 가운데에 둔다.
+            wakeUp.Key.alignment = TextAlignmentOptions.Center;
+            wakeUp.Key.margin = Vector4.zero;
             wakeUp.Key.alpha = 0.55f;
-            wakeUp.Name.text = WakeUpName;
-            wakeUp.Name.alpha = 0.45f;
-            wakeUp.Cooldown.text = "5";
+            wakeUp.Cooldown.text = "8";
 
             Undo.RecordObject(this, "Build Skill Slot UI");
             slots = built;
@@ -377,7 +382,7 @@ namespace TeamOdd.UI
                 Graphic = graphic,
                 Key = NewText("Key", rect, textFont, KeyFontSize, TextAlignmentOptions.BottomLeft, new Vector4(4f, 2f, 4f, 2f)),
                 Name = NewText("Name", rect, textFont, NameFontSize, TextAlignmentOptions.Center, Vector4.zero),
-                Cooldown = NewText("Cooldown", rect, textFont, CooldownFontSize, TextAlignmentOptions.Center, Vector4.zero),
+                Cooldown = NewReadableText("Cooldown", rect, CooldownFontSize),
             };
         }
 
@@ -400,6 +405,16 @@ namespace TeamOdd.UI
             text.margin = margin;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.raycastTarget = false;
+            return text;
+        }
+
+        // 남은 초는 칩 바탕 위에서도 읽히도록 외곽선·그림자를 켠 Readable 스타일 폰트로 쓴다.
+        private TMP_Text NewReadableText(string objectName, Transform parent, float fontSize)
+        {
+            TMP_FontAsset readableFont = ReadableTextStyle.Font;
+            TMP_Text text = NewText(objectName, parent, readableFont != null ? readableFont : font, fontSize, TextAlignmentOptions.Center, Vector4.zero);
+            text.color = Color.white;
+            ReadableTextStyle.Apply(text);
             return text;
         }
 

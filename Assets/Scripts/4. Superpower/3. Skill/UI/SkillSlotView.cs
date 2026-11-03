@@ -112,7 +112,8 @@ namespace TeamOdd.Superpower
 
             cooldownFill.enabled = remaining > 0f;
             cooldownFill.fillAmount = remaining > 0f && skill.Cooldown > 0f ? remaining / skill.Cooldown : 0f;
-            cooldownText.text = remaining > 0f ? remaining.ToString("0.0") : "";
+            // 전투당 한 번인 스킬은 남은 초를 띄우지 않는다
+            cooldownText.text = remaining > 0f && skill.IsOncePerBattle == false ? remaining.ToString("0.0") : "";
         }
 
         // 드래그 중에 놓을 수 있는 슬롯을 표시한다
