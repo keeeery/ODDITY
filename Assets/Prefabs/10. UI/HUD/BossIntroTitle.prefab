@@ -75,7 +75,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4291089112
-  m_fontColor: {r: 0.847, g: 0.824, b: 0.769, a: 1}
+  m_fontColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -203,7 +203,7 @@ MonoBehaviour:
   epithetText: {fileID: 267256866333425471}
   nameText: {fileID: 503178754814718696}
   screenOffset: {x: 160, y: -60}
-  font: {fileID: 11400000, guid: 659ceb8947c683b4a9e1216df0a67515, type: 2}
+  font: {fileID: 11400000, guid: 67030cfd0846444148b748c4f12766fc, type: 2}
   sortingOrder: 250
   fadeInDuration: 0.45
   slideDistance: 40
@@ -283,7 +283,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 2797916888
-  m_fontColor: {r: 0.847, g: 0.824, b: 0.769, a: 0.65}
+  m_fontColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 0.65}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
