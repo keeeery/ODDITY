@@ -7,6 +7,7 @@ namespace TeamOdd.UI
 {
     // 화면 가장자리를 붉게 물들이는 피격 연출
     // 피격 시 번쩍 → 유지 → 서서히 사라짐, 저체력이면 맥박처럼 깜빡임
+    // 회복 스킬을 쓰면 같은 모양을 초록색으로 한 번 더 그린다
     [RequireComponent(typeof(CanvasRenderer))]
     public class DamageVignette : MaskableGraphic
     {
@@ -42,6 +43,13 @@ namespace TeamOdd.UI
             alpha = 0.7f, holdDuration = 0.4f, fadeDuration = 1.4f,
         };
 
+        [Header("Heal")]
+        [SerializeField] private Color healColor = new(0.1f, 0.75f, 0.25f, 1f);
+        [SerializeField] private HitEnvelope heal = new()
+        {
+            alpha = 0.45f, holdDuration = 0.15f, fadeDuration = 0.8f,
+        };
+
         [Header("Low Health")]
         [SerializeField, Range(0f, 1f)] private float lowHealthRatio = 0.3f;
         [SerializeField, Range(0f, 1f)] private float lowHealthMinAlpha = 0.2f;
@@ -53,6 +61,9 @@ namespace TeamOdd.UI
         private Sequence hitSequence;
         private float healthRatio = 1f;
         private float currentAlpha;
+        private float healAlpha;
+        private Sequence healSequence;
+        private float currentHealAlpha;
 
         public float HealthRatio
         {
@@ -74,10 +85,22 @@ namespace TeamOdd.UI
                     .SetEase(Ease.InOutSine));
         }
 
+        public void HealPulse()
+        {
+            healSequence?.Kill();
+            healAlpha = heal.alpha;
+            healSequence = DOTween.Sequence().SetTarget(this)
+                .AppendInterval(heal.holdDuration)
+                .Append(DOTween.To(() => healAlpha, value => healAlpha = value, 0f, heal.fadeDuration)
+                    .SetEase(Ease.InOutSine));
+        }
+
         protected override void OnDisable()
         {
             hitSequence?.Kill();
             hitAlpha = 0f;
+            healSequence?.Kill();
+            healAlpha = 0f;
             base.OnDisable();
         }
 
@@ -103,18 +126,24 @@ namespace TeamOdd.UI
                 alpha = Mathf.Max(alpha, Mathf.Lerp(lowHealthMinAlpha, lowHealthMaxAlpha, beat) * danger);
             }
 
-            if (Mathf.Approximately(alpha, currentAlpha)) return;
+            if (Mathf.Approximately(alpha, currentAlpha) && Mathf.Approximately(healAlpha, currentHealAlpha)) return;
 
             currentAlpha = alpha;
+            currentHealAlpha = healAlpha;
             SetVerticesDirty();
         }
 
-        // 네 변에서 같은 거리만큼 들어온 둥근 사각형 고리를 겹쳐, 화면 끝은 진하고 안쪽은 투명한 그라데이션을 만든다.
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
+            AddVignette(vh, vignetteColor, currentAlpha);
+            AddVignette(vh, healColor, currentHealAlpha);
+        }
 
-            if (currentAlpha <= 0.001f) return;
+        // 네 변에서 같은 거리만큼 들어온 둥근 사각형 고리를 겹쳐, 화면 끝은 진하고 안쪽은 투명한 그라데이션을 만든다.
+        private void AddVignette(VertexHelper vh, Color tint, float alpha)
+        {
+            if (alpha <= 0.001f) return;
 
             Rect rect = rectTransform.rect;
             float maxInset = Mathf.Min(rect.width, rect.height) * 0.5f;
@@ -122,8 +151,8 @@ namespace TeamOdd.UI
 
             if (width <= 0f) return;
 
-            Color32 solid = vignetteColor * color;
-            byte maxAlpha = (byte)(solid.a * currentAlpha);
+            Color32 solid = tint * color;
+            byte maxAlpha = (byte)(solid.a * alpha);
             int startIndex = vh.currentVertCount;
 
             for (int ring = 0; ring <= GradientRings; ring++)

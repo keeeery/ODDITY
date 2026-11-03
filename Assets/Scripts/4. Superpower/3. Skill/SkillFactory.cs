@@ -32,7 +32,7 @@ namespace TeamOdd.Superpower
                 SkillType.PsychoBeam => new PsychoBeamSkill(name, cooldown, p.GetFloat("Duration"), p.GetFloat("Range"), p.GetInt("DPS"), p.GetFloat("TickInterval"), def.Prefab.GetComponent<PsychoBeam>()),
 
                 // 방어
-                SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount"), def.Prefab),
+                SkillType.Heal => new HealSkill(name, cooldown, p.GetInt("Amount")),
                 SkillType.Barrier => new BarrierSkill(name, cooldown, p.GetInt("Shield"), p.GetFloat("Duration"), def.Prefab),
                 SkillType.TimeReverse => new TimeReverseSkill(name, cooldown, p.GetFloat("Duration")),
 

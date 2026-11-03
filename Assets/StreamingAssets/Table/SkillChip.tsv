@@ -5,7 +5,7 @@ Id	Name	Description	CellCount	UnitSpriteKey	IconSpriteKey	Category	SkillType	Coo
 2104	염동 폭풍	10초 동안 적을 추적해 초당 10의 피해를 입히는 폭풍을 부릅니다.	6	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Attack/Skill_PsychoTempest	Attack	PsychoTempest	20	0	Duration=10;DPS=10;TrackSpeed=10;Radius=2.5;TickInterval=0.25	Skill/Projectile/PsychoTempest
 2105	염동 구체	바라보는 방향으로 염동력 구체를 던집니다. 구체는 적에 닿으면 크게 느려지며 통과하는 동안 초당 20의 피해를 입힙니다.	4	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Attack/Skill_PsychoOrb	Attack	PsychoOrb	8	0	Speed=25;SlowSpeed=5;Range=30;Radius=1;DPS=20;TickInterval=0.25	Skill/Projectile/PsychoOrb
 2106	염동 투사	키를 누르고 있는 동안 조준한 곳으로 레이저를 쏴 닿은 적에게 초당 50의 피해를 입힙니다. 최대 4초 동안 유지됩니다.	5	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Attack/Skill_PsychoBeam	Attack	PsychoBeam	12	0	Duration=4;Range=30;DPS=50;TickInterval=0.2	Skill/Projectile/PsychoBeam
-2201	회복	체력을 30 회복합니다.	3	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Defense/Skill_Heal	Defense	Heal	30	0	Amount=30	Skill/Effect/HealEffect
+2201	회복	체력을 30 회복합니다.	3	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Defense/Skill_Heal	Defense	Heal	30	0	Amount=30
 2202	보호막	6초 동안 20의 피해를 막는 보호막을 얻습니다.	4	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Defense/Skill_Barrier	Defense	Barrier	20	0	Shield=20;Duration=6	Skill/Effect/BarrierEffect
 2203	시간 역행	10초 이전 위치와 그때의 체력·스태미나로 되돌아갑니다.	5	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Defense/Skill_TimeReverse	Defense	TimeReverse	30	0	Duration=10
 2301	순간 이동	바라보는 방향 8m 전방으로 순간 이동합니다.	3	AugmentationChip/ChipUnit_Purple	AugmentationChip/Icon/Utility/Skill_Blink	Utility	Blink	5	0	Distance=8;PassThrough=false	Skill/Effect/BlinkEffect
