@@ -9,7 +9,8 @@ namespace TeamOdd
     // - 화면 모드: 전체화면 / 전체 창 모드 / 창 모드, 고르는 즉시 바뀜
     // - 해상도: 창 모드일 때만 지금 모니터보다 크지 않은 해상도 중에서 고르고, 전체화면·전체 창 모드는 모니터 해상도로 고정
     // - 마스터 볼륨 / 배경음 / 효과음 슬라이더(0~100), 옆에 수치를 표시
-    // 값은 GameSettings로 로컬에 저장하고, 열 때마다 저장된 값으로 다시 맞춘다 (닫을 때 파일에 씀)
+    // 화면 설정은 저장하지 않고 열 때마다 지금 화면 상태(게임을 실행했을 때의 값 또는 이 창에서 바꾼 값)를 보여 준다
+    // 볼륨은 GameSettings로 로컬에 저장하고, 열 때마다 저장된 값으로 다시 맞춘다 (닫을 때 파일에 씀)
     // 에디터의 Game 창에서는 화면 모드·해상도가 바뀌지 않음 (빌드에서 확인)
     public class TitleSettingsPopup : MonoBehaviour
     {
@@ -50,20 +51,11 @@ namespace TeamOdd
             if (closeButton != null) closeButton.onClick.AddListener(Close);
         }
 
-        // 열 때마다 저장된 화면 설정·볼륨으로 다시 맞춤, 화면 설정을 저장한 적이 없으면 지금 화면 상태를 보여 줌
+        // 열 때마다 지금 화면 상태와 저장된 볼륨으로 다시 맞춤
         private void OnEnable()
         {
-            if (GameSettings.HasDisplay)
-            {
-                mode = GameSettings.DisplayMode;
-                Vector2Int saved = GameSettings.WindowSize;
-                windowSize = saved.x > 0 && saved.y > 0 ? saved : new Vector2Int(Screen.width, Screen.height);
-            }
-            else
-            {
-                mode = Screen.fullScreenMode == FullScreenMode.MaximizedWindow ? FullScreenMode.FullScreenWindow : Screen.fullScreenMode;
-                windowSize = new Vector2Int(Screen.width, Screen.height);
-            }
+            mode = Screen.fullScreenMode == FullScreenMode.MaximizedWindow ? FullScreenMode.FullScreenWindow : Screen.fullScreenMode;
+            windowSize = new Vector2Int(Screen.width, Screen.height);
 
             if (System.Array.IndexOf(Modes, mode) < 0) mode = FullScreenMode.FullScreenWindow;
             displayModeDropdown.SetValueWithoutNotify(System.Array.IndexOf(Modes, mode));
@@ -119,7 +111,6 @@ namespace TeamOdd
                 Screen.SetResolution(monitor.x, monitor.y, mode);
             }
 
-            GameSettings.SetDisplay(mode, windowSize);
             RefreshResolutions();
         }
 
@@ -130,7 +121,6 @@ namespace TeamOdd
 
             windowSize = resolutions[index];
             Screen.SetResolution(windowSize.x, windowSize.y, mode);
-            GameSettings.SetDisplay(mode, windowSize);
         }
 
         // 창 모드면 고를 수 있는 목록을, 아니면 모니터 해상도 하나만 보이고 막음
