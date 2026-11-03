@@ -173,6 +173,9 @@ PrefabInstance:
       addedObject: {fileID: 2864915537702138846}
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 8081330279859192958}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 2920962985299418174}
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
@@ -485,6 +488,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af796d1ff8d5fd94589b17e4d426231b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeReverseEffect
+--- !u!114 &8081330279859192958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814c6ecc7edc4b369b5c5784ff2c264e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.TimeSlowEffect
+  saturation: -30
+  colorFilter: {r: 0.8, g: 0.9, b: 1, a: 1}
+  vignette: 0.3
+  fadeInDuration: 0.15
+  fadeOutDuration: 0.3
+  pulseDuration: 2.5
+  startLensDistortion: -0.3
+  startChromaticAberration: 0.8
+  endLensDistortion: 0.15
+  startGlitch: 0.5
+  endGlitch: 0.3
 --- !u!114 &2920962985299418174
 MonoBehaviour:
   m_ObjectHideFlags: 0

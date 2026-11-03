@@ -3577,6 +3577,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1161441243179999686}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7310429581736204417}
   m_SourcePrefab: {fileID: 100100000, guid: ca79cfc4abfccaf438e90b558af9cebb, type: 3}
 --- !u!4 &760891972866721219 stripped
 Transform:
@@ -4195,3 +4198,20 @@ MonoBehaviour:
   idleIntensity: 0.25
   intensitySharpness: 15
   teleportDistance: 3
+--- !u!114 &7310429581736204417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337976221362853378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e67fb6ebbed8754e9d9822e2ee416c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossNavMeshGuard
+  checkInterval: 0.2
+  offMeshTolerance: 0.5
+  graceTime: 0.3
+  searchDistance: 20
+  edgePadding: 0.6

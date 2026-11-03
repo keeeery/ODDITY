@@ -13,7 +13,7 @@ namespace TeamOdd.Player
         private const string ManualPrefabKey = "Skill/Effect/ManualDodgeEffect"; // Resources 경로
         private const string AutoPrefabKey = "Skill/Effect/AutoDodgeEffect";
         private const float SlowScale = 0.25f;   // 수동 회피 슬로모션 배율 (75% 느려짐)
-        private const float SlowDuration = 0.5f; // 수동 회피 슬로모션 시간 (실제 시간, 초). 허물이 하얗게 머무는 시간(SkillEffectFactory)과 맞춘다
+        private const float SlowDuration = 0.1f; // 수동 회피 슬로모션 시간 (실제 시간, 초). 허물이 하얗게 머무는 시간(SkillEffectFactory)과 맞춘다
 
         private static GameObject manualPrefab; // 처음 쓸 때 한 번 불러 둔다
         private static GameObject autoPrefab;

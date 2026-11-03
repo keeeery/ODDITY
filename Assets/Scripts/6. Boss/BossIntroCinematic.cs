@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -91,6 +92,8 @@ namespace TeamOdd.Boss
 
         private float framingYaw;   // framingOffset만큼 보스를 옆으로 두려고 카메라를 더 돌리는 각도(도)
 
+        public event Action OnCinematicEnded;
+
         private const int MAX_FRAME_POINTS = 4000;   // 화면 채움 계산에 쓰는 메시 점 수 상한
 
         public string CurrentBossName => bossName;
@@ -164,6 +167,8 @@ namespace TeamOdd.Boss
 
             playerController.SetActionLocked(false);
             boss.StartStateMachine();
+
+            OnCinematicEnded?.Invoke();
         }
 
         // 패턴 상태에 들어가지 않고 트리거만 걸어 모션을 재생, 루트 모션은 꺼 두어 보스가 연출 위치에서 벗어나지 않음

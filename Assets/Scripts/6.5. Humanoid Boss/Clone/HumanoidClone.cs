@@ -14,6 +14,7 @@ namespace TeamOdd
     {
         private static readonly int ALPHA = Shader.PropertyToID("_Alpha");
         private static readonly int GLITCH = Shader.PropertyToID("_RandomGlitchAmount");
+        private static readonly int IDLE_STATE = Animator.StringToHash("Idle");
 
         [Title("References")]
         [SerializeField] private BossMonster boss;
@@ -34,6 +35,7 @@ namespace TeamOdd
 
         [Title("Runtime State")]
         [ShowInInspector, ReadOnly] public bool IsVanishing { get; private set; }
+        [ShowInInspector, ReadOnly] public bool IsSuspended { get; private set; }
 
         // 사라지는 연출이 끝나 삭제되기 직전 한 번
         public event Action<HumanoidClone> Vanished;
@@ -98,12 +100,12 @@ namespace TeamOdd
             if (player != null && player.PlayerController != null) player.PlayerController.RemovePassThroughBody(transform);
         }
 
-        // instant: 세상이 멈추는 연출(A15) 등 기다릴 수 없을 때 연출 없이 바로 삭제
+        // instant: 기다릴 수 없을 때 연출 없이 바로 삭제, 숨겨 둔 동안은 흩어지며 다시 보이지 않게 항상 바로 삭제
         public void Vanish(bool instant = false)
         {
             if (hasFinished) return;
 
-            if (instant)
+            if (instant || IsSuspended)
             {
                 StopAllCoroutines();
                 Finish();
@@ -116,6 +118,41 @@ namespace TeamOdd
             StopAllCoroutines();
             StopActing();
             StartCoroutine(FadeOut());
+        }
+
+        // 세상이 멈추는 연출(A15) 동안 체력·쿨다운은 그대로 둔 채 숨김, 멈추는 건 그 연출의 세상 감속에 맡김
+        // 하던 공격의 예고·판정이 남지 않도록 상태를 꺼서 정리(OnExit)하고, 보이지도 맞지도 않게 함
+        public void Suspend()
+        {
+            if (hasFinished || IsSuspended) return;
+
+            if (IsVanishing)
+            {
+                Vanish(true);
+                return;
+            }
+
+            IsSuspended = true;
+            StopAllCoroutines();
+
+            foreach (BossStateBase state in GetComponentsInChildren<BossStateBase>())
+                state.gameObject.SetActive(false);
+
+            combatEntity.IsInvincible = true;
+            combatEntity.Collider.enabled = false;
+            SetHologram(0f, 0f);
+        }
+
+        // 대기 자세로 세워 등장 연출부터 다시 시작, 등장 상태가 연출 동안 서 있다가 Idle로 넘김
+        public void Resume()
+        {
+            if (hasFinished || IsSuspended == false) return;
+
+            IsSuspended = false;
+            combatEntity.Collider.enabled = true;
+            if (boss.Animator.HasState(0, IDLE_STATE)) boss.Animator.Play(IDLE_STATE, 0, 0f);
+            boss.ChangeBossState(typeof(HumanoidCloneAppearState), true);
+            StartCoroutine(Appear());
         }
 
         private void HandleDied() => Vanish();
