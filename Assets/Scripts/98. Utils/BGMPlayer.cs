@@ -20,6 +20,10 @@ namespace TeamOdd
 
         private void OnEnable()
         {
+            // 씬 이동으로 켜질 때는 OnSceneLoaded에서 한 번만 틂. 여기서도 틀면 이전 씬 BGMPlayer가 내려가며 부르는 StopBGM과 순서가 엉키거나,
+            // 로비의 ChangeBGM이 화면이 꺼지는 도중 다음 곡을 켜서 줄어들던 BGM이 다시 커질 수 있음
+            if (SceneLoadManager.IsInitialized && SceneLoad.IsLoading) return;
+
             Sound.PlayBGM(bgm.ClipName, bgm.Volume, fadeTime);
         }
 

@@ -5,11 +5,12 @@ using UnityEngine.EventSystems;
 
 namespace TeamOdd
 {
-    // 메인 메뉴의 글자 버튼
+    // 메인 메뉴·일시 정지 메뉴의 글자 버튼
     // - 마우스를 올리면 살짝 커지고, 왼쪽에서 강조 바가 펼쳐지며 글자가 오른쪽으로 밀리고, 짧게 지직거림(UIGlitch)
     // - 누르는 동안 글자색이 바뀌었다가 떼면 돌아오며, 클릭하면 동작
     // - 메뉴가 나타나기 전에는 상위 CanvasGroup이 입력을 막음
     // - Interactable을 끄면 글자가 회색으로 바뀌고 올리기·클릭에 반응하지 않음 (저장 데이터가 없을 때의 이어하기)
+    // - 일시 정지 메뉴(PauseMenuUI)가 지정되어 있으면 메인 메뉴 대신 그쪽으로 클릭을 넘김
     public class TitleMenuButton : MonoBehaviour,
         IPointerEnterHandler,
         IPointerExitHandler,
@@ -18,10 +19,11 @@ namespace TeamOdd
         IPointerClickHandler
     {
         // 씬에 저장된 값이 바뀌지 않도록 기존 항목(Start=0, Quit=1)의 번호를 지킴
-        public enum ButtonType { NewGame = 0, Quit = 1, Continue = 2, Settings = 3 }
+        public enum ButtonType { NewGame = 0, Quit = 1, Continue = 2, Settings = 3, Resume = 4, Lobby = 5, MainMenu = 6 }
 
         [SerializeField] private ButtonType buttonType;
         [SerializeField] private StartMenuUI menu;
+        [SerializeField] private PauseMenuUI pauseMenu;
         [SerializeField] private float hoverScaleMultiplier = 1.05f;
         [SerializeField, Min(0f)] private float hoverSpeed = 16f; // 0이면 바로 바뀜
         [SerializeField] private Color pressedColor = new(0.45f, 0.85f, 1f, 1f);
@@ -114,6 +116,12 @@ namespace TeamOdd
         public void OnPointerClick(PointerEventData eventData)
         {
             if (interactable == false) return;
+            if (pauseMenu != null)
+            {
+                pauseMenu.Select(buttonType);
+                return;
+            }
+
             if (menu == null)
             {
                 Debug.LogWarning("[Title] StartMenuUI가 지정되지 않았습니다.");

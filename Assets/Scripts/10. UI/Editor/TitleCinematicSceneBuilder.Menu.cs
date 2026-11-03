@@ -16,7 +16,7 @@ namespace TeamOdd.UI
     public static partial class TitleCinematicSceneBuilder
     {
         private const string BodyFontPath = "Assets/Font/Pretendard/Pretendard-Medium SDF.asset";
-        private const float MenuButtonSpacing = 70f;
+        private const float MenuButtonSpacing = 76f; // 메뉴 항목 간격, 일시 정지 메뉴도 같이 씀
         private const float PopupPadding = 36f;
 
         private static class PopupPalette
@@ -92,16 +92,21 @@ namespace TeamOdd.UI
                 ("settingsPopup", settings));
         }
 
-        private static GameObject CreateNewGamePopup(Transform root, TMP_FontAsset titleFont, TMP_FontAsset bodyFont, out Button confirm, out Button cancel)
-        {
-            RectTransform window = CreatePopupWindow("New Game Popup", root, "새 게임", new Vector2(620f, 300f), titleFont);
+        private static GameObject CreateNewGamePopup(Transform root, TMP_FontAsset titleFont, TMP_FontAsset bodyFont, out Button confirm, out Button cancel) =>
+            CreateConfirmPopup("New Game Popup", root, "새 게임", "저장된 데이터를 삭제하고\n새 게임을 시작하시겠습니까?", titleFont, bodyFont, out confirm, out cancel);
 
-            TMP_Text body = CreateText("Message", window, "저장된 데이터를 삭제하고\n새 게임을 시작하시겠습니까?", bodyFont, 24f,
+        // 제목 + 가운데 문구 + 예(주 버튼)/아니오, 새 게임 확인과 일시 정지 메뉴의 메인 메뉴·게임 종료 확인이 같이 씀
+        private static GameObject CreateConfirmPopup(string name, Transform root, string title, string message,
+            TMP_FontAsset titleFont, TMP_FontAsset bodyFont, out Button confirm, out Button cancel)
+        {
+            RectTransform window = CreatePopupWindow(name, root, title, new Vector2(620f, 300f), titleFont);
+
+            TMP_Text body = CreateText("Message", window, message, bodyFont, 24f,
                 PopupPalette.TextAlpha(0.85f), Vector2.zero, Vector2.zero);
             body.rectTransform.anchorMin = new Vector2(0f, 0f);
             body.rectTransform.anchorMax = new Vector2(1f, 1f);
-            body.rectTransform.offsetMin = new Vector2(PopupPadding, 100f);
-            body.rectTransform.offsetMax = new Vector2(-PopupPadding, -100f);
+            body.rectTransform.offsetMin = new Vector2(PopupPadding, 116f);
+            body.rectTransform.offsetMax = new Vector2(-PopupPadding, -84f);
             body.textWrappingMode = TextWrappingModes.Normal;
             body.lineSpacing = 12f;
 
@@ -270,6 +275,10 @@ namespace TeamOdd.UI
             return dropdown;
         }
 
+        // 슬라이더 선 두께와 손잡이 높이, 처음(4, 14)보다 2/3로 낮춤
+        private const float SliderBarHeight = 4f * 2f / 3f;
+        private const float SliderHandleHeight = 14f * 2f / 3f;
+
         // 가는 선 위의 채움과 네모 손잡이, 오른쪽에 수치(0~100)
         private static (Slider slider, TMP_Text value) CreateSliderRow(RectTransform window, string label, float y, TMP_FontAsset font)
         {
@@ -304,7 +313,7 @@ namespace TeamOdd.UI
                 handle.color = PopupPalette.Text;
                 slider.handleRect.anchorMin = new Vector2(slider.handleRect.anchorMin.x, 0.5f);
                 slider.handleRect.anchorMax = new Vector2(slider.handleRect.anchorMax.x, 0.5f);
-                slider.handleRect.sizeDelta = new Vector2(14f, 14f);
+                slider.handleRect.sizeDelta = new Vector2(14f, SliderHandleHeight);
             }
 
             ApplyPopupSelectableColors(slider);
@@ -351,7 +360,7 @@ namespace TeamOdd.UI
         {
             bar.anchorMin = new Vector2(bar.anchorMin.x, 0.5f);
             bar.anchorMax = new Vector2(bar.anchorMax.x, 0.5f);
-            bar.sizeDelta = new Vector2(bar.sizeDelta.x, 4f);
+            bar.sizeDelta = new Vector2(bar.sizeDelta.x, SliderBarHeight);
             if (bar.TryGetComponent(out Image image))
             {
                 image.sprite = null;
