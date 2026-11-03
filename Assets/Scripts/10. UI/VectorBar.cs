@@ -225,7 +225,7 @@ namespace TeamOdd.UI
 
             shape.SetRoundedRect(rect, radius, CornerSegments);
             if (shadowSize > 0f)
-                shape.Fill(vh, rect.center, borderWidth + shadowSize * 0.5f, shadowSize, shadowColor * color);
+                shape.FillShadow(vh, rect.center, borderWidth, shadowSize, shadowColor * color);
             if (borderWidth > 0f)
                 shape.Fill(vh, rect.center, borderWidth, antiAlias, borderColor * color);
             shape.Fill(vh, rect.center, 0f, antiAlias, trackColor * color);
