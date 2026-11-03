@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
+using TeamOdd.UI;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
@@ -51,6 +52,7 @@ namespace TeamOdd.Superpower
             if (targets.Count > 0) return true;
 
             Debug.Log($"[{Name}] 반경 {radius}m 안에 들 수 있는 염동력 오브젝트가 없습니다.");
+            SystemMessage.Show("주변에 들 수 있는 염동력 오브젝트가 없습니다.", SystemMessage.Tone.Warning);
             return false;
         }
 
