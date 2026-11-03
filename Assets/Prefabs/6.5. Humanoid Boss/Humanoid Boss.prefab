@@ -3852,6 +3852,18 @@ MonoBehaviour:
   debrisSpawnRadius: 0.15
   debrisSpawnFill: 0.85
   debrisTipColor: {r: 0.6, g: 0.9, b: 1, a: 1}
+  weakHitSound:
+    clipName: Boss/Hit/SFX_Boss_Hit_Weak
+    volume: 0.6
+  mediumHitSound:
+    clipName: Boss/Hit/SFX_Boss_Hit_Medium
+    volume: 0.8
+  strongHitSound:
+    clipName: Boss/Hit/SFX_Boss_Hit_Strong
+    volume: 1
+  finishHitSound:
+    clipName: Boss/Hit/SFX_Boss_Hit_Finish
+    volume: 1
 --- !u!114 &5163552388750867610
 MonoBehaviour:
   m_ObjectHideFlags: 0

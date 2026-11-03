@@ -9,6 +9,7 @@ namespace TeamOdd.Boss
     // (약한 피격은 기본 공격처럼 자주 들어와 히트스탑을 걸지 않음)
     // 강한 피격은 가장 큰 충격·밝은 점광원·긴 히트스탑·센 흔들림에 카메라 줌 펀치까지 더함
     // 구간은 받은 피해를 공격자의 현재 공격력과 비교해 정하므로, 공격력 칩을 끼거나 보스가 달라도 같은 공격은 같은 구간이 된다.
+    // 구간마다 피격음도 따로 틂, 마무리 일격 소리는 슬로모션과 상관없이 실제 시간으로 나옴
     // 숨을 끊는 피격(마무리 일격)은 가장 큰 충격과 많은 입자를 슬로모션 배율대로 느리게 퍼뜨림, 히트스탑·번쩍임·흔들림은 사망 상태가 맡음
     // 루트 캡슐 기준 맞은 지점은 허공일 수 있어, 충격은 부위 콜라이더 표면으로 옮겨서 터뜨린다.
     [DisallowMultipleComponent]
@@ -149,6 +150,16 @@ namespace TeamOdd.Boss
         [Tooltip("입자가 사라질 때 물드는 색, 충격 머티리얼의 Tip Color와 맞추면 자연스럽다.")]
         [SerializeField] private Color debrisTipColor = new(0.6f, 0.9f, 1f);
 
+        [Title("Hit Sound")]
+        [Tooltip("약한 피격 소리, 기본 공격마다 나오므로 중간·강한 피격보다 작게 둔다.")]
+        [SerializeField] private SoundData weakHitSound;
+        [Tooltip("중간 피격 소리")]
+        [SerializeField] private SoundData mediumHitSound;
+        [Tooltip("강한 피격 소리")]
+        [SerializeField] private SoundData strongHitSound;
+        [Tooltip("마무리 일격 소리, 슬로모션과 상관없이 실제 시간으로 재생된다.")]
+        [SerializeField] private SoundData finishHitSound;
+
         private ICombatable self;
         private HitFlash flash;
         private CombatManager combatManager;
@@ -198,6 +209,7 @@ namespace TeamOdd.Boss
             if (self is CombatEntity { IsDead: true })
             {
                 PlayFinishImpact(GetFinishPoint(damageEvent.Info.HitPoint));
+                finishHitSound.Play();
                 return;
             }
 
@@ -207,13 +219,18 @@ namespace TeamOdd.Boss
             switch (tier)
             {
                 case HitTier.Strong:
+                    strongHitSound.Play();
                     HitStop.Request(strongHitStop);
                     ShakeCamera(strongShakeTrauma, strongShakeFadeTime);
                     PunchZoom();
                     break;
                 case HitTier.Medium:
+                    mediumHitSound.Play();
                     HitStop.Request(mediumHitStop);
                     ShakeCamera(mediumShakeTrauma, mediumShakeFadeTime);
+                    break;
+                default:
+                    weakHitSound.Play();
                     break;
             }
         }
