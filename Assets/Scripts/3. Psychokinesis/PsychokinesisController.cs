@@ -161,7 +161,8 @@ namespace TeamOdd.Psychokinesis
         public int CalculateAttackGroggy(int damage, int fallback)
             => scaleAttackGroggy ? Mathf.RoundToInt(damage * attackGroggyScale) : fallback;
 
-        public bool TryCalculateObjectDamage(float mass, out int damage, out int groggy)
+        // mass는 크기 조절 전 질량(등급 판정용), sizeFactor는 크기 조절 칩으로 누적된 배율
+        public bool TryCalculateObjectDamage(float mass, float sizeFactor, out int damage, out int groggy)
         {
             damage = 0;
             groggy = 0;
@@ -172,7 +173,7 @@ namespace TeamOdd.Psychokinesis
             else if (mass >= objectMassThresholds.x) atkScale = mediumObjectAtkScale;
             else atkScale = smallObjectAtkScale;
             // 평타처럼 공격력 칩 보너스까지 반영하도록 쓸 때마다 읽음
-            damage = Mathf.Max(1, Mathf.RoundToInt(combatEntity.CurrentStats.Atk * atkScale));
+            damage = Mathf.Max(1, Mathf.RoundToInt(combatEntity.CurrentStats.Atk * atkScale * sizeFactor));
             groggy = Mathf.RoundToInt(damage * objectGroggyScale);
             return true;
         }
