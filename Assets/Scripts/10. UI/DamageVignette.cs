@@ -44,10 +44,11 @@ namespace TeamOdd.UI
         };
 
         [Header("Heal")]
-        [SerializeField] private Color healColor = new(0.1f, 0.75f, 0.25f, 1f);
+        // 피격 색처럼 어둡게 눌러 원색 느낌을 뺀 초록
+        [SerializeField] private Color healColor = new(0.06f, 0.38f, 0.22f, 1f);
         [SerializeField] private HitEnvelope heal = new()
         {
-            alpha = 0.45f, holdDuration = 0.15f, fadeDuration = 0.8f,
+            alpha = 0.3f, holdDuration = 0.15f, fadeDuration = 0.8f,
         };
 
         [Header("Low Health")]

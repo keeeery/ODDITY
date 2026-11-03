@@ -22,6 +22,8 @@ namespace TeamOdd.UI
         // 조작 안내(KeyHintBuilder.TextColor)와 같은 백색, 경고는 채도를 올린 주황
         [SerializeField] private Color normalColor = new(1f, 1f, 1f, 1f);
         [SerializeField] private Color warningColor = new(1f, 0.68f, 0.2f, 1f);
+        [Tooltip("경고를 띄울 때마다 나는 소리, 같은 문구를 연달아 띄워도(키 연타) 매번 난다.")]
+        [SerializeField] private SoundData warningSound;
 
         [Header("Timing (초, 실제 시간)")]
         [SerializeField, Min(0f)] private float fadeInDuration = 0.15f;
@@ -91,6 +93,7 @@ namespace TeamOdd.UI
             shownMessage = message;
             text.SetText(message);
             text.color = tone == Tone.Warning ? warningColor : normalColor;
+            if (tone == Tone.Warning) warningSound.Play();
 
             sequence?.Kill();
             sequence = DOTween.Sequence().SetUpdate(true).SetTarget(this);

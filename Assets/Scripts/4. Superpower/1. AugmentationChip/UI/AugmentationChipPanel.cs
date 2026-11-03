@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using TeamOdd.Combat;
 using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,7 +14,7 @@ namespace TeamOdd.Superpower
     /// 드래그로 트레이 ↔ 그리드를 오가게 하고, 그리드에 놓으면 inventory.Equip, 들어 올리면 inventory.Unequip을 부른다.
     /// 마우스 오른쪽 클릭은 빠른 장착/해제다. 트레이 칩은 그리드의 빈 자리에 바로 넣고, 그리드 칩은 트레이로 돌려보낸다.
     /// 스킬 칩은 스킬 슬롯 수(5개)까지만 장착된다. 그리드에 놓으면 인벤토리가 빈 스킬 슬롯에 넣고, 아래 스킬 슬롯 줄(SkillSlotBarView)에서 순서를 바꾼다.
-    /// 칩·스킬 슬롯에 마우스를 올리면 칩 툴팁(TooltipView)을 띄우고, 안내·장착 실패·스탯 변화는 HUD의 SystemMessage로 알린다.
+    /// 칩·스킬 슬롯에 마우스를 올리면 칩 툴팁(TooltipView)을 띄우고, 안내·장착 실패는 HUD의 SystemMessage로 알린다.
     /// 모은 칩 종류 수는 패널 위쪽 오른쪽(countText)에 늘 보여 준다.
     /// 패널은 테이블도 플레이어도 모른다. 여는 쪽(AugmentationChipToggle, 정비소 등)이 인벤토리를 넘겨준다.
     /// </summary>
@@ -238,7 +237,6 @@ namespace TeamOdd.Superpower
             // 칩이 포인터 아래에서 다른 곳으로 옮겨 갔으므로 툴팁을 닫는다. 다음에 올라간 칩이 새로 띄운다
             if (Tooltip != null)
                 Tooltip.Hide(chip);
-            SystemMessage.Show(GetStatSummary());
         }
 
         // 지금 방향부터 시계 방향으로 돌려 가며 들어갈 자리를 찾는다
@@ -317,11 +315,9 @@ namespace TeamOdd.Superpower
             // 트레이로 돌아오거나 빠져나간 자리를 메우도록 다시 정렬한다
             tray.Layout();
 
-            // 놓을 자리는 맞았는데 스킬 슬롯이 가득 차서 트레이로 돌아온 경우 알려준다. 아니면 바뀐 스탯을 보여준다
+            // 놓을 자리는 맞았는데 스킬 슬롯이 가득 차서 트레이로 돌아온 경우 알려준다
             if (fits && equipped == false)
                 SystemMessage.Show(SkillSlotsFullMessage, SystemMessage.Tone.Warning);
-            else
-                SystemMessage.Show(GetStatSummary());
 
             // 내려놓은 뒤에도 포인터가 칩 위에 있으면 바뀐 장착 상태로 툴팁을 다시 띄운다
             if (RectTransformUtility.RectangleContainsScreenPoint(chip.Rect, eventData.position, null))
@@ -395,13 +391,6 @@ namespace TeamOdd.Superpower
             }
 
             countText.text = $"보유 {owned.Count} / 전체 {totalChipCount}";
-        }
-
-        // 장착이 바뀔 때 SystemMessage로 띄우는 스탯 한 줄. 칩 수는 countText가 보여 준다
-        private string GetStatSummary()
-        {
-            RuntimeStats stats = inventory.Stats;
-            return $"MaxHp {stats.MaxHp}(+{stats.GetBonus(StatType.MaxHp)})  Atk {stats.Atk}(+{stats.GetBonus(StatType.Atk)})  Def {stats.Def}(+{stats.GetBonus(StatType.Def)})";
         }
 
         // Screen Space - Overlay 캔버스 전제라 카메라 없이(null) 변환한다
