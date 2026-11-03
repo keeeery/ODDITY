@@ -43,7 +43,7 @@ namespace TeamOdd.Superpower
             Vector3 direction = GetCrosshairDirection(spawn, context.Caster);
 
             PsychoOrb orb = Object.Instantiate(prefab, spawn, Quaternion.identity);
-            orb.Init(direction, context.Owner, speed, slowSpeed, range, radius, powerPerSecond, tickInterval);
+            orb.Init(direction, context.Owner, speed, slowSpeed, range, radius, powerPerSecond, tickInterval, Sounds);
         }
 
         // 구체가 생기는 곳에서 화면 중앙 조준점으로 가는 방향. 구체가 카메라와 다른 곳에서 출발해도 조준점에 맞도록 카메라 방향 대신 사용

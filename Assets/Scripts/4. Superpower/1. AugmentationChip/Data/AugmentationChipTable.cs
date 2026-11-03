@@ -45,6 +45,7 @@ namespace TeamOdd.Superpower
                     Cost = chipDto.Cost,
                     Params = new SkillParams(chipDto.Params),
                     Prefab = chipDto.PrefabKey == "" ? null : Resources.Load<GameObject>(chipDto.PrefabKey),
+                    Sounds = new SkillSounds(chipDto.Sounds),
                 };
                 SetCommon(def, chipDto);
 
@@ -78,7 +79,7 @@ namespace TeamOdd.Superpower
             return rows;
         }
 
-        // SkillChip.tsv: 공통 여섯 칸 + Category, SkillType, Cooldown, Cost, Params, PrefabKey
+        // SkillChip.tsv: 공통 여섯 칸 + Category, SkillType, Cooldown, Cost, Params, PrefabKey, Sounds
         private static List<SkillChipDTO> ReadSkillChips()
         {
             List<SkillChipDTO> rows = new List<SkillChipDTO>();
@@ -95,6 +96,8 @@ namespace TeamOdd.Superpower
                 chipDto.Params = cells.Length > 10 ? cells[10] : "";
                 // 프리팹이 필요 없는 스킬은 비워 둔다. Resources 폴더 기준 경로 (예: Skill/PsychoOrb)
                 chipDto.PrefabKey = cells.Length > 11 ? cells[11] : "";
+                // 소리가 없는 스킬은 비워 둔다. 적는 방법은 SkillSounds 주석에 있다
+                chipDto.Sounds = cells.Length > 12 ? cells[12] : "";
                 rows.Add(chipDto);
             }
 

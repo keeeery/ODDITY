@@ -19,6 +19,8 @@ namespace TeamOdd.Superpower
     {
         private const float SlamTime = 0.15f;          // 내려찍는 데 걸리는 시간 (초)
         private const float GroundProbeHeight = 50f;   // 보스 아래 바닥을 찾을 거리 (m)
+        private const float RiseStartPitch = 0.6f;     // 들어 올리기 시작할 때 소리 빠르기 (1이면 원래 음)
+        private const float RiseEndPitch = 2f;         // 꼭대기에 닿을 때 소리 빠르기
 
         private readonly float duration;
         private readonly float height;
@@ -151,14 +153,29 @@ namespace TeamOdd.Superpower
             float liftTime = duration - slamTime;
 
             // 들어 올리기: 빠르게 떠올라 꼭대기에서 잠깐 머무는 느낌
-            for (float elapsed = 0f; elapsed < liftTime; elapsed += Time.fixedDeltaTime)
+            // 들어 올리는 동안 반복하는 소리(SkillChip.tsv의 Rise)를 점점 빠르게 틀어 음이 올라가게 한다
+            AudioSource rise = Sounds.PlayLoop("Rise");
+            try
             {
-                if (boss == null) yield break;
+                for (float elapsed = 0f; elapsed < liftTime; elapsed += Time.fixedDeltaTime)
+                {
+                    if (boss == null) yield break;
 
-                float t = 1f - Mathf.Pow(1f - elapsed / liftTime, 3f);
-                body.MovePosition(Vector3.Lerp(start, top, t));
-                yield return new WaitForFixedUpdate();
+                    float t = 1f - Mathf.Pow(1f - elapsed / liftTime, 3f);
+                    body.MovePosition(Vector3.Lerp(start, top, t));
+
+                    if (rise != null) rise.pitch = Mathf.Lerp(RiseStartPitch, RiseEndPitch, elapsed / liftTime);
+
+                    yield return new WaitForFixedUpdate();
+                }
             }
+            finally
+            {
+                // 보스가 중간에 사라져도 소리가 남지 않게 끈다
+                SkillSounds.StopLoop(rise);
+            }
+
+            Sounds.Play("Drop");
 
             // 내려찍기: 갈수록 빨라짐
             for (float elapsed = 0f; elapsed < slamTime; elapsed += Time.fixedDeltaTime)

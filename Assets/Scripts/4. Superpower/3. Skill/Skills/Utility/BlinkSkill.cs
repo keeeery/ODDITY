@@ -47,6 +47,7 @@ namespace TeamOdd.Superpower
             if (controller != null) controller.enabled = true;
 
             Object.Instantiate(exitEffect, caster.position + Vector3.up * EffectHeight, Quaternion.identity);
+            Sounds.Play("Cast");
         }
 
         // 플레이어 몸통(캡슐)을 앞으로 밀어 보아 처음 닿는 벽까지의 거리

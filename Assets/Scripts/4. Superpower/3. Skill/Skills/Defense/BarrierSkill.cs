@@ -32,7 +32,7 @@ namespace TeamOdd.Superpower
                 Object.Destroy(currentEffect);
 
             currentEffect = Object.Instantiate(effect, context.Caster);
-            currentEffect.AddComponent<BarrierEffect>().Bind(context.Owner);
+            currentEffect.AddComponent<BarrierEffect>().Bind(context.Owner, Sounds);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace TeamOdd.Superpower
             spawn.y = 0f;
 
             PsychoTempest storm = Object.Instantiate(prefab, spawn, Quaternion.identity);
-            storm.Init(context.Owner, duration, powerPerSecond, trackSpeed, radius, tickInterval);
+            storm.Init(context.Owner, duration, powerPerSecond, trackSpeed, radius, tickInterval, Sounds);
         }
     }
 }

@@ -27,6 +27,8 @@ namespace TeamOdd.Superpower
         private float radius;
         private int powerPerSecond;
         private float tickInterval;
+        private SkillSounds sounds;
+        private AudioSource hum; // 날아가는 동안 반복하는 웅웅거림 (SkillChip.tsv의 Hum)
 
         // 지금 트리거 안에 들어와 있는 적 콜라이더. 들어오고 나갈 때 OnTriggerEnter/Exit가 고친다
         private readonly List<Collider> touching = new List<Collider>();
@@ -34,7 +36,7 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval)
+        public void Init(Vector3 direction, CombatEntity owner, float speed, float slowSpeed, float range, float radius, int powerPerSecond, float tickInterval, SkillSounds sounds)
         {
             this.direction = direction;
             this.owner = owner;
@@ -44,9 +46,17 @@ namespace TeamOdd.Superpower
             this.radius = radius;
             this.powerPerSecond = powerPerSecond;
             this.tickInterval = tickInterval;
+            this.sounds = sounds;
 
             transform.localScale = Vector3.one * radius * 2f;
+            hum = sounds.PlayLoop("Hum");
             StartCoroutine(Run());
+        }
+
+        // 다 날기 전에 씬이 바뀌어 사라져도 소리가 남지 않게 끈다
+        private void OnDestroy()
+        {
+            SkillSounds.StopLoop(hum);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -91,6 +101,10 @@ namespace TeamOdd.Superpower
         private IEnumerator Collapse()
         {
             Vector3 startScale = transform.localScale;
+
+            // 웅웅거림도 쪼그라드는 동안 줄인다. 줄이는 중에 OnDestroy가 다시 끄지 않도록 비워 둔다
+            SkillSounds.StopLoop(hum, CollapseTime);
+            hum = null;
 
             for (float elapsed = 0f; elapsed < CollapseTime; elapsed += Time.deltaTime)
             {
@@ -146,6 +160,9 @@ namespace TeamOdd.Superpower
                 DamageInfo info = new DamageInfo(damage, collider.ClosestPoint(transform.position), collider);
                 CombatManager.Instance.AddCombatEvent(new DamageEvent(owner, target, info));
             }
+
+            // 적이 여럿이어도 틱마다 한 번만 탁
+            sounds.Play("Tick");
         }
     }
 }

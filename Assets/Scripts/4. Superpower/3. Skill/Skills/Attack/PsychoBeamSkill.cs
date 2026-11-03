@@ -51,7 +51,7 @@ namespace TeamOdd.Superpower
         protected override void Execute(SkillContext context)
         {
             beam = Object.Instantiate(prefab);
-            beam.Init(context.Caster, context.Owner, duration, range, powerPerSecond, tickInterval);
+            beam.Init(context.Caster, context.Owner, duration, range, powerPerSecond, tickInterval, Sounds);
         }
     }
 }

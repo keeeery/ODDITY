@@ -41,6 +41,7 @@ namespace TeamOdd.Superpower
 
             Vector3 center = context.Caster.position;
             Object.Instantiate(effect, center, Quaternion.identity).Play(radius);
+            Sounds.Play("Cast");
 
             Collider[] colliders = Physics.OverlapSphere(center, radius, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 

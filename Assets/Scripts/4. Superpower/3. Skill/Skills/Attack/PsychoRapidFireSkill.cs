@@ -88,6 +88,8 @@ namespace TeamOdd.Superpower
             foreach (PsychokinesisObject shot in shots)
                 shot.BeginHold(casterColliders, context.Owner);
 
+            Sounds.Play("Pull");
+
             try
             {
                 // 끌어오기
@@ -104,6 +106,7 @@ namespace TeamOdd.Superpower
                     if (IsStillHeld(shots[i]) == false) continue;
 
                     shots[i].Release(GetCrosshairDirection(shots[i], context) * speed, true, context.Owner);
+                    Sounds.Play("Fire");
 
                     if (i == shots.Count - 1) yield break;
 

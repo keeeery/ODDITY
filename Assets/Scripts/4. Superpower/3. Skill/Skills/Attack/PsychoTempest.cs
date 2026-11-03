@@ -20,6 +20,7 @@ namespace TeamOdd.Superpower
         private int powerPerSecond;
         private float trackSpeed;
         private float tickInterval; // 피해를 주는 간격 (초)
+        private AudioSource loop;   // 폭풍이 도는 동안 반복하는 소리 (SkillChip.tsv의 Loop)
 
         // 지금 트리거 안에 들어와 있는 적 콜라이더. 들어오고 나갈 때 OnTriggerEnter/Exit가 고친다
         private readonly List<Collider> touching = new List<Collider>();
@@ -27,7 +28,7 @@ namespace TeamOdd.Superpower
         // 콜라이더가 여러 개인 적이 한 번에 여러 번 맞지 않도록 이번 틱에 맞은 것을 담아 둔다
         private readonly List<ICombatable> hitTargets = new List<ICombatable>();
 
-        public void Init(CombatEntity owner, float duration, int powerPerSecond, float trackSpeed, float radius, float tickInterval)
+        public void Init(CombatEntity owner, float duration, int powerPerSecond, float trackSpeed, float radius, float tickInterval, SkillSounds sounds)
         {
             this.owner = owner;
             this.duration = duration;
@@ -36,7 +37,14 @@ namespace TeamOdd.Superpower
             this.tickInterval = tickInterval;
 
             transform.localScale = Vector3.one * radius * 2f;
+            loop = sounds.PlayLoop("Loop");
             StartCoroutine(Run());
+        }
+
+        // 다 돌기 전에 씬이 바뀌어 사라져도 소리가 남지 않게 끈다
+        private void OnDestroy()
+        {
+            SkillSounds.StopLoop(loop);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -82,6 +90,10 @@ namespace TeamOdd.Superpower
             // 새 파티클만 멈추고 이미 나온 파티클은 수명을 마치게 둔 뒤 지운다
             foreach (ParticleSystem particle in GetComponentsInChildren<ParticleSystem>())
                 particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+
+            // 소리도 이펙트와 함께 서서히 줄인다. 줄이는 중에 OnDestroy가 다시 끄지 않도록 비워 둔다
+            SkillSounds.StopLoop(loop, FadeOutTime);
+            loop = null;
 
             Destroy(gameObject, FadeOutTime);
         }

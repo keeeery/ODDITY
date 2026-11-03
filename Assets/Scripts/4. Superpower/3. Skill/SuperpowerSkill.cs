@@ -36,6 +36,9 @@ namespace TeamOdd.Superpower
         public bool IsReady => remainingCooldown <= 0f;
         public float RemainingCooldown => remainingCooldown;
 
+        // SkillChip.tsv의 Sounds 칸. 어떤 이름의 소리를 언제 틀지는 자식 클래스가 정한다
+        protected SkillSounds Sounds { get; private set; }
+
         // 쓴 뒤에도 한동안 시전이 이어지는 스킬(염동 연사 등)이 그동안 true로 둔다. 이 동안 SkillCaster는 다른 스킬을 쓰지 않는다
         public virtual bool IsCasting => false;
 
@@ -77,6 +80,12 @@ namespace TeamOdd.Superpower
         {
             remainingCooldown = Mathf.Max(0f, remainingCooldown - seconds);
             CooldownReduced?.Invoke(this);
+        }
+
+        // 모든 스킬에 공통이라 생성자 대신 SkillFactory가 만든 직후에 넣는다
+        public void BindSounds(SkillSounds sounds)
+        {
+            Sounds = sounds;
         }
 
         // 쿨타임을 바로 끝낸다. 마을과 아레나 사이를 오갈 때 인벤토리가 부른다

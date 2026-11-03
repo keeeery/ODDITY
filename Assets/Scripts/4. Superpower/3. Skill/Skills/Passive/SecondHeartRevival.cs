@@ -42,13 +42,13 @@ namespace TeamOdd.Superpower
         private static readonly int ReviveTrigger = Animator.StringToHash("Revive");
         private static readonly int HitTrigger = Animator.StringToHash("Hit");
 
-        // reviveHp: 일어설 때 맞출 체력
-        public void Play(GameObject heartbeatEffect, int reviveHp)
+        // reviveHp: 일어설 때 맞출 체력, sounds: 쓰러질 때 Heartbeat, 일어설 때 Revive를 튼다 (SkillChip.tsv)
+        public void Play(GameObject heartbeatEffect, int reviveHp, SkillSounds sounds)
         {
-            StartCoroutine(Revive(heartbeatEffect, reviveHp));
+            StartCoroutine(Revive(heartbeatEffect, reviveHp, sounds));
         }
 
-        private IEnumerator Revive(GameObject heartbeatEffect, int reviveHp)
+        private IEnumerator Revive(GameObject heartbeatEffect, int reviveHp, SkillSounds sounds)
         {
             Animator animator = GetComponent<Animator>();
             PlayerController controller = GetComponent<PlayerController>();
@@ -68,6 +68,7 @@ namespace TeamOdd.Superpower
             HitStop.Request(HitStopDuration);
             SlowMotion.Play(FallSlowScale, FallDuration, 0f);
             animator.SetTrigger(SecondHeartTrigger);
+            sounds.Play("Heartbeat"); // 쓰러지는 동안 느려지며 잦아드는 심장 소리
             yield return ChangeWeight(fadeVolume, 0f, 1f, FallDuration);
 
             // 2. 부활
@@ -78,6 +79,7 @@ namespace TeamOdd.Superpower
 
             owner.SetHp(reviveHp);
             Instantiate(heartbeatEffect, transform);
+            sounds.Play("Revive");
             player.CameraController.AddTrauma(ShakeTrauma, ShakeFadeTime);
 
             yield return ChangeWeight(burstVolume, 1f, 0f, BurstDuration);

@@ -53,8 +53,12 @@ namespace TeamOdd.Superpower
             };
 
             if (skill == null)
+            {
                 Debug.LogError($"[SkillFactory] {def.ID}번 칩의 스킬 {def.SkillType}을(를) 만드는 코드가 없습니다.");
+                return null;
+            }
 
+            skill.BindSounds(def.Sounds);
             return skill;
         }
     }

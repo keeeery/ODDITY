@@ -34,6 +34,7 @@ namespace TeamOdd.Superpower
         {
             CombatManager.Instance.AddCombatEvent(new HealEvent(context.Owner, context.Owner, amount));
             OnHealed?.Invoke();
+            Sounds.Play("Cast");
         }
     }
 }

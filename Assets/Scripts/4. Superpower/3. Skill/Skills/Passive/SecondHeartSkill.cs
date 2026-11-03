@@ -26,7 +26,7 @@ namespace TeamOdd.Superpower
         protected override void Execute(SkillContext context)
         {
             int reviveHp = context.Owner.CurrentStats.MaxHp * amount / 100;
-            context.Caster.gameObject.AddComponent<SecondHeartRevival>().Play(effect, reviveHp);
+            context.Caster.gameObject.AddComponent<SecondHeartRevival>().Play(effect, reviveHp, Sounds);
         }
     }
 }
