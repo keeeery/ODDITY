@@ -8,6 +8,14 @@ using UnityEngine.InputSystem;
 
 namespace TeamOdd.Player
 {
+    public enum AttackSoundType
+    {
+        Normal,
+        Pull,
+        Hold,
+        Throw
+    }
+    
     // 플레이어가 맞을지는 CombatEntity.TakeDamage 한 곳에서 정해지고, 그 중 플레이어 몫(회피)은 여기서 답한다 (IDamageGuard)
     // 순서: 구르기·기상 직후 무적 → SkillGuard(패시브 칩). 둘 다 지나 맞기로 정해지면 CombatEntity.Hit을 듣고 피격 반응을 건다
     public class Player : SingletonBase<Player>, IDamageGuard
@@ -23,11 +31,12 @@ namespace TeamOdd.Player
 
         private float lastConsumeTime = float.NegativeInfinity;
         private CombatEntity combatEntity;
+        [SerializeField] private SoundData normalSound, pullSound, holdSound, throwSound;
 
         // 구르기 무적 다음으로 피해 직전·죽기 직전에 물어볼 곳. 증강칩(PassiveSkillRunner)이 자기를 넣는다. 없으면 null
         public IDamageGuard SkillGuard { get; set; }
 
-        public CharacterController CharacterController;
+        public CharacterController CharacterController { get; private set; }
         public CameraController CameraController;
         public PlayerController PlayerController;
         
@@ -94,6 +103,19 @@ namespace TeamOdd.Player
         }
 
         public bool PreventDeath() => SkillGuard != null && SkillGuard.PreventDeath();
+        
+        public void PlayAttackSound(AttackSoundType type)
+        {
+            SoundData sound = type switch
+            {
+                AttackSoundType.Normal => normalSound,
+                AttackSoundType.Pull   => pullSound,
+                AttackSoundType.Hold   => holdSound,
+                AttackSoundType.Throw  => throwSound,
+                _ => null
+            };
+            sound?.Play();
+        }
 
         private void HandleHit(DamageEvent damageEvent)
         {

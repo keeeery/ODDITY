@@ -584,12 +584,12 @@ MonoBehaviour:
   sounds:
   - time: 0.36
     sound:
-      clipName: 
-      volume: 1
+      clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
+      volume: 0.75
   - time: 0.87
     sound:
-      clipName: 
-      volume: 1
+      clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
+      volume: 0.75
 --- !u!1101 &-91263837108623531
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -895,7 +895,6 @@ AnimatorState:
   - {fileID: -1381892269511316360}
   m_StateMachineBehaviours:
   - {fileID: -3911888194047828791}
-  - {fileID: 5100764065673098581}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1322,27 +1321,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!114 &5100764065673098581
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86802dd4e8f60e9478073cde80078a2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
-  sounds:
-  - time: 0.42
-    sound:
-      clipName: Player/SFX_PK_Step_Tile_Loop_02
-      volume: 1
-  - time: 0.8
-    sound:
-      clipName: Player/SFX_PK_Step_Tile_Loop_02
-      volume: 1
 --- !u!1102 &5203817746210940001
 AnimatorState:
   serializedVersion: 6
@@ -1504,10 +1482,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.AnimStateSoundSender
   sounds:
-  - time: 0.325
+  - time: 0.26
     sound:
-      clipName: Player/SFX_PK_Step_Tile_Loop_02
-      volume: 1
+      clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
+      volume: 0.75
+  - time: 0.8
+    sound:
+      clipName: Player/Move/SFX_PK_Step_Tile_Loop_02
+      volume: 0.75
 --- !u!1102 &5446206025688810471
 AnimatorState:
   serializedVersion: 6
