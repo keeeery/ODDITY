@@ -5,40 +5,78 @@ using UnityEngine;
 
 namespace TeamOdd.Boss
 {
-    // 보스 피격 연출: 모든 피격은 윤곽 번쩍임, 중간 피격부터 충격·점광원·입자와 히트스탑, 강한 피격은 더 큰 충격과 카메라 흔들림도 더함
+    // 보스 피격 연출: 모든 피격은 윤곽 번쩍임과 충격·점광원·입자, 중간 피격은 더 큰 충격과 히트스탑·카메라 흔들림을 더하고
+    // (약한 피격은 기본 공격처럼 자주 들어와 히트스탑을 걸지 않음)
+    // 강한 피격은 가장 큰 충격·밝은 점광원·긴 히트스탑·센 흔들림에 카메라 줌 펀치까지 더함
+    // 구간은 받은 피해를 공격자의 현재 공격력과 비교해 정하므로, 공격력 칩을 끼거나 보스가 달라도 같은 공격은 같은 구간이 된다.
     // 숨을 끊는 피격(마무리 일격)은 가장 큰 충격과 많은 입자를 슬로모션 배율대로 느리게 퍼뜨림, 히트스탑·번쩍임·흔들림은 사망 상태가 맡음
     // 루트 캡슐 기준 맞은 지점은 허공일 수 있어, 충격은 부위 콜라이더 표면으로 옮겨서 터뜨린다.
     [DisallowMultipleComponent]
     public sealed class BossHitFeedback : MonoBehaviour
     {
+        private enum HitTier
+        {
+            Weak,
+            Medium,
+            Strong
+        }
+
         [Title("Hit Flash")]
         [Tooltip("윤곽이 번쩍였다가 사라지는 시간(초)")]
         [SerializeField, Min(0.01f)] private float flashDuration = 0.12f;
 
+        [Title("Tier Threshold")]
+        [Tooltip("실제로 받은 피해(방어력을 뺀 값)가 공격자 현재 공격력 × 이 값 이상이면 중간 피격, 강한 피격 조건을 먼저 적용한다.")]
+        [SerializeField, Min(0.1f)] private float mediumHitAtkScale = 2.5f;
+        [Tooltip("실제로 받은 피해가 공격자 현재 공격력 × 이 값 이상이거나 Knockdown 공격이면 강한 피격으로 본다.")]
+        [SerializeField, Min(0.1f)] private float strongHitAtkScale = 6f;
+        [Tooltip("공격자의 공격력을 알 수 없을 때(공격자가 사라졌거나 CombatEntity가 아닐 때) 대신 쓰는 공격력")]
+        [SerializeField, Min(1)] private int fallbackAtk = 10;
+
         [Title("Medium Hit")]
-        [Tooltip("실제로 받은 피해(방어력을 뺀 값)가 이 값 이상이면 중간 피격, 강한 피격 조건을 먼저 적용한다.")]
-        [SerializeField, Min(1)] private int mediumHitDamage = 20;
         [Tooltip("중간 피격의 히트스탑 시간(초), 0이면 쓰지 않음")]
-        [SerializeField, Min(0f)] private float mediumHitStop = 0.03f;
+        [SerializeField, Min(0f)] private float mediumHitStop = 0.07f;
+        [Tooltip("중간 피격의 카메라 trauma(0~1), 실제 세기는 trauma², 0이면 쓰지 않음")]
+        [SerializeField, Range(0f, 1f)] private float mediumShakeTrauma = 0.45f;
+        [Tooltip("중간 피격의 카메라 흔들림이 사라지는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float mediumShakeFadeTime = 0.3f;
+        [Tooltip("중간 피격의 충격 크기 배율, 약한 피격의 Impact Size 기준")]
+        [SerializeField, Min(1f)] private float mediumImpactSizeMultiplier = 1.5f;
+        [Tooltip("중간 피격의 입자 수 배율, Debris Count 기준")]
+        [SerializeField, Min(1f)] private float mediumDebrisCountMultiplier = 2f;
+        [Tooltip("중간 피격의 입자 속도 배율, 높일수록 더 멀리 퍼진다.")]
+        [SerializeField, Min(1f)] private float mediumDebrisSpeedMultiplier = 1.2f;
 
         [Title("Strong Hit")]
-        [Tooltip("실제로 받은 피해(방어력을 뺀 값)가 이 값 이상이거나 Knockdown 공격이면 강한 피격으로 본다.")]
-        [SerializeField, Min(1)] private int strongHitDamage = 60;
         [Tooltip("강한 피격의 히트스탑 시간(초), 0이면 쓰지 않음")]
-        [SerializeField, Min(0f)] private float strongHitStop = 0.07f;
+        [SerializeField, Min(0f)] private float strongHitStop = 0.12f;
         [Tooltip("강한 피격의 카메라 trauma(0~1), 실제 세기는 trauma², 0이면 쓰지 않음")]
-        [SerializeField, Range(0f, 1f)] private float strongShakeTrauma = 0.45f;
+        [SerializeField, Range(0f, 1f)] private float strongShakeTrauma = 0.7f;
         [Tooltip("강한 피격의 카메라 흔들림이 사라지는 시간(초)")]
-        [SerializeField, Min(0.01f)] private float strongShakeFadeTime = 0.3f;
-        [Tooltip("강한 피격의 충격 크기 배율, 중간 피격의 Impact Size 기준")]
-        [SerializeField, Min(1f)] private float strongImpactSizeMultiplier = 1.5f;
+        [SerializeField, Min(0.01f)] private float strongShakeFadeTime = 0.45f;
+        [Tooltip("강한 피격의 충격 크기 배율, 약한 피격의 Impact Size 기준")]
+        [SerializeField, Min(1f)] private float strongImpactSizeMultiplier = 2.3f;
+        [Tooltip("강한 피격의 충격이 터졌다가 사라지는 시간(초), 약한·중간 피격은 Impact Duration을 쓴다.")]
+        [SerializeField, Min(0.05f)] private float strongImpactDuration = 0.45f;
         [Tooltip("강한 피격의 입자 수 배율, Debris Count 기준")]
-        [SerializeField, Min(1f)] private float strongDebrisCountMultiplier = 2f;
+        [SerializeField, Min(1f)] private float strongDebrisCountMultiplier = 3.5f;
         [Tooltip("강한 피격의 입자 속도 배율, 높일수록 더 멀리 퍼진다.")]
-        [SerializeField, Min(1f)] private float strongDebrisSpeedMultiplier = 1.2f;
+        [SerializeField, Min(1f)] private float strongDebrisSpeedMultiplier = 1.45f;
+        [Tooltip("강한 피격의 입자 크기 배율, Debris Size 기준")]
+        [SerializeField, Min(1f)] private float strongDebrisSizeMultiplier = 1.5f;
+        [Tooltip("강한 피격의 입자가 남아 있는 시간 배율, Debris Lifetime 기준")]
+        [SerializeField, Min(1f)] private float strongDebrisLifetimeMultiplier = 1.5f;
+        [Tooltip("강한 피격 점광원의 세기·닿는 거리 배율, Impact Light 기준")]
+        [SerializeField, Min(1f)] private float strongLightMultiplier = 1.6f;
+        [Tooltip("강한 피격에 카메라 FOV를 좁히는 각도(도), 0이면 줌 펀치를 하지 않는다.")]
+        [SerializeField, Range(0f, 15f)] private float strongZoomFov = 3f;
+        [Tooltip("강한 피격 줌 펀치에서 FOV를 좁히는 데 걸리는 시간(실제 초)")]
+        [SerializeField, Min(0.01f)] private float strongZoomInDuration = 0.05f;
+        [Tooltip("강한 피격 줌 펀치에서 FOV를 되돌리는 시간(실제 초), 히트스탑이 끝난 뒤부터 되돌린다.")]
+        [SerializeField, Min(0.01f)] private float strongZoomReleaseDuration = 0.25f;
 
         [Title("Finishing Hit")]
-        [Tooltip("마무리 일격의 충격 크기 배율, 중간 피격의 Impact Size 기준")]
+        [Tooltip("마무리 일격의 충격 크기 배율, 약한 피격의 Impact Size 기준")]
         [SerializeField, Min(1f)] private float finishImpactSizeMultiplier = 3.8f;
         [Tooltip("마무리 일격의 입자 수 배율, Debris Count 기준")]
         [SerializeField, Min(1f)] private float finishDebrisCountMultiplier = 10f;
@@ -70,7 +108,7 @@ namespace TeamOdd.Boss
         [Title("Impact")]
         [Tooltip("TeamOdd/Hit Impact 셰이더 머티리얼, 빛줄기 굵기·베기 섬광 세기·타원 정도·몸에 가려지는 정도는 머티리얼에서 조정한다.")]
         [SerializeField] private Material impactMaterial;
-        [Tooltip("중간 피격의 충격 크기(m), 빛줄기가 뻗는 지름, 강한 피격은 배율을 곱한다.")]
+        [Tooltip("약한 피격의 충격 크기(m), 빛줄기가 뻗는 지름, 중간·강한 피격은 배율을 곱한다.")]
         [SerializeField, Min(0.1f)] private float impactSize = 3f;
         [Tooltip("충격이 터졌다가 사라지는 시간(초)")]
         [SerializeField, Min(0.05f)] private float impactDuration = 0.3f;
@@ -115,11 +153,10 @@ namespace TeamOdd.Boss
         private HitFlash flash;
         private CombatManager combatManager;
         private Collider[] bodyParts;
-        private HitImpact[] impacts;
-        private HitImpact[] strongImpacts;
+        // 구간마다 크기·입자 설정이 달라 따로 돌려 씀, HitTier 순서
+        private readonly HitImpact[][] impactPools = new HitImpact[3][];
+        private readonly int[] nextImpacts = new int[3];
         private HitImpact finishImpact;
-        private int nextImpact;
-        private int nextStrongImpact;
 
         private void Awake()
         {
@@ -143,8 +180,7 @@ namespace TeamOdd.Boss
         {
             if (combatManager != null) combatManager.OnDamageEventExecuted -= HandleDamageExecuted;
 
-            DestroyImpacts(impacts);
-            DestroyImpacts(strongImpacts);
+            foreach (HitImpact[] pool in impactPools) DestroyImpacts(pool);
             if (finishImpact != null) finishImpact.DestroyAfterPlaying();
         }
 
@@ -166,48 +202,74 @@ namespace TeamOdd.Boss
             }
 
             flash.Play(flashDuration);
-            if (receivedDamage >= strongHitDamage || damageEvent.Info.Reaction == HitReaction.Knockdown)
+            HitTier tier = GetTier(damageEvent, receivedDamage);
+            PlayImpact(SnapToBody(damageEvent.Info.HitPoint), tier);
+            switch (tier)
             {
-                PlayImpact(SnapToBody(damageEvent.Info.HitPoint), true);
-                HitStop.Request(strongHitStop);
-                ShakeCamera(strongShakeTrauma);
-            }
-            else if (receivedDamage >= mediumHitDamage)
-            {
-                PlayImpact(SnapToBody(damageEvent.Info.HitPoint), false);
-                HitStop.Request(mediumHitStop);
+                case HitTier.Strong:
+                    HitStop.Request(strongHitStop);
+                    ShakeCamera(strongShakeTrauma, strongShakeFadeTime);
+                    PunchZoom();
+                    break;
+                case HitTier.Medium:
+                    HitStop.Request(mediumHitStop);
+                    ShakeCamera(mediumShakeTrauma, mediumShakeFadeTime);
+                    break;
             }
         }
 
-        private void ShakeCamera(float trauma)
+        // 공격력 칩·정당한 보복으로 오른 공격력까지 반영하도록 맞을 때마다 공격자의 현재 공격력을 읽음
+        private HitTier GetTier(DamageEvent damageEvent, int receivedDamage)
+        {
+            if (damageEvent.Info.Reaction == HitReaction.Knockdown) return HitTier.Strong;
+
+            int atk = damageEvent.Sender is CombatEntity attacker && attacker != null ? attacker.CurrentStats.Atk : 0;
+            if (atk <= 0) atk = fallbackAtk;
+
+            if (receivedDamage >= atk * strongHitAtkScale) return HitTier.Strong;
+            if (receivedDamage >= atk * mediumHitAtkScale) return HitTier.Medium;
+            return HitTier.Weak;
+        }
+
+        private static void ShakeCamera(float trauma, float fadeTime)
         {
             if (trauma <= 0f) return;
 
             Player.Player player = Player.Player.Instance;
-            if (player != null && player.CameraController != null) player.CameraController.AddTrauma(trauma, strongShakeFadeTime);
+            if (player != null && player.CameraController != null) player.CameraController.AddTrauma(trauma, fadeTime);
         }
 
-        private void PlayImpact(Vector3 position, bool isStrong)
+        // 히트스탑 동안 좁힌 채로 머물렀다가 풀리면 되돌림
+        private void PunchZoom()
+        {
+            if (strongZoomFov <= 0f) return;
+
+            Player.Player player = Player.Player.Instance;
+            if (player == null || player.CameraController == null) return;
+
+            float hold = Mathf.Max(0f, strongHitStop - strongZoomInDuration);
+            player.CameraController.PunchFov(strongZoomFov, strongZoomInDuration, hold, strongZoomReleaseDuration);
+        }
+
+        private void PlayImpact(Vector3 position, HitTier tier)
         {
             if (impactMaterial == null) return;
 
-            HitImpact impact;
-            if (isStrong)
-            {
-                strongImpacts ??= CreateImpacts(true);
-                impact = strongImpacts[nextStrongImpact];
-                nextStrongImpact = (nextStrongImpact + 1) % strongImpacts.Length;
-            }
-            else
-            {
-                impacts ??= CreateImpacts(false);
-                impact = impacts[nextImpact];
-                nextImpact = (nextImpact + 1) % impacts.Length;
-            }
+            int poolIndex = (int)tier;
+            HitImpact[] pool = impactPools[poolIndex] ??= CreateImpacts(tier);
+            HitImpact impact = pool[nextImpacts[poolIndex]];
+            nextImpacts[poolIndex] = (nextImpacts[poolIndex] + 1) % pool.Length;
 
-            float size = isStrong ? impactSize * strongImpactSizeMultiplier : impactSize;
-            impact.Play(position, size, impactDuration, impactTowardCamera, impactRollRange);
+            float duration = tier == HitTier.Strong ? strongImpactDuration : impactDuration;
+            impact.Play(position, GetImpactSize(tier), duration, impactTowardCamera, impactRollRange);
         }
+
+        private float GetImpactSize(HitTier tier) => tier switch
+        {
+            HitTier.Strong => impactSize * strongImpactSizeMultiplier,
+            HitTier.Medium => impactSize * mediumImpactSizeMultiplier,
+            _ => impactSize
+        };
 
         // 한 번뿐이라 풀 없이 처음 쓸 때 하나만 만듦
         private void PlayFinishImpact(Vector3 position)
@@ -230,17 +292,32 @@ namespace TeamOdd.Boss
             finishImpact.Play(position, size, finishImpactDuration, impactTowardCamera, finishImpactRollRange);
         }
 
-        private HitImpact[] CreateImpacts(bool isStrong)
+        private HitImpact[] CreateImpacts(HitTier tier)
         {
-            int count = isStrong ? Mathf.RoundToInt(debrisCount * strongDebrisCountMultiplier) : debrisCount;
-            Vector2 speed = isStrong ? debrisSpeed * strongDebrisSpeedMultiplier : debrisSpeed;
-            float size = isStrong ? impactSize * strongImpactSizeMultiplier : impactSize;
+            float countScale = 1f, speedScale = 1f, particleSizeScale = 1f, lifetimeScale = 1f, lightScale = 1f;
+            if (tier == HitTier.Medium)
+            {
+                countScale = mediumDebrisCountMultiplier;
+                speedScale = mediumDebrisSpeedMultiplier;
+            }
+            else if (tier == HitTier.Strong)
+            {
+                countScale = strongDebrisCountMultiplier;
+                speedScale = strongDebrisSpeedMultiplier;
+                particleSizeScale = strongDebrisSizeMultiplier;
+                lifetimeScale = strongDebrisLifetimeMultiplier;
+                lightScale = strongLightMultiplier;
+            }
+
+            int count = Mathf.RoundToInt(debrisCount * countScale);
+            float size = GetImpactSize(tier);
             HitImpact[] result = new HitImpact[impactPoolSize];
             for (int index = 0; index < result.Length; index++)
             {
-                result[index] = HitImpact.Create(impactMaterial, $"{name} Hit Impact");
-                result[index].SetLight(impactLightColor, impactLightIntensity, impactLightRange);
-                result[index].SetDebris(debrisMaterial, count, speed, debrisLifetime, debrisSize, size * debrisSpawnRadius, debrisTipColor, debrisSpawnFill);
+                result[index] = HitImpact.Create(impactMaterial, $"{name} {tier} Hit Impact");
+                result[index].SetLight(impactLightColor, impactLightIntensity * lightScale, impactLightRange * lightScale);
+                result[index].SetDebris(debrisMaterial, count, debrisSpeed * speedScale, debrisLifetime * lifetimeScale,
+                    debrisSize * particleSizeScale, size * debrisSpawnRadius, debrisTipColor, debrisSpawnFill);
             }
             return result;
         }

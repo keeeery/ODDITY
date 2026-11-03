@@ -20313,15 +20313,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossHitFeedback
   flashDuration: 0.12
-  mediumHitDamage: 20
-  mediumHitStop: 0.03
-  strongHitDamage: 60
-  strongHitStop: 0.07
-  strongShakeTrauma: 0.45
-  strongShakeFadeTime: 0.3
-  strongImpactSizeMultiplier: 1.5
-  strongDebrisCountMultiplier: 2
-  strongDebrisSpeedMultiplier: 1.2
+  mediumHitStop: 0.07
+  mediumShakeTrauma: 0.45
+  mediumShakeFadeTime: 0.3
+  mediumImpactSizeMultiplier: 1.5
+  mediumDebrisCountMultiplier: 2
+  mediumDebrisSpeedMultiplier: 1.2
   finishImpactSizeMultiplier: 3.8
   finishDebrisCountMultiplier: 10
   finishDebrisSpeedMultiplier: 1.7
@@ -32804,7 +32801,7 @@ PrefabInstance:
       objectReference: {fileID: 1982781878}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: attackInterval
-      value: 0.6
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: pickupDistance
