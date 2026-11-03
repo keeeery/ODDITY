@@ -69,6 +69,12 @@ namespace TeamOdd.Boss
         [SerializeField, Min(0f)] private float pullBackHold = 2f;
         [SerializeField, Min(0f)] private float pullBackRelease = 1.5f;
 
+        [Title("Sound")]
+        [Tooltip("몸이 땅에 닿을 때 소리, 마무리 일격 소리는 BossHitFeedback이 맡는다.")]
+        [SerializeField] private SoundData impactSound;
+        [Tooltip("홀로그램으로 바뀌어 흩어지기 시작할 때 소리, 기본 클립은 BossDeathShed 기본 시간(나타남 0.2 → 머묾 0.6 → 사라짐 1.8초)에 맞춰 만들어 그 값을 바꾸면 클립도 다시 맞춰야 한다.")]
+        [SerializeField] private SoundData shedSound;
+
         private CombatEntity entity;
         private BossFootDust footDust;
         private BossDeathResidue residue;
@@ -181,6 +187,7 @@ namespace TeamOdd.Boss
             impactClockTime = Clock.LocalTime;
             if (footDust != null) footDust.PlayBodyLanding(dustAmount);
             if (residue != null) residue.Play();
+            impactSound.Play();
             ShakeCamera(impactShakeTrauma, impactShakeFadeTime);
 
             Player.Player player = Player.Player.Instance;
@@ -191,7 +198,10 @@ namespace TeamOdd.Boss
         private void PlayShed()
         {
             hasShed = true;
-            if (shed != null) shed.Play();
+            if (shed == null) return;
+
+            shed.Play();
+            shedSound.Play();
         }
 
         private void ShakeCamera(float trauma, float fadeTime)

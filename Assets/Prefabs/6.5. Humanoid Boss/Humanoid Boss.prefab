@@ -1387,7 +1387,7 @@ MonoBehaviour:
   idleCrossFade: 0.4
   shatterSound:
     clipName: Humanoid/dimension crash
-    volume: 0.7
+    volume: 0.4
   shatterSoundLead: 0.09
   damageRatio: 1
   minHpRatio: 0.2
@@ -2463,6 +2463,12 @@ MonoBehaviour:
   pullBackDuration: 2.5
   pullBackHold: 2
   pullBackRelease: 1.5
+  impactSound:
+    clipName: Boss/Death/SFX_Boss_Death_Collapse
+    volume: 0.75
+  shedSound:
+    clipName: Boss/Death/SFX_Boss_Death_Dissolve
+    volume: 0.45
 --- !u!1 &5854567238708996988
 GameObject:
   m_ObjectHideFlags: 0

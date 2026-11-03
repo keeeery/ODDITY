@@ -785,6 +785,12 @@ MonoBehaviour:
   pullBackDuration: 2.5
   pullBackHold: 2
   pullBackRelease: 1.5
+  impactSound:
+    clipName: Boss/Death/SFX_Boss_Death_Collapse
+    volume: 0.75
+  shedSound:
+    clipName: Boss/Death/SFX_Boss_Death_Dissolve
+    volume: 0.45
 --- !u!1 &571707755603245690
 GameObject:
   m_ObjectHideFlags: 0
