@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258f1770b7f14ea5881c8ffa98ea7acb, type: 3}
   m_Name: ReadableTextStyle
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.ReadableTextStyle
-  font: {fileID: 11400000, guid: 67030cfd0846444148b748c4f12766fc, type: 2}
-  material: {fileID: 2100000, guid: dce4fea0a223476195a3690a23491ee3, type: 2}
+  font: {fileID: 11400000, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
+  material: {fileID: 2100000, guid: 854df27b2793465799a684ecb666c52c, type: 2}

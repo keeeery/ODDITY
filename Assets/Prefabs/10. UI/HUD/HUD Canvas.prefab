@@ -1523,8 +1523,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.UI.SystemMessage
   text: {fileID: 2130793764096732008}
-  normalColor: {r: 0.84705883, g: 0.8235294, b: 0.76862746, a: 1}
-  warningColor: {r: 0.7686275, g: 0.5764706, b: 0.2901961, a: 1}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0.68, b: 0.2, a: 1}
   fadeInDuration: 0.15
   holdDuration: 1.8
   fadeOutDuration: 0.4
@@ -2008,8 +2008,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 67030cfd0846444148b748c4f12766fc, type: 2}
-  m_sharedMaterial: {fileID: 1560366891041958691, guid: 67030cfd0846444148b748c4f12766fc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
+  m_sharedMaterial: {fileID: -5628987093634180009, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2033,8 +2033,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21
-  m_fontSizeBase: 21
+  m_fontSize: 23
+  m_fontSizeBase: 23
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
