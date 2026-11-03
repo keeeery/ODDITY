@@ -23304,7 +23304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.BGMPlayer
   bgm:
     clipName: BGM/For Test/bgm-test-03
-    volume: 0.5
+    volume: 0.25
   fadeTime: 0.5
 --- !u!4 &598615621
 Transform:
