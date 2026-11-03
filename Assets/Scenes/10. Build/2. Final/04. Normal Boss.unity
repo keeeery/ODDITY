@@ -61919,6 +61919,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: overridePsychoSlamDamage
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: CameraController
       value: 
@@ -61941,39 +61945,23 @@ PrefabInstance:
       objectReference: {fileID: 1982781878}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: attackInterval
-      value: 0.6
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: pickupDistance
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: tankObjectDamage
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: attackGroggyScale
       value: 0.27
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: largeObjectDamage
-      value: 110
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: objectGroggyScale
-      value: 0.3
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: scaleAttackGroggy
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: smallObjectDamage
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: mediumObjectDamage
-      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: queryLayers.m_Bits
@@ -61990,10 +61978,6 @@ PrefabInstance:
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: objectMassThresholds.y
       value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: objectMassThresholds.z
-      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1595685480918527147, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: holdStaminaCostPerSecond
@@ -62039,18 +62023,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: chipIds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: 'chipIds.Array.data[0]'
+      value: 2302
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: 'chipIds.Array.data[1]'
+      value: 2102
+      objectReference: {fileID: 0}
     - target: {fileID: 2920962985299418174, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: maxHpOverride
-      value: 1000
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Stats>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 96facd5f2705d4946a19e1f684e974ca, type: 2}
+      objectReference: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Collider>k__BackingField
       value: 
@@ -62058,22 +62054,6 @@ PrefabInstance:
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: NeedRollStamina
       value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: overridePsychoSlamDamage
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.data[0]
-      value: 2302
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.data[1]
-      value: 2102
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

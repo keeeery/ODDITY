@@ -37,6 +37,9 @@ namespace TeamOdd
         [SerializeField, Min(0.01f)] private float settleDuration = 0.6f;
         [SerializeField, Range(0f, 1f)] private float settleGlitch = 0.5f;
 
+        [Title("SFX Settings")]
+        [SerializeField] private SoundData fadeInSound;
+
         private Sequence sequence;
         private bool isLoading;
 
@@ -81,7 +84,7 @@ namespace TeamOdd
             isLoading = false;
         }
 
-        [Button]
+        [Title("Function Test"), Button]
         public void LoadScene(string sceneName)
         {
             _ = LoadSceneAsync(sceneName);
@@ -129,6 +132,8 @@ namespace TeamOdd
         // 꺼진 화면에서 점이 켜짐 → 가로 선으로 늘어남 → 위아래로 펼쳐짐 → 남은 글리치가 사그라듦
         private UniTask PlayFadeIn()
         {
+            fadeInSound.Play();
+            
             float dotEnd = dotAppearDuration;
             float expandEnd = dotEnd + expandDuration;
             float unfoldEnd = expandEnd + unfoldDuration;
