@@ -1,4 +1,5 @@
 ﻿using Study.MiniDefence;
+using TeamOdd.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,11 +21,13 @@ namespace TeamOdd.Mission
 
         private string stageSceneName;
         private MissionDef selectedMission;
+        private Color bossImageEmptyColor;
 
         private void Awake()
         {
             missionTable = new MissionTable();
             missionTable.Load();
+            bossImageEmptyColor = bossImage.color;
 
             for (int i = 0; i < missionNames.Length; i++)
             {
@@ -44,6 +47,8 @@ namespace TeamOdd.Mission
 
             bossName.SetText(missionDef.BossName);
             bossImage.sprite = missionDef.BossSprite;
+            // 그림이 있으면 원래 색으로, 없으면 빈 칸 색으로 (StageMoveUI와 같게)
+            bossImage.color = missionDef.BossSprite != null ? Color.white : bossImageEmptyColor;
             missionDescription.SetText($"{missionDef.MissionDescription} \n Reward : {missionDef.Reward}");
             stageSceneName = missionDef.NextStageName;
             Debug.Log(stageSceneName);
@@ -52,6 +57,17 @@ namespace TeamOdd.Mission
         // 선택한 미션을 Quest List UI 에 추가한다. 이동은 Stage Move NPC 에서 한다.
         // 추가하지 못하면 ClickFail UI 에 이유를 띄운다.
         public void RegisterMission()
+        {
+            if (TryRegisterMission()) CloseUI();
+        }
+
+        // 선택한 미션을 수락하고 바로 그 스테이지로 이동한다. 수락하지 못하면 이동하지 않고 이유를 띄운다.
+        public void RegisterAndMove()
+        {
+            if (TryRegisterMission()) MoveToNextStage();
+        }
+
+        private bool TryRegisterMission()
         {
             string failMessage = missionListUI.AddMission(selectedMission) switch
             {
@@ -62,10 +78,14 @@ namespace TeamOdd.Mission
             };
 
             if (failMessage == null)
-                return;
+            {
+                SystemMessage.Show($"{selectedMission.QuestName} 퀘스트를 수락했습니다.");
+                return true;
+            }
 
             clickFailText.SetText(failMessage);
             clickFailUI.SetActive(true);
+            return false;
         }
         
         public void MoveToNextStage()

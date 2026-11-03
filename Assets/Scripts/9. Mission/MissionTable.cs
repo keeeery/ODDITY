@@ -31,6 +31,8 @@ namespace Study.MiniDefence
             foreach (MissionDTO missionDto in rows)
             {
                 Sprite bossSprite = Resources.Load<Sprite>(missionDto.BossSpriteKey);
+                if (bossSprite == null && string.IsNullOrEmpty(missionDto.BossSpriteKey) == false)
+                    Debug.LogWarning($"[MissionTable] 보스 그림을 찾지 못했습니다: Resources/{missionDto.BossSpriteKey} (임무 {missionDto.ID})");
 
                 defs[missionDto.ID] = new MissionDef
                 {
