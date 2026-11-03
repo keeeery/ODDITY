@@ -21,7 +21,7 @@ namespace TeamOdd.UI
     // 시네마틱 메인 화면 씬(TitleCinematicDirector)을 새로 만든다.
     // - Hard Boss 씬의 맵·볼륨·조명 설정과 보스/플레이어 위치를 가져와 같은 아레나에서 1인칭으로 보스를 마주 보게 둔다
     // - 보스와 던질 물체는 프리팹에서 꺼내 게임 스크립트를 떼어 내고 애니메이터만 남긴다 (매니저 없이 연출만 돌도록)
-    // - 씬 이동 연출(Scene Load)과 EventSystem은 기존 Title 씬에서 복사한다
+    // - 씬 이동 연출(Scene Load)·사운드(Sound)·EventSystem은 기존 Title 씬에서 복사한다 (Sound가 없으면 씬 이동 때 BGM을 틀다 멈춤)
     // - 메뉴 UI는 Arcanist 메인 화면처럼 왼쪽에 제목·글자 버튼, 오른쪽에 회전하는 홀로그램 보스와 스캔 표시, 먼지를 둔다
     // 다시 실행하면 같은 경로의 씬을 덮어쓴다. 빌드 설정에는 넣지 않는다.
     public static partial class TitleCinematicSceneBuilder
@@ -80,6 +80,7 @@ namespace TeamOdd.UI
             Scene title = EditorSceneManager.OpenScene(TitleScenePath, OpenSceneMode.Additive);
             GameObject sceneLoad = FindRoot(title, "Scene Load");
             GameObject eventSystem = FindRoot(title, "EventSystem");
+            GameObject sound = FindRoot(title, "Sound");
 
             // 2) 새 씬에 복사
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
@@ -95,6 +96,7 @@ namespace TeamOdd.UI
 
             if (sceneLoad != null) Copy(sceneLoad, null);
             if (eventSystem != null) Copy(eventSystem, null);
+            if (sound != null) Copy(sound, null);
 
             EditorSceneManager.CloseScene(title, true);
             EditorSceneManager.CloseScene(source, true);

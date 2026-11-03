@@ -72303,7 +72303,7 @@ PrefabInstance:
       objectReference: {fileID: 1433546535}
     - target: {fileID: 4391235115479835729, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: maxHpOverride
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4554608892249188006, guid: b7936b8f942af9a479cfd5e7c0bed674, type: 3}
       propertyPath: jump.damage
@@ -78111,7 +78111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: maxHpOverride
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4790431442688611916, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: <Stats>k__BackingField
