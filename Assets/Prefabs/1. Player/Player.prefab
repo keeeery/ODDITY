@@ -264,16 +264,16 @@ MonoBehaviour:
   staminaRegenDelay: 1
   normalSound:
     clipName: Player/Attack/Normal Attack
-    volume: 1
+    volume: 0.25
   pullSound:
     clipName: Player/Attack/SFX_Vefects_Projectile_Burst_01
-    volume: 1
+    volume: 0.25
   holdSound:
     clipName: Player/Attack/Hold Object
-    volume: 1
+    volume: 0.25
   throwSound:
     clipName: Player/Attack/SFX_Vefects_Zap_Medium_02
-    volume: 1
+    volume: 0.25
   CameraController: {fileID: 0}
   PlayerController: {fileID: 6101258613780513084}
 --- !u!114 &6101258613780513084
