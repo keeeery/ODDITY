@@ -1,7 +1,7 @@
 Shader "Hidden/TeamOdd/Telegraph Mask"
 {
-    // 보스·플레이어 몸이 보이는 픽셀에 스텐실 비트(128)를 표시해, 공격 범위 예고(BossTelegraph)가 그 위에 그려지지 않게 함
-    // TelegraphMaskFeature가 불투명 렌더링 직후 등록된 렌더러를 이 셰이더로 다시 그린다. 색과 깊이는 바꾸지 않는다.
+    // 바닥(Ground 레이어) 외의 물체와 보스·플레이어 몸이 보이는 픽셀에 스텐실 비트(128)를 표시해, 공격 범위 예고(BossTelegraph)가 그 위에 그려지지 않게 함
+    // TelegraphMaskFeature가 불투명 렌더링 직후 해당 렌더러를 이 셰이더로 다시 그린다. 색과 깊이는 바꾸지 않는다.
     SubShader
     {
         Tags { "RenderPipeline"="UniversalPipeline" }
