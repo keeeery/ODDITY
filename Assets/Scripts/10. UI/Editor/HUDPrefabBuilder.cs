@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -17,6 +18,10 @@ namespace TeamOdd.UI
         private const string HUDPrefabPath = PrefabFolder + "/HUD Canvas.prefab";
         private const string DeathScreenPrefabPath = PrefabFolder + "/DeathScreen.prefab";
         private const string BossIntroTitlePrefabPath = PrefabFolder + "/BossIntroTitle.prefab";
+
+        private const string SystemMessageName = "SystemMessage";
+        private const string SystemMessageFontPath = "Assets/Font/Pretendard/Pretendard-Medium SDF.asset";
+        private const string SystemMessageMaterialPath = "Assets/Font/Pretendard/Pretendard-Medium SDF - System Message.mat";
 
         private static readonly Vector2 ReferenceResolution = new(1920f, 1080f);
 
@@ -61,6 +66,97 @@ namespace TeamOdd.UI
             }
 
             Debug.Log($"[{nameof(HUDPrefabBuilder)}] {PrefabFolder} 에 HUD 프리팹 저장 완료.");
+        }
+
+        // 기상기 슬롯(화면 아래에서 약 184px) 바로 위에 시스템 안내 한 줄을 HUD 프리팹에 넣는다. 이미 있으면 위치·글꼴만 다시 맞춘다.
+        [MenuItem("Tools/UI/HUD/3. Add System Message To HUD Prefab")]
+        private static void AddSystemMessage()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(HUDPrefabPath);
+            try
+            {
+                Transform existing = root.transform.Find(SystemMessageName);
+                GameObject message = existing != null ? existing.gameObject : new GameObject(SystemMessageName, typeof(RectTransform));
+                message.transform.SetParent(root.transform, false);
+                message.transform.SetAsLastSibling();
+
+                var rect = (RectTransform)message.transform;
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0f);
+                rect.pivot = new Vector2(0.5f, 0f);
+                rect.anchoredPosition = new Vector2(0f, 204f);
+                rect.sizeDelta = new Vector2(900f, 32f);
+
+                if (message.TryGetComponent(out CanvasGroup group) == false) group = message.AddComponent<CanvasGroup>();
+                group.alpha = 0f;
+                group.blocksRaycasts = false;
+                group.interactable = false;
+
+                Transform label = message.transform.Find("Text");
+                if (label == null)
+                {
+                    label = new GameObject("Text", typeof(RectTransform)).transform;
+                    label.SetParent(message.transform, false);
+                }
+                var labelRect = (RectTransform)label;
+                labelRect.anchorMin = Vector2.zero;
+                labelRect.anchorMax = Vector2.one;
+                labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
+
+                if (label.TryGetComponent(out TextMeshProUGUI text) == false) text = label.gameObject.AddComponent<TextMeshProUGUI>();
+                text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(SystemMessageFontPath);
+                text.fontSize = 21f;
+                text.alignment = TextAlignmentOptions.Center;
+                text.textWrappingMode = TextWrappingModes.NoWrap;
+                text.overflowMode = TextOverflowModes.Overflow;
+                text.raycastTarget = false;
+                text.color = new Color(0.84705883f, 0.8235294f, 0.76862746f, 1f);
+                text.text = string.Empty;
+                text.fontSharedMaterial = SystemMessageMaterial(text.font);
+
+                if (message.TryGetComponent(out SystemMessage component) == false) component = message.AddComponent<SystemMessage>();
+                var serialized = new SerializedObject(component);
+                serialized.FindProperty("text").objectReferenceValue = text;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+
+                PrefabUtility.SaveAsPrefabAsset(root, HUDPrefabPath);
+                Debug.Log($"[{nameof(HUDPrefabBuilder)}] {HUDPrefabPath} 에 {SystemMessageName} 추가 완료.");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        // 밝은 바닥·이펙트 위에서도 읽히도록 바깥 외곽선과 오른쪽 아래로 살짝 번지는 그림자를 켠 글꼴 머티리얼.
+        // 외곽선은 글자를 두껍게(FaceDilate) 한 만큼만 그려서 글자 안쪽을 깎지 않고 바깥으로만 생긴다.
+        private static Material SystemMessageMaterial(TMP_FontAsset font)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(SystemMessageMaterialPath);
+            if (material == null)
+            {
+                material = new Material(font.material) { name = Path.GetFileNameWithoutExtension(SystemMessageMaterialPath) };
+                AssetDatabase.CreateAsset(material, SystemMessageMaterialPath);
+            }
+            else
+            {
+                material.CopyPropertiesFromMaterial(font.material);
+            }
+
+            material.SetFloat(ShaderUtilities.ID_FaceDilate, 0.2f);
+            material.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.2f);
+            material.SetColor(ShaderUtilities.ID_OutlineColor, new Color(0.03f, 0.025f, 0.02f, 0.9f));
+            material.EnableKeyword(ShaderUtilities.Keyword_Outline);
+
+            material.SetColor(ShaderUtilities.ID_UnderlayColor, new Color(0f, 0f, 0f, 0.55f));
+            material.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 0.5f);
+            material.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, -0.5f);
+            material.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.2f);
+            material.SetFloat(ShaderUtilities.ID_UnderlaySoftness, 0.5f);
+            material.EnableKeyword(ShaderUtilities.Keyword_Underlay);
+
+            EditorUtility.SetDirty(material);
+            AssetDatabase.SaveAssetIfDirty(material);
+            return material;
         }
 
         [MenuItem("Tools/UI/HUD/2. Replace HUD In Open Scene With Prefab")]
