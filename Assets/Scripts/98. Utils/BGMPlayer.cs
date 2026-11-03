@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,8 +13,20 @@ namespace TeamOdd
 
         private SceneLoadManager SceneLoad => SceneLoadManager.Instance;
         private SoundManager Sound => SoundManager.Instance;
+        
+        public SoundData BGM => bgm;
 
         private void Awake() => SceneLoad.OnSceneLoaded += HandleSceneLoaded;
+
+        private void OnEnable()
+        {
+            Sound.PlayBGM(bgm.ClipName, bgm.Volume, fadeTime);
+        }
+
+        private void OnDisable()
+        {
+            Sound.StopBGM();
+        }
 
         // SceneLoadManager는 씬이 바뀌어도 남으므로, 파괴된 뒤 다음 씬 로드 때 불리지 않도록 해제
         private void OnDestroy()

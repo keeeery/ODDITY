@@ -1,3 +1,4 @@
+using TeamOdd.Arena;
 using TeamOdd.Boss;
 using TeamOdd.Combat;
 using TMPro;
@@ -42,6 +43,7 @@ namespace TeamOdd.UI
         private bool findsBoss;
         private Player.Player player;
         private BossGroggy groggy;
+        private TrainingDummy dummy;
         private HumanoidClone clone;
 
         private CanvasGroup canvasGroup;
@@ -91,8 +93,8 @@ namespace TeamOdd.UI
 
         private void Update()
         {
-            // 연결된 보스가 꺼지거나 사라지면 활성화된 다른 보스로 바꾸고, 바는 새 보스의 체력으로 바로 맞춤
-            if (findsBoss && (boss == null || boss.isActiveAndEnabled == false))
+            // 연결된 보스가 꺼지거나 사라지면(수련장 허수아비는 플레이어가 수련장을 나가면) 활성화된 다른 보스로 바꾸고, 바는 새 보스의 체력으로 바로 맞춤
+            if (findsBoss && (boss == null || boss.isActiveAndEnabled == false || IsLeftDummy()))
             {
                 CombatEntity found = FindActiveBoss();
                 if (found != boss)
@@ -124,6 +126,7 @@ namespace TeamOdd.UI
         private void BindBoss()
         {
             groggy = boss != null ? boss.GetComponent<BossGroggy>() : null;
+            dummy = boss != null ? boss.GetComponent<TrainingDummy>() : null;
             if (hpBar != null) hpBar.SetFillImmediate(GetHpRatio());
             if (groggyBar != null) groggyBar.SetFillImmediate(GetGroggyRatio());
             UpdateName();
@@ -196,10 +199,15 @@ namespace TeamOdd.UI
 
         private float GetGroggyRatio() => groggy != null ? groggy.Ratio : 0f;
 
+        // 보스가 없는 곳(로비)에서는 플레이어가 들어가 있는 수련장의 허수아비를 보여 줌
         private static CombatEntity FindActiveBoss()
         {
             BossMonster monster = FindAnyObjectByType<BossMonster>();
-            return monster != null ? monster.GetComponent<CombatEntity>() : null;
+            if (monster != null) return monster.GetComponent<CombatEntity>();
+
+            return TrainingDummy.Focused != null ? TrainingDummy.Focused.CombatEntity : null;
         }
+
+        private bool IsLeftDummy() => dummy != null && TrainingDummy.Focused != dummy;
     }
 }

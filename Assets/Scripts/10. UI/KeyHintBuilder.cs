@@ -9,8 +9,9 @@ namespace TeamOdd.UI
     // 크기는 기준 해상도 1920x1080 캔버스 기준이며, 기준 해상도가 다른 캔버스는 scale로 맞춘다 (3840x2160이면 2).
     public static class KeyHintBuilder
     {
-        public const float DefaultFontSize = 17f;
-        public static readonly Color TextColor = new(0.84705883f, 0.8235294f, 0.76862746f, 1f);
+        public const float DefaultFontSize = 19f;
+        // HUD 기본 회백색보다 밝은 백색, 밝은 바닥·벽 위에서도 외곽선·그림자와 함께 눈에 띄도록
+        public static readonly Color TextColor = new(1f, 1f, 1f, 1f);
         public const float SubTextAlpha = 0.6f;
 
         // 자식을 가로로 늘어놓고 내용 크기에 맞춰 줄어드는 줄

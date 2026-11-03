@@ -1,5 +1,6 @@
 using System;
 using TeamOdd.Combat;
+using TeamOdd.UI;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
@@ -26,6 +27,7 @@ namespace TeamOdd.Superpower
             if (context.Owner.Hp < context.Owner.CurrentStats.MaxHp) return true;
 
             Debug.Log($"[{Name}] 체력이 가득 차 있습니다.");
+            SystemMessage.Show("체력이 가득 차 있습니다.", SystemMessage.Tone.Warning);
             return false;
         }
 

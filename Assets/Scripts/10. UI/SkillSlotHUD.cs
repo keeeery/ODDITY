@@ -35,10 +35,12 @@ namespace TeamOdd.UI
             [NonSerialized] public Tween PunchTween;
         }
 
+        // 플레이어는 씬을 넘어 살아 있고 새 씬에 놓인 플레이어는 중복으로 파괴되므로, 살아 있는 플레이어(Player.Instance)를 먼저 쓴다.
+        // 아래 참조는 살아 있는 플레이어가 아직 없을 때만 쓴다.
         [Header("References")]
-        [Tooltip("비어 있으면 씬에서 찾는다.")]
+        [Tooltip("살아 있는 플레이어가 없을 때 쓴다. 비어 있으면 씬에서 찾는다.")]
         [SerializeField] private AugmentationChipInventory inventory;
-        [Tooltip("기상기 쿨타임을 읽을 플레이어, 비어 있으면 씬에서 찾는다.")]
+        [Tooltip("기상기 쿨타임을 읽을 플레이어, 살아 있는 플레이어가 없을 때 쓴다. 비어 있으면 씬에서 찾는다.")]
         [SerializeField] private PlayerController player;
         [Tooltip("1~5번 슬롯, 순서대로")]
         [SerializeField] private List<Slot> slots = new();
@@ -62,11 +64,11 @@ namespace TeamOdd.UI
         [Tooltip("커졌다 돌아오는 데 걸리는 시간(초)")]
         [SerializeField, Min(0.01f)] private float reducedPunchDuration = 0.25f;
 
+        // 지금 SkillSlotsChanged를 구독하고 있는 인벤토리
+        private AugmentationChipInventory boundInventory;
+
         private void Awake()
         {
-            if (inventory == null) inventory = FindAnyObjectByType<AugmentationChipInventory>();
-            if (inventory == null) Debug.LogWarning($"{name}: 씬에 AugmentationChipInventory가 없어 스킬 슬롯을 비워 둡니다.", this);
-            if (player == null) player = FindAnyObjectByType<PlayerController>();
             if (slots.Count != AugmentationChipInventory.SkillSlotCount)
                 Debug.LogWarning($"{name}: 배치된 스킬 슬롯이 {slots.Count}개로 {AugmentationChipInventory.SkillSlotCount}개와 다릅니다. '1. Build Skill Slot UI' 로 다시 만드세요.", this);
 
@@ -79,17 +81,19 @@ namespace TeamOdd.UI
         private void OnValidate() => ApplyStyle();
 
         // 인벤토리는 플레이어에 있어 이 HUD보다 오래 살 수 있으므로 꺼질 때 구독을 끊는다.
-        private void OnEnable()
-        {
-            if (inventory == null) return;
+        private void OnEnable() => BindPlayer();
 
-            inventory.SkillSlotsChanged += Refresh;
-            Refresh();
+        // 처음 켜질 때는 씬의 플레이어가 아직 Awake 전일 수 있으므로, 모든 Awake가 끝난 뒤 살아 있는 플레이어로 다시 맞춘다.
+        private void Start()
+        {
+            BindPlayer();
+            if (boundInventory == null) Debug.LogWarning($"{name}: 씬에 AugmentationChipInventory가 없어 스킬 슬롯을 비워 둡니다.", this);
         }
 
         private void OnDisable()
         {
-            if (inventory != null) inventory.SkillSlotsChanged -= Refresh;
+            if (boundInventory != null) boundInventory.SkillSlotsChanged -= Refresh;
+            boundInventory = null;
             foreach (Slot slot in slots)
             {
                 // 칩은 씬을 넘어 남으므로 쿨타임 감소 알림을 끊어 둔다.
@@ -107,9 +111,35 @@ namespace TeamOdd.UI
 
         private void Update()
         {
+            // 연결한 플레이어가 중복으로 파괴됐으면 살아 있는 플레이어로 다시 연결
+            if (boundInventory == null || player == null) BindPlayer();
+
             foreach (Slot slot in slots)
                 UpdateCooldown(slot);
             UpdateWakeUpSlot();
+        }
+
+        // 살아 있는 플레이어의 인벤토리·컨트롤러에 연결하고, 인벤토리가 바뀌면 구독을 옮겨 다시 그린다.
+        private void BindPlayer()
+        {
+            AugmentationChipInventory targetInventory = inventory;
+            if (Player.Player.IsInitialized)
+            {
+                Player.Player alive = Player.Player.Instance;
+                targetInventory = alive.GetComponent<AugmentationChipInventory>();
+                player = alive.PlayerController != null ? alive.PlayerController : alive.GetComponent<PlayerController>();
+            }
+            if (targetInventory == null) targetInventory = FindAnyObjectByType<AugmentationChipInventory>();
+            if (player == null) player = FindAnyObjectByType<PlayerController>();
+
+            if (targetInventory == boundInventory) return;
+
+            if (boundInventory != null) boundInventory.SkillSlotsChanged -= Refresh;
+            boundInventory = targetInventory;
+            if (boundInventory == null) return;
+
+            boundInventory.SkillSlotsChanged += Refresh;
+            Refresh();
         }
 
         private void ApplyStyle()
@@ -145,7 +175,7 @@ namespace TeamOdd.UI
 
         private void Refresh()
         {
-            int count = Mathf.Min(slots.Count, inventory.SkillSlots.Count);
+            int count = Mathf.Min(slots.Count, boundInventory.SkillSlots.Count);
             for (int index = 0; index < count; index++)
             {
                 Slot slot = slots[index];
@@ -153,7 +183,7 @@ namespace TeamOdd.UI
 
                 // 아드레날린 과분비 칩처럼 쿨타임을 당겨 주는 효과가 있으면 슬롯을 번쩍이도록 지금 칩의 알림만 받는다.
                 if (slot.Chip != null) slot.Chip.Skill.CooldownReduced -= HandleCooldownReduced;
-                slot.Chip = inventory.SkillSlots[index];
+                slot.Chip = boundInventory.SkillSlots[index];
                 if (slot.Chip != null) slot.Chip.Skill.CooldownReduced += HandleCooldownReduced;
                 slot.Graphic.HasSkill = slot.Chip != null;
                 slot.Icon.enabled = slot.Chip != null;
