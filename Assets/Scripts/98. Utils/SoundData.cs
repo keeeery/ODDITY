@@ -37,6 +37,26 @@ namespace TeamOdd
         }
 
         /// <summary>
+        /// 클립을 반복 재생하고 멈출 때 넘길 AudioSource를 돌려줌, 다 쓰면 StopLoop로 멈춰야 함
+        /// </summary>
+        public AudioSource PlayLoop()
+        {
+            if (Sound == null) return null;
+
+            return Sound.PlayLoop(clipName, volume);
+        }
+
+        /// <summary>
+        /// PlayLoop로 튼 소리를 fadeTime초 동안 줄이며 멈춤, 틀지 못해 null이면 아무 일도 없음
+        /// </summary>
+        public static void StopLoop(AudioSource loop, float fadeTime = 0f)
+        {
+            if (loop == null || SoundManager.Instance == null) return;
+
+            SoundManager.Instance.StopLoop(loop, fadeTime);
+        }
+
+        /// <summary>
         /// 클립을 재생하고 끝날 때까지 기다림, 취소해도 이미 재생된 소리는 멈추지 않음
         /// </summary>
         public async UniTask PlayAsync(CancellationToken token = default)
