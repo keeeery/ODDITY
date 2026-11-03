@@ -29,14 +29,14 @@ namespace TeamOdd.Psychokinesis
         [Header("Object Damage Override")]
         [Tooltip("이 플레이어가 던지거나 휘두른 물체에 씬별 피해 설정을 적용한다.")]
         [SerializeField] private bool overrideObjectDamage;
-        [Tooltip("중형·대형·탱크 등급의 최소 질량(kg), 각 기준 미만은 이전 등급으로 처리한다.")]
-        [SerializeField] private Vector3 objectMassThresholds = new Vector3(4.5f, 9f, 12f);
-        [SerializeField, Min(1)] private int smallObjectDamage = 25;
-        [SerializeField, Min(1)] private int mediumObjectDamage = 60;
-        [SerializeField, Min(1)] private int largeObjectDamage = 110;
-        [SerializeField, Min(1)] private int tankObjectDamage = 150;
-        [Tooltip("등급별 고정 피해에 곱하는 무력화 배율")]
-        [SerializeField, Min(0f)] private float objectGroggyScale = 0.3f;
+        [Tooltip("중형·대형 등급의 최소 질량(kg), 각 기준 미만은 이전 등급으로 처리한다.")]
+        [SerializeField] private Vector2 objectMassThresholds = new Vector2(4.5f, 9f);
+        [Tooltip("등급별로 현재 공격력에 곱하는 피해 배율")]
+        [SerializeField, Min(0f)] private float smallObjectAtkScale = 3f;
+        [SerializeField, Min(0f)] private float mediumObjectAtkScale = 5f;
+        [SerializeField, Min(0f)] private float largeObjectAtkScale = 7f;
+        [Tooltip("등급별 피해에 곱하는 무력화 배율")]
+        [SerializeField, Min(0f)] private float objectGroggyScale = 1.2f;
 
         [Header("Swing Activation")]
         [SerializeField, Min(0f)] private float swingMinSpeed = 8f;
@@ -167,10 +167,12 @@ namespace TeamOdd.Psychokinesis
             groggy = 0;
             if (overrideObjectDamage == false) return false;
 
-            if (mass >= objectMassThresholds.z) damage = tankObjectDamage;
-            else if (mass >= objectMassThresholds.y) damage = largeObjectDamage;
-            else if (mass >= objectMassThresholds.x) damage = mediumObjectDamage;
-            else damage = smallObjectDamage;
+            float atkScale;
+            if (mass >= objectMassThresholds.y) atkScale = largeObjectAtkScale;
+            else if (mass >= objectMassThresholds.x) atkScale = mediumObjectAtkScale;
+            else atkScale = smallObjectAtkScale;
+            // 평타처럼 공격력 칩 보너스까지 반영하도록 쓸 때마다 읽음
+            damage = Mathf.Max(1, Mathf.RoundToInt(combatEntity.CurrentStats.Atk * atkScale));
             groggy = Mathf.RoundToInt(damage * objectGroggyScale);
             return true;
         }

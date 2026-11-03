@@ -1600,7 +1600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d04f04c88ad426ba7e96b729ba4db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Boss.BossGroggy
-  maxGroggy: 700
+  maxGroggy: 650
 --- !u!114 &1806004382529604527
 MonoBehaviour:
   m_ObjectHideFlags: 0
