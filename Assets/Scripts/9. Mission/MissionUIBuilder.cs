@@ -813,7 +813,7 @@ namespace Study.Utilities
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f),
                 Vector2.zero, new Vector2(0f, QuestListHeaderHeight));
 
-            TMP_Text title = NewText("MissionListTitleText", header.transform, "수락한 미션", 64f, TextAlignmentOptions.MidlineLeft);
+            TMP_Text title = NewText("MissionListTitleText", header.transform, "진행 중인 임무", 64f, TextAlignmentOptions.MidlineLeft);
             title.fontStyle = FontStyles.Bold;
             title.color = Color.white;
             SetRect(title.rectTransform,
@@ -823,7 +823,7 @@ namespace Study.Utilities
             Transform content = CreateQuestScrollView(listPanel.transform, QuestListHeaderHeight, 0f);
 
             // 수락한 미션이 없을 때 목록 자리에 표시
-            TMP_Text empty = NewText("EmptyText", listPanel.transform, "수락한 미션이 없습니다", 56f, TextAlignmentOptions.Center);
+            TMP_Text empty = NewText("EmptyText", listPanel.transform, "진행 중인 임무가 없습니다.", 56f, TextAlignmentOptions.Center);
             empty.color = SubTextColor;
             SetRect(empty.rectTransform,
                 Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f),

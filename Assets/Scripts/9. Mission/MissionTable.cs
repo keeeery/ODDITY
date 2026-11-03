@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Jay.FileIO;
+using TeamOdd.Reward;
 using UnityEngine;
 
 namespace Study.MiniDefence
@@ -26,6 +27,10 @@ namespace Study.MiniDefence
             // 특정 경로에 있는 파일을 읽어온다
             string path = Application.streamingAssetsPath + "/" + TableName;
             List<MissionDTO> rows = TSVReader.ReadTable<MissionDTO>(path);
+
+            // 임무의 Reward는 BossReward.tsv의 RewardId다
+            BossRewardTable rewardTable = new BossRewardTable();
+            rewardTable.Load();
     
             // List<MissionDTO> rows 를 이용해서 def 객체를 생성한다
             foreach (MissionDTO missionDto in rows)
@@ -34,6 +39,9 @@ namespace Study.MiniDefence
                 if (bossSprite == null && string.IsNullOrEmpty(missionDto.BossSpriteKey) == false)
                     Debug.LogWarning($"[MissionTable] 보스 그림을 찾지 못했습니다: Resources/{missionDto.BossSpriteKey} (임무 {missionDto.ID})");
 
+                if (rewardTable.TryGet(missionDto.Reward, out IReadOnlyList<BossRewardDef> rewardRows) == false)
+                    Debug.LogWarning($"[MissionTable] BossReward.tsv에 {missionDto.Reward}번 보상이 없습니다 (임무 {missionDto.ID})");
+
                 defs[missionDto.ID] = new MissionDef
                 {
                     ID = missionDto.ID,
@@ -41,6 +49,7 @@ namespace Study.MiniDefence
                     MissionDescription = missionDto.MissionDescription,
                     BossName = missionDto.BossName,
                     Reward = missionDto.Reward,
+                    RewardRows = rewardRows,
                     BossSprite = bossSprite,
                     NextStageName = missionDto.NextStageName,
                     QuestName = missionDto.QuestName

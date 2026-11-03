@@ -81,14 +81,14 @@ namespace TeamOdd.Mission
                 bossName.SetText("-");
                 bossImage.sprite = null;
                 bossImage.color = bossImageEmptyColor;
-                missionDescription.SetText("Mission NPC 에게서 미션을 먼저 수락하세요.");
+                missionDescription.SetText("NPC를 통해 임무를 먼저 수락하세요.");
                 return;
             }
 
             bossName.SetText(mission.BossName);
             bossImage.sprite = mission.BossSprite;
             bossImage.color = mission.BossSprite != null ? Color.white : bossImageEmptyColor;
-            missionDescription.SetText($"{mission.MissionName}\n{mission.MissionDescription} \n Reward : {mission.Reward}");
+            missionDescription.SetText($"{mission.MissionName}\n{mission.MissionDescription}\n\n보상\n{mission.GetRewardText()}");
         }
 
         public void MoveToStage()

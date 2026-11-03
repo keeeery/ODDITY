@@ -2555,8 +2555,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 26, y: 0}
-  m_SizeDelta: {x: -52, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -26, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &2647109524428281979
 CanvasRenderer:
@@ -2586,7 +2586,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC218\uB77D\uD55C \uBBF8\uC158"
+  m_text: "\uC9C4\uD589 \uC911\uC778 \uC784\uBB34"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
   m_sharedMaterial: {fileID: -5628987093634180009, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
@@ -3349,7 +3349,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1975.9999, y: 1144}
+  m_SizeDelta: {x: 1975.9999, y: 1344}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8400049770251833616
 CanvasRenderer:
@@ -4389,7 +4389,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1975.9999, y: 1144}
+  m_SizeDelta: {x: 1975.9999, y: 1344}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &357586652148290225
 CanvasRenderer:
@@ -4782,7 +4782,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC218\uB77D\uD55C \uBBF8\uC158\uC774 \uC5C6\uC2B5\uB2C8\uB2E4"
+  m_text: "\uC9C4\uD589 \uC911\uC778 \uC784\uBB34\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
   m_sharedMaterial: {fileID: -5628987093634180009, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
@@ -6210,7 +6210,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC218\uD589 \uC911\uC778 \uC784\uBB34"
+  m_text: "\uC9C4\uD589 \uC911\uC778 \uC784\uBB34"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
   m_sharedMaterial: {fileID: -5628987093634180009, guid: d0ce36b1cb03f479c81e6aa3cffeab35, type: 2}
@@ -6407,13 +6407,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4e1ea9ddd244b74b1944219af8a9915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_9._Mission.MissionUI
-  missionNames:
-  - {fileID: 7309288503911690551}
-  - {fileID: 3214733566150330865}
-  - {fileID: 2226823281992506657}
-  - {fileID: 5700166129329061200}
-  - {fileID: 1034799743736419847}
-  - {fileID: 7281793587243383835}
+  missionContent: {fileID: 6601512759292399633}
+  missionRowTemplate: {fileID: 3643102493070763721}
+  acceptButtons:
+  - {fileID: 205836655163157845}
+  - {fileID: 1813332961523130108}
   missionDescription: {fileID: 5341413359325459373}
   bossName: {fileID: 7613094068659943363}
   bossImage: {fileID: 6884436620255383882}
@@ -10984,7 +10982,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -2.600006}
+  m_AnchoredPosition: {x: 0, y: -2.5999756}
   m_SizeDelta: {x: -31.199999, y: -36.399998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7420469039340529109

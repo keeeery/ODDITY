@@ -1,7 +1,4 @@
 ID	MissionName	MissionDescription	BossName	Reward	BossSpriteKey	NextStageName	QuestName
-0	폐공장 소탕	버려진 공장에 숨어든 괴인을 처치하라	차르카로사우루스	500	Mission/Boss/Charcharosaurus	03. Easy Boss	폐공장의 철갑 괴인 처치
-1	지하철 구출 작전	지하철에 갇힌 시민들을 구출하고 괴인을 제압하라	페르데로스	800	Mission/Boss/Perderos	04. Normal Boss	지하철 시민 구출과 그림자 사냥꾼 제압
-2	도심 방어전	도심을 습격한 거대 괴수를 막아내라	휴머노이드	1500	Mission/Boss/Humanoid	05. Hard Boss	도심을 습격한 붉은 거신 저지
-3	항만 창고 습격	밀수 조직과 손잡은 괴인의 거점을 급습하라	독안개 마녀	1100	Mission/Boss/PoisonFogWitch		항만 창고의 독안개 마녀 급습
-4	연구소 탈환	괴인에게 점거된 연구소를 되찾고 연구원들을 보호하라	광기의 박사	1800	Mission/Boss/MadDoctor		연구소 탈환과 광기의 박사 토벌
-5	고층 빌딩 결전	도시 최고층 빌딩 옥상에 나타난 괴인 우두머리를 쓰러뜨려라	폭풍의 군주	2500	Mission/Boss/StormLord		빌딩 옥상의 폭풍의 군주 격파
+0	탈출 실험체 저지	정비 격납고에서 파충류 실험체가 격리를 뚫고 탈출했다. 격납고의 보급품을 먹어 치우며 몸집을 불리고 있다. 시설 밖으로 나가기 전에 초능력으로 저지하라.	차르카로사우루스	1	Mission/Boss/Charcharosaurus	03. Easy Boss	탈출한 실험체 차르카로사우루스 저지
+1	봉쇄 격납고 진압	강화 실험 중이던 실험체가 폭주해 격납고 전체가 봉쇄됐다. 두꺼운 외피는 웬만한 충격을 튕겨 낸다. 경보가 멈추기 전에 폭군을 쓰러뜨려라.	페르데로스	2	Mission/Boss/Perderos	04. Normal Boss	폭주한 강화 실험체 페르데로스 진압
+2	최심부 실험체 격파	시설 최심부에서 인간형 병기 실험체가 깨어났다. 대검을 든 기계 몸은 다른 실험체와 차원이 다르다. 이 실험체가 밖으로 나가면 도시가 위험하다. 반드시 여기서 막아라.	휴머노이드	3	Mission/Boss/Humanoid	05. Hard Boss	최심부의 병기 실험체 휴머노이드 격파

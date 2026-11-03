@@ -1,7 +1,9 @@
-﻿using Study.MiniDefence;
+﻿using System.Collections.Generic;
+using Study.MiniDefence;
 using TeamOdd.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace TeamOdd.Mission
@@ -10,8 +12,13 @@ namespace TeamOdd.Mission
     {
         private MissionTable missionTable;
 
+        private const string SelectGuideText = "왼쪽 임무 목록에서 임무를 선택하세요.";
+        private const string NoMissionText = "수락 가능한 임무가 없습니다.";
+
         [Header("미션UI 세팅")] 
-        [SerializeField] private TMP_Text[] missionNames;
+        [SerializeField] private Transform missionContent;
+        [SerializeField] private Button missionRowTemplate;  // missions.tsv 한 줄마다 복제하는 임무 칸
+        [SerializeField] private Button[] acceptButtons;     // 고른 임무가 없으면 누를 수 없게 한다
         [SerializeField] private TMP_Text missionDescription;
         [SerializeField] private TMP_Text bossName;
         [SerializeField] private Image bossImage;
@@ -19,6 +26,7 @@ namespace TeamOdd.Mission
         [SerializeField] private TMP_Text clickFailText;
         [SerializeField] private MissionListUI missionListUI;
 
+        private readonly List<Button> rows = new();
         private string stageSceneName;
         private MissionDef selectedMission;
         private Color bossImageEmptyColor;
@@ -29,27 +37,87 @@ namespace TeamOdd.Mission
             missionTable.Load();
             bossImageEmptyColor = bossImage.color;
 
-            for (int i = 0; i < missionNames.Length; i++)
+            // 프리팹에 배치해 둔 샘플 칸은 지우고, 첫 칸만 복제용 틀로 숨겨 둔다
+            foreach (Transform child in missionContent)
             {
-                missionNames[i].SetText(missionTable.Get(i).BossName);
+                if (child != missionRowTemplate.transform)
+                    Destroy(child.gameObject);
             }
+            missionRowTemplate.gameObject.SetActive(false);
         }
 
-        private void Start()
+        // NPC 가 창을 열 때마다 아직 수락하지 않은 임무로 목록을 다시 그린다.
+        private void OnEnable()
         {
-            MissionClick(0);
+            clickFailUI.SetActive(false);
+            RefreshList();
+        }
+
+        private void RefreshList()
+        {
+            foreach (Button row in rows)
+                Destroy(row.gameObject);
+            rows.Clear();
+
+            foreach (MissionDef mission in missionTable.GetDefs)
+            {
+                if (IsAccepted(mission))
+                    continue;
+
+                Button row = Instantiate(missionRowTemplate, missionContent);
+                row.gameObject.SetActive(true);
+                row.name = $"Mission {mission.ID}";
+                row.transform.Find("QuestTitleText").GetComponent<TMP_Text>().SetText(mission.BossName);
+                // 틀에 연결된 MissionClick(번호) 호출은 끄고, 복제한 칸이 자기 임무를 고르게 한다
+                for (int i = 0; i < row.onClick.GetPersistentEventCount(); i++)
+                    row.onClick.SetPersistentListenerState(i, UnityEventCallState.Off);
+                row.onClick.AddListener(() => MissionClick(mission.ID));
+                rows.Add(row);
+            }
+
+            ShowEmptyDetail(rows.Count > 0 ? SelectGuideText : NoMissionText);
+        }
+
+        private static bool IsAccepted(MissionDef mission)
+        {
+            foreach (MissionDef accepted in MissionListUI.AcceptedMissionList)
+            {
+                if (accepted.ID == mission.ID)
+                    return true;
+            }
+            return false;
+        }
+
+        // 고른 임무가 없을 때 우측에 안내 글만 보여 준다
+        private void ShowEmptyDetail(string message)
+        {
+            selectedMission = null;
+            stageSceneName = null;
+            SetAcceptButtonsInteractable(false);
+
+            bossName.SetText("-");
+            bossImage.sprite = null;
+            bossImage.color = bossImageEmptyColor;
+            missionDescription.SetText(message);
+        }
+
+        private void SetAcceptButtonsInteractable(bool interactable)
+        {
+            foreach (Button button in acceptButtons)
+                button.interactable = interactable;
         }
 
         public void MissionClick(int i)
         {
             MissionDef missionDef = missionTable.Get(i);
             selectedMission = missionDef;
+            SetAcceptButtonsInteractable(true);
 
             bossName.SetText(missionDef.BossName);
             bossImage.sprite = missionDef.BossSprite;
             // 그림이 있으면 원래 색으로, 없으면 빈 칸 색으로 (StageMoveUI와 같게)
             bossImage.color = missionDef.BossSprite != null ? Color.white : bossImageEmptyColor;
-            missionDescription.SetText($"{missionDef.MissionDescription} \n Reward : {missionDef.Reward}");
+            missionDescription.SetText($"{missionDef.MissionDescription}\n\n보상\n{missionDef.GetRewardText()}");
             stageSceneName = missionDef.NextStageName;
             Debug.Log(stageSceneName);
         }
@@ -69,6 +137,9 @@ namespace TeamOdd.Mission
 
         private bool TryRegisterMission()
         {
+            if (selectedMission == null)
+                return false;
+
             string failMessage = missionListUI.AddMission(selectedMission) switch
             {
                 AddMissionResult.NoStageScene => "이전 미션을 클리어 해주세요",

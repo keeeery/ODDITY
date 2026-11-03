@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Study.MiniDefence;
 using TeamOdd.Boss;
 using TeamOdd.Combat;
 using TeamOdd.Superpower;
@@ -7,6 +8,7 @@ using UnityEngine;
 namespace TeamOdd.Reward
 {
     // 보스 루트에 붙인다. 사망 연출과 칩 데이터는 기존 구현을 사용하고, 보상 규칙은 BossReward.tsv에서 RewardId로 고른다.
+    // RewardId는 missions.tsv에서 이 보스 씬으로 가는 임무(NextStageName)의 Reward를 쓴다. 그래야 임무 창에 보이는 보상과 같다.
     [DisallowMultipleComponent]
     public sealed class BossChipReward : MonoBehaviour
     {
@@ -18,7 +20,7 @@ namespace TeamOdd.Reward
         [SerializeField] private BossRewardPanel rewardPanel;
 
         [Header("Reward")]
-        [Tooltip("BossReward.tsv의 RewardId, 같은 RewardId의 줄을 모두 지급합니다. 스킬·스탯 칩을 합쳐 추첨하고 기존 보유 칩도 후보에 포함됩니다.")]
+        [Tooltip("missions.tsv에 이 보스 씬으로 가는 임무가 없을 때(테스트 씬 등) 쓰는 BossReward.tsv의 RewardId입니다. 임무가 있으면 임무의 Reward를 씁니다.")]
         [SerializeField] private int rewardId = 1;
 
         private bool hasGranted;
@@ -60,11 +62,12 @@ namespace TeamOdd.Reward
                 return;
             }
 
+            int currentRewardId = ResolveRewardId();
             BossRewardTable rewardTable = new BossRewardTable();
             rewardTable.Load();
-            if (rewardTable.TryGet(rewardId, out IReadOnlyList<BossRewardDef> rules) == false)
+            if (rewardTable.TryGet(currentRewardId, out IReadOnlyList<BossRewardDef> rules) == false)
             {
-                Debug.LogError($"[BossChipReward] BossReward.tsv에 {rewardId}번 보상이 없습니다.", this);
+                Debug.LogError($"[BossChipReward] BossReward.tsv에 {currentRewardId}번 보상이 없습니다.", this);
                 if (SlowMotion.IsSlowed) SlowMotion.Resume();
                 return;
             }
@@ -90,6 +93,21 @@ namespace TeamOdd.Reward
                 Debug.LogError("[BossChipReward] 보상은 지급했지만 Reward Panel이 연결되지 않아 결과창을 표시하지 못했습니다.", this);
                 if (SlowMotion.IsSlowed) SlowMotion.Resume();
             }
+        }
+
+        // 이 보스가 있는 씬으로 가는 임무의 Reward, 없으면 인스펙터 값
+        private int ResolveRewardId()
+        {
+            MissionTable missionTable = new MissionTable();
+            missionTable.Load();
+            string sceneName = gameObject.scene.name;
+            foreach (MissionDef mission in missionTable.GetDefs)
+            {
+                if (mission.NextStageName == sceneName)
+                    return mission.Reward;
+            }
+
+            return rewardId;
         }
 
         private List<AugmentationChipDef> PickRewards(IReadOnlyList<BossRewardDef> rules, IReadOnlyCollection<AugmentationChipDef> defs)
