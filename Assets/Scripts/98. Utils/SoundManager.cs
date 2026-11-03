@@ -1,5 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Jay;
 using UnityEngine;
 
@@ -17,15 +21,42 @@ namespace TeamOdd
         private readonly Dictionary<string, AudioClip> clipMap = new();
 
         private AudioSource source;
+        [SerializeField] private AudioSource bgmSource;
         private AudioLowPassFilter lowPass;
 
-        // 씬에 없어 자동 생성될 때는 AddComponent의 Awake와 Instance 쪽에서 두 번 불리므로, 이미 붙어 있으면 그대로 씀
+        private CancellationTokenSource bgmCts;
+
+        // 씬에 없어 자동 생성될 때는 AddComponent의 Awake와 Instance 쪽에서 두 번 불리므로, 이미 만들었으면 그대로 씀
+        // TryGetComponent로 찾으면 같은 오브젝트에 붙은 bgmSource를 집어 효과음이 BGM 페이드에 같이 묻힐 수 있어 따로 만듦
         protected override void OnInitialize()
         {
-            if (TryGetComponent(out source) == false) source = gameObject.AddComponent<AudioSource>();
+            if (source != null) return;
 
+            source = gameObject.AddComponent<AudioSource>();
             source.playOnAwake = false;
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            bgmCts?.Cancel();
+            bgmCts?.Dispose();
+        }
+
+        // 0에서부터 fadeTime초 동안 키우며 틂, 지금 나오는 곡은 StopBGM으로 먼저 줄여 둬야 끊기지 않음
+        public void PlayBGM(string clipName, float volume = 1f, float fadeTime = 0.5f)
+        {
+            if (TryGetClip(clipName, out AudioClip clip) == false) return;
+
+            bgmSource.clip = clip;
+            bgmSource.volume = 0f;
+            bgmSource.Play();
+
+            FadeBGMAsync(volume, fadeTime, ResetBGMToken()).Forget();
+        }
+
+        public void StopBGM(float fadeTime = 0.5f) => FadeBGMAsync(0f, fadeTime, ResetBGMToken()).Forget();
 
         /// <summary>
         /// 클립을 반복 재생하고, 멈출 때 넘길 AudioSource를 돌려줌 (클립이 없으면 null)
@@ -90,14 +121,38 @@ namespace TeamOdd
             Destroy(loop);
         }
 
-        /// <summary>
-        /// Resources/Audios 기준 경로(확장자 제외)의 클립을 한 번 재생
-        /// </summary>
+        // 페이드 도중 새 요청이 오면 이전 페이드를 끊고 지금 볼륨에서 다시 시작
+        private CancellationToken ResetBGMToken()
+        {
+            bgmCts?.Cancel();
+            bgmCts?.Dispose();
+            bgmCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+
+            return bgmCts.Token;
+        }
+
+        // 히트스톱·슬로모션과 상관없이 실제 시간으로 페이드, 0까지 줄였으면 멈춤
+        private async UniTaskVoid FadeBGMAsync(float endVolume, float duration, CancellationToken token)
+        {
+            try
+            {
+                await bgmSource
+                    .DOFade(endVolume, duration)
+                    .SetUpdate(true)
+                    .ToUniTask(TweenCancelBehaviour.Kill, token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            if (endVolume <= 0f) bgmSource.Stop();
+        }
+
+        // Resources/Audios 기준 경로(확장자 제외)의 클립을 한 번 재생
         public void Play(string clipName, float volume = 1f) => TryPlay(clipName, volume, out _);
 
-        /// <summary>
-        /// Play와 같고, 재생한 클립을 함께 돌려줌 (재생 길이만큼 기다릴 때 사용)
-        /// </summary>
+        // 재생 길이만큼 기다릴 때 쓰도록 재생한 클립을 함께 돌려줌
         public bool TryPlay(string clipName, float volume, out AudioClip clip)
         {
             if (TryGetClip(clipName, out clip) == false) return false;

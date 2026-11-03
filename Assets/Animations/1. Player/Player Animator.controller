@@ -1508,10 +1508,6 @@ MonoBehaviour:
     sound:
       clipName: Player/SFX_PK_Step_Tile_Loop_02
       volume: 1
-  - time: 0.865
-    sound:
-      clipName: _test/test-clip
-      volume: 0
 --- !u!1102 &5446206025688810471
 AnimatorState:
   serializedVersion: 6

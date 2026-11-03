@@ -48,6 +48,8 @@ namespace TeamOdd
         public event Action<string> OnSceneLoaded;
         public event Action<string> OnFadeInCompleted;
 
+        private float FadeOutDuration => glitchDuration + foldDuration + shrinkDuration + dotFadeDuration;
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -70,6 +72,9 @@ namespace TeamOdd
             ScreenGlitch.Clear();
 
             OnFadeOutStarted?.Invoke(sceneName);
+
+            // 화면이 꺼지는 동안 지금 BGM을 줄여 다 꺼졌을 때는 조용하게 함, 새 BGM은 OnSceneLoaded에서 BGMPlayer가 키우며 틂
+            SoundManager.Instance.StopBGM(FadeOutDuration);
 
             await PlayFadeOut();
             OnFadeOutCompleted?.Invoke(sceneName);

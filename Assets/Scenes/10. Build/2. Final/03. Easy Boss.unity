@@ -23273,6 +23273,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8417036417208304927, guid: 087e68f54abcee0468c40debfe79c682, type: 3}
   m_PrefabInstance: {fileID: 598468767}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &598615619
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 598615621}
+  - component: {fileID: 598615620}
+  m_Layer: 0
+  m_Name: BGM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &598615620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598615619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf33b276c7397ae4b8f408edd5d16389, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.BGMPlayer
+  bgm:
+    clipName: BGM/For Test/bgm-test-03
+    volume: 0.5
+  fadeTime: 0.5
+--- !u!4 &598615621
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598615619}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &601777904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78576,6 +78624,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: overridePsychoSlamDamage
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 527695291722530190, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: CameraController
       value: 
@@ -78680,6 +78732,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: chipIds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: 'chipIds.Array.data[0]'
+      value: 2302
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
+      propertyPath: 'chipIds.Array.data[1]'
+      value: 2102
+      objectReference: {fileID: 0}
     - target: {fileID: 2920962985299418174, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -78699,22 +78763,6 @@ PrefabInstance:
     - target: {fileID: 6101258613780513084, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
       propertyPath: NeedRollStamina
       value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 438697543137805273, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: overridePsychoSlamDamage
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.data[0]
-      value: 2302
-      objectReference: {fileID: 0}
-    - target: {fileID: 2911260366761806129, guid: 7186d50d4e961c94fb69ed8723116caa, type: 3}
-      propertyPath: chipIds.Array.data[1]
-      value: 2102
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -89657,3 +89705,4 @@ SceneRoots:
   - {fileID: 1902345671}
   - {fileID: 1577625838}
   - {fileID: 2134242175}
+  - {fileID: 598615621}

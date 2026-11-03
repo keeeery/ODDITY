@@ -25,9 +25,6 @@ namespace TeamOdd
 
         private SoundManager Sound => SoundManager.Instance;
 
-        /// <summary>
-        /// 클립을 한 번 재생
-        /// </summary>
         public void Play()
         {
             // 게임 종료 중에는 싱글톤이 null을 돌려줌
@@ -56,9 +53,7 @@ namespace TeamOdd
             SoundManager.Instance.StopLoop(loop, fadeTime);
         }
 
-        /// <summary>
-        /// 클립을 재생하고 끝날 때까지 기다림, 취소해도 이미 재생된 소리는 멈추지 않음
-        /// </summary>
+        // 클립이 끝날 때까지 기다림, 취소해도 이미 재생된 소리는 멈추지 않음
         public async UniTask PlayAsync(CancellationToken token = default)
         {
             if (Sound == null) return;
