@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TeamOdd.Combat;
 using TeamOdd.Psychokinesis;
-using TeamOdd.TimeControl;
 using UnityEngine;
 
 namespace TeamOdd.Superpower
@@ -32,6 +31,10 @@ namespace TeamOdd.Superpower
 
         private readonly List<PsychokinesisObject> targets = new List<PsychokinesisObject>(); // CanExecute에서 고른 대상, Execute에서 씀
 
+        private bool isFiring; // 끌어와서 마지막 하나를 던질 때까지 true
+
+        public override bool IsCasting => isFiring;
+
         public PsychoRapidFireSkill(string name, float cooldown, float radius, int count, float interval, float speed) : base(name, cooldown)
         {
             this.radius = radius;
@@ -55,7 +58,7 @@ namespace TeamOdd.Superpower
         {
             List<PsychokinesisObject> shots = new List<PsychokinesisObject>(targets);
             targets.Clear();
-            TimeFreezeManager.Instance.StartCoroutine(Run(shots, context));
+            context.Owner.StartCoroutine(Run(shots, context)); // 스킬은 MonoBehaviour가 아니므로 시전한 플레이어가 돌린다. 플레이어가 사라지면 같이 멈춤
         }
 
         // 범위 안에서 먼저 찾은 것부터 최대 count개 (거리 순서는 따지지 않음)
@@ -79,6 +82,8 @@ namespace TeamOdd.Superpower
         // 중간에 멈추더라도 잡힌 채로 남지 않도록 finally에서 남은 것을 놓음
         private IEnumerator Run(List<PsychokinesisObject> shots, SkillContext context)
         {
+            isFiring = true;
+
             Collider[] casterColliders = context.Caster.GetComponentsInChildren<Collider>();
             foreach (PsychokinesisObject shot in shots)
                 shot.BeginHold(casterColliders, context.Owner);
@@ -88,8 +93,6 @@ namespace TeamOdd.Superpower
                 // 끌어오기
                 for (float elapsed = 0f; elapsed < PullTime; elapsed += Time.fixedDeltaTime)
                 {
-                    if (context.Caster == null) yield break;
-
                     LineUp(shots, context);
                     yield return new WaitForFixedUpdate();
                 }
@@ -99,7 +102,6 @@ namespace TeamOdd.Superpower
                 {
                     // 차례를 기다리는 동안 부서진 것은 기다리지 않고 건너뜀
                     if (IsStillHeld(shots[i]) == false) continue;
-                    if (context.Caster == null) yield break;
 
                     shots[i].Release(GetCrosshairDirection(shots[i], context) * speed, true, context.Owner);
 
@@ -114,6 +116,7 @@ namespace TeamOdd.Superpower
             }
             finally
             {
+                isFiring = false;
                 foreach (PsychokinesisObject shot in shots)
                     if (IsStillHeld(shot)) shot.Release(Vector3.zero);
             }
@@ -122,8 +125,6 @@ namespace TeamOdd.Superpower
         // 아직 던지지 않은 것을 머리 둘레 반원의 자기 자리로 당긴다. i번째는 항상 i번째 자리
         private static void LineUp(List<PsychokinesisObject> shots, SkillContext context)
         {
-            if (context.Caster == null) return;
-
             Vector3 head = context.Caster.position + Vector3.up * HeadHeight;
             Vector3 right = Camera.main != null ? Camera.main.transform.right : context.Caster.right; // 화면 기준 오른쪽
             float arcRadius = BaseArcRadius + ArcRadiusPerShot * shots.Count; // 던져서 빠져도 shots.Count는 그대로라 연사 중에 크기가 바뀌지 않음

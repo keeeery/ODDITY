@@ -36,6 +36,9 @@ namespace TeamOdd.Superpower
         public bool IsReady => remainingCooldown <= 0f;
         public float RemainingCooldown => remainingCooldown;
 
+        // 쓴 뒤에도 한동안 시전이 이어지는 스킬(염동 연사 등)이 그동안 true로 둔다. 이 동안 SkillCaster는 다른 스킬을 쓰지 않는다
+        public virtual bool IsCasting => false;
+
         // 효과로 쿨타임이 당겨졌을 때. 어느 스킬인지 넘겨서 게임 화면 스킬 바(SkillSlotHUD)가 그 슬롯을 반짝인다
         public event Action<SuperpowerSkill> CooldownReduced;
 
