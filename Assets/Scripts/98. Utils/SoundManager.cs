@@ -162,7 +162,7 @@ namespace TeamOdd
         }
 
         // 못 찾은 이름도 null로 남겨, 같은 이름을 다시 요청할 때 매번 Resources를 뒤지며 경고하지 않게 함
-        private bool TryGetClip(string clipName, out AudioClip result)
+        public bool TryGetClip(string clipName, out AudioClip result)
         {
             result = null;
 
