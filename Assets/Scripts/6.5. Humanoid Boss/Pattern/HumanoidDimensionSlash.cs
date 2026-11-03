@@ -95,6 +95,8 @@ namespace TeamOdd
         [SerializeField] private float shakeTrauma = 0.8f;
         [SerializeField] private float releaseFadeDuration = 0.3f;
         [SerializeField] private float idleCrossFade = 0.4f;
+        [SerializeField] private SoundData shatterSound;
+        [SerializeField] private float shatterSoundLead = 0.09f; // 클립 앞부분 무음만큼 깨지기 전에 미리 재생
 
         // 원하는 피해 = 최대 체력 × damageRatio, 단 플레이어 체력이 최대 체력 × minHpRatio 아래로는 거의 안 내려가게 깎음
         // (CombatEntity가 최소 1을 주므로 이미 그 아래면 1, HP 1이면 사망)
@@ -451,10 +453,17 @@ namespace TeamOdd
             screen.SetCut(1f, 0f, cutRiftOpen);
             yield return Clock.Wait(splitPause);
 
+            bool hasPlayedShatter = false;
             float startTime = Clock.LocalTime;
             while (Clock.LocalTime - startTime < holdAfterFreeze)
             {
                 float elapsed = Clock.LocalTime - startTime;
+                if (hasPlayedShatter == false && elapsed >= holdAfterFreeze - shatterSoundLead)
+                {
+                    shatterSound.Play();
+                    hasPlayedShatter = true;
+                }
+
                 float progress = Mathf.Clamp01(elapsed / splitDuration);
                 float split = 1f - Mathf.Pow(1f - progress, 3f); // 정적을 깨고 단숨에 벌어지도록 ease-out
                 screen.SetSplit(Mathf.Lerp(slip, offset, split), Mathf.Clamp01(elapsed / crackDuration));
@@ -464,6 +473,9 @@ namespace TeamOdd
                 screen.SetCut(1f, 0f, Mathf.Lerp(cutRiftOpen, 1f, split) * flicker);
                 yield return null;
             }
+
+            // 프레임이 길어 미리 재생할 구간을 건너뛰었으면 깨지는 순간에 바로 재생
+            if (hasPlayedShatter == false) shatterSound.Play();
         }
 
         // 깨지는 순간 피해·넉다운을 주고, 세상·플레이어를 풀어 넉다운이 바로 보이게 함, 숨겼던 분신도 이때 다시 나타남
