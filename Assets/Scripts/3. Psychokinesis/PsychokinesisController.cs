@@ -1,6 +1,7 @@
 using System;
 using TeamOdd.Combat;
 using Study.Utilities;
+using TeamOdd.Player;
 using UnityEngine;
 
 namespace TeamOdd.Psychokinesis
@@ -210,15 +211,21 @@ namespace TeamOdd.Psychokinesis
             if (rightHeld == false) releaseRequested = true;
             else if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right))
             {
+                Player.Player.Instance.PlayAttackSound(AttackSoundType.Hold);
                 grabRequested = true;
                 releaseRequested = false;
             }
 
             if (SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Left))
             {
-                if (heldObject == null) attackRequested = true;
+                if (heldObject == null)
+                {
+                    Player.Player.Instance.PlayAttackSound(AttackSoundType.Normal);
+                    attackRequested = true;
+                }
                 else if (rightHeld)
                 {
+                    Player.Player.Instance.PlayAttackSound(AttackSoundType.Pull);
                     swingActiveUntil = float.NegativeInfinity;
                     throwPrepareStartOffset = heldObject.Body.worldCenterOfMass - GetHoldOrigin();
                     throwPrepareStartTime = Time.time;
@@ -227,7 +234,10 @@ namespace TeamOdd.Psychokinesis
             }
 
             if (IsPreparingThrow && rightHeld && SimpleInput.GetMouseButtonUp(SimpleInput.MouseButton.Left))
+            {
+                Player.Player.Instance.PlayAttackSound(AttackSoundType.Throw);
                 throwRequested = true;
+            }
         }
 
         private void LateUpdate()

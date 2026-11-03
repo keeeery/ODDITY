@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.y
@@ -102,7 +102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.5
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.w
@@ -110,15 +110,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8613002707549745596, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -195,6 +195,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3846190275516204713}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6474464230969543606}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7476393363341704050}
+    - targetCorrespondingSourceObject: {fileID: 8992660380984191750, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7604838971264483964}
   m_SourcePrefab: {fileID: 100100000, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
 --- !u!1 &1572104908200295443 stripped
 GameObject:
@@ -253,7 +262,18 @@ MonoBehaviour:
   stamina: 100
   staminaRegenRate: 15
   staminaRegenDelay: 1
-  CharacterController: {fileID: 677289072813033125}
+  normalSound:
+    clipName: Player/Attack/Normal Attack
+    volume: 1
+  pullSound:
+    clipName: Player/Attack/SFX_Vefects_Projectile_Burst_01
+    volume: 1
+  holdSound:
+    clipName: Player/Attack/Hold Object
+    volume: 1
+  throwSound:
+    clipName: Player/Attack/SFX_Vefects_Zap_Medium_02
+    volume: 1
   CameraController: {fileID: 0}
   PlayerController: {fileID: 6101258613780513084}
 --- !u!114 &6101258613780513084
@@ -272,7 +292,7 @@ MonoBehaviour:
   runSpeed: 7
   jumpHeight: 1.2
   gravity: -9.81
-  NeedRunStamina: 5
+  NeedRunStamina: 2
   moveReference: {fileID: 0}
   rotateTowardMove: 1
   turnSpeed: 720
@@ -313,7 +333,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   rollStateName: Roll
   rollClipName: Unarmed-DiveRoll-Forward1
-  NeedRollStamina: 40
+  NeedRollStamina: 25
   animator: {fileID: 1806036652689195332}
   pushForce: 150
   maxPushMass: 50
@@ -361,7 +381,7 @@ MonoBehaviour:
   attackLookBodyWeight: 0.3
   attackLookHeadWeight: 0.6
   attackLookBlendSpeed: 12
-  MaxEarlyWakeUpCooldown: 5
+  MaxEarlyWakeUpCooldown: 1
   WakeUpTime: 3
   InvincibleTime: 1.5
   maxHitAnimationWait: 3
@@ -429,7 +449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Combat.CombatEntity
   <Collider>k__BackingField: {fileID: 677289072813033125}
-  <Stats>k__BackingField: {fileID: 11400000, guid: 26316e6cc0391f64fbf80abd2474ef4c, type: 2}
+  <Stats>k__BackingField: {fileID: 11400000, guid: 30c34b21faf23ff4cb88cd0231f02440, type: 2}
   maxHpOverride: 0
 --- !u!114 &5859343519902430467
 MonoBehaviour:
@@ -508,8 +528,8 @@ MonoBehaviour:
   pulseDuration: 2.5
   startLensDistortion: -0.3
   startChromaticAberration: 0.8
-  endLensDistortion: 0.15
   startGlitch: 0.5
+  endLensDistortion: 0.15
   endGlitch: 0.3
 --- !u!114 &2920962985299418174
 MonoBehaviour:
@@ -609,6 +629,8 @@ MonoBehaviour:
   chipIds: 6109000062090000630900006409000065090000
   grantOnStart: 1
   grantKey: 102
+  grantAll: 0
+  grantAllToggleKey: 101
   inventory: {fileID: 288158857127106202}
 --- !u!114 &4264485809676156296
 MonoBehaviour:
@@ -635,6 +657,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.InGameDebugTool
   damage: 999999
+  hp: 999999
+--- !u!114 &6474464230969543606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b259e7dd2d4466478d3a084bd0f6832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.AugmentationChipInventory
+--- !u!114 &7476393363341704050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc008deb0f4501a4493bb1dca1e730d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.SkillCaster
+  overridePsychoSlamDamage: 0
+  psychoSlamDamage: 120
+  psychoSlamGroggy: 60
+--- !u!114 &7604838971264483964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572104908200295443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0fc69233eff43f284653c3ac5d83bd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamOdd.Superpower.Development.AugmentationChipGrantTester
+  chipIds: fe08000036080000
+  grantOnStart: 1
+  grantKey: 102
+  grantAll: 0
+  grantAllToggleKey: 101
+  inventory: {fileID: 6474464230969543606}
 --- !u!95 &1806036652689195332 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8074163760421901905, guid: e76854dd0fb436f47a369d5e9ada2033, type: 3}
