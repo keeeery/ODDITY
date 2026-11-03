@@ -41,6 +41,7 @@ namespace TeamOdd.UI
 
         private SkillSlotStyle style = new();
         private bool hasSkill;
+        private Color? skillColor;
         private float cooldownRatio;
         private float flashAlpha;
 
@@ -57,6 +58,18 @@ namespace TeamOdd.UI
             {
                 if (hasSkill == value) return;
                 hasSkill = value;
+                SetVerticesDirty();
+            }
+        }
+
+        // 스킬이 있을 때 바탕(트랙)을 칠할 색, null이면 style.trackColor
+        public Color? SkillColor
+        {
+            get => skillColor;
+            set
+            {
+                if (skillColor == value) return;
+                skillColor = value;
                 SetVerticesDirty();
             }
         }
@@ -105,7 +118,9 @@ namespace TeamOdd.UI
                 shape.FillShadow(vh, rect.center, borderWidth, style.shadowSize, style.shadowColor * color);
             if (borderWidth > 0f)
                 shape.Fill(vh, rect.center, borderWidth, antiAlias, borderColor * color);
-            shape.Fill(vh, rect.center, 0f, antiAlias, (hasSkill ? style.trackColor : style.emptyTrackColor) * color);
+            Color trackColor = style.emptyTrackColor;
+            if (hasSkill) trackColor = skillColor.HasValue ? skillColor.Value : style.trackColor;
+            shape.Fill(vh, rect.center, 0f, antiAlias, trackColor * color);
 
             if (hasSkill == false) return;
 

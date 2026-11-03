@@ -35,6 +35,14 @@ namespace TeamOdd.UI
             [NonSerialized] public Tween PunchTween;
         }
 
+        // 칩 칸 스프라이트 하나에 슬롯 바탕색 하나를 짝지어 둔다.
+        [Serializable]
+        private class SkillColor
+        {
+            public Sprite UnitSprite;
+            public Color Color = Color.white;
+        }
+
         [Header("References")]
         [Tooltip("비어 있으면 씬에서 찾는다.")]
         [SerializeField] private AugmentationChipInventory inventory;
@@ -51,6 +59,8 @@ namespace TeamOdd.UI
         [SerializeField] private SkillSlotStyle style = new();
         [Tooltip("슬롯 테두리와 스킬 아이콘 사이 여백")]
         [SerializeField, Min(0f)] private float iconPadding = 6f;
+        [Tooltip("장착한 칩의 칸 스프라이트(UnitSprite)에 맞춰 슬롯 바탕을 칠할 색, 목록에 없는 칩은 Style의 Track Color로 칠한다.")]
+        [SerializeField] private List<SkillColor> skillColors = new();
 
         [Header("Ready Flash")]
         [Tooltip("쿨타임이 끝나거나 당겨지는 순간 슬롯이 하얗게 번쩍였다 사라지는 시간(초)")]
@@ -158,6 +168,7 @@ namespace TeamOdd.UI
                 slot.Graphic.HasSkill = slot.Chip != null;
                 slot.Icon.enabled = slot.Chip != null;
                 if (slot.Chip != null) slot.Icon.sprite = slot.Chip.Def.IconSprite;
+                slot.Graphic.SkillColor = slot.Chip != null ? FindSkillColor(slot.Chip) : null;
                 // 장착하는 순간 쿨타임이 이미 끝나 있으면 번쩍이는 연출 없이 바로 사용 가능 상태로 둔다.
                 slot.WasCoolingDown = slot.Chip != null && slot.Chip.Skill.IsReady == false;
                 slot.FlashTween?.Kill();
@@ -165,6 +176,14 @@ namespace TeamOdd.UI
                 slot.Graphic.FlashAlpha = 0f;
                 UpdateCooldown(slot);
             }
+        }
+
+        // 칩의 칸 스프라이트와 짝지은 색, 목록에 없으면 null
+        private Color? FindSkillColor(OwnedChip chip)
+        {
+            foreach (SkillColor entry in skillColors)
+                if (entry.UnitSprite == chip.Def.UnitSprite) return entry.Color;
+            return null;
         }
 
         private void UpdateCooldown(Slot slot)
