@@ -22,6 +22,8 @@ namespace TeamOdd.Superpower
         private static readonly Color DarkTextColor = new Color(0.06f, 0.05f, 0.04f, 1f);
         private static readonly Vector2 NewBadgeSize = new Vector2(108f, 48f);
         private static readonly Vector2 NewBadgeOffset = new Vector2(12f, -12f); // 첫 칸 좌상단에서 외곽선 안쪽으로
+        // 아이콘을 칸(CellSize)보다 작게 가운데에 둔다. 칸을 꽉 채우면 아이콘 구석의 등급 다이아가 외곽선에 닿는다
+        private const float IconSize = 172f;
 
         private readonly List<RectTransform> units = new();
         private RectTransform outlineRoot;
@@ -84,7 +86,7 @@ namespace TeamOdd.Superpower
 
             // 첫 칸에 칩 아이콘을 표시
             icon = CreateRect("Icon", transform);
-            icon.sizeDelta = new Vector2(ChipGridMetrics.CellSize, ChipGridMetrics.CellSize);
+            icon.sizeDelta = new Vector2(IconSize, IconSize);
 
             Image iconImage = icon.gameObject.AddComponent<Image>();
             iconImage.sprite = def.IconSprite;
@@ -173,12 +175,14 @@ namespace TeamOdd.Superpower
 
             BuildOutline();
 
-            icon.anchoredPosition = ChipGridMetrics.CellPosition(Cells[0]);
+            Vector2 firstCell = ChipGridMetrics.CellPosition(Cells[0]);
+            float iconInset = (ChipGridMetrics.CellSize - IconSize) * 0.5f;
+            icon.anchoredPosition = firstCell + new Vector2(iconInset, -iconInset);
             icon.SetAsLastSibling();
 
             if (newBadge != null)
             {
-                newBadge.anchoredPosition = icon.anchoredPosition + NewBadgeOffset;
+                newBadge.anchoredPosition = firstCell + NewBadgeOffset;
                 newBadge.SetAsLastSibling();
             }
         }
