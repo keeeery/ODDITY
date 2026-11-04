@@ -138,7 +138,7 @@ namespace TeamOdd.Superpower
         // 죽을 뻔한 그 한 방은 체력을 깎기 전에 피격 반응(밀려남·넉다운)부터 시작한다 (CombatEntity.Hit → PlayerController.ApplyHitReaction)
         // 그대로 두면 넉다운 타이머가 연출보다 길어서, 일어선 뒤에도 한동안 못 움직이거나 늦게 온 기상 신호가 남는다
         // PlayerController는 꺼질 때(OnDisable) 진행 중인 피격 반응을 정리하므로 한 번 껐다 켜서 끊는다
-        // (TimeReverseRecorder와 같은 방식. 팀원 코드는 고치지 않는다)
+        // (팀원 코드는 고치지 않는다)
         // 피격 반응이 이미 쏜 Hit 신호도 지운다. 남겨 두면 일어서서 대기 자세로 돌아가는 순간 피격 모션이 나온다
         private static void CancelLethalHitReaction(PlayerController controller, Animator animator)
         {

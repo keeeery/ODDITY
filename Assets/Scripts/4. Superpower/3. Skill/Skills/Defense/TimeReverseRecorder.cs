@@ -13,7 +13,7 @@ namespace TeamOdd.Superpower
     ///   애니메이션은 레이어마다 재생 중이던 상태와 진행률을 적어 두었다가, 되감을 때 Animator.Play로 그 장면을 그대로 보여준다 (거꾸로 재생되는 것처럼 보인다)
     /// - Rewind(seconds): 기록을 끝(지금)에서 seconds초 전까지 RewindMultiplier배속으로 거꾸로 틀며, 체력·스태미나도 그때 값으로 되돌린다
     ///   (영상 되감기처럼 기록한 시간을 배속으로 거슬러 간다. 기록이 seconds초보다 짧으면 가장 오래된 기록까지만 간다)
-    /// - 되감는 동안에는 무적이고 이동 입력을 받지 않는다. 되감은 뒤에는 기록을 비우고 새로 쌓는다
+    /// - 되감는 동안에는 무적이고 행동이 잠긴다(PlayerController.SetActionLocked, 이동·구르기·염동력·다른 스킬 불가). 되감은 뒤에는 기록을 비우고 새로 쌓는다
     /// 화면 효과 같은 연출은 여기서 하지 않고 RewindStarted·RewindFinished 이벤트로 알리기만 한다 (TimeReverseEffect가 받아서 처리)
     /// </summary>
     public class TimeReverseRecorder : MonoBehaviour
@@ -45,7 +45,6 @@ namespace TeamOdd.Superpower
 
         private CombatEntity owner;
         private Player.Player player;
-        private CharacterController controller;
         private Animator animator;
         private int holdLayer; // 염동력 들기·조준 레이어 번호, 되감는 동안에는 끈다
         private float prevAnimatorSpeed; // 되감는 동안 애니메이터를 멈춰 두었다가 되돌릴 빠르기
@@ -64,7 +63,6 @@ namespace TeamOdd.Superpower
         {
             owner = GetComponent<CombatEntity>();
             player = GetComponent<Player.Player>();
-            controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
             holdLayer = animator.GetLayerIndex(Player.PlayerController.HoldLayerName);
         }
@@ -138,11 +136,13 @@ namespace TeamOdd.Superpower
 
         // time 시각에 기록된 모습으로 맞춘다. time은 index-1번 기록과 index번 기록 사이
         // 위치·회전은 두 기록 사이를 섞어 부드럽게, 애니메이션·체력·스태미나는 더 가까운 기록의 값을 쓴다
+        // 옮긴 자리를 CharacterController에 바로 알린다. 알리지 않으면 PlayerController의 다음 Move가 옮기기 전 자리에서 움직여 원래 자리로 돌아간다
         private void ShowRecordedAt(float time, int index)
         {
             if (index == 0)
             {
                 transform.SetPositionAndRotation(history[0].Position, history[0].Rotation);
+                Physics.SyncTransforms();
                 ApplyValues(history[0]);
                 return;
             }
@@ -155,6 +155,7 @@ namespace TeamOdd.Superpower
             transform.SetPositionAndRotation(
                 Vector3.Lerp(before.Position, after.Position, blend),
                 Quaternion.Slerp(before.Rotation, after.Rotation, blend));
+            Physics.SyncTransforms();
             ApplyValues(blend < 0.5f ? before : after);
         }
 
@@ -185,8 +186,8 @@ namespace TeamOdd.Superpower
         }
 
         // 적어 둔 장면으로 애니메이터를 맞춘다. 되감는 동안 애니메이터 빠르기가 0이라 이 장면에서 멈춰 보인다
-        // 염동력 레이어는 끈다. 그 손 모양은 PlayerController가 손가락 굽힘을 줄여야 자연스러운데, 되감는 동안에는 PlayerController가 꺼져 있어 왼손이 과하게 굽어 보인다
-        // (끝나면 PlayerController가 들고 있는지에 따라 레이어 무게를 다시 정한다)
+        // 염동력 레이어는 끈다. 들고 있던 장면이 나오면 왼손 자세가 기록과 어긋나 보인다
+        // (PlayerController가 매 프레임 들고 있는지에 따라 레이어 무게를 정하므로, 그 뒤에 도는 이 코루틴이 덮어쓴다. 끝나면 PlayerController가 다시 정한다)
         private void ApplyAnimation(AnimationSample[] samples)
         {
             for (int i = 0; i < samples.Length; i++)
@@ -202,8 +203,7 @@ namespace TeamOdd.Superpower
             }
         }
 
-        // 되감는 동안 무적, 이동 입력 막기, CharacterController 끄기, 애니메이터 멈추기
-        // (CharacterController가 켜져 있으면 position을 바꿔도 다음 프레임에 원래 자리로 돌아간다)
+        // 되감는 동안 무적, 행동 잠금(이동·구르기·염동력·다른 스킬·카메라 회전), 애니메이터 멈추기
         // (애니메이터가 흐르면 Play로 맞춘 장면에서 앞으로 재생되어 버리므로 빠르기를 0으로 둔다)
         private void SetRewinding(bool rewinding)
         {
@@ -212,10 +212,7 @@ namespace TeamOdd.Superpower
             if (rewinding) prevAnimatorSpeed = animator.speed;
             animator.speed = rewinding ? 0f : prevAnimatorSpeed;
 
-            controller.enabled = rewinding == false;
-
-            // 커서 잠금에 맞춰 PlayerController를 켜고 끄는 일은 UIManager가 맡는다. 되감는 동안만 바로 끄고, 끝나면 UIManager와 같은 기준(커서가 잠겨 있으면 켬)으로 되돌린다
-            player.PlayerController.enabled = rewinding == false && Cursor.lockState == CursorLockMode.Locked;
+            player.PlayerController.SetActionLocked(rewinding);
         }
     }
 }
