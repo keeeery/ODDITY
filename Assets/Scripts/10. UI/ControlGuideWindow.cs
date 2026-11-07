@@ -83,7 +83,7 @@ namespace TeamOdd.UI
                     new Entry("이동", null, null, "W", "A", "S", "D"),
                     new Entry("달리기", "누르는 동안", null, "Shift"),
                     new Entry("구르기", "구르는 동안 무적", null, "Space"),
-                    new Entry("시점 회전", null, null, "마우스"),
+                    new Entry("카메라 회전", null, null, "마우스"),
                 },
                 new[]
                 {

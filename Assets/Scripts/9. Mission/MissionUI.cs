@@ -172,6 +172,8 @@ namespace TeamOdd.Mission
 
             SceneLoadManager.Instance.LoadScene(stageSceneName);
             UIManager.Instance.BattleUIActive(true);
+            // 클리어 후 보상 창이 이 이름으로 수락 목록에서 임무를 지운다 (StageMoveUI.MoveToStage 와 같게)
+            if (selectedMission != null) UIManager.Instance.SetBossName(selectedMission.BossName);
             CloseUI();
         }
 

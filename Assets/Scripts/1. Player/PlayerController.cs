@@ -1407,7 +1407,7 @@ namespace TeamOdd.Player
                                 CanWakeUp = false;
                                 break;
                             }
-                            SystemMessage.Show("기상기 재사용 대기시간 중입니다.", SystemMessage.Tone.Warning);
+                            SystemMessage.Show("빠른 기상 재사용 대기시간 중입니다.", SystemMessage.Tone.Warning);
                         }
                         MoveDuringHit(Vector3.zero);
                         elapsed += PlayerDeltaTime;

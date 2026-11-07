@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/10. Build/2. Final/00. Title Cinematic.unity
     guid: 4e5cee8562d814123a7aafd708ab8810
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/10. Build/2. Final/01. Title.unity
     guid: bbf48027564341a4385b840f0fcc6084
   - enabled: 1
