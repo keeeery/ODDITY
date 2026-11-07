@@ -115,10 +115,10 @@ namespace TeamOdd.UI
             return window.gameObject;
         }
 
-        // 화면(모드·해상도) 두 줄, 구분선, 사운드(마스터·배경음·효과음) 세 줄, 우상단 X
+        // 화면(모드·해상도) 두 줄, 구분선, 사운드(마스터·배경음·효과음, 각각 음소거) 세 줄, 구분선, 카메라 회전 속도 한 줄, 우상단 X
         private static TitleSettingsPopup CreateSettingsPopup(Transform root, TMP_FontAsset titleFont, TMP_FontAsset bodyFont, StartMenuUI menu)
         {
-            RectTransform window = CreatePopupWindow("Settings Popup", root, "환경설정", new Vector2(760f, 500f), titleFont);
+            RectTransform window = CreatePopupWindow("Settings Popup", root, "환경설정", new Vector2(820f, 588f), titleFont);
             Button close = CreateCloseButton(window);
 
             TMP_Dropdown displayMode = CreateDropdownRow(window, "화면 모드", -140f, bodyFont);
@@ -127,9 +127,16 @@ namespace TeamOdd.UI
             Image line = CreateImage("Section Line", window, null, PopupPalette.TextAlpha(0.12f), Vector2.zero, Vector2.zero);
             PlacePopupRow(line.rectTransform, -248f, 1f);
 
-            (Slider master, TMP_Text masterValue) = CreateSliderRow(window, "마스터 볼륨", -292f, bodyFont);
-            (Slider bgm, TMP_Text bgmValue) = CreateSliderRow(window, "배경음", -356f, bodyFont);
-            (Slider sfx, TMP_Text sfxValue) = CreateSliderRow(window, "효과음", -420f, bodyFont);
+            (Slider master, TMP_Text masterValue, Toggle masterMute) = CreateVolumeRow(window, "마스터 볼륨", -292f, bodyFont);
+            (Slider bgm, TMP_Text bgmValue, Toggle bgmMute) = CreateVolumeRow(window, "배경음", -356f, bodyFont);
+            (Slider sfx, TMP_Text sfxValue, Toggle sfxMute) = CreateVolumeRow(window, "효과음", -420f, bodyFont);
+
+            Image controlLine = CreateImage("Control Section Line", window, null, PopupPalette.TextAlpha(0.12f), Vector2.zero, Vector2.zero);
+            PlacePopupRow(controlLine.rectTransform, -464f, 1f);
+
+            // 볼륨 줄과 슬라이더 끝을 맞추도록 음소거 칸만큼 오른쪽을 비움
+            (Slider cameraSpeed, TMP_Text cameraSpeedValue) = CreateSliderRow(window, "카메라 회전 속도", -508f, bodyFont, MuteToggleReserve);
+            cameraSpeed.value = 50f;
 
             TitleSettingsPopup popup = window.gameObject.AddComponent<TitleSettingsPopup>();
             Wire(popup,
@@ -141,9 +148,78 @@ namespace TeamOdd.UI
                 ("bgmValue", bgmValue),
                 ("sfxSlider", sfx),
                 ("sfxValue", sfxValue),
+                ("masterMuteToggle", masterMute),
+                ("bgmMuteToggle", bgmMute),
+                ("sfxMuteToggle", sfxMute),
+                ("cameraRotationSpeedSlider", cameraSpeed),
+                ("cameraRotationSpeedValue", cameraSpeedValue),
                 ("closeButton", close),
                 ("menu", menu));
             return popup;
+        }
+
+        // 이미 만든 타이틀 씬과 일시 정지 메뉴 프리팹에서 환경설정 팝업만 새로 만들어 바꾼다 (다른 UI는 건드리지 않음)
+        [MenuItem("Tools/Team Odd/Apply Settings Popup")]
+        private static void ApplySettingsPopup()
+        {
+            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo() == false) return;
+
+            var titleFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MenuFontPath);
+            var bodyFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BodyFontPath);
+
+            // 타이틀 씬
+            Scene title = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            StartMenuUI menu = Object.FindFirstObjectByType<StartMenuUI>(FindObjectsInactive.Include);
+            if (menu != null && ReplaceSettingsPopup(menu.transform, menu, titleFont, bodyFont, menu))
+            {
+                EditorSceneManager.MarkSceneDirty(title);
+                EditorSceneManager.SaveScene(title);
+                Debug.Log($"[Settings] 타이틀 씬의 환경설정 팝업을 바꿨습니다: {ScenePath}");
+            }
+            else
+            {
+                Debug.LogError($"[Settings] {ScenePath} 에서 StartMenuUI 또는 Settings Popup 을 찾지 못했습니다.");
+            }
+
+            // 일시 정지 메뉴 프리팹
+            GameObject prefab = PrefabUtility.LoadPrefabContents(PausePrefabPath);
+            try
+            {
+                PauseMenuUI pause = prefab.GetComponent<PauseMenuUI>();
+                Transform content = prefab.transform.Find("Content");
+                if (pause != null && content != null && ReplaceSettingsPopup(content, pause, titleFont, bodyFont, null))
+                {
+                    PrefabUtility.SaveAsPrefabAsset(prefab, PausePrefabPath);
+                    Debug.Log($"[Settings] 일시 정지 메뉴의 환경설정 팝업을 바꿨습니다: {PausePrefabPath}");
+                }
+                else
+                {
+                    Debug.LogError($"[Settings] {PausePrefabPath} 에서 PauseMenuUI 또는 Settings Popup 을 찾지 못했습니다.");
+                }
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(prefab);
+            }
+        }
+
+        // 같은 부모·같은 순서·같은 켜짐 상태로 새 팝업을 두고, owner 의 settingsPopup 연결을 옮긴다
+        private static bool ReplaceSettingsPopup(Transform parent, Object owner, TMP_FontAsset titleFont, TMP_FontAsset bodyFont, StartMenuUI menu)
+        {
+            Transform old = parent.Find("Settings Popup");
+            if (old == null) return false;
+
+            int siblingIndex = old.GetSiblingIndex();
+            bool active = old.gameObject.activeSelf;
+            int layer = old.gameObject.layer;
+            Object.DestroyImmediate(old.gameObject);
+
+            TitleSettingsPopup popup = CreateSettingsPopup(parent, titleFont, bodyFont, menu);
+            SetLayerRecursive(popup.transform, layer);
+            popup.transform.SetSiblingIndex(siblingIndex);
+            popup.gameObject.SetActive(active);
+            Wire(owner, ("settingsPopup", popup));
+            return true;
         }
 
         #region POPUP_PARTS
@@ -275,15 +351,16 @@ namespace TeamOdd.UI
             return dropdown;
         }
 
-        // 슬라이더 선 두께와 손잡이 높이, 처음(4, 14)보다 2/3로 낮춤
+        // 슬라이더 선 두께와 손잡이 높이. 선은 처음(4)의 2/3, 손잡이는 너비(14)보다 긴 세로 막대
         private const float SliderBarHeight = 4f * 2f / 3f;
-        private const float SliderHandleHeight = 14f * 2f / 3f;
+        private const float SliderHandleHeight = 36f;
 
         // 가는 선 위의 채움과 네모 손잡이, 오른쪽에 수치(0~100)
-        private static (Slider slider, TMP_Text value) CreateSliderRow(RectTransform window, string label, float y, TMP_FontAsset font)
+        // trailing: 수치 오른쪽에 비워 둘 너비 (음소거 체크박스 자리)
+        private static (Slider slider, TMP_Text value) CreateSliderRow(RectTransform window, string label, float y, TMP_FontAsset font, float trailing = 0f)
         {
             const float ValueWidth = 64f;
-            RectTransform control = CreatePopupRowControl(window, label, y, font, ValueWidth + 16f);
+            RectTransform control = CreatePopupRowControl(window, label, y, font, ValueWidth + 16f + trailing);
 
             GameObject go = DefaultControls.CreateSlider(new DefaultControls.Resources());
             go.name = "Slider";
@@ -311,9 +388,14 @@ namespace TeamOdd.UI
                 Image handle = slider.handleRect.GetComponent<Image>();
                 handle.sprite = null;
                 handle.color = PopupPalette.Text;
-                slider.handleRect.anchorMin = new Vector2(slider.handleRect.anchorMin.x, 0.5f);
-                slider.handleRect.anchorMax = new Vector2(slider.handleRect.anchorMax.x, 0.5f);
-                slider.handleRect.sizeDelta = new Vector2(14f, SliderHandleHeight);
+                // Slider는 갱신할 때마다 손잡이를 부모(Handle Slide Area) 높이 전체로 늘리고 sizeDelta.y를 더하므로
+                // 손잡이 높이는 부모 영역을 그 높이로 줄여서 정하고, 손잡이 자신은 세로로 더하지 않는다
+                var handleArea = (RectTransform)slider.handleRect.parent;
+                handleArea.anchorMin = new Vector2(handleArea.anchorMin.x, 0.5f);
+                handleArea.anchorMax = new Vector2(handleArea.anchorMax.x, 0.5f);
+                handleArea.sizeDelta = new Vector2(handleArea.sizeDelta.x, SliderHandleHeight);
+                handleArea.anchoredPosition = new Vector2(handleArea.anchoredPosition.x, 0f);
+                slider.handleRect.sizeDelta = new Vector2(14f, 0f);
             }
 
             ApplyPopupSelectableColors(slider);
@@ -321,10 +403,67 @@ namespace TeamOdd.UI
             TMP_Text value = CreateText("Value", window, "100", font, 22f, PopupPalette.Text, Vector2.zero, Vector2.zero);
             RectTransform valueRect = value.rectTransform;
             valueRect.anchorMin = valueRect.anchorMax = valueRect.pivot = new Vector2(1f, 1f);
-            valueRect.anchoredPosition = new Vector2(-PopupPadding, y + 22f);
+            valueRect.anchoredPosition = new Vector2(-PopupPadding - trailing, y + 22f);
             valueRect.sizeDelta = new Vector2(ValueWidth, 44f);
             value.alignment = TextAlignmentOptions.Right;
             return (slider, value);
+        }
+
+        // 음소거 체크박스(네모 칸 + "음소거") 너비와 수치와의 간격
+        private const float MuteToggleWidth = 104f;
+        private const float MuteToggleReserve = MuteToggleWidth + 20f;
+        private const float MuteBoxSize = 20f;
+
+        // 볼륨 줄: 슬라이더 + 수치 + 맨 오른쪽 음소거 체크박스
+        private static (Slider slider, TMP_Text value, Toggle mute) CreateVolumeRow(RectTransform window, string label, float y, TMP_FontAsset font)
+        {
+            (Slider slider, TMP_Text value) = CreateSliderRow(window, label, y, font, MuteToggleReserve);
+            Toggle mute = CreateMuteToggle(window, label, y, font);
+            return (slider, value, mute);
+        }
+
+        // 외곽선 네모 칸(버튼과 같은 모양, 올리면 밝아짐) 안에 켜지면 채워지는 작은 네모, 오른쪽에 "음소거". 글자를 눌러도 켜고 끔
+        private static Toggle CreateMuteToggle(RectTransform window, string label, float y, TMP_FontAsset font)
+        {
+            RectTransform root = CreateRect($"{label} Mute Toggle", window, Vector2.zero, Vector2.zero, Vector2.zero);
+            root.anchorMin = root.anchorMax = root.pivot = new Vector2(1f, 1f);
+            root.anchoredPosition = new Vector2(-PopupPadding, y + 22f);
+            root.sizeDelta = new Vector2(MuteToggleWidth, 44f);
+
+            // 줄 전체를 눌러도 반응하도록 투명한 바탕을 깔아 둠
+            Image hitArea = root.gameObject.AddComponent<Image>();
+            hitArea.color = Color.clear;
+            hitArea.raycastTarget = true;
+
+            RectTransform box = CreateRect("Box", root, Vector2.zero, Vector2.zero, Vector2.zero);
+            box.anchorMin = box.anchorMax = box.pivot = new Vector2(0f, 0.5f);
+            box.anchoredPosition = Vector2.zero;
+            box.sizeDelta = new Vector2(MuteBoxSize, MuteBoxSize);
+            VectorPanel boxPanel = box.gameObject.AddComponent<VectorPanel>();
+            boxPanel.raycastTarget = true; // 칸에 올리면 버튼처럼 밝아짐, 누르면 부모 Toggle 로 전달
+            StylePopupPanel(boxPanel, PopupPanelRole.Button);
+
+            Image check = CreateImage("Checkmark", box, null, PopupPalette.TextAlpha(0.85f), Vector2.zero, Vector2.zero);
+            check.rectTransform.anchorMin = Vector2.zero;
+            check.rectTransform.anchorMax = Vector2.one;
+            check.rectTransform.offsetMin = new Vector2(5f, 5f);
+            check.rectTransform.offsetMax = new Vector2(-5f, -5f);
+
+            TMP_Text text = CreateText("Label", root, "음소거", font, 20f, PopupPalette.TextAlpha(0.85f), Vector2.zero, Vector2.zero);
+            text.rectTransform.anchorMin = new Vector2(0f, 0f);
+            text.rectTransform.anchorMax = new Vector2(1f, 1f);
+            text.rectTransform.offsetMin = new Vector2(MuteBoxSize + 10f, 0f);
+            text.rectTransform.offsetMax = Vector2.zero;
+            text.alignment = TextAlignmentOptions.Left;
+
+            Toggle toggle = root.gameObject.AddComponent<Toggle>();
+            toggle.targetGraphic = boxPanel;
+            toggle.graphic = check;
+            toggle.toggleTransition = Toggle.ToggleTransition.Fade;
+            toggle.isOn = false;
+            ApplyPopupSelectableColors(toggle);
+            SetLayerRecursive(root, window.gameObject.layer);
+            return toggle;
         }
 
         // 한 줄: 왼쪽 이름 + 오른쪽 조작 영역(높이 44), y는 줄 가운데. rightReserve만큼 오른쪽을 비워 둠

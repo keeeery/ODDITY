@@ -8,7 +8,8 @@ namespace TeamOdd
     // 메인 화면·일시 정지 메뉴의 환경설정 팝업
     // - 화면 모드: 전체화면 / 전체 창 모드 / 창 모드, 고르는 즉시 바뀜
     // - 해상도: 창 모드일 때만 지금 모니터보다 크지 않은 해상도 중에서 고르고, 전체화면·전체 창 모드는 모니터 해상도로 고정
-    // - 마스터 볼륨 / 배경음 / 효과음 슬라이더(0~100), 옆에 수치를 표시
+    // - 마스터 볼륨 / 배경음 / 효과음 슬라이더(0~100), 옆에 수치와 음소거 체크박스
+    // - 카메라 회전 속도 슬라이더(0~100, 50 = 기본값), 바꾸는 즉시 반영
     // 화면 설정은 저장하지 않고 열 때마다 지금 화면 상태(게임을 실행했을 때의 값 또는 이 창에서 바꾼 값)를 보여 준다
     // 볼륨은 GameSettings로 로컬에 저장하고, 열 때마다 저장된 값으로 다시 맞춘다 (닫을 때 파일에 씀)
     // 에디터의 Game 창에서는 화면 모드·해상도가 바뀌지 않음 (빌드에서 확인)
@@ -28,6 +29,13 @@ namespace TeamOdd
         [SerializeField] private TMP_Text bgmValue;
         [SerializeField] private Slider sfxSlider;
         [SerializeField] private TMP_Text sfxValue;
+        [SerializeField] private Toggle masterMuteToggle;
+        [SerializeField] private Toggle bgmMuteToggle;
+        [SerializeField] private Toggle sfxMuteToggle;
+
+        [Header("Camera")]
+        [SerializeField] private Slider cameraRotationSpeedSlider;
+        [SerializeField] private TMP_Text cameraRotationSpeedValue;
 
         [Header("Close")]
         [SerializeField] private Button closeButton;
@@ -47,6 +55,11 @@ namespace TeamOdd
             BindSlider(masterSlider, masterValue, value => GameSettings.MasterVolume = value);
             BindSlider(bgmSlider, bgmValue, value => GameSettings.BgmVolume = value);
             BindSlider(sfxSlider, sfxValue, value => GameSettings.SfxVolume = value);
+            BindToggle(masterMuteToggle, muted => GameSettings.MasterMuted = muted);
+            BindToggle(bgmMuteToggle, muted => GameSettings.BgmMuted = muted);
+            BindToggle(sfxMuteToggle, muted => GameSettings.SfxMuted = muted);
+
+            BindSlider(cameraRotationSpeedSlider, cameraRotationSpeedValue, value => GameSettings.CameraRotationSpeed = value);
 
             if (closeButton != null) closeButton.onClick.AddListener(Close);
         }
@@ -64,6 +77,11 @@ namespace TeamOdd
             SetSlider(masterSlider, masterValue, GameSettings.MasterVolume);
             SetSlider(bgmSlider, bgmValue, GameSettings.BgmVolume);
             SetSlider(sfxSlider, sfxValue, GameSettings.SfxVolume);
+            SetToggle(masterMuteToggle, GameSettings.MasterMuted);
+            SetToggle(bgmMuteToggle, GameSettings.BgmMuted);
+            SetToggle(sfxMuteToggle, GameSettings.SfxMuted);
+
+            SetSlider(cameraRotationSpeedSlider, cameraRotationSpeedValue, GameSettings.CameraRotationSpeed);
         }
 
         private void OnDisable()
@@ -168,10 +186,12 @@ namespace TeamOdd
 
         #endregion
 
-        #region SOUND
+        #region SLIDER_TOGGLE
 
+        // 슬라이더는 0~100, 저장 값은 0~1. 빌더를 아직 돌리지 않은 창에는 카메라 슬라이더가 없으므로 비어 있으면 건너뜀
         private static void BindSlider(Slider slider, TMP_Text label, System.Action<float> save)
         {
+            if (slider == null) return;
             slider.minValue = 0f;
             slider.maxValue = 100f;
             slider.wholeNumbers = true;
@@ -184,9 +204,20 @@ namespace TeamOdd
 
         private static void SetSlider(Slider slider, TMP_Text label, float volume)
         {
+            if (slider == null) return;
             float value = Mathf.Round(volume * 100f);
             slider.SetValueWithoutNotify(value);
             label.SetText("{0}", value);
+        }
+
+        private static void BindToggle(Toggle toggle, System.Action<bool> save)
+        {
+            if (toggle != null) toggle.onValueChanged.AddListener(muted => save(muted));
+        }
+
+        private static void SetToggle(Toggle toggle, bool muted)
+        {
+            if (toggle != null) toggle.SetIsOnWithoutNotify(muted);
         }
 
         #endregion

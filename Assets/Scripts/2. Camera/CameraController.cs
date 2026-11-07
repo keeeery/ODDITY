@@ -405,8 +405,10 @@ namespace TeamOdd.CameraMove
                 // 마우스 이동량은 시간 배율과 무관하므로 슬로모션 중에는 플레이어 배율만큼 직접 느리게 돌림
                 Vector2 delta = target.PlayerController.IsActionLocked ? Vector2.zero : SimpleInput.GetMouseDelta() * (MOUSE_AXIS_SCALE * SlowMotion.PlayerScale * SlowMotion.PlayerOnlyScale);
 
-                yaw += delta.x * mouseSensitivity;
-                pitch -= delta.y * mouseSensitivity;
+                // 환경설정의 카메라 회전 속도는 인스펙터 값에 곱하는 배율 (가운데가 1배)
+                float sensitivity = mouseSensitivity * GameSettings.CameraRotationScale;
+                yaw += delta.x * sensitivity;
+                pitch -= delta.y * sensitivity;
                 pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
                 // 입력은 목표에 바로 쌓고 적용 회전만 빠른 지수 감쇠로 따라가게 함

@@ -116,7 +116,7 @@ namespace TeamOdd
             uiMotion?.Kill();
             masterVolumeFade?.Kill();
             // 전환 도중 사라지면 소리가 꺼진 채 남지 않게 설정 볼륨으로 되돌린다
-            if (isLoading) AudioListener.volume = GameSettings.MasterVolume;
+            if (isLoading) AudioListener.volume = GameSettings.MasterOutput;
             if (isLoading) ScreenGlitch.Clear();
             RestoreUI();
         }
@@ -155,7 +155,7 @@ namespace TeamOdd
 
             await SceneManager.LoadSceneAsync(sceneName);
             // 새 씬의 환경음 등은 검은 화면 뒤에서 짧게 키워 둔다 (새 BGM은 제 페이드로 0에서부터 커짐)
-            FadeMasterVolume(GameSettings.MasterVolume, soundFadeInDuration);
+            FadeMasterVolume(GameSettings.MasterOutput, soundFadeInDuration);
             HideSceneUI();
             // 구독한 쪽(BGM 등)에서 예외가 나도 화면을 켜지 않으면 꺼진 채로 남으므로 로그만 남기고 이어 간다
             try

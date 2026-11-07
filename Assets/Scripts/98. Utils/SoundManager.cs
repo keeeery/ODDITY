@@ -118,7 +118,7 @@ namespace TeamOdd
             AudioSource loop = gameObject.AddComponent<AudioSource>();
             loop.playOnAwake = false;
             loop.clip = clip;
-            loop.volume = volume * GameSettings.SfxVolume;
+            loop.volume = volume * GameSettings.SfxOutput;
             loop.loop = true;
             loopLevels[loop] = volume;
             loop.Play();
@@ -207,14 +207,14 @@ namespace TeamOdd
         private void SetBGMLevel(float level)
         {
             bgmLevel = level;
-            if (bgmSource != null) bgmSource.volume = bgmLevel * GameSettings.BgmVolume;
+            if (bgmSource != null) bgmSource.volume = bgmLevel * GameSettings.BgmOutput;
         }
 
         // 설정 창에서 슬라이더를 움직이면 지금 나오는 소리에도 바로 반영
         // 한 번 재생(PlayOneShot)은 source.volume이 곱해지므로 소스 볼륨만 맞추면 됨
         private void ApplyVolumes()
         {
-            float sfx = GameSettings.SfxVolume;
+            float sfx = GameSettings.SfxOutput;
 
             SetBGMLevel(bgmLevel);
             source.volume = sfx;
