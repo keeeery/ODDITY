@@ -31,8 +31,11 @@ namespace TeamOdd
 
         private void Start()
         {
-            playerController = Player.Player.Instance.PlayerController;
-            cameraController = Player.Player.Instance.CameraController;
+            // 플레이어가 없는 씬에서 먼저 만들어질 수 있다. 비어 있으면 LockCursor 에서 다시 찾는다
+            Player.Player player = Player.Player.Instance;
+            if (player == null) return;
+            playerController = player.PlayerController;
+            cameraController = player.CameraController;
         }
 
         private void Update()

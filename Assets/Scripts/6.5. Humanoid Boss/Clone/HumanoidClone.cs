@@ -96,6 +96,8 @@ namespace TeamOdd
         {
             if (combatEntity != null) combatEntity.Died -= HandleDied;
 
+            // 씬을 내리는 중이면 플레이어가 먼저 파괴됐을 수 있다. 살아 있을 때만 정리한다
+            if (Player.Player.IsInitialized == false) return;
             Player.Player player = Player.Player.Instance;
             if (player != null && player.PlayerController != null) player.PlayerController.RemovePassThroughBody(transform);
         }

@@ -2,12 +2,18 @@
 
 namespace Jay
 {
+    // 씬에 놓인 오브젝트만 쓰는 싱글톤(Player 등)에 붙인다. Instance 로 찾았는데 씬에 없으면 새로 만들지 않고 null 을 돌려준다.
+    // 씬을 내리는 도중(OnDestroy 등)에 불려 빈 오브젝트가 만들어지면 다음 씬까지 남아, 새 씬에 놓인 진짜 오브젝트가 중복으로 파괴된다
+    [System.AttributeUsage(System.AttributeTargets.Class, Inherited = true)]
+    public sealed class SceneOnlySingletonAttribute : System.Attribute { }
+
     public abstract class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
     {
         protected static T instance;
         private static readonly object lockObj = new object();
         private static bool applicationIsQuitting = false;
         private static bool isInitialized = false;
+        private static readonly bool createIfMissing = typeof(T).IsDefined(typeof(SceneOnlySingletonAttribute), true) == false;
 
         public static bool IsInitialized => isInitialized && instance != null;
         
@@ -31,6 +37,9 @@ namespace Jay
 
                     // 씬에 이미 놓여 있는지 먼저 찾아보고, 없으면 그때 만든다.
                     instance = FindAnyObjectByType<T>();
+
+                    if (instance == null && createIfMissing == false)
+                        return null;
 
                     if (instance == null)
                     {

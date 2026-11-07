@@ -18,6 +18,8 @@ namespace TeamOdd.Player
     
     // 플레이어가 맞을지는 CombatEntity.TakeDamage 한 곳에서 정해지고, 그 중 플레이어 몫(회피)은 여기서 답한다 (IDamageGuard)
     // 순서: 구르기·기상 직후 무적 → SkillGuard(패시브 칩). 둘 다 지나 맞기로 정해지면 CombatEntity.Hit을 듣고 피격 반응을 건다
+    // 씬마다 놓인 플레이어만 쓴다. 씬을 내리는 도중 Instance 가 불려도 빈 Player 를 만들지 않아야 다음 씬의 플레이어가 중복으로 파괴되지 않는다
+    [SceneOnlySingleton]
     public class Player : SingletonBase<Player>, IDamageGuard
     {
         [SerializeField] private float stamina = 100;
