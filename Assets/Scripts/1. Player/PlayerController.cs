@@ -334,6 +334,11 @@ namespace TeamOdd.Player
                 Player.Instance.ConsumeStamina(NeedRunStamina * PlayerDeltaTime);
 
             Vector2 inputRaw = ReadMoveInput();
+
+            // 움직이면서 달리기를 누른 순간 스태미나가 모자라거나, 달리던 중(지난 프레임) 스태미나가 바닥나 걷기로 바뀌면 알린다
+            bool runBlocked = SimpleInput.GetKey(Key.LeftShift) && canRun == false && inputRaw != Vector2.zero && isUIClose;
+            if (runBlocked && (SimpleInput.GetKeyDown(Key.LeftShift) || IsSprinting))
+                SystemMessage.Show(SystemMessage.NotEnoughStamina, SystemMessage.Tone.Warning);
             
             IsSprinting = inputRaw != Vector2.zero && Mathf.Approximately(speed, runSpeed) && isUIClose;
 

@@ -3,6 +3,7 @@ using Study.Utilities;
 using Study3D.FpsGame;
 using TeamOdd.CameraMove;
 using TeamOdd.Combat;
+using TeamOdd.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -131,7 +132,13 @@ namespace TeamOdd.Player
         
         private void HandleRollRequested()
         {
-            if (stamina < PlayerController.NeedRollStamina) return;
+            if (stamina < PlayerController.NeedRollStamina)
+            {
+                // 이미 구르는 중이면 어차피 새로 구르지 않으므로 알리지 않는다
+                if (PlayerController.IsRolling == false)
+                    SystemMessage.Show(SystemMessage.NotEnoughStamina, SystemMessage.Tone.Warning);
+                return;
+            }
 
             ConsumeStamina(PlayerController.NeedRollStamina);
             PlayerController.InputRolling(DodgeType.Manual);

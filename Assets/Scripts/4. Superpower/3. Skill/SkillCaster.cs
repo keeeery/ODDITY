@@ -137,7 +137,7 @@ namespace TeamOdd.Superpower
             float cost = ((SkillChipDef)chip.Def).Cost;
             if (player != null && player.Stamina < cost)
             {
-                SystemMessage.Show("스태미나가 부족합니다.", SystemMessage.Tone.Warning);
+                SystemMessage.Show(SystemMessage.NotEnoughStamina, SystemMessage.Tone.Warning);
                 return;
             }
 

@@ -16,6 +16,9 @@ namespace TeamOdd.UI
             Warning, // 할 수 없는 행동 (재사용 대기 등)
         }
 
+        // 스태미나를 쓰는 행동(달리기·구르기·염동력 잡기·스킬)을 스태미나가 모자라 못 할 때 띄우는 경고
+        public const string NotEnoughStamina = "스태미나가 부족합니다.";
+
         private static SystemMessage current;
 
         [SerializeField] private TMP_Text text;

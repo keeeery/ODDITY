@@ -291,6 +291,11 @@ namespace TeamOdd.Psychokinesis
                     heldObject.SetFocused(true, true);
                     targetInitialized = false;
                 }
+                else if (heldObject == null && focusedObject != null && CanGrab(focusedObject))
+                {
+                    // 잡을 수 있는 물체를 겨눴는데 스태미나만 모자란 경우
+                    SystemMessage.Show(SystemMessage.NotEnoughStamina, SystemMessage.Tone.Warning);
+                }
 
                 grabRequested = false;
                 Debug.Log(grabRequested);
@@ -327,7 +332,12 @@ namespace TeamOdd.Psychokinesis
 
             playerStatus.ConsumeStamina(holdStaminaCostPerSecond * Time.deltaTime);
 
-            if (playerStatus.Stamina <= 0f) releaseRequested = true;
+            if (playerStatus.Stamina <= 0f && releaseRequested == false)
+            {
+                // 들고 있던 물체를 스태미나가 바닥나 놓친다
+                releaseRequested = true;
+                SystemMessage.Show(SystemMessage.NotEnoughStamina, SystemMessage.Tone.Warning);
+            }
         }
 
         private void FixedUpdate()
