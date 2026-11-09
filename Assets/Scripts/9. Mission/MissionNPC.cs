@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Study.Utilities;
 using TeamOdd.Superpower;
+using TeamOdd.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -78,12 +79,20 @@ namespace TeamOdd.Mission
         {
             RefreshFocus();
             if (Focused != this) return;
+            // 증강 칩 창의 검색 칸에 글자를 치는 중이면 F(ㄹ)·Esc는 글자 입력이므로 받지 않는다
+            if (TextInputFocus.IsTyping) return;
+
+            // 로비에서 E로 연 증강 칩 창처럼 다른 창이 열려 있으면 그 위에 이 NPC의 창을 겹쳐 열지 않는다
+            // (우클릭은 그 창의 조작인 칩 빠른 장착/해제와도 겹친다). 이 NPC의 창이 열려 있으면 F로 닫는 것은 그대로 한다
+            bool isOpen = popupUI.activeSelf;
+            bool canOpen = isOpen == false && UIManager.Instance.IsUIClose;
 
             // 정비소에서는 염동력 대신 우클릭으로도 말을 건다. 창을 닫는 것은 F와 Esc만 한다
-            bool rightClick = CanInteractWithRightClick && popupUI.activeSelf == false &&
+            bool rightClick = CanInteractWithRightClick && canOpen &&
                               SimpleInput.GetMouseButtonDown(SimpleInput.MouseButton.Right);
+            bool fKey = (isOpen || canOpen) && SimpleInput.GetKeyDown(Key.F);
 
-            if (SimpleInput.GetKeyDown(Key.F) || rightClick)
+            if (fKey || rightClick)
             {
                 bool isClose = popupUI.activeSelf == false;
 

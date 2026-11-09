@@ -164,6 +164,8 @@ namespace TeamOdd.UI
         private void Update()
         {
             if (isLeaving || Keyboard.current == null || Keyboard.current.escapeKey.wasPressedThisFrame == false) return;
+            // 검색 칸 같은 글자 입력 칸에 치는 중이면 Esc는 입력만 끝낸다. 창을 닫거나 멈추지 않는다
+            if (TextInputFocus.IsTyping) return;
 
             if (IsPaused)
             {

@@ -131,6 +131,45 @@ namespace TeamOdd.UI
             }
         }
 
+        // 도형을 inner만큼 넓힌 선과 outer만큼 넓힌 선 사이의 띠(테두리 선)만 칠하고, 양쪽 가장자리 feather 폭은 투명해지도록 그림
+        // inner를 0으로 두면 안쪽 가장자리가 Fill(expand 0)의 가장자리와 맞물린다
+        public void Stroke(VertexHelper vh, float inner, float outer, float feather, Color32 strokeColor, Vector2 uv = default)
+        {
+            int count = points.Count;
+            if (count < 3 || outer <= inner) return;
+
+            Color32 clear = strokeColor;
+            clear.a = 0;
+            float half = feather * 0.5f;
+            // 띠가 feather보다 얇으면 가운데에서 가장 진해지고 양쪽으로 옅어진다
+            float middle = (inner + outer) * 0.5f;
+            float solidInner = Mathf.Min(inner + half, middle);
+            float solidOuter = Mathf.Max(outer - half, middle);
+            float orientation = GetSignedArea() >= 0f ? 1f : -1f;
+
+            int startIndex = vh.currentVertCount;
+            for (int index = 0; index < count; index++)
+            {
+                Vector2 point = points[index];
+                Vector2 normal = GetMiterNormal(index, orientation);
+                vh.AddVert(point + normal * (inner - half), clear, uv);
+                vh.AddVert(point + normal * solidInner, strokeColor, uv);
+                vh.AddVert(point + normal * solidOuter, strokeColor, uv);
+                vh.AddVert(point + normal * (outer + half), clear, uv);
+            }
+
+            for (int index = 0; index < count; index++)
+            {
+                int current = startIndex + index * 4;
+                int next = startIndex + (index + 1) % count * 4;
+                for (int band = 0; band < 3; band++)
+                {
+                    vh.AddTriangle(current + band, current + band + 1, next + band + 1);
+                    vh.AddTriangle(current + band, next + band + 1, next + band);
+                }
+            }
+        }
+
         // 도형 바깥으로 start부터 spread 폭만큼 번지는 그림자.
         // Fill의 직선 페더는 끝나는 곳에 선이 보여서, 여러 겹의 고리를 (1 - t)^ShadowFalloffPower로 옅어지게 쌓는다.
         // 창 바로 옆에서 빠르게 옅어지고 바깥쪽은 기울기가 0에 가까워지며 사라져 끝나는 곳이 눈에 띄지 않는다.

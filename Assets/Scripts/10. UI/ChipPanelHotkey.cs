@@ -73,6 +73,8 @@ namespace TeamOdd.UI
         private void Update()
         {
             if (panel == null) return;
+            // 창의 검색 칸에 글자를 치는 중이면 E(ㄷ)·Esc는 글자 입력이므로 창을 닫지 않는다
+            if (TextInputFocus.IsTyping) return;
 
             if (SimpleInput.GetKeyDown(key))
             {

@@ -16,11 +16,20 @@ namespace TeamOdd.Superpower
     /// 스킬 칩은 스킬 슬롯 수(5개)까지만 장착된다. 그리드에 놓으면 인벤토리가 빈 스킬 슬롯에 넣고, 아래 스킬 슬롯 줄(SkillSlotBarView)에서 순서를 바꾼다.
     /// 칩·스킬 슬롯에 마우스를 올리면 칩 툴팁(TooltipView)을 띄우고, 안내·장착 실패는 HUD의 SystemMessage로 알린다.
     /// 모은 칩 종류 수는 패널 위쪽 오른쪽(countText)에 늘 보여 준다.
+    /// 그리드 위에는 "보유 칩" 제목과 같은 높이로 "장착 칩" 제목 줄을 만들고, 그 오른쪽 끝의 전체 해제 버튼은 장착된 칩을 모두 트레이로 돌려보낸다.
     /// 패널은 테이블도 플레이어도 모른다. 여는 쪽(AugmentationChipToggle, 정비소 등)이 인벤토리를 넘겨준다.
     /// </summary>
     public class AugmentationChipPanel : MonoBehaviour
     {
         private static readonly string SkillSlotsFullMessage = $"스킬 칩은 {AugmentationChipInventory.SkillSlotCount}개까지만 장착할 수 있습니다.";
+
+        private const string UnequipAllLabel = "전체 해제";
+        private const string GridTitleLabel = "장착 칩";
+        // 전체 해제 버튼 크기와 간격 (칩 캔버스 3840x2160 기준)
+        private const float UnequipAllPadding = 48f; // 버튼 가장자리 ~ 글자
+        private const float UnequipAllGap = 48f;     // 그리드 위에 자리가 없어 제목 줄에 둘 때 버튼 ~ 보유 칩 수 글자
+
+        private static readonly Vector3[] corners = new Vector3[4];
 
         [SerializeField] private ChipGridView grid;
         [SerializeField] private ChipTrayView tray;
@@ -36,6 +45,8 @@ namespace TeamOdd.Superpower
         private readonly List<ChipItemView> chips = new();
         private AugmentationChipInventory inventory;
         private RectTransform root;  // 드래그 중인 칩을 올려두는 최상단
+        private Button unequipAllButton; // 처음 열 때 정렬 버튼을 복제해 만든다
+        private Text gridTitle;          // "장착 칩". 처음 열 때 "보유 칩" 제목을 복제해 만든다
 
         private ChipItemView dragging;
         private Vector2 dragOffset; // 드래그 중인 칩 위치 - 포인터 위치
@@ -95,6 +106,8 @@ namespace TeamOdd.Superpower
             chips.Clear();
             tray.Clear();
             grid.Clear();
+            // 지난번 검색어가 남아 있으면 칩이 빠진 것처럼 보이므로 다시 열 때마다 지운다
+            tray.ResetSearch();
 
             foreach (OwnedChip owned in inventory.Chips)
                 AddChip(owned);
@@ -112,6 +125,7 @@ namespace TeamOdd.Superpower
             }
 
             RefreshCounts();
+            PlaceUnequipAllButton();
             gameObject.SetActive(true);
             // 제목 오른쪽 조작 안내. 처음 열 때만 만든다
             ChipControlHint.Attach(transform);
@@ -241,6 +255,37 @@ namespace TeamOdd.Superpower
             // 칩이 포인터 아래에서 다른 곳으로 옮겨 갔으므로 툴팁을 닫는다. 다음에 올라간 칩이 새로 띄운다
             if (Tooltip != null)
                 Tooltip.Hide(chip);
+        }
+
+        // 그리드에 장착된 칩을 모두 해제해 트레이로 돌려보낸다. 칩마다 방향은 그대로 두고 소리는 한 번만 낸다
+        private void UnequipAll()
+        {
+            // 드래그 중에는 들고 있는 칩이나 스킬 슬롯과 꼬이지 않도록 무시한다 (OnRightClick과 같은 이유)
+            if (IsDragging)
+                return;
+
+            bool any = false;
+            foreach (ChipItemView chip in chips)
+            {
+                if (chip.Owned.IsEquipped == false)
+                    continue;
+
+                grid.Remove(chip);
+                inventory.Unequip(chip.Owned);
+                tray.Add(chip);
+                any = true;
+            }
+
+            if (any == false)
+            {
+                SystemMessage.Show("장착된 칩이 없습니다.", SystemMessage.Tone.Warning);
+                return;
+            }
+
+            unequipSound.Play();
+            tray.Layout();
+            if (Tooltip != null)
+                Tooltip.Hide();
         }
 
         // 지금 방향부터 시계 방향으로 돌려 가며 들어갈 자리를 찾는다
@@ -395,6 +440,102 @@ namespace TeamOdd.Superpower
             }
 
             countText.text = $"보유 {owned.Count} / 전체 {totalChipCount}";
+        }
+
+        // 그리드 위, "보유 칩" 제목과 같은 높이의 줄 왼쪽에 "장착 칩" 제목을, 오른쪽 끝(그리드 오른쪽 끝)에 전체 해제 버튼을 둔다
+        // 프리팹은 그리드를 이 줄만큼 내려 두었다. Build Layout으로 다시 배치해 그리드 위에 자리가 없어지면
+        // 제목 줄 오른쪽, 보유 칩 수 글자 바로 왼쪽에 둔다 (그 글자는 오른쪽 끝에 맞춰 왼쪽으로 늘어나므로 열 때마다 폭을 다시 잰다)
+        private void PlaceUnequipAllButton()
+        {
+            if (unequipAllButton == null)
+                unequipAllButton = CreateUnequipAllButton();
+            if (unequipAllButton == null)
+                return;
+
+            RectTransform rect = (RectTransform)unequipAllButton.transform;
+            Text trayTitle = tray.TitleText;
+            if (trayTitle != null && TryGetGridHeaderRow(trayTitle.rectTransform, out Rect row))
+            {
+                if (gridTitle == null)
+                    gridTitle = CreateGridTitle(trayTitle);
+                gridTitle.gameObject.SetActive(true);
+                PlaceAt(gridTitle.rectTransform, new Vector2(0f, 1f), new Vector2(row.xMin, row.yMax));
+                PlaceAt(rect, new Vector2(1f, 0.5f), new Vector2(row.xMax, row.center.y));
+                return;
+            }
+
+            if (gridTitle != null)
+                gridTitle.gameObject.SetActive(false);
+            if (countText == null)
+                return;
+
+            RectTransform count = countText.rectTransform;
+            rect.anchorMin = rect.anchorMax = count.anchorMin;
+            rect.pivot = new Vector2(1f, 0.5f);
+            rect.anchoredPosition = new Vector2(count.anchoredPosition.x - countText.preferredWidth - UnequipAllGap, count.anchoredPosition.y);
+        }
+
+        // 그리드 위 제목 줄 (패널 로컬 좌표). 높이는 "보유 칩" 제목 칸, 왼쪽·오른쪽 끝은 그리드에 맞춘다
+        // 그리드 위쪽 끝이 그 줄 아래에 있어야 자리가 있다
+        private bool TryGetGridHeaderRow(RectTransform trayTitle, out Rect row)
+        {
+            Rect title = GetLocalRect(trayTitle);
+            Rect area = GetLocalRect((RectTransform)grid.transform);
+            row = Rect.MinMaxRect(area.xMin, title.yMin, area.xMax, title.yMax);
+            return area.yMax <= title.yMin + 0.5f;
+        }
+
+        // 다른 부모 아래 있는 칸의 사각형을 패널 로컬 좌표로 바꾼다
+        private Rect GetLocalRect(RectTransform target)
+        {
+            target.GetWorldCorners(corners);
+            Vector2 min = transform.InverseTransformPoint(corners[0]);
+            Vector2 max = transform.InverseTransformPoint(corners[2]);
+            return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        }
+
+        // 피벗이 패널 로컬 좌표 point에 오도록 놓는다
+        private static void PlaceAt(RectTransform rect, Vector2 pivot, Vector2 point)
+        {
+            rect.pivot = pivot;
+            rect.localPosition = point;
+        }
+
+        // "보유 칩" 제목을 복제해 글꼴·크기·색을 맞춘다
+        private Text CreateGridTitle(Text template)
+        {
+            Text title = Instantiate(template, transform);
+            title.name = "GridTitle";
+            title.text = GridTitleLabel;
+            return title;
+        }
+
+        // 트레이의 정렬 버튼을 복제해 테두리·마우스 반응·글꼴을 맞춘다. 복제본에는 정렬 기능(실행 중에 붙인 리스너)이 따라오지 않는다
+        private Button CreateUnequipAllButton()
+        {
+            Button template = tray.SortButtonTemplate;
+            if (template == null)
+                return null;
+
+            Button button = Instantiate(template, transform);
+            button.name = "Unequip All";
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(UnequipAll);
+            // 정렬 버튼과 달리 바탕 없이 테두리 선만 그린다
+            if (button.TryGetComponent(out VectorPanel frame))
+                frame.OutlineOnly = true;
+
+            Text label = button.GetComponentInChildren<Text>(true);
+            label.text = UnequipAllLabel;
+            RectTransform labelRect = label.rectTransform;
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.pivot = new Vector2(0.5f, 0.5f);
+            labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
+
+            RectTransform rect = (RectTransform)button.transform;
+            rect.sizeDelta = new Vector2(label.preferredWidth + UnequipAllPadding * 2f, rect.sizeDelta.y);
+            return button;
         }
 
         // Screen Space - Overlay 캔버스 전제라 카메라 없이(null) 변환한다

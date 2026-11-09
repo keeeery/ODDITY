@@ -16,6 +16,9 @@ namespace TeamOdd.Superpower
     /// 보유 칩 트레이. 장착되지 않은 칩을 정렬 버튼 기준으로 정렬해서 스크롤 영역에 배치한다.
     /// 필터 토글은 모두 켜진 채(전체) 시작하고, 켜진 묶음의 칩만 보여준다. 모두 끄면 아무 칩도 보이지 않는다.
     /// 전체 토글은 "필터가 모두 켜져 있음"을 체크로 보여준다. 켜고 끄면 필터를 모두 같이 켜고 끈다.
+    /// 유형별 필터 글자 뒤에는 그 유형의 칩 색 음영을 깔아 칩 색과 필터를 이어 보이게 한다.
+    /// 위쪽 오른쪽 검색 칸(ChipSearchField)에 글자를 치면 필터를 통과한 칩 가운데 이름이 맞는 칩만 보여준다.
+    /// 검색 칸의 자동 완성 후보도 필터를 통과한, 트레이에 있는 칩 이름이다. 검색 칸은 처음 깨어날 때 정렬 버튼을 복제해 만든다.
     /// 트레이 크기와 필터 토글/정렬 버튼/스크롤 영역 배치는 에디터에서 AugmentationChipLayoutBuilder가 정해 둔다.
     /// </summary>
     public class ChipTrayView : MonoBehaviour
@@ -45,11 +48,30 @@ namespace TeamOdd.Superpower
         // content 안쪽 여백이자 칩 사이 간격
         [SerializeField] private float chipSpacing = 36f;
 
+        private const string TitleName = "TrayTitle"; // "보유 칩" 제목. 검색 칸을 이 줄에 둔다
+        // 필터 글자 뒤 유형 색 음영 (칩 캔버스 3840x2160 기준)
+        private const float FilterShadeAlpha = 0.75f;
+        private const float FilterShadePaddingX = 10f; // 글자 ~ 음영 왼쪽·오른쪽 끝. 글자는 체크 상자에서 28 떨어져 있어 음영과 상자 사이가 18 빈다
+        private const float FilterShadePaddingY = 6f;  // 글자 크기 ~ 음영 위·아래 끝
+
         private readonly List<ChipItemView> chips = new();
         private ChipSortKey sortKey = ChipSortKey.Recent; // 방금 얻은 칩을 찾기 쉽게 최신순으로 시작한다
         private bool sortAscending = true;
+        // 처음 깨어날 때 만든다. 패널은 트레이가 깨어나기 전에 Layout을 먼저 부를 수 있으므로 비어 있을 수 있다
+        private ChipSearchField search;
 
         public RectTransform Content => content;
+        // "보유 칩" 제목. 검색 칸이 이 줄 오른쪽에 붙고, 패널은 같은 높이에 그리드 쪽 "장착 칩" 제목 줄을 만든다
+        public Text TitleText
+        {
+            get
+            {
+                Transform title = transform.Find(TitleName);
+                return title != null ? title.GetComponent<Text>() : null;
+            }
+        }
+        // 전체 해제 버튼처럼 정렬 버튼과 같은 생김새가 필요한 곳이 복제해 간다
+        public Button SortButtonTemplate => sortButtons.Length > 0 ? sortButtons[0].button : null;
 
         // 아래는 AugmentationChipLayoutBuilder가 트레이 크기와 정렬 버튼을 배치할 때 읽는다
         public float ChipSpacing => chipSpacing;
@@ -85,6 +107,76 @@ namespace TeamOdd.Superpower
             }
 
             RefreshSortLabels();
+            CreateFilterShades();
+            CreateSearch();
+        }
+
+        // 필터 토글 글자 뒤에 그 유형의 칩 색 음영을 깐다. 글자 폭에 맞춰 세로 가운데에 두고, 누르는 것은 그대로 토글이 받는다
+        private void CreateFilterShades()
+        {
+            foreach (FilterToggle filterToggle in filterToggles)
+            {
+                Text label = filterToggle.text;
+                if (label == null)
+                    continue;
+
+                RectTransform labelRect = label.rectTransform;
+                GameObject go = new("Shade", typeof(RectTransform), typeof(Image));
+                go.layer = label.gameObject.layer;
+                RectTransform rect = (RectTransform)go.transform;
+                rect.SetParent(labelRect.parent, false);
+                rect.SetSiblingIndex(labelRect.GetSiblingIndex()); // 글자 바로 뒤에 그린다
+
+                // 글자는 칸 왼쪽 가운데 정렬이므로 칸 왼쪽 끝과 세로 가운데를 기준으로 글자 폭만큼 덮는다
+                Vector2 size = labelRect.sizeDelta;
+                Vector2 position = labelRect.anchoredPosition;
+                rect.anchorMin = labelRect.anchorMin;
+                rect.anchorMax = labelRect.anchorMax;
+                rect.pivot = new Vector2(0f, 0.5f);
+                rect.anchoredPosition = new Vector2(position.x - labelRect.pivot.x * size.x - FilterShadePaddingX,
+                                                    position.y + (0.5f - labelRect.pivot.y) * size.y);
+                rect.sizeDelta = new Vector2(Mathf.Min(label.preferredWidth, size.x) + FilterShadePaddingX * 2f,
+                                             label.fontSize + FilterShadePaddingY * 2f);
+
+                Image shade = go.GetComponent<Image>();
+                shade.color = GetFilterColor(filterToggle.filter);
+                shade.raycastTarget = false;
+            }
+        }
+
+        // 칩 칸 스프라이트(Resources/AugmentationChip/ChipUnit_*) 가운데 색에 음영 투명도를 곱한다
+        private static Color GetFilterColor(ChipFilter filter)
+        {
+            Color color = filter switch
+            {
+                ChipFilter.Attack => new Color(0.51f, 0.196f, 0.208f),   // ChipUnit_Red
+                ChipFilter.Defense => new Color(0.227f, 0.239f, 0.439f), // ChipUnit_Blue
+                ChipFilter.Utility => new Color(0.51f, 0.51f, 0.208f),   // ChipUnit_Yellow
+                ChipFilter.Passive => new Color(0.369f, 0.188f, 0.486f), // ChipUnit_Purple
+                ChipFilter.Stat => new Color(0.086f, 0.086f, 0.102f),    // ChipUnit_Black
+                _ => Color.clear,
+            };
+            color.a *= FilterShadeAlpha;
+            return color;
+        }
+
+        // 검색 칸을 "보유 칩" 제목 줄 오른쪽에, 오른쪽 끝을 정렬 버튼 줄 오른쪽 끝에 맞춰 만든다
+        private void CreateSearch()
+        {
+            if (sortButtons.Length == 0)
+                return;
+
+            RectTransform lastSortButton = GetSortButtonRect(sortButtons.Length - 1);
+            float right = lastSortButton.anchoredPosition.x + lastSortButton.sizeDelta.x;
+            search = ChipSearchField.Create((RectTransform)transform, sortButtons[0].button, TitleText, right, GetSearchCandidates);
+            search.QueryChanged += _ => Layout();
+        }
+
+        // 패널을 다시 열 때 지난번 검색어를 지운다
+        public void ResetSearch()
+        {
+            if (search != null)
+                search.Clear();
         }
 
         public void Add(ChipItemView chip)
@@ -168,8 +260,22 @@ namespace TeamOdd.Superpower
             return true;
         }
 
-        // 켜진 묶음의 칩만 보여준다
-        private bool IsShown(AugmentationChipDef def)
+        // 켜진 묶음의 칩 가운데 이름이 검색어와 맞는 칩만 보여준다
+        private bool IsShown(AugmentationChipDef def) => IsFilterOn(def) && (search == null || search.Matches(def.Name));
+
+        // 자동 완성 후보: 지금 트레이에 있고 필터를 통과한 칩의 이름 (같은 칩을 여러 장 가져도 한 번)
+        private IEnumerable<string> GetSearchCandidates()
+        {
+            HashSet<string> names = new();
+            foreach (ChipItemView chip in chips)
+            {
+                if (IsFilterOn(chip.Owned.Def))
+                    names.Add(chip.Owned.Def.Name);
+            }
+            return names;
+        }
+
+        private bool IsFilterOn(AugmentationChipDef def)
         {
             ChipFilter filter = GetFilter(def);
             foreach (FilterToggle filterToggle in filterToggles)

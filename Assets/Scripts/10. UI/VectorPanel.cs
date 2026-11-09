@@ -36,6 +36,7 @@ namespace TeamOdd.UI
         private bool highlighted;
         private float highlightAmount;
         private float flashAlpha;
+        private bool outlineOnly;
 
         public bool Highlighted
         {
@@ -45,6 +46,31 @@ namespace TeamOdd.UI
                 if (highlighted == value) return;
                 highlighted = value;
                 if (highlightFadeDuration <= 0f || Application.isPlaying == false) SetHighlightAmount(value ? 1f : 0f);
+            }
+        }
+
+        // 바탕 색. 버튼을 복제해 입력 칸처럼 바탕만 바꿔 쓸 때 쓴다
+        public Color TrackColor
+        {
+            get => trackColor;
+            set
+            {
+                if (trackColor == value) return;
+                trackColor = value;
+                SetVerticesDirty();
+            }
+        }
+
+        // 켜면 테두리를 선으로만 그려 트랙이 투명한 버튼도 바탕이 비어 보인다. 끄면(기본) 테두리 색이 트랙 아래를 채운다
+        // 증강 칩 창의 전체 해제 버튼처럼 실행 중에 복제한 버튼 하나만 다르게 보이게 할 때 쓴다
+        public bool OutlineOnly
+        {
+            get => outlineOnly;
+            set
+            {
+                if (outlineOnly == value) return;
+                outlineOnly = value;
+                SetVerticesDirty();
             }
         }
 
@@ -101,19 +127,34 @@ namespace TeamOdd.UI
             if (rect.width <= 0f || rect.height <= 0f) return;
 
             float antiAlias = VectorShape.PixelsToUnits(canvas, antiAliasPixels);
-            Color border = Color.Lerp(borderColor, highlightBorderColor, highlightAmount);
 
             shape.SetRoundedRect(rect, 0f, 1);
             if (shadowSize > 0f)
                 shape.FillShadow(vh, rect.center, borderWidth, shadowSize, shadowColor * color);
-            if (borderWidth > 0f)
-                shape.Fill(vh, rect.center, borderWidth, antiAlias, border * color);
+            // 테두리 색은 트랙 아래를 통째로 채운다. 트랙이 투명한 버튼은 이 색이 옅은 바탕으로 보인다
+            if (borderWidth > 0f && outlineOnly == false)
+                shape.Fill(vh, rect.center, borderWidth, antiAlias, borderColor * color);
             shape.Fill(vh, rect.center, 0f, antiAlias, trackColor * color);
             if (highlightAmount > 0.001f && highlightTrackColor.a > 0f)
             {
                 Color hover = highlightTrackColor;
                 hover.a *= highlightAmount;
                 shape.Fill(vh, rect.center, 0f, antiAlias, hover * color);
+            }
+            // 강조는 테두리 선에만 칠한다. 바탕까지 칠하면 트랙이 투명한 버튼·드롭다운은 바탕 전체가 밝아져 밝은 글자가 묻힌다
+            if (borderWidth > 0f)
+            {
+                if (outlineOnly)
+                {
+                    Color border = Color.Lerp(borderColor, highlightBorderColor, highlightAmount);
+                    shape.Stroke(vh, 0f, borderWidth, antiAlias, border * color);
+                }
+                else if (highlightAmount > 0.001f && highlightBorderColor.a > 0f)
+                {
+                    Color highlight = highlightBorderColor;
+                    highlight.a *= highlightAmount;
+                    shape.Stroke(vh, 0f, borderWidth, antiAlias, highlight * color);
+                }
             }
 
             if (flashAlpha > 0.001f)
