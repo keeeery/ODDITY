@@ -7,8 +7,10 @@ using UnityEngine.Rendering.Universal;
 
 namespace TeamOdd.UI
 {
-    // 보스가 플레이어를 가리면 가려진 부분에만 플레이어 실루엣의 외곽선을 그리는 기능
-    // 대상과 색은 BossHUD가 SetTargets로 넘겨준다.
+    // 보스와 다른 물체가 서로 가릴 때 가려진 쪽을 화면에 드러내는 기능
+    // - 보스가 플레이어를 가리면 가려진 부분에만 플레이어 실루엣의 외곽선을 그린다.
+    // - 보스가 플레이어가 아닌 다른 물체에 가리면 가려진 부분을 보스 실루엣으로 채워 그린다. 지정한 레이어(예: 수련장 벽)에 가린 부분은 뺀다.
+    // 대상과 색은 BossHUD가 SetTargets, SetStyle, SetFillStyle로 넘겨준다.
     public sealed class BossOcclusionOutlineFeature : ScriptableRendererFeature
     {
         [SerializeField] private Shader outlineShader;
@@ -19,6 +21,9 @@ namespace TeamOdd.UI
         private static readonly List<Renderer> playerRenderers = new List<Renderer>();
         private static Color outlineColor = Color.white;
         private static float outlineWidthPixels = 2f;
+        private static Color fillColor = Color.clear;
+        private static float fillMinGap = 0.3f;
+        private static LayerMask fillIgnoredOccluders;
 
         public static void SetTargets(GameObject boss, GameObject player)
         {
@@ -30,6 +35,16 @@ namespace TeamOdd.UI
         {
             outlineColor = color;
             outlineWidthPixels = widthPixels;
+        }
+
+        // 가려진 보스 실루엣의 채우기 색과, 보스 앞면과 가린 물체 사이가 이 거리(m)보다 멀어야 채우기 시작하는 값
+        // ignoredOccluders 레이어의 물체(예: 수련장 벽)가 보스 앞을 막고 있으면 그 부분은 채우지 않는다.
+        // 색의 알파가 0이면 채우기를 그리지 않는다.
+        public static void SetFillStyle(Color color, float minGap, LayerMask ignoredOccluders)
+        {
+            fillColor = color;
+            fillMinGap = minGap;
+            fillIgnoredOccluders = ignoredOccluders;
         }
 
         public static void ClearTargets()
@@ -47,7 +62,7 @@ namespace TeamOdd.UI
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            if (bossRenderers.Count == 0 || playerRenderers.Count == 0) return;
+            if (bossRenderers.Count == 0) return;
             Camera camera = renderingData.cameraData.camera;
             if (camera.cameraType != CameraType.Game && camera.cameraType != CameraType.SceneView) return;
             renderer.EnqueuePass(pass);
@@ -77,28 +92,54 @@ namespace TeamOdd.UI
 
         private sealed class OutlinePass : ScriptableRenderPass
         {
-            private const int BossDepthPass = 0;
+            private const int DepthMaskPass = 0;
             private const int PlayerSilhouettePass = 1;
             private const int ScreenOutlinePass = 2;
+            private const int ScreenFillPass = 3;
             private static readonly int BossDepthId = Shader.PropertyToID("_BossOcclusionBossDepth");
             private static readonly int PlayerMaskId = Shader.PropertyToID("_BossOcclusionPlayerMask");
+            private static readonly int IgnoredDepthId = Shader.PropertyToID("_BossOcclusionIgnoredDepth");
             private static readonly int ColorId = Shader.PropertyToID("_BaseColor");
             private static readonly int WidthId = Shader.PropertyToID("_OutlineWidthPixels");
             private static readonly int RectId = Shader.PropertyToID("_OutlineRect");
+            private static readonly int FillColorId = Shader.PropertyToID("_FillColor");
+            private static readonly int FillMinGapId = Shader.PropertyToID("_FillMinGap");
+            private static readonly int FillRectId = Shader.PropertyToID("_FillRect");
+            private static readonly Vector4 ScreenRect = new Vector4(0f, 0f, 1f, 1f);
+            private static readonly List<ShaderTagId> OccluderShaderTags = new List<ShaderTagId>
+            {
+                new ShaderTagId("UniversalForward"), new ShaderTagId("UniversalForwardOnly"), new ShaderTagId("SRPDefaultUnlit"),
+            };
             private readonly Material material;
-            private readonly MaterialPropertyBlock properties = new MaterialPropertyBlock();
+            private readonly MaterialPropertyBlock outlineProperties = new MaterialPropertyBlock();
+            private readonly MaterialPropertyBlock fillProperties = new MaterialPropertyBlock();
+            private readonly List<Material> materialBuffer = new List<Material>();
+
+            private struct DrawItem
+            {
+                public Renderer Renderer;
+                public int SubMesh;
+            }
 
             private sealed class MaskData
             {
                 public Material Material;
                 public int ShaderPass;
-                public readonly List<Renderer> Renderers = new List<Renderer>();
+                public readonly List<DrawItem> Items = new List<DrawItem>();
+            }
+
+            private sealed class OccluderData
+            {
+                public RendererListHandle Renderers;
             }
 
             private sealed class CompositeData
             {
                 public Material Material;
+                public int ShaderPass;
                 public MaterialPropertyBlock Properties;
+                public TextureHandle PlayerMask;
+                public TextureHandle IgnoredDepth;
             }
 
             public OutlinePass(Material material)
@@ -112,97 +153,187 @@ namespace TeamOdd.UI
             {
                 UniversalResourceData resources = frameData.Get<UniversalResourceData>();
                 UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
-                // 두 대상이 화면에서 겹치는 영역이 없으면 마스크도 그리지 않는다.
+                if (resources.cameraDepthTexture.IsValid() == false) return;
+                // 보스가 화면 밖이면 아무것도 그리지 않는다.
                 if (TryGetBounds(bossRenderers, out Bounds bossBounds) == false) return;
-                if (TryGetBounds(playerRenderers, out Bounds playerBounds) == false) return;
-                Vector4 rect = Intersect(GetScreenRect(cameraData, bossBounds), GetScreenRect(cameraData, playerBounds));
-                if (rect.x >= rect.z || rect.y >= rect.w) return;
+                Vector4 bossRect = Intersect(GetScreenRect(cameraData, bossBounds), ScreenRect);
+                if (IsEmpty(bossRect)) return;
 
-                TextureDesc bossDescriptor = renderGraph.GetTextureDesc(resources.activeColorTexture);
-                bossDescriptor.name = "Boss occlusion depth";
-                bossDescriptor.colorFormat = GraphicsFormat.R32G32_SFloat;
-                // 보스 경계의 커버리지를 얻기 위해 MSAA로 그리고, 읽을 때 자동 Resolve된 값 사용
-                bossDescriptor.msaaSamples = MSAASamples.MSAA4x;
-                bossDescriptor.bindTextureMS = false;
-                bossDescriptor.depthBufferBits = DepthBits.None;
-                bossDescriptor.clearBuffer = true;
-                bossDescriptor.clearColor = Color.clear;
-                bossDescriptor.filterMode = FilterMode.Point;
-                TextureHandle bossDepth = renderGraph.CreateTexture(bossDescriptor);
+                // 외곽선과 플레이어 마스크는 두 대상이 화면에서 겹칠 때만 필요하다.
+                bool hasPlayer = TryGetBounds(playerRenderers, out Bounds playerBounds);
+                Vector4 overlapRect = hasPlayer ? Intersect(bossRect, GetScreenRect(cameraData, playerBounds)) : Vector4.zero;
+                bool overlapsPlayer = hasPlayer && IsEmpty(overlapRect) == false;
+                bool drawsFill = fillColor.a > 0f;
+                if (overlapsPlayer == false && drawsFill == false) return;
 
-                // 보스 메시끼리의 앞뒤만 가리는 전용 깊이 버퍼
-                TextureDesc bossZDescriptor = bossDescriptor;
-                bossZDescriptor.name = "Boss occlusion z-buffer";
-                bossZDescriptor.depthBufferBits = DepthBits.Depth32;
-                TextureHandle bossZ = renderGraph.CreateTexture(bossZDescriptor);
-
+                TextureHandle bossDepth = CreateMaskTexture(renderGraph, resources, "Boss occlusion depth", GraphicsFormat.R32G32_SFloat);
                 using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<MaskData>("Boss occlusion depth", out MaskData data))
                 {
-                    SetMaskData(data, BossDepthPass, bossRenderers);
+                    SetMaskData(data, DepthMaskPass, bossRenderers);
                     builder.SetRenderAttachment(bossDepth, 0, AccessFlags.Write);
-                    builder.SetRenderAttachmentDepth(bossZ, AccessFlags.Write);
+                    builder.SetRenderAttachmentDepth(CreateMaskZBuffer(renderGraph, bossDepth, "Boss occlusion z-buffer"), AccessFlags.Write);
                     builder.SetGlobalTextureAfterPass(bossDepth, BossDepthId);
                     builder.SetRenderFunc(static (MaskData data, RasterGraphContext context) => DrawMask(data, context));
                 }
 
-                TextureDesc playerDescriptor = renderGraph.GetTextureDesc(resources.activeColorTexture);
-                playerDescriptor.name = "Boss occlusion player silhouette";
-                playerDescriptor.colorFormat = GraphicsFormat.R16G16_SFloat;
-                // 가장자리 커버리지를 얻기 위해 MSAA로 그리고, 읽을 때 자동 Resolve된 값 사용
-                playerDescriptor.msaaSamples = MSAASamples.MSAA4x;
-                playerDescriptor.bindTextureMS = false;
-                playerDescriptor.depthBufferBits = DepthBits.None;
-                playerDescriptor.clearBuffer = true;
-                playerDescriptor.clearColor = Color.clear;
-                playerDescriptor.filterMode = FilterMode.Point;
-                TextureHandle playerMask = renderGraph.CreateTexture(playerDescriptor);
-
-                using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<MaskData>("Boss occlusion player silhouette", out MaskData data))
+                // 플레이어가 보스와 겹치지 않으면 채우기에서 비울 플레이어 부분도 없으므로 검은 텍스처로 대신한다.
+                TextureHandle playerMask = renderGraph.defaultResources.blackTexture;
+                if (overlapsPlayer)
                 {
-                    SetMaskData(data, PlayerSilhouettePass, playerRenderers);
-                    builder.UseTexture(bossDepth, AccessFlags.Read);
-                    builder.UseTexture(resources.cameraDepthTexture, AccessFlags.Read);
-                    builder.SetRenderAttachment(playerMask, 0, AccessFlags.Write);
-                    builder.SetGlobalTextureAfterPass(playerMask, PlayerMaskId);
-                    builder.SetRenderFunc(static (MaskData data, RasterGraphContext context) => DrawMask(data, context));
+                    // 0~1 값만 담으므로 8비트로 충분하다.
+                    playerMask = CreateMaskTexture(renderGraph, resources, "Boss occlusion player silhouette", GraphicsFormat.R8G8B8A8_UNorm);
+                    using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<MaskData>("Boss occlusion player silhouette", out MaskData data))
+                    {
+                        SetMaskData(data, PlayerSilhouettePass, playerRenderers);
+                        builder.UseTexture(bossDepth, AccessFlags.Read);
+                        builder.UseTexture(resources.cameraDepthTexture, AccessFlags.Read);
+                        builder.SetRenderAttachment(playerMask, 0, AccessFlags.Write);
+                        builder.SetRenderAttachmentDepth(CreateMaskZBuffer(renderGraph, playerMask, "Boss occlusion player z-buffer"), AccessFlags.Write);
+                        builder.SetGlobalTextureAfterPass(playerMask, PlayerMaskId);
+                        builder.SetRenderFunc(static (MaskData data, RasterGraphContext context) => DrawMask(data, context));
+                    }
                 }
 
-                properties.Clear();
-                properties.SetColor(ColorId, outlineColor);
-                properties.SetFloat(WidthId, outlineWidthPixels);
-                properties.SetVector(RectId, rect);
-                using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<CompositeData>("Boss occlusion outline", out CompositeData data))
+                if (drawsFill)
                 {
-                    data.Material = material;
-                    data.Properties = properties;
-                    builder.UseTexture(playerMask, AccessFlags.Read);
-                    builder.SetRenderAttachment(resources.activeColorTexture, 0, AccessFlags.ReadWrite);
-                    builder.SetRenderFunc(static (CompositeData data, RasterGraphContext context) =>
-                        context.cmd.DrawProcedural(Matrix4x4.identity, data.Material, ScreenOutlinePass, MeshTopology.Triangles, 3, 1, data.Properties));
+                    TextureHandle ignoredDepth = DrawIgnoredOccluders(renderGraph, frameData, resources, cameraData);
+                    fillProperties.Clear();
+                    fillProperties.SetColor(FillColorId, fillColor);
+                    fillProperties.SetFloat(FillMinGapId, fillMinGap);
+                    fillProperties.SetVector(FillRectId, bossRect);
+                    using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<CompositeData>("Boss occlusion fill", out CompositeData data))
+                    {
+                        SetCompositeData(data, ScreenFillPass, fillProperties, playerMask, ignoredDepth);
+                        builder.UseTexture(bossDepth, AccessFlags.Read);
+                        builder.UseTexture(playerMask, AccessFlags.Read);
+                        builder.UseTexture(ignoredDepth, AccessFlags.Read);
+                        builder.UseTexture(resources.cameraDepthTexture, AccessFlags.Read);
+                        builder.SetRenderAttachment(resources.activeColorTexture, 0, AccessFlags.ReadWrite);
+                        builder.SetRenderFunc(static (CompositeData data, RasterGraphContext context) => DrawComposite(data, context));
+                    }
                 }
+
+                if (overlapsPlayer)
+                {
+                    outlineProperties.Clear();
+                    outlineProperties.SetColor(ColorId, outlineColor);
+                    outlineProperties.SetFloat(WidthId, outlineWidthPixels);
+                    outlineProperties.SetVector(RectId, overlapRect);
+                    using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<CompositeData>("Boss occlusion outline", out CompositeData data))
+                    {
+                        SetCompositeData(data, ScreenOutlinePass, outlineProperties, playerMask, renderGraph.defaultResources.blackTexture);
+                        builder.UseTexture(playerMask, AccessFlags.Read);
+                        builder.UseTexture(data.IgnoredDepth, AccessFlags.Read);
+                        builder.SetRenderAttachment(resources.activeColorTexture, 0, AccessFlags.ReadWrite);
+                        builder.SetRenderFunc(static (CompositeData data, RasterGraphContext context) => DrawComposite(data, context));
+                    }
+                }
+            }
+
+            // 채우기에서 무시할 레이어의 불투명 물체를 화면에 보이는 것만 골라 가장 가까운 면의 깊이로 그린다.
+            // 무시할 레이어가 없으면 검은 텍스처(커버리지 0)를 돌려준다.
+            private TextureHandle DrawIgnoredOccluders(RenderGraph renderGraph, ContextContainer frameData, UniversalResourceData resources, UniversalCameraData cameraData)
+            {
+                if (fillIgnoredOccluders.value == 0) return renderGraph.defaultResources.blackTexture;
+
+                UniversalRenderingData renderingData = frameData.Get<UniversalRenderingData>();
+                UniversalLightData lightData = frameData.Get<UniversalLightData>();
+                DrawingSettings drawing = RenderingUtils.CreateDrawingSettings(OccluderShaderTags, renderingData, cameraData, lightData, SortingCriteria.CommonOpaque);
+                drawing.overrideMaterial = material;
+                drawing.overrideMaterialPassIndex = DepthMaskPass;
+                FilteringSettings filtering = new FilteringSettings(RenderQueueRange.opaque, fillIgnoredOccluders);
+
+                TextureHandle ignoredDepth = CreateMaskTexture(renderGraph, resources, "Boss occlusion ignored occluders", GraphicsFormat.R32G32_SFloat);
+                using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<OccluderData>("Boss occlusion ignored occluders", out OccluderData data))
+                {
+                    data.Renderers = renderGraph.CreateRendererList(new RendererListParams(renderingData.cullResults, drawing, filtering));
+                    builder.UseRendererList(data.Renderers);
+                    builder.SetRenderAttachment(ignoredDepth, 0, AccessFlags.Write);
+                    builder.SetRenderAttachmentDepth(CreateMaskZBuffer(renderGraph, ignoredDepth, "Boss occlusion ignored occluders z-buffer"), AccessFlags.Write);
+                    builder.SetRenderFunc(static (OccluderData data, RasterGraphContext context) => context.cmd.DrawRendererList(data.Renderers));
+                }
+                return ignoredDepth;
+            }
+
+            private static TextureHandle CreateMaskTexture(RenderGraph renderGraph, UniversalResourceData resources, string name, GraphicsFormat format)
+            {
+                TextureDesc descriptor = renderGraph.GetTextureDesc(resources.activeColorTexture);
+                descriptor.name = name;
+                descriptor.colorFormat = format;
+                // 대상 경계의 커버리지를 얻기 위해 MSAA로 그리고, 읽을 때 자동 Resolve된 값 사용
+                descriptor.msaaSamples = MSAASamples.MSAA4x;
+                descriptor.bindTextureMS = false;
+                descriptor.depthBufferBits = DepthBits.None;
+                descriptor.clearBuffer = true;
+                descriptor.clearColor = Color.clear;
+                descriptor.filterMode = FilterMode.Point;
+                return renderGraph.CreateTexture(descriptor);
+            }
+
+            // 마스크 대상 메시끼리의 앞뒤만 가리는 전용 깊이 버퍼
+            private static TextureHandle CreateMaskZBuffer(RenderGraph renderGraph, TextureHandle mask, string name)
+            {
+                TextureDesc descriptor = renderGraph.GetTextureDesc(mask);
+                descriptor.name = name;
+                descriptor.depthBufferBits = DepthBits.Depth32;
+                return renderGraph.CreateTexture(descriptor);
             }
 
             private void SetMaskData(MaskData data, int shaderPass, List<Renderer> renderers)
             {
                 data.Material = material;
                 data.ShaderPass = shaderPass;
-                data.Renderers.Clear();
+                data.Items.Clear();
                 foreach (Renderer renderer in renderers)
-                    if (IsVisible(renderer)) data.Renderers.Add(renderer);
+                {
+                    if (IsVisible(renderer) == false) continue;
+                    // 반투명 재질(효과·텔레그래프 등)은 깊이에 남지 않아 실루엣으로 보면 엉뚱한 곳이 채워지므로 불투명 서브메시만 그린다.
+                    renderer.GetSharedMaterials(materialBuffer);
+                    int subMeshCount = Mathf.Min(GetSubMeshCount(renderer), materialBuffer.Count);
+                    for (int index = 0; index < subMeshCount; index++)
+                        if (IsOpaque(materialBuffer[index])) data.Items.Add(new DrawItem { Renderer = renderer, SubMesh = index });
+                }
+                materialBuffer.Clear();
+            }
+
+            private void SetCompositeData(CompositeData data, int shaderPass, MaterialPropertyBlock properties, TextureHandle playerMask, TextureHandle ignoredDepth)
+            {
+                data.Material = material;
+                data.ShaderPass = shaderPass;
+                data.Properties = properties;
+                data.PlayerMask = playerMask;
+                data.IgnoredDepth = ignoredDepth;
             }
 
             private static void DrawMask(MaskData data, RasterGraphContext context)
             {
-                foreach (Renderer renderer in data.Renderers)
-                {
-                    int subMeshCount = GetSubMeshCount(renderer);
-                    for (int index = 0; index < subMeshCount; index++)
-                        context.cmd.DrawRenderer(renderer, data.Material, index, data.ShaderPass);
-                }
+                foreach (DrawItem item in data.Items)
+                    if (item.Renderer != null) context.cmd.DrawRenderer(item.Renderer, data.Material, item.SubMesh, data.ShaderPass);
+            }
+
+            private static void DrawComposite(CompositeData data, RasterGraphContext context)
+            {
+                // 마스크를 그리지 않은 프레임에는 검은 텍스처가 들어가도록 전역 값 대신 직접 넘긴다.
+                data.Properties.SetTexture(PlayerMaskId, OrBlack(data.PlayerMask));
+                data.Properties.SetTexture(IgnoredDepthId, OrBlack(data.IgnoredDepth));
+                context.cmd.DrawProcedural(Matrix4x4.identity, data.Material, data.ShaderPass, MeshTopology.Triangles, 3, 1, data.Properties);
+            }
+
+            // 텍스처를 얻지 못하면 MaterialPropertyBlock이 null을 받지 않으므로 검은 텍스처로 대신한다.
+            private static Texture OrBlack(TextureHandle handle)
+            {
+                Texture texture = handle;
+                return texture != null ? texture : Texture2D.blackTexture;
             }
 
             private static bool IsVisible(Renderer renderer) =>
-                renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy;
+                renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy
+                && renderer.forceRenderingOff == false && renderer.shadowCastingMode != ShadowCastingMode.ShadowsOnly;
+
+            private static bool IsOpaque(Material material) =>
+                material != null && material.renderQueue <= (int)RenderQueue.GeometryLast;
+
+            private static bool IsEmpty(Vector4 rect) => rect.x >= rect.z || rect.y >= rect.w;
 
             private static bool TryGetBounds(List<Renderer> renderers, out Bounds bounds)
             {
@@ -232,7 +363,7 @@ namespace TeamOdd.UI
                 {
                     Vector3 corner = bounds.center + Vector3.Scale(bounds.extents,
                         new Vector3((index & 1) == 0 ? -1f : 1f, (index & 2) == 0 ? -1f : 1f, (index & 4) == 0 ? -1f : 1f));
-                    if (-view.MultiplyPoint(corner).z <= camera.nearClipPlane) return new Vector4(0f, 0f, 1f, 1f);
+                    if (-view.MultiplyPoint(corner).z <= camera.nearClipPlane) return ScreenRect;
                     Vector4 clip = viewProjection * new Vector4(corner.x, corner.y, corner.z, 1f);
                     Vector2 viewport = new Vector2(clip.x, clip.y) / clip.w * 0.5f + Vector2.one * 0.5f;
                     // GPU 투영 결과를 셰이더의 SV_POSITION과 같은 픽셀 좌표계로 변환한다.

@@ -40,6 +40,12 @@ namespace TeamOdd.UI
         [Tooltip("보스에 가려진 플레이어 외곽선 두께(픽셀), 색은 보스 이름 텍스트 색을 따른다.")]
         [SerializeField, Range(1f, 8f)] private float occlusionOutlineWidth = 2f;
 
+        [Header("Occlusion Silhouette")]
+        [Tooltip("플레이어가 아닌 다른 물체에 가려진 보스 부분을 채우는 색, 알파로 진하기를 정한다.")]
+        [SerializeField] private Color occlusionFillColor = new(0.85f, 0.1f, 0.08f, 0.5f);
+        [Tooltip("보스 앞면과 가린 물체 사이가 이 거리(m)보다 멀어야 채우기 시작한다. 땅에 묻힌 발 같은 맞닿은 부분이 채워지면 올린다.")]
+        [SerializeField, Min(0f)] private float occlusionFillMinGap = 0.3f;
+
         private bool findsBoss;
         private Player.Player player;
         private BossGroggy groggy;
@@ -48,10 +54,12 @@ namespace TeamOdd.UI
 
         private CanvasGroup canvasGroup;
         private CanvasGroup cloneBarGroup;
+        private LayerMask wallLayers;
 
         private void Awake()
         {
             findsBoss = boss == null;
+            wallLayers = LayerMask.GetMask("Wall");
             // RequireComponent는 이미 씬에 배치된 HUD에는 붙지 않으므로 없으면 직접 추가
             if (TryGetComponent(out canvasGroup) == false) canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
@@ -120,6 +128,9 @@ namespace TeamOdd.UI
             Color outlineColor = nameText != null ? nameText.color : trailColor;
             outlineColor.a = 1f;
             BossOcclusionOutlineFeature.SetStyle(outlineColor, occlusionOutlineWidth);
+            // 쓰러진 보스는 가려져도 실루엣을 채우지 않고, 수련장 허수아비는 벽(Wall 레이어) 뒤에 가린 부분만 채우지 않음
+            Color fillColor = boss != null && boss.IsDead == false ? occlusionFillColor : Color.clear;
+            BossOcclusionOutlineFeature.SetFillStyle(fillColor, occlusionFillMinGap, dummy != null ? wallLayers : default);
         }
 
         // 새 보스의 체력·무력화 수치로 바를 바로 맞춤
@@ -135,13 +146,14 @@ namespace TeamOdd.UI
 
         private void UpdateOcclusionTargets()
         {
-            if (boss == null || player == null)
+            if (boss == null)
             {
                 BossOcclusionOutlineFeature.ClearTargets();
                 return;
             }
 
-            BossOcclusionOutlineFeature.SetTargets(boss.gameObject, player.gameObject);
+            // 플레이어가 아직 없어도 보스 실루엣 채우기는 그릴 수 있도록 보스만 먼저 넘김
+            BossOcclusionOutlineFeature.SetTargets(boss.gameObject, player != null ? player.gameObject : null);
         }
 
         private void UpdateFill(VectorBar bar, float ratio)
