@@ -119,7 +119,19 @@ namespace TeamOdd.UI
 
             drain?.Kill();
             sequence?.Kill();
-            if (isShowing) ScreenGlitch.Clear();
+            if (isShowing == false) return;
+
+            // 사망 화면에서 로비로 가며 이 씬이 내려갈 때는 화면 꺼짐(PowerOff)·글리치를 SceneLoadManager가 쓰고 있다.
+            // 다 지우면 다 꺼져 있어야 할 로딩 중에 새 씬이 먼저 보였다가 켜짐 연출 직전에 다시 꺼지므로, 이 연출이 넣은 채도·가장자리만 되돌린다
+            if (SceneLoadManager.IsInitialized && SceneLoadManager.Instance.IsLoading)
+            {
+                ScreenGlitch.Desaturate = 0f;
+                ScreenGlitch.Vignette = 0f;
+            }
+            else
+            {
+                ScreenGlitch.Clear();
+            }
         }
 
         private void HandleDied()

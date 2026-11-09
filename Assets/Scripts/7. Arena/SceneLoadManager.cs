@@ -278,6 +278,9 @@ namespace TeamOdd
         private void ShowCanvas()
         {
             canvas.sortingOrder = sortingOrder;
+            // 타이틀 씬에 캔버스 오브젝트가 꺼진 채 놓여 있다. 컴포넌트만 켜면 그려지지 않아 검은 화면·검은 띠·로딩 아이콘이 모두 안 보이고,
+            // 로딩 중 화면이 셰이더(PowerOff) 하나로만 가려져 그 값이 0이 되는 순간 새 씬이 그대로 비친다
+            canvas.gameObject.SetActive(true);
             canvas.enabled = true;
             // 씬에 꺼진 채 놓여 있으면 다 꺼진 동안 새 씬 UI가 검은 화면 위로 비치므로 여기서 켠다.
             // (이전 씬 연출이 ScreenGlitch.Clear 로 PowerOff 를 0으로 되돌리면 검은 띠도 열려 버린다)
