@@ -24,6 +24,7 @@ Shader "TeamOdd/Boss Occlusion Outline"
         TEXTURE2D_X(_BossOcclusionBossDepth);
         TEXTURE2D_X(_BossOcclusionPlayerMask);
         TEXTURE2D_X(_BossOcclusionIgnoredDepth);
+        TEXTURE2D_X(_BossOcclusionDebrisMask);
         float EyeDepth(float rawDepth)
         {
             return unity_OrthoParams.w > 0.5 ? LinearDepthToEyeDepth(rawDepth) : LinearEyeDepth(rawDepth, _ZBufferParams);
@@ -49,6 +50,28 @@ Shader "TeamOdd/Boss Occlusion Outline"
             ScreenVaryings output;
             output.positionCS = GetFullScreenTriangleVertexPosition(vertexID);
             return output;
+        }
+        // 최소 간격을 넘은 뒤 이 거리(m)에 걸쳐 실루엣이 차오른다.
+        #define FILL_FADE_DISTANCE 0.4
+        // 보스 실루엣을 채울 양(0~1)을 구하고, coverage에는 그 픽셀의 보스 커버리지를 돌려준다.
+        half FillAmount(float2 uv, out half coverage)
+        {
+            float2 boss = SAMPLE_TEXTURE2D_X(_BossOcclusionBossDepth, sampler_PointClamp, uv).rg;
+            coverage = boss.r;
+            if (boss.r <= 0.001) return 0.0;
+            float bossDepth = boss.g / boss.r;
+            float sceneDepth = EyeDepth(SampleSceneDepth(uv));
+            // 보스 앞면보다 다른 물체가 충분히 앞에 있을 때만 가려졌다고 본다.
+            // 땅에 살짝 묻힌 발처럼 맞닿은 부분은 간격에 따라 서서히 걸러 깜빡이지 않게 한다.
+            half hidden = saturate((bossDepth - sceneDepth - _FillMinGap) / FILL_FADE_DISTANCE);
+            // 맨 앞에 보이는 면이 플레이어나 작은 파편인 부분은 비운다.
+            half player = SAMPLE_TEXTURE2D_X(_BossOcclusionPlayerMask, sampler_PointClamp, uv).b;
+            half debris = SAMPLE_TEXTURE2D_X(_BossOcclusionDebrisMask, sampler_PointClamp, uv).b;
+            // 무시할 물체(예: 바닥, 수련장 벽)가 보스 앞을 막고 있으면 그 뒤에 있는 것으로 보아 채우지 않는다.
+            float2 ignored = SAMPLE_TEXTURE2D_X(_BossOcclusionIgnoredDepth, sampler_PointClamp, uv).rg;
+            half behindIgnored = ignored.r > 0.001 && ignored.g / ignored.r < bossDepth - _FillMinGap ? ignored.r : 0.0;
+            // 보스 커버리지를 곱해 실루엣 경계를 부드럽게 한다.
+            return boss.r * hidden * (1.0 - player) * (1.0 - debris) * (1.0 - behindIgnored);
         }
         ENDHLSL
 
@@ -144,27 +167,36 @@ Shader "TeamOdd/Boss Occlusion Outline"
             HLSLPROGRAM
             #pragma vertex ScreenVertex
             #pragma fragment FillFragment
-            // 최소 간격을 넘은 뒤 이 거리(m)에 걸쳐 실루엣이 차오른다.
-            #define FILL_FADE_DISTANCE 0.4
             half4 FillFragment(ScreenVaryings input) : SV_Target
             {
                 float2 uv = input.positionCS.xy / _ScaledScreenParams.xy;
                 ClipToRect(uv, _FillRect);
-                float2 boss = SAMPLE_TEXTURE2D_X(_BossOcclusionBossDepth, sampler_PointClamp, uv).rg;
-                clip(boss.r - 0.001);
-                float bossDepth = boss.g / boss.r;
-                float sceneDepth = EyeDepth(SampleSceneDepth(uv));
-                // 보스 앞면보다 다른 물체가 충분히 앞에 있을 때만 가려졌다고 본다.
-                // 땅에 살짝 묻힌 발처럼 맞닿은 부분은 간격에 따라 서서히 걸러 깜빡이지 않게 한다.
-                half hidden = saturate((bossDepth - sceneDepth - _FillMinGap) / FILL_FADE_DISTANCE);
-                // 맨 앞에 보이는 면이 플레이어인 부분은 비워 플레이어 위에는 실루엣을 덮지 않는다.
-                half player = SAMPLE_TEXTURE2D_X(_BossOcclusionPlayerMask, sampler_PointClamp, uv).b;
-                // 무시할 물체(예: 수련장 벽)가 보스 앞을 막고 있으면 그 뒤에 있는 것으로 보아 채우지 않는다.
-                float2 ignored = SAMPLE_TEXTURE2D_X(_BossOcclusionIgnoredDepth, sampler_PointClamp, uv).rg;
-                half behindIgnored = ignored.r > 0.001 && ignored.g / ignored.r < bossDepth - _FillMinGap ? ignored.r : 0.0;
-                // 보스 커버리지를 곱해 실루엣 경계를 부드럽게 한다.
-                half alpha = boss.r * hidden * (1.0 - player) * (1.0 - behindIgnored);
+                half coverage;
+                half alpha = FillAmount(uv, coverage);
+                clip(alpha - 0.001);
                 return half4(_FillColor.rgb, _FillColor.a * alpha);
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "Hidden Ratio"
+            Cull Off
+            ZWrite Off
+            ZTest Always
+            HLSLPROGRAM
+            #pragma vertex ScreenVertex
+            #pragma fragment RatioFragment
+            // C#의 HiddenRatioSize와 같아야 한다.
+            #define HIDDEN_RATIO_SIZE 64.0
+            // 보스 화면 영역(_FillRect)을 격자로 나눈 표본, r = 보스 커버리지, g = 채워질 양
+            float2 RatioFragment(ScreenVaryings input) : SV_Target
+            {
+                float2 uv = lerp(_FillRect.xy, _FillRect.zw, input.positionCS.xy / HIDDEN_RATIO_SIZE);
+                half coverage;
+                half amount = FillAmount(uv, coverage);
+                return float2(coverage, amount);
             }
             ENDHLSL
         }

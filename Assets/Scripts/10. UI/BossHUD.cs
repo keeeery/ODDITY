@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using TeamOdd.Arena;
 using TeamOdd.Boss;
 using TeamOdd.Combat;
+using TeamOdd.Psychokinesis;
 using TMPro;
 using UnityEngine;
 
@@ -45,6 +47,12 @@ namespace TeamOdd.UI
         [SerializeField] private Color occlusionFillColor = new(0.85f, 0.1f, 0.08f, 0.5f);
         [Tooltip("보스 앞면과 가린 물체 사이가 이 거리(m)보다 멀어야 채우기 시작한다. 땅에 묻힌 발 같은 맞닿은 부분이 채워지면 올린다.")]
         [SerializeField, Min(0f)] private float occlusionFillMinGap = 0.3f;
+        [Tooltip("화면에 보이는 보스 실루엣 중 이 비율(0~1) 이상이 가려져야 채우기를 보여 준다.")]
+        [SerializeField, Range(0f, 1f)] private float occlusionFillMinRatio = 0.2f;
+        [Tooltip("채우기가 나타나고 사라지는 시간(초)")]
+        [SerializeField, Min(0.01f)] private float occlusionFillFadeDuration = 0.2f;
+        [Tooltip("염동력 오브젝트·벽 파편 중 가장 긴 변이 이 길이(m)보다 짧으면 작은 파편으로 보고, 보스를 가려도 채우지 않는다.")]
+        [SerializeField, Min(0f)] private float occlusionDebrisMaxSize = 1.5f;
 
         private bool findsBoss;
         private Player.Player player;
@@ -55,11 +63,17 @@ namespace TeamOdd.UI
         private CanvasGroup canvasGroup;
         private CanvasGroup cloneBarGroup;
         private LayerMask wallLayers;
+        private LayerMask groundLayers;
+        private bool showsFill;
+        private float fillOpacity;
+        private readonly List<Renderer> smallOccluders = new();
+        private readonly List<Renderer> rendererBuffer = new();
 
         private void Awake()
         {
             findsBoss = boss == null;
             wallLayers = LayerMask.GetMask("Wall");
+            groundLayers = LayerMask.GetMask("Ground");
             // RequireComponent는 이미 씬에 배치된 HUD에는 붙지 않으므로 없으면 직접 추가
             if (TryGetComponent(out canvasGroup) == false) canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
@@ -128,9 +142,62 @@ namespace TeamOdd.UI
             Color outlineColor = nameText != null ? nameText.color : trailColor;
             outlineColor.a = 1f;
             BossOcclusionOutlineFeature.SetStyle(outlineColor, occlusionOutlineWidth);
-            // 쓰러진 보스는 가려져도 실루엣을 채우지 않고, 수련장 허수아비는 벽(Wall 레이어) 뒤에 가린 부분만 채우지 않음
-            Color fillColor = boss != null && boss.IsDead == false ? occlusionFillColor : Color.clear;
-            BossOcclusionOutlineFeature.SetFillStyle(fillColor, occlusionFillMinGap, dummy != null ? wallLayers : default);
+            UpdateOcclusionFill();
+        }
+
+        // 쓰러진 보스는 가려져도 실루엣을 채우지 않음
+        // 바닥(Ground 레이어)과 작은 파편에 가린 부분은 채우지 않고, 수련장 허수아비는 벽(Wall 레이어) 뒤에 가린 부분도 채우지 않음
+        // 채울 부분이 보스 실루엣의 일정 비율을 넘을 때만 서서히 보여 줌
+        private void UpdateOcclusionFill()
+        {
+            bool alive = boss != null && boss.IsDead == false;
+            LayerMask ignored = groundLayers | (dummy != null ? wallLayers : (LayerMask)0);
+            BossOcclusionOutlineFeature.SetFillStyle(alive ? occlusionFillColor : Color.clear, occlusionFillMinGap, ignored);
+
+            CollectSmallOccluders();
+            BossOcclusionOutlineFeature.SetSmallOccluders(smallOccluders);
+
+            // 경계값 근처에서 깜빡이지 않도록 사라질 때는 조금 더 낮은 비율까지 버팀
+            float ratio = BossOcclusionOutlineFeature.HiddenRatio;
+            if (alive == false) showsFill = false;
+            else if (ratio >= occlusionFillMinRatio) showsFill = true;
+            else if (ratio < occlusionFillMinRatio * 0.7f) showsFill = false;
+
+            float step = Time.unscaledDeltaTime / occlusionFillFadeDuration;
+            fillOpacity = Mathf.MoveTowards(fillOpacity, showsFill ? 1f : 0f, step);
+            BossOcclusionOutlineFeature.SetFillOpacity(fillOpacity);
+        }
+
+        // 염동력 오브젝트(벽 파편 포함) 중 전체 크기가 작은 것의 렌더러를 모음
+        private void CollectSmallOccluders()
+        {
+            smallOccluders.Clear();
+            if (boss == null) return;
+
+            IReadOnlyList<PsychokinesisObject> objects = PsychokinesisObject.ActiveObjects;
+            for (int index = 0; index < objects.Count; index++)
+            {
+                PsychokinesisObject target = objects[index];
+                if (target == null) continue;
+
+                target.GetComponentsInChildren(false, rendererBuffer);
+                bool found = false;
+                Bounds bounds = default;
+                foreach (Renderer renderer in rendererBuffer)
+                {
+                    if (renderer is not MeshRenderer && renderer is not SkinnedMeshRenderer) continue;
+                    if (found) bounds.Encapsulate(renderer.bounds);
+                    else bounds = renderer.bounds;
+                    found = true;
+                }
+                if (found == false) continue;
+
+                Vector3 size = bounds.size;
+                if (Mathf.Max(size.x, Mathf.Max(size.y, size.z)) >= occlusionDebrisMaxSize) continue;
+                foreach (Renderer renderer in rendererBuffer)
+                    if (renderer is MeshRenderer || renderer is SkinnedMeshRenderer) smallOccluders.Add(renderer);
+            }
+            rendererBuffer.Clear();
         }
 
         // 새 보스의 체력·무력화 수치로 바를 바로 맞춤
